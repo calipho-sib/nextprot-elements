@@ -221,10 +221,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     </div>
                     <div class="filter-body">
                         <div id="filtering" class="all-filters">
-                            <button class="btn btn-default btn-sm" id="allFilters">All/None</button>
+                            <button class="btn btn-default btn-sm" id="allFilters" on-tap="filterAll">All/None</button>
                             <template is="dom-repeat" items="{{_toArray(activeFiltering)}}" as="filter">
-                                <label class="filter-box">{{filter.value}}
-                                    <input type="checkbox" id={{filter.name}} value="option1" checked>
+                                <label class="filter-box" on-mouseover="highlightCategories" on-mouseout="dimCategories">
+                                    <input type="checkbox" id={{filter.name}} value="option1" on-change="toggleFiltering" checked>{{filter.value}}
                                 </label>
                             </template>
                         </div>
@@ -246,11 +246,12 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         </tr>
                         </thead>
                         <template is="dom-repeat" items="[[_toArray(groupedFeatures)]]" as="featureGroup">
-                            <tbody><!--{{_formatClassName(featureGroup.name, featureGroup.value.group)}} -->
-                            <tr><th colspan="6" class="general-info table-section-header"><div class="grey-x">[[featureGroup.name]]</div></th></tr>
+                            <tbody>
+                            <tr class$="[[_formatClassName(featureGroup.name, featureGroup.name)]]">
+                                <th colspan="6" class="general-info table-section-header"><div class="grey-x">[[featureGroup.name]]</div></th>
+                            </tr>
                             <template is="dom-repeat" items="[[featureGroup.value]]" as="feature">
-                                <!--[[_formatClassName(feature.category, feature.group)]] -->
-                                <tr id=[[feature.id]] class="general-info">
+                                <tr id=[[feature.id]] class$="[[_formatClassName(feature.category, feature.group)]] general-info">
                                     <td>[[feature.category]]</td>
                                     <td class="text-align-right"><a class="featPosition" on-tap="tvSelection">
                                         <span inner-h-t-m-l="[[feature.range]]"></span>
@@ -280,8 +281,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                         <td></td>
                                     </template>
                                 </tr>
-                                <!--[[_formatClassName(feature.category, feature.group)]] -->
-                                <tr class="detailed-info">
+                                <tr class$="[[_formatClassName(feature.category, feature.group)]] detailed-info">
                                     <td colspan="6" id="[[feature.id]]-evidence-container" class="table-row-evidence"></td>
                                 </tr>
                             </template>
@@ -303,7 +303,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     type: Object,
                     value: {}
                 },
-                isoform: {
+                isoName: {
                     type: String
                 },
                 featuresByIsoform: {
@@ -336,7 +336,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             ready: function() {
                 this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
                 this.nxEntry = this.nxConfig.entry || this.nx.getEntryName();
-                this.isoName = this.nxEntry+"-1";
+                if(!this.isoName) this.isoName = this.nxEntry+"-1";
                 var self=this;
                 this.nx.getProteinSequence(this.nxEntry).then(
                     function (data) {
@@ -348,7 +348,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                 self._renderFeatureViewer();
                                 self.addFiltering();
                                 self.addFeatures();
-                                self.toggleFiltering();
                                 self.fillTable();
                                 self.tvSelection();
                                 self.eventTV();
@@ -361,7 +360,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 });
             },
             reloadSVG: function(){
-                $("#chart svg").remove();
+                $("#featureViewer svg").remove();
                 this.ft.clearInstance();
                 this._renderFeatureViewer();
                 this.addFeatures();
@@ -531,74 +530,55 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     this.featuresLength = number;
                 };
             },
+            highlightCategories: function(mouseEvent){
+                var srcElementId =  mouseEvent.srcElement.id || mouseEvent.srcElement.childNodes[1].id;
+                this.ft.showFilteredFeature(srcElementId, "#795B42", document.location.href);
+            },
+            dimCategories: function(mouseEvent){
+                var srcElementId =  mouseEvent.srcElement.id || mouseEvent.srcElement.childNodes[1].id;
+                this.ft.hideFilteredFeature(srcElementId, "#795B42", document.location.href);
+            },
+            filterAll: function() {
+                if ($("#filtering").hasClass("all-filters")){
+
+                    $("#filtering input[type=checkbox]").prop("checked", false);
+
+                    for(var key in this.filterOptions) {
+                        this.filterOptions[key] = false;
+                    }
+                    $("#filtering").removeClass("all-filters");
+                }
+                else {
+
+                    $("#filtering input[type=checkbox]").prop("checked", true);
+
+                    for(var key in this.filterOptions) {
+                        this.filterOptions[key] = true;
+                    }
+                    $("#filtering").addClass("all-filters");
+                }
+                this.applyFiltering();
+                this.reloadSVG();
+            },
             toggleFiltering: function() {
-                var self = this;
-                $("#filtering label").mouseover(function(){
-                    var type=$(this).children("input").attr("id");
-                    ft.showFilteredFeature(type, "#795B42", document.location.href);
-                });
-                $("#filtering label").mouseout(function(){
-                    var type=$(this).children("input").attr("id");
-                    ft.hideFilteredFeature(type);
-                });
-                $("#allFilters").click(function(){
-                    if ($("#filtering").hasClass("all-filters")){
-
-                        $("#filtering input[type=checkbox]").prop("checked", false);
-
-                        console.log("has class all-filters");
-                        for(var key in this.filterOptions) {
-                            this.filterOptions[key] = false;
-                        }
-                        $("#filtering").removeClass("all-filters");
-                    }
-                    else {
-
-                        $("#filtering input[type=checkbox]").prop("checked", true);
-
-                        for(var key in this.filterOptions) {
-                            this.filterOptions[key] = true;
-                        }
-                        $("#filtering").addClass("all-filters");
-                    }
-                    self.applyFiltering();
-                    self.reloadSVG();
-
-                });
-                var self=this;
-                $("#filtering input:checkbox").on("change", function() {
-                    console.log("count the number of checkbox not checked : ");
-                    console.log($("#filtering input:checkbox:not(:checked)").length);
-
-                    if (!$("#filtering input:checkbox:not(:checked)").length) {
-                        console.log("all checkbox are checked");
-                        $("#filtering").addClass("all-filters");
-                    }
-                    else if (!$("#filtering input:checkbox:checked").length) {
-                        console.log("all checkbox are unchecked");
-                        $("#filtering").removeClass("all-filters");
-                    }
-                    else {
-                        $("#filtering").removeClass("all-filters");
-                    }
-                    self.filterOptions["none"] = true;
-                    self.applyFiltering();
-                    self.reloadSVG();
-                });
-
+                if (!$("#filtering input:checkbox:not(:checked)").length) {
+                    $("#filtering").addClass("all-filters");
+                } else {
+                    $("#filtering").removeClass("all-filters");
+                }
+                this.applyFiltering();
+                this.reloadSVG();
             },
             applyFiltering: function() {
                 for (var filter in this.activeFiltering) {
                     if ($("#"+filter).prop("checked")) {
-                        $("."+filter+".general-info").show();
-                        filterOptions[filter] = true;
+                        $("."+filter).show();
+                        this.filterOptions[filter] = true;
                     } else {
                         $("."+filter).hide();
                         this.filterOptions[filter] = false;
                     }
                 }
-                var tableLength = $("#featuresTable .general-info:visible").length;
-                $("#featuresTableTitle .badge").text(tableLength);
             },
             tvSelection: function() {
                 var self = this;
@@ -666,10 +646,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 }
                 return null;
             },
-            _toggle: function(mouseEvent){
-                var srcElementId = mouseEvent.srcElement.id || mouseEvent.srcElement.parentNode.id;
-                this.$$("#"+srcElementId.replace('button','container')).toggle();
-            },
             _isDisulfideBondFeature: function(featureCategory) {
                 return featureCategory === "Disulfide bond";
             },
@@ -678,9 +654,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             },
             _formatClassName: function(name, group) {
                 return name.replace(' ','')+" "+group.split(" ").join("_");
-            },
-            _increment: function(num) {
-                return num+=1;
             },
             _showEvidences: function(e){
                 var feature = JSON.parse(e.target.dataset.args);
