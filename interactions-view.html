@@ -26,8 +26,8 @@ View listing protein interaction annotations.
       </div>
     </div>
     <div class="row nxSection">
-      <isoform-selector nx-config="{{nxConfig}}"></isoform-selector>
-      <triple-viewer nx-config="{{nxConfig}}" feature-list='[{"APIRef": "interacting-region",
+      <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}}></isoform-selector>
+      <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] feature-list='[{"APIRef": "interacting-region",
           "metadata": {
           "name": "Interacting region",
           "className": "intregion",
@@ -316,6 +316,9 @@ View listing protein interaction annotations.
           value: {}
         },
         nxEntry: {
+          type: String
+        },
+        isoName: {
           type: String
         },
         goldOnly: {

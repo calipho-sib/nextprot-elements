@@ -92,7 +92,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 <ul id="navTabs" class="nav nav-tabs">
                     <template id="tablist" is="dom-repeat" items="[[isoforms.visible]]" as="isoform">
                         <li class-list="[[_navTabClass(index)]]">
-                            <a class="isoformNames" href="#[[isoform.uniqueName]]" data-args$="[[isoform.uniqueName]]" data-toggle="tab" title="[[isoform.mainEntityName.value]]" on-tap="displayIsoform">[[isoform.uniqueName]]</a>
+                            <a id="[[isoform.uniqueName]]" class="isoformNames" href="#[[isoform.uniqueName]]" data-args$="[[isoform.uniqueName]]" data-toggle="tab" title="[[isoform.mainEntityName.value]]" on-tap="displayIsoform">[[isoform.uniqueName]]</a>
                         </li>
                     </template>
                     <template id="menu" is="dom-if" if="[[isoforms.more]]">
@@ -377,8 +377,8 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                             .on("click", function () {
                                 svgIsoform.selectAll("rect").style("fill", "#C2DEC8");
                                 d3.selectAll("." + data.isoformAc + "Rect").style("fill", "#74EB78");
-                                //self.reload(data.isoformAc);
-                                var isoSelection = $('#nx-isoformChoice a[href=#' + data.isoformAc + ']').tab('show');
+                                self.reload(data.isoformAc);
+                                var isoSelection = $('#nx-isoformChoice #' + data.isoformAc).tab('show');
                                 if (isoSelection.parent().parent().is("#moreIsoforms")) $("#extendIsoformChoice").text(data.isoformAc);
 
                             });

@@ -304,7 +304,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     value: {}
                 },
                 isoName: {
-                    type: String
+                    type: String,
+                    observer: "reloadSVG"
                 },
                 featuresByIsoform: {
                     type: Array,
@@ -360,15 +361,16 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 });
             },
             reloadSVG: function(){
-                $("#featureViewer svg").remove();
-                this.ft.clearInstance();
-                this._renderFeatureViewer();
-                this.addFeatures();
-                if ($(".zoomUnit").length) $(".zoomUnit").text("1");
-                d3.selectAll('div.selectedRect').remove();
-
-                this.tvSelection();
-                this.eventTV();
+                if (this.ft) {
+                    $("#featureViewer svg").remove();
+                    this.ft.clearInstance();
+                    this._renderFeatureViewer();
+                    this.addFeatures();
+                    if ($(".zoomUnit").length) $(".zoomUnit").text("1");
+                    d3.selectAll('div.selectedRect').remove();
+                    this.tvSelection();
+                    this.eventTV();
+                }
             },
             getFeaturesByIsoform: function(isoforms){
                 this.isofroms=isoforms[0];
