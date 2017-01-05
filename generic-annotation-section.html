@@ -102,7 +102,7 @@ Annotation section used in function, medical, and expression views.
                                             </div>
                                         </template>
                                         <template is="dom-if" if="{{!_checkIfContainsAccessionOrXref(annotation.value)}}">
-                                            <p class="annotation-title">{{annotation.value.description}}
+                                            <p class="annotation-title" inner-h-t-m-l="{{annotation.value.description}}">
                                                 <template is="dom-if" if="{{!_isBinaryInteractionOrCofactor(annotation.value.category)}}">
                                                     <quality-label quality="{{annotation.value.qualityQualifier}}"></quality-label>
                                                 </template>
@@ -251,6 +251,9 @@ Annotation section used in function, medical, and expression views.
                                 a.bioObject.properties["chemical name"] : undefined;
                     }
                     if(a.category=="pathway") a.category=self._getUniqueListOfEvidenceSources(a.evidences)+" pathways";
+                    if(a.category=="subcellular location info") {
+                        a.category="";
+                        a.description = "<b>Note:</b> "+ a.description;}
                     if(Object.keys(self.categoryTitles).indexOf(a.category)!=-1) a.category = self.categoryTitles[a.category];
                     if (a.description) a.description=a.description.charAt(0).toUpperCase()+ a.description.slice(1);
                     if (a.cvTermName) a.cvTermName=a.cvTermName.charAt(0).toUpperCase()+a.cvTermName.slice(1);
