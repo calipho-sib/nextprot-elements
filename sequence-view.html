@@ -1,0 +1,454 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="protein-overview.html">
+<link rel="import" href="isoform-selector.html">
+<link rel="import" href="triple-viewer.html">
+<link rel="import" href="generic-annotation-section.html">
+<link rel="import" href="keywords-section.html">
+<link rel="import" href="xrefs-section.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`sequence-view`
+View listing sequence annotations.
+
+#### Example
+
+          <sequence-view nx-config='{"entry": "P52701"}'></sequence-view>
+
+@demo demo/sequence-view-demo.html
+-->
+<dom-module id="sequence-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background:#ECF0F1;
+                overflow-y: auto;
+            }
+        </style>
+        <div class="row">
+            <div id="nxOverview" class="col-md-12">
+                <protein-overview nx-config="{{nxConfig}}"></protein-overview>
+            </div>
+        </div>
+        <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no sequence information available in neXtProt for {{nxConfig.entry}}.
+            Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
+        </div>
+        <div class="row nxSection">
+            <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}}></isoform-selector>
+            <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] feature-list='[
+      {
+        "APIRef": "sequence",
+        "metadata": {"name": "Sequence"}
+      },
+      {
+        "APIRef": "propeptide",
+        "metadata": {
+          "name": "Propeptide",
+          "className": "pro",
+          "color": "#B3B3B3",
+          "type": "rect",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "mature-protein",
+        "metadata": {
+          "name": "Mature protein",
+          "className": "mat",
+          "color": "#B3B3C2",
+          "type": "rect",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "signal-peptide",
+        "metadata": {
+          "name": "Signal peptide",
+          "className": "sign",
+          "color": "#B3B3E1",
+          "type": "rect",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "peroxisome-transit-peptide",
+        "metadata": {
+          "name": "Transit peptide",
+          "className": "pero",
+          "color": "#B3B3F0",
+          "type": "rect",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "mitochondrial-transit-peptide",
+        "metadata": {
+          "name": "Transit peptide",
+          "className": "mito",
+          "color": "#B3B3F0",
+          "type": "rect",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "miscellaneous-region",
+        "metadata": {
+          "name": "Region",
+          "className": "miscregion",
+          "color": "#B3C2B3",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "domain",
+        "metadata": {
+          "name": "Domain",
+          "className": "domain",
+          "color": "#B3C2C2",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "repeat",
+        "metadata": {
+          "name": "Repeat",
+          "className": "repeat",
+          "color": "#98B7D5",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "calcium-binding-region",
+        "metadata": {
+          "name": "Calcium binding",
+          "className": "calcium",
+          "color": "#B3C2E1",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "zinc-finger-region",
+        "metadata": {
+          "name": "Zinc finger",
+          "className": "calcium",
+          "color": "#B3C2E1",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "dna-binding-region",
+        "metadata": {
+          "name": "DNA binding",
+          "className": "dnabind",
+          "color": "#B3C2FF",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "nucleotide-phosphate-binding-region",
+        "metadata": {
+          "name": "Nucleotide binding",
+          "className": "nucleobind",
+          "color": "#B3D1B3",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "coiled-coil-region",
+        "metadata": {
+          "name": "Coiled-coil",
+          "className": "coiledcoil",
+          "color": "#B3D1C2",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "short-sequence-motif",
+        "metadata": {
+          "name": "Sequence motif",
+          "className": "motif",
+          "color": "#B3D1D1",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "compositionally-biased-region",
+        "metadata": {
+          "name": "Composition bias",
+          "className": "biased",
+          "color": "#B3D1E1",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "topological-domain",
+        "metadata": {
+          "name": "Top domain",
+          "className": "topodomain",
+          "color": "#A5DBA5",
+          "type": "rect",
+          "filter": "Topology"
+        }
+      },
+      {
+        "APIRef": "transmembrane-region",
+        "metadata": {
+          "name": "Membrane",
+          "className": "membrane",
+          "color": "#A5DBB7",
+          "type": "rect",
+          "filter": "Topology"
+        }
+      },
+      {
+        "APIRef": "disulfide-bond",
+        "metadata": {
+          "name": "Disulfide bond",
+          "className": "dsB",
+          "color": "#B3B3E1",
+          "type": "path",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "initiator-methionine",
+        "metadata": {
+          "name": "Initiator meth",
+          "className": "initMeth",
+          "color": "#B3B3D1",
+          "type": "unique",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "interacting-region",
+        "metadata": {
+          "name": "Interacting region",
+          "className": "intReg",
+          "color": "#B3D1F0",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "modified-residue",
+        "metadata": {
+          "name": "Modified residue",
+          "className": "modifRes",
+          "color": "#B3C2B3",
+          "type": "unique",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "cross-link",
+        "metadata": {
+          "name": "Cross-link",
+          "className": "crossLink",
+          "color": "#B3C2C2",
+          "type": "unique",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "glycosylation-site",
+        "metadata": {
+          "name": "Glycosylation",
+          "className": "glycoSite",
+          "color": "#74E374",
+          "type": "unique",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "miscellaneous-site",
+        "metadata": {
+          "name": "Site",
+          "className": "site",
+          "color": "#B3F0E1",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "active-site",
+        "metadata": {
+          "name": "Active site",
+          "className": "actSite",
+          "color": "#B3F0F0",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "binding-site",
+        "metadata": {
+          "name": "Binding site",
+          "className": "bindsite",
+          "color": "#82E6FF",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "cleavage-site",
+        "metadata": {
+          "name": "Cleavage site",
+          "className": "cleavsite",
+          "color": "#B3FFB3",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "metal-binding-site",
+        "metadata": {
+          "name": "Metal binding",
+          "className": "metal",
+          "color": "#B3FFC2",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "lipidation-site",
+        "metadata": {
+          "name": "Lipidation",
+          "className": "lipidation",
+          "color": "#A3B5DB",
+          "type": "unique",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "selenocysteine",
+        "metadata": {
+          "name": "Non standart AA",
+          "className": "seleno",
+          "color": "#859DE7",
+          "type": "unique",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "variant",
+        "metadata": {
+          "name": "Variant",
+          "className": "variant",
+          "color": "rgba(0,255,154,0.3)",
+          "type": "unique",
+          "filter": "Variant"
+        }
+      },
+      {
+        "APIRef": "mutagenesis",
+        "metadata": {
+          "name": "Mutagenesis",
+          "className": "mutagenesis",
+          "color": "#73FFE3",
+          "type": "unique",
+          "filter": "Variant"
+        }
+      },
+      {
+        "APIRef": "sequence-conflict",
+        "metadata": {
+          "name": "Conflict",
+          "className": "seqconflict",
+          "color": "#6FFFFF",
+          "type": "unique",
+          "filter": "Conflict"
+        }
+      },
+      {
+        "APIRef": "isoform-mapping",
+        "metadata": {}
+      }
+    ]'></triple-viewer>
+        <div class="row">
+            <div id="nxAnnotations" class="col-md-12">
+                <generic-annotation-section id="annotationElement" section="sequence" goldOnly="{{goldOnly}}"
+                                            categories='["CAUTION", "DOMAIN-INFO", "PTM-INFO", "SEQUENCE-CAUTION"]'
+                                            category-titles='{"domain information": "domain"}'
+                                            count="{{annotationsCount}}" nx-config="{{nxConfig}}">
+                </generic-annotation-section>
+            </div>
+        </div>
+        <div class="row">
+            <div id="nxKeywords" class="col-md-12">
+                <keywords-section categories='["Coding sequence diversity", "Domain", "PTM", "Technical term"]'
+                                  exceptions='["KW-0002", "KW-0021", "KW-0181", "KW-0895", "KW-0374", "KW-0511", "KW-0582", "KW-0814"]'
+                                  nx-config="{{nxConfig}}" count="{{keywordsCount}}">
+                </keywords-section>
+            </div>
+        </div>
+        <div class="row">
+            <div id="nxXrefs" class="col-md-12">
+                <xrefs-section categories='["CCDS", "eggNOG", "EMBL","Ensembl", "Gene3D", "GlycoSuiteDB", "HOGENOM", "HOVERGEN",
+	                  "InParanoid", "InterPro", "KEGG", "MGI",
+	                  "OMA", "OrthoDB", "PANTHER", "Pfam", "PhosphoSite", "PhylomeDB",
+	                  "PIR", "PIRSF", "PMAP-CutDB", "PRINTS", "ProDom", "ProtClustDB", "PROSITE",
+	                  "RefSeq", "SMART", "SUPFAM", "TIGRFAMS","UCSC", "UniProt",
+                      "DNASU", "EvolutionaryTrace", "KO", "UniCarbKB", "ChiTaRS", "HAMAP", "TIGRFAMs",
+					  "TreeFam","DEPOD","GeneTree","BioMuta"]'
+                               nx-config="{{nxConfig}}" count="{{xrefsCount}}">
+                </xrefs-section>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'sequence-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                isoName: {
+                    type: String
+                },
+                goldOnly: {
+                    type: Boolean,
+                    value: false
+                },
+                annotationsCount: {
+                    type: Number,
+                    observer: "_checkAnnotations"
+                },
+                keywordsCount: {
+                    type: Number,
+                    observer: "_checkKeywords"
+                },
+                xrefsCount: {
+                    type: Number,
+                    observer: "_checkXrefs"
+                }
+            },
+            _checkAnnotations: function(){
+                if(this.annotationsCount===0){
+                    this.$.nxAnnotations.hidden=true;
+                    this.$.noDataWarning.hidden=false;
+                } else {
+                    this.$.nxAnnotations.hidden=false;
+                    this.$.noDataWarning.hidden=true;
+                }
+            },
+            _checkKeywords: function(){
+                this.keywordsCount===0 ? this.$.nxKeywords.hidden=true : this.$.nxKeywords.hidden=false;
+            },
+            _checkXrefs: function(){
+                this.xrefsCount===0 ? this.$.nxXrefs.hidden=true : this.$.nxXrefs.hidden=false;
+            }
+        });
+    </script>
+</dom-module>
