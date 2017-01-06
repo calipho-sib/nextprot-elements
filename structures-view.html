@@ -1,0 +1,327 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="protein-overview.html">
+<link rel="import" href="isoform-selector.html">
+<link rel="import" href="triple-viewer.html">
+<link rel="import" href="keywords-section.html">
+<link rel="import" href="xrefs-section.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`structures-view`
+View listing sequence annotations.
+
+#### Example
+
+          <structures-view nx-config='{"entry": "P52701"}'></structures-view>
+
+@demo demo/structures-view-demo.html
+-->
+<dom-module id="structures-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background:#ECF0F1;
+                overflow-y: auto;
+            }
+        </style>
+        <div class="row">
+            <div id="nxOverview" class="col-md-12">
+                <protein-overview nx-config="{{nxConfig}}"></protein-overview>
+            </div>
+        </div>
+        <div class="row nxSection">
+            <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}}></isoform-selector>
+            <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] feature-list='[
+      {
+        "APIRef": "sequence",
+        "metadata": {"name": "Sequence"}
+      },
+      {
+        "APIRef": "domain",
+        "metadata": {
+          "name": "Domain",
+          "className": "domain",
+          "color": "#B3C2C2",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "repeat",
+        "metadata": {
+          "name": "Repeat",
+          "className": "repeat",
+          "color": "#98B7D5",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "calcium-binding-region",
+        "metadata": {
+          "name": "Calcium binding",
+          "className": "calcium",
+          "color": "#B3C2E1",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "zinc-finger-region",
+        "metadata": {
+          "name": "Zinc finger",
+          "className": "calcium",
+          "color": "#B3C2E1",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "dna-binding-region",
+        "metadata": {
+          "name": "DNA binding",
+          "className": "dnabind",
+          "color": "#B3C2FF",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "nucleotide-phosphate-binding-region",
+        "metadata": {
+          "name": "Nucleotide binding",
+          "className": "nucleobind",
+          "color": "#B3D1B3",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "coiled-coil-region",
+        "metadata": {
+          "name": "Coiled-coil",
+          "className": "coiledcoil",
+          "color": "#B3D1C2",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "short-sequence-motif",
+        "metadata": {
+          "name": "Sequence motif",
+          "className": "motif",
+          "color": "#B3D1D1",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "compositionally-biased-region",
+        "metadata": {
+          "name": "Composition bias",
+          "className": "biased",
+          "color": "#B3D1E1",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "interacting-region",
+        "metadata": {
+          "name": "Interacting region",
+          "className": "intregion",
+          "color": "#B3C2F0",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "miscellaneous-region",
+        "metadata": {
+          "name": "Region",
+          "className": "miscregion",
+          "color": "#B3C2B3",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "topological-domain",
+        "metadata": {
+          "name": "Topological domain",
+          "className": "topodomain",
+          "color": "#A5DBA5",
+          "type": "rect",
+          "filter": "Topology"
+        }
+      },
+      {
+        "APIRef": "transmembrane-region",
+        "metadata": {
+          "name": "Membrane",
+          "className": "membrane",
+          "color": "#A5DBB7",
+          "type": "rect",
+          "filter": "Topology"
+        }
+      },
+      {
+        "APIRef": "miscellaneous-site",
+        "metadata": {
+          "name": "Site",
+          "className": "site",
+          "color": "#B3F0E1",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "active-site",
+        "metadata": {
+          "name": "Active site",
+          "className": "actSite",
+          "color": "#B3F0F0",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "binding-site",
+        "metadata": {
+          "name": "Binding site",
+          "className": "bindsite",
+          "color": "#82E6FF",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "cleavage-site",
+        "metadata": {
+          "name": "Cleavage site",
+          "className": "cleavsite",
+          "color": "#B3FFB3",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "metal-binding-site",
+        "metadata": {
+          "name": "Metal binding",
+          "className": "metal",
+          "color": "#B3FFC2",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "variant",
+        "metadata": {
+          "name": "Variant",
+          "className": "variant",
+          "color": "rgba(0,255,154,0.3)",
+          "type": "unique",
+          "filter": "Variant"
+        }
+      },
+      {
+        "APIRef": "mutagenesis",
+        "metadata": {
+          "name": "Mutagenesis",
+          "className": "mutagenesis",
+          "color": "#73FFE3",
+          "type": "unique",
+          "filter": "Variant"
+        }
+      },
+      {
+        "APIRef": "sequence-conflict",
+        "metadata": {
+          "name": "Conflict",
+          "className": "seqconflict",
+          "color": "#6FFFFF",
+          "type": "unique",
+          "filter": "Conflict"
+        }
+      },
+      {
+        "APIRef": "beta-strand",
+        "metadata": {
+          "name": "Beta strand",
+          "className": "betastrand",
+          "color": "#B3F0C2",
+          "type": "rect",
+          "filter": "Secondary structure"
+        }
+      },
+      {
+        "APIRef": "helix",
+        "metadata": {
+          "name": "Helix",
+          "className": "helix",
+          "color": "#B3F0D1",
+          "type": "rect",
+          "filter": "Secondary structure"
+        }
+      },
+      {
+        "APIRef": "turn",
+        "metadata": {
+          "name": "Turn",
+          "className": "turn",
+          "color": "#B3F0E1",
+          "type": "rect",
+          "filter": "Secondary structure"
+        }
+      },
+      {
+        "APIRef": "isoform-mapping",
+        "metadata": {}
+      }]'></triple-viewer>
+        </div>
+        <div class="row">
+            <div id="nxKeywords" class="col-md-12">
+                <keywords-section categories='["Technical term"]'
+                                  exceptions='["KW-0021", "KW-0181", "KW-0903", "KW-0895", "KW-0374", "KW-0511", "KW-0582", "KW-0814"]'
+                                  nx-config="{{nxConfig}}" count="{{keywordsCount}}"></keywords-section>
+            </div>
+        </div>
+        <div class="row">
+            <div id="nxXrefs" class="col-md-12">
+                <xrefs-section categories='["ProteinModelPortal","HSSP","SMR","ModBase","DisProt"]'
+                               nx-config="{{nxConfig}}" count="{{xrefsCount}}"></xrefs-section>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'structures-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                goldOnly: {
+                    type: Boolean,
+                    value: false
+                },
+                keywordsCount: {
+                    type: Number,
+                    observer: "_checkKeywords"
+                },
+                xrefsCount: {
+                    type: Number,
+                    observer: "_checkXrefs"
+                }
+            },
+            _checkKeywords: function(){
+                this.keywordsCount===0 ? this.$.nxKeywords.hidden=true : this.$.nxKeywords.hidden=false;
+            },
+            _checkXrefs: function(){
+                this.xrefsCount===0 ? this.$.nxXrefs.hidden=true : this.$.nxXrefs.hidden=false;
+            }
+        });
+    </script>
+</dom-module>
