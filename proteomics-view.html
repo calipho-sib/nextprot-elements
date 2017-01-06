@@ -1,0 +1,249 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="protein-overview.html">
+<link rel="import" href="isoform-selector.html">
+<link rel="import" href="triple-viewer.html">
+<link rel="import" href="xrefs-section.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`proteomics-view`
+View listing sequence annotations.
+
+#### Example
+
+          <proteomics-view nx-config='{"entry": "P52701"}'></proteomics-view>
+
+@demo demo/sequence-view-demo.html
+-->
+<dom-module id="proteomics-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background:#ECF0F1;
+                overflow-y: auto;
+            }
+        </style>
+        <div class="row">
+            <div id="nxOverview" class="col-md-12">
+                <protein-overview nx-config="{{nxConfig}}"></protein-overview>
+            </div>
+        </div>
+        <div class="row nxSection">
+            <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}}></isoform-selector>
+            <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] feature-list='[{
+        "APIRef": "sequence",
+        "metadata": {"name": "Sequence"}
+      },
+      {
+        "APIRef": "propeptide",
+        "metadata": {
+          "name": "Propeptide",
+          "className": "pro",
+          "color": "#B3B3B3",
+          "type": "rect",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "mature-protein",
+        "metadata": {
+          "name": "Mature protein",
+          "className": "mat",
+          "color": "#B3B3C2",
+          "type": "rect",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "signal-peptide",
+        "metadata": {
+          "name": "Signal peptide",
+          "className": "sign",
+          "color": "#B3B3E1",
+          "type": "rect",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "peroxisome-transit-peptide",
+        "metadata": {
+          "name": "Transit peptide",
+          "className": "pero",
+          "color": "#B3B3F0",
+          "type": "rect",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "mitochondrial-transit-peptide",
+        "metadata": {
+          "name": "Transit peptide",
+          "className": "mito",
+          "color": "#B3B3F0",
+          "type": "rect",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "topological-domain",
+        "metadata": {
+          "name": "Topo. domain",
+          "className": "topodomain",
+          "color": "#A5DBA5",
+          "type": "rect",
+          "filter": "Topology"
+        }
+      },
+      {
+        "APIRef": "transmembrane-region",
+        "metadata": {
+          "name": "Membrane",
+          "className": "membrane",
+          "color": "#A5DBB7",
+          "type": "rect",
+          "filter": "Topology"
+        }
+      },
+      {
+        "APIRef": "disulfide-bond",
+        "metadata": {
+          "name": "Disulfide bond",
+          "className": "dsB",
+          "color": "#B3B3E1",
+          "type": "path",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "antibody-mapping",
+        "metadata": {
+          "name": "Antibody",
+          "className": "anti",
+          "color": "#B3C2F0",
+          "type": "rect",
+          "filter": "Antibody"
+        }
+      },
+      {
+        "APIRef": "initiator-methionine",
+        "metadata": {
+          "name": "Initiator meth",
+          "className": "initMeth",
+          "color": "#B3B3D1",
+          "type": "unique",
+          "filter": "Processing"
+        }
+      },
+      {
+        "APIRef": "modified-residue",
+        "metadata": {
+          "name": "Modified residue",
+          "className": "modifRes",
+          "color": "#B3C2B3",
+          "type": "unique",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "cross-link",
+        "metadata": {
+          "name": "Cross-link",
+          "className": "crossLink",
+          "color": "#B3C2C2",
+          "type": "unique",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "glycosylation-site",
+        "metadata": {
+          "name": "Glycosylation",
+          "className": "glycoSite",
+          "color": "#B3C2D1",
+          "type": "unique",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "lipidation-site",
+        "metadata": {
+          "name": "Lipidation",
+          "className": "lipidation",
+          "color": "#A3B5DB",
+          "type": "unique",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "selenocysteine",
+        "metadata": {
+          "name": "Non standart AA",
+          "className": "seleno",
+          "color": "#859DE7",
+          "type": "unique",
+          "filter": "Modified Residue"
+        }
+      },
+      {
+        "APIRef": "peptide-mapping",
+        "metadata": {
+          "name": "Peptide",
+          "className": "pep",
+          "color": "#B3E1D1",
+          "type": "rect",
+          "filter": "Peptide",
+          "height": 8
+        }
+      },
+      {
+        "APIRef": "srm-peptide-mapping",
+        "metadata": {
+          "name": "SRM Peptide",
+          "className": "srmPep",
+          "color": "#B3E1F0",
+          "type": "rect",
+          "filter": "Peptide",
+          "height": 8
+        }
+      },
+      {
+        "APIRef": "isoform-mapping",
+        "metadata": {}
+      }]'></triple-viewer>
+        </div>
+        <div class="row">
+            <div id="nxXrefs" class="col-md-12">
+                <xrefs-section categories='["Gene3D","InterPro","Pfam","PRINTS","PROSITE","SMART","SUPFAM",
+      "Ensembl", "KEGG", "UCSC", "MGI", "EvolutionaryTrace", "PMAP-CutDB", "PhosphoSite",
+      "eggNOG", "GeneTree", "HOGENOM", "HOVERGEN", "InParanoid", "KO", "OMA", "PhylomeDB", "TreeFam", "BioMuta",
+      "CCDS", "EMBL", "PIR", "RefSeq", "UniProtKB", "DNASU"]' nx-config="{{nxConfig}}" count="{{xrefsCount}}">
+                </xrefs-section>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'proteomics-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                isoName: {
+                    type: String
+                },
+                goldOnly: {
+                    type: Boolean,
+                    value: false
+                },
+                xrefsCount: {
+                    type: Number,
+                    observer: "_checkXrefs"
+                }
+            },
+            _checkXrefs: function(){
+                this.xrefsCount===0 ? this.$.nxXrefs.hidden=true : this.$.nxXrefs.hidden=false;
+            }
+        });
+    </script>
+</dom-module>
