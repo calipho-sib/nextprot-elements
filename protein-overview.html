@@ -68,115 +68,115 @@ Protein overview
     </style>
     <div id="proteinTitle">
       <button id="extender" class="btn btn-default" on-click="toggle">
-        <template is="dom-if" if="{{extended}}">
+        <template is="dom-if" if="[[extended]]">
           <iron-icon icon="arrow-drop-up"></iron-icon>Collapse overview
         </template>
-        <template is="dom-if" if="{{!extended}}">
+        <template is="dom-if" if="[[!extended]]">
           <iron-icon icon="arrow-drop-down"></iron-icon>Extend overview
         </template>
       </button>
       <h3>
-        <template is="dom-if" if="{{data.geneName}}">
-          <template is="dom-if" if="{{data.geneName.0.name}}">
-            {{data.geneName.0.name}}  →
+        <template is="dom-if" if="[[data.geneName]]">
+          <template is="dom-if" if="[[data.geneName.0.name]]">
+            [[data.geneName.0.name]]  →
           </template>
         </template>
-        {{data.entryName}}
-        <template is="dom-if" if="{{data.recommendedProteinName}}">
-          <template is="dom-if" if="{{data.recommendedProteinName.EC.0}}">[
-            <template is="dom-repeat" items="{{data.recommendedProteinName.EC}}" as="ec">
+        [[data.entryName]]
+        <template is="dom-if" if="[[data.recommendedProteinName]]">
+          <template is="dom-if" if="[[data.recommendedProteinName.EC.0]]">[
+            <template is="dom-repeat" items="[[data.recommendedProteinName.EC]]" as="ec">
               <div class="ec-link">
-                <a href="{{nxUrl}}/term/{{ec}}">EC {{ec}}</a></div><template is="dom-if" if="[[!_checkIfLast(data.recommendedProteinName.EC,index)]]">,</template>
+                <a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a></div><template is="dom-if" if="[[!_checkIfLast(data.recommendedProteinName.EC,index)]]">,</template>
             </template>]
           </template>
-          <template is="dom-if" if="{{data.recommendedProteinName.mainShortName}}">({{data.recommendedProteinName.mainShortName}})</template>
+          <template is="dom-if" if="[[data.recommendedProteinName.mainShortName]]">([[data.recommendedProteinName.mainShortName]])</template>
         </template>
       </h3>
     </div>
     <iron-collapse id="collapseInfosLess" opened="{{!extended}}">
     <div id="infos-less">
-      <template is="dom-if" if="{{data.recommendedProteinName.mainSynonymName}}">
+      <template is="dom-if" if="[[data.recommendedProteinName.mainSynonymName]]">
         <div id="synonym-less" class="row">
           <div class="col-md-3 col-xs-3 grey-x text-align-right">Protein also known as :</div>
           <div class="col-md-9 col-xs-9">
-            {{data.recommendedProteinName.mainSynonymName.name}}
-            <template is="dom-if" if="{{data.recommendedProteinName.mainSynonymName.synonym}}"> ({{data.recommendedProteinName.mainSynonymName.synonym}}) </template>
-            <template is="dom-if" if="{{data.recommendedProteinName.others.0}}">; </template>
-            <template is="dom-repeat" items="{{data.recommendedProteinName.others}}" as="others">
-              {{others.type}}{{_pluralize(others.names)}}:
-              <template is="dom-repeat" items="{{others.names}}" as="nameArray">
-                {{nameArray.name}}<template is="dom-if" if="[[!_checkIfLast(others.names,index)]]">,</template>
+            [[data.recommendedProteinName.mainSynonymName.name]]
+            <template is="dom-if" if="[[data.recommendedProteinName.mainSynonymName.synonym]]"> ([[data.recommendedProteinName.mainSynonymName.synonym]]) </template>
+            <template is="dom-if" if="[[data.recommendedProteinName.others.0]]">; </template>
+            <template is="dom-repeat" items="[[data.recommendedProteinName.others]]" as="others">
+              [[others.type]][[_pluralize(others.names)]]:
+              <template is="dom-repeat" items="[[others.names]]" as="nameArray">
+                [[nameArray.name]]<template is="dom-if" if="[[!_checkIfLast(others.names,index)]]">,</template>
               </template>
-              <template is="dom-if" if="{{!_checkIfLast(others,index)}}">; </template>
+              <template is="dom-if" if="[[!_checkIfLast(others,index)]]">; </template>
             </template>
           </div>
         </div>
       </template>
-      <template is="dom-if" if="{{!data.recommendedProteinName.mainSynonymName}}">
-        <template is="dom-if" if="{{data.recommendedProteinName.others.0}}">
+      <template is="dom-if" if="[[!data.recommendedProteinName.mainSynonymName]]">
+        <template is="dom-if" if="[[data.recommendedProteinName.others.0]]">
           <div id="synonym-other-less" class="row">
             <div class="col-md-3 col-xs-3 grey-x text-align-right">Protein also known as :</div>
             <div class="col-md-9 col-xs-9">
-              <template is="dom-repeat" items="{{recommendedProteinName.others}}" as="others">
-                {{others.type}}{{_pluralize(others.names)}}:
-                <template is="dom-repeat" items="{{others.names}}" as="nameArray">
-                  {{nameArray.name}}<template is="dom-if" if="{{!_checkIfLast(others.names,index)}}">,</template>
+              <template is="dom-repeat" items="[[recommendedProteinName.others]]" as="others">
+                [[others.type]][[_pluralize(others.names)]]:
+                <template is="dom-repeat" items="[[others.names]]" as="nameArray">
+                  [[nameArray.name]]<template is="dom-if" if="[[!_checkIfLast(others.names,index)]]">,</template>
                 </template>
-                <template is="dom-if" if="{{!_checkIfLast(others,index)}}">; </template>
+                <template is="dom-if" if="[[!_checkIfLast(others,index)]]">; </template>
               </template>
             </div>
           </div>
         </template>
       </template>
-      <template is="dom-if" if="{{data.cleavage.0}}">
+      <template is="dom-if" if="[[data.cleavage.0]]">
       <div id="cleavage-less" class="row">
         <div class="col-md-3 col-xs-3 grey-x text-align-right">Cleaved into :</div>
         <div class="col-md-6 col-xs-6">
-          <template is="dom-repeat" items="{{data.cleavage}}" as="cleavage">
-            <template is="dom-repeat" items="{{cleavage.names}}" as="nameArray"><span>{{nameArray.name}}<template is="dom-if" if="{{!_checkIfLast(cleavage.names,index)}}">; </template></span></template>
+          <template is="dom-repeat" items="[[data.cleavage]]" as="cleavage">
+            <template is="dom-repeat" items="[[cleavage.names]]" as="nameArray"><span>[[nameArray.name]]<template is="dom-if" if="[[!_checkIfLast(cleavage.names,index)]]">; </template></span></template>
           </template>
         </div>
       </div>
       </template>
       <div id="gene-less" class="row">
-        <template is="dom-if" if="{{data.geneName.0}}">
-          <template is="dom-if" if="{{data.geneName.0.name}}">
+        <template is="dom-if" if="[[data.geneName.0]]">
+          <template is="dom-if" if="[[data.geneName.0.name]]">
             <div class="col-md-3 col-xs-3 grey-x text-align-right">Gene name :</div>
             <div class="col-md-6 col-xs-6" >
-              <template is="dom-repeat" items="{{data.geneName}}" as="gn">{{gn.name}}<span hidden$="[[_checkIfLast(data.geneName,index)]]">; </span></template>
+              <template is="dom-repeat" items="[[data.geneName]]" as="gn">[[gn.name]]<span hidden$="[[_checkIfLast(data.geneName,index)]]">; </span></template>
             </div>
           </template>
-          <template is="dom-if" if="{{!data.geneName.0.name}}">
+          <template is="dom-if" if="[[!data.geneName.0.name]]">
             <div class="col-md-3 col-xs-3 grey-x text-align-right">ORF name :</div>
-            <div class="col-md-6 col-xs-6">{{data.geneName.0.orf.0.name}}</div>
+            <div class="col-md-6 col-xs-6">[[data.geneName.0.orf.0.name]]</div>
           </template>
         </template>
-        <template is="dom-if" if="{{!data.geneName.0}}">
+        <template is="dom-if" if="[[!data.geneName.0]]">
           <div class="col-md-3 col-xs-3 grey-x text-align-right">Gene name :</div>
           <div class="col-md-6 col-xs-6" >None assigned yet</div>
         </template>
       </div>
-      <template is="dom-if" if="{{data.families.0}}">
+      <template is="dom-if" if="[[data.families.0]]">
         <div id="family-less" class="row">
           <div class="col-md-3 col-xs-3 grey-x text-align-right">Family name :</div>
           <div class="col-md-6 col-xs-6">
-            <template is="dom-repeat" items="{{data.families}}" as="familyroot">
+            <template is="dom-repeat" items="[[data.families]]" as="familyroot">
               <span>
-                <template is="dom-if" if="{{familyroot.superfamily}">
-                  <div id="collapseInfosLess{{familyroot.superfamily.accession}}" class="term-link">
-                    <a href="{{nxUrl}}/term/{{familyroot.superfamily.accession}}">{{familyroot.superfamily.name}}</a>
+                <template is="dom-if" if="[[familyroot.superfamily]]">
+                  <div id="collapseInfosLess[[familyroot.superfamily.accession]]" class="term-link">
+                    <a href="[[nxUrl]]/term/[[familyroot.superfamily.accession]]">[[familyroot.superfamily.name]]</a>
                     </div>
                 </template>
-                <template is="dom-if" if="{{familyroot.family}}">
-                  <template is="dom-if" if="{{familyroot.superfamily}}"> >> </template>
-                  <div id="collapseInfosLess{{familyroot.family.accession}}" class="term-link">
-                    <a href="{{nxUrl}}/term/{{familyroot.family.accession}}">{{familyroot.family.name}}</a>
+                <template is="dom-if" if="[[familyroot.family]]">
+                  <template is="dom-if" if="[[familyroot.superfamily]]"> >> </template>
+                  <div id="collapseInfosLess[[familyroot.family.accession]]" class="term-link">
+                    <a href="[[nxUrl]]/term/[[familyroot.family.accession]]">[[familyroot.family.name]]</a>
                   </div>
                 </template>
-                <template is="dom-if" if="{{familyroot.subfamily}}">
-                  <template is="dom-if" if="{{familyroot.family}}"> >> </template>
-                  <div id="collapseInfosLess{{familyroot.subfamily.accession}}" class="term-link">
-                    <a href="{{nxUrl}}/term/{{familyroot.subfamily.accession}}">{{familyroot.subfamily.name}}</a>
+                <template is="dom-if" if="[[familyroot.subfamily]]">
+                  <template is="dom-if" if="[[familyroot.family]]"> >> </template>
+                  <div id="collapseInfosLess[[familyroot.subfamily.accession]]" class="term-link">
+                    <a href="[[nxUrl]]/term/[[familyroot.subfamily.accession]]">[[familyroot.subfamily.name]]</a>
                   </div>
                 </template>
               </span>
@@ -193,38 +193,38 @@ Protein overview
         <div class="col-md-9 col-xs-8">
           <dl>
             <dt>Recommended name</dt>
-            <template is="dom-if" if="{{data.recommendedProteinName}}">
-            <dd>{{data.recommendedProteinName.name}}
-              <template is="dom-if" if="{{data.recommendedProteinName.EC.0}}">[
-                <template is="dom-repeat" items="{{data.recommendedProteinName.EC}}" as="ec">
+            <template is="dom-if" if="[[data.recommendedProteinName]]">
+            <dd>[[data.recommendedProteinName.name]]
+              <template is="dom-if" if="[[data.recommendedProteinName.EC.0]]">[
+                <template is="dom-repeat" items="[[data.recommendedProteinName.EC]]" as="ec">
                   <div class="ec-link">
-                    <a href="{{nxUrl}}/term/{{ec}}">EC {{ec}}</a></div><template is="dom-if" if="{{!_checkIfLast(data.recommendedProteinName.EC,index)}}">,</template>
+                    <a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a></div><template is="dom-if" if="[[!_checkIfLast(data.recommendedProteinName.EC,index)]]">,</template>
                 </template>]
               </template>
-              <template is="dom-if" if="{{data.recommendedProteinName.synonyms}}">
-                <template is="dom-if" if="{{data.recommendedProteinName.synonyms.short}}"><span><span  class="grey-x">Short: </span>
-                  <template is="dom-repeat" items="{{data.recommendedProteinName.synonyms.short}}" as="short">
-                    {{short}}<template is="dom-if" if="{{!_checkIfLast(data.recommendedProteinName.synonyms.short,index)}}">,</template>
+              <template is="dom-if" if="[[data.recommendedProteinName.synonyms]]">
+                <template is="dom-if" if="[[data.recommendedProteinName.synonyms.short]]"><span><span  class="grey-x">Short: </span>
+                  <template is="dom-repeat" items="[[data.recommendedProteinName.synonyms.short]]" as="short">
+                    [[short]]<template is="dom-if" if="[[!_checkIfLast(data.recommendedProteinName.synonyms.short,index)]]">,</template>
                   </template></span>
                 </template>
               </template>
             </dd>
             </template>
-            <template is="dom-if" if="{{data.alternativeProteinNames}}">
-              <template is="dom-repeat" items="{{data.alternativeProteinNames}}" as="alternativeProteinNames">
-                <dt>{{alternativeProteinNames.type}}{{_pluralize(alternativeProteinNames.names)}}</dt>
-                <template is="dom-repeat" items="{{alternativeProteinNames.names}}" as="nameroot">
-                <dd> {{nameroot.name}}
-                  <template is="dom-if" if="{{nameroot.synonyms}}">
-                    <template is="dom-if" if="{{nameroot.synonyms.EC}}">[
-                      <template is="dom-repeat" items="{{nameroot.synonyms.EC}}" as="ec">
+            <template is="dom-if" if="[[data.alternativeProteinNames]]">
+              <template is="dom-repeat" items="[[data.alternativeProteinNames]]" as="alternativeProteinNames">
+                <dt>[[alternativeProteinNames.type]][[_pluralize(alternativeProteinNames.names)]]</dt>
+                <template is="dom-repeat" items="[[alternativeProteinNames.names]]" as="nameroot">
+                <dd> [[nameroot.name]]
+                  <template is="dom-if" if="[[nameroot.synonyms]]">
+                    <template is="dom-if" if="[[nameroot.synonyms.EC]]">[
+                      <template is="dom-repeat" items="[[nameroot.synonyms.EC]]" as="ec">
                         <div class="ec-link">
-                          <a href="{{nxUrl}}/term/{{ec}}">EC {{ec}}</a></div><template is="dom-if" if="{{!_checkIfLast(nameroot.synonyms.EC,index)}}">,</template>
+                          <a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a></div><template is="dom-if" if="[[!_checkIfLast(nameroot.synonyms.EC,index)]]">,</template>
                       </template>]
                     </template>
-                    <template is="dom-if" if="{{nameroot.synonyms.short}}"><span><span class="grey-x">Short: </span>
-                      <template is="dom-repeat" items="{{nameroot.synonyms.short}}" as="short">
-                        {{short}}<template is="dom-if" if="{{!_checkIfLast(nameroot.synonyms.short,index)}}">,</template>
+                    <template is="dom-if" if="[[nameroot.synonyms.short]]"><span><span class="grey-x">Short: </span>
+                      <template is="dom-repeat" items="[[nameroot.synonyms.short]]" as="short">
+                        [[short]]<template is="dom-if" if="[[!_checkIfLast(nameroot.synonyms.short,index)]]">,</template>
                       </template></span>
                     </template>
                   </template>
@@ -232,20 +232,20 @@ Protein overview
                 </template>
               </template>
             </template>
-            <template is="dom-if" if="{{data.functionalRegionNames}}">
-              <template is="dom-repeat" items="{{data.functionalRegionNames}}" as="functionalRegionName">
-              <dt>Include the following {{functionalRegionNames.names.length}} functional region{{_pluralize(functionalRegionNames.names)}}</dt>
-                <template is="dom-repeat" items="{{functionalRegionName.names}}" as="regionName">
-                  <dd> {{regionName.name}}
-                    <template is="dom-repeat" items="{{regionName.synonyms}}" as="synonym">
-                      <template is="dom-if" if="{{synonym.EC}}">[<template is="dom-repeat" items="{{synonyms.EC}}" as="ec">
+            <template is="dom-if" if="[[data.functionalRegionNames]]">
+              <template is="dom-repeat" items="[[data.functionalRegionNames]]" as="functionalRegionName">
+              <dt>Include the following [[functionalRegionNames.names.length]] functional region[[_pluralize(functionalRegionNames.names)]]</dt>
+                <template is="dom-repeat" items="[[functionalRegionName.names]]" as="regionName">
+                  <dd> [[regionName.name]]
+                    <template is="dom-repeat" items="[[regionName.synonyms]]" as="synonym">
+                      <template is="dom-if" if="[[synonym.EC]]">[<template is="dom-repeat" items="[[synonyms.EC]]" as="ec">
                         <div class="ec-link">
-                          <a href="{{nxUrl}}/term/{{ec}}">EC {{ec}}</a></div><template is="dom-if" if="{{!_checkIfLast(synonym.EC,index)}}">,</template>
+                          <a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a></div><template is="dom-if" if="[[!_checkIfLast(synonym.EC,index)]]">,</template>
                       </template>]</template>
-                    <template is="dom-repeat" items="{{synonyms.full.0}}" as="full">
-                        <span><span class="grey-x">Alternative name{{_pluralize(full)}}:</span>
-                          <template is="dom-repeat" items="{{full}}" as="f">
-                            {{f}}<template is="dom-if" if="{{!_checkIfLast(full.f,index)}}">; </template>
+                    <template is="dom-repeat" items="[[synonyms.full.0]]" as="full">
+                        <span><span class="grey-x">Alternative name[[_pluralize(full)]]:</span>
+                          <template is="dom-repeat" items="[[full]]" as="f">
+                            [[f]]<template is="dom-if" if="[[!_checkIfLast(full.f,index)]]">; </template>
                           </template></span>
                       </template>
                     </template>
@@ -253,22 +253,22 @@ Protein overview
                 </template>
               </template>
             </template>
-            <template is="dom-if" if="{{data.cleavage}}">
-              <template is="dom-repeat" items="{{data.cleavage}}" as="cleavage">
-                <dt>Cleaved into the following {{cleavage.names.length}} chain{{_pluralize(cleavage.names)}}</dt>
-                <template is="dom-repeat" items="{{cleavage.names}}" as="cleavageName">
-                  <dd>{{cleavageName.name}}
-                    <template is="dom-repeat" items="{{cleavage.synonyms}}" as="synonym">
-                      <template is="dom-if" if="{{cleavage.EC}}">[<template is="dom-repeat" items="{{cleavage.EC}}" as="ec">
+            <template is="dom-if" if="[[data.cleavage]]">
+              <template is="dom-repeat" items="[[data.cleavage]]" as="cleavage">
+                <dt>Cleaved into the following [[cleavage.names.length]] chain[[_pluralize(cleavage.names)]]</dt>
+                <template is="dom-repeat" items="[[cleavage.names]]" as="cleavageName">
+                  <dd>[[cleavageName.name]]
+                    <template is="dom-repeat" items="[[cleavage.synonyms]]" as="synonym">
+                      <template is="dom-if" if="[[cleavage.EC]]">[<template is="dom-repeat" items="[[cleavage.EC]]" as="ec">
                         <div class="ec-link">
-                          <a href="{{nxUrl}}/term/{{ec}}">EC {{ec}}</a>
+                          <a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a>
                         </div>
-                        <template is="dom-if" if="{{!_checkIfLast(cleavage.EC,index)}}">,</template></template>]
+                        <template is="dom-if" if="[[!_checkIfLast(cleavage.EC,index)]]">,</template></template>]
                       </template>
-                      <template is="dom-if" if="{{cleavage.full.0}}">
-                        <span><span class="grey-x">Alternative name{{_pluralize(cleavage.full)}}:</span>
-                        <template is="dom-repeat" items="{{cleavage.full}}" as="full">{{full}}
-                          <template is="dom-if" if="{{!_checkIfLast(cleavage.full,index)}}">; </template>
+                      <template is="dom-if" if="[[cleavage.full.0]]">
+                        <span><span class="grey-x">Alternative name[[_pluralize(cleavage.full)]]:</span>
+                        <template is="dom-repeat" items="[[cleavage.full]]" as="full">[[full]]
+                          <template is="dom-if" if="[[!_checkIfLast(cleavage.full,index)]]">; </template>
                         </template></span>
                       </template>
                     </template>
@@ -276,14 +276,14 @@ Protein overview
                 </template>
               </template>
             </template>
-            <template is="dom-if" if="{{data.isoforms}}">
-              <dt>Spliced into the following {{data.isoforms.length}} isoform{{_pluralize(data.isoforms)}}</dt>
-              <template is="dom-repeat" items="{{data.isoforms}}" as="isoform">
-                <dd>{{isoform.name}}
-                  <template is="dom-if" if="{{isoform.synonyms.0}}">
-                    <span class="grey-x"> Alternative name{{_pluralize(isoform.synonyms)}}: </span>
-                    <template is="dom-repeat" items="{{isoform.synonyms}}" as="synonym">
-                      {{synonym.name}}<template is="dom-if" if="{{!_checkIfLast(isoform.synonyms,index)}}">; </template>
+            <template is="dom-if" if="[[data.isoforms]]">
+              <dt>Spliced into the following [[data.isoforms.length]] isoform[[_pluralize(data.isoforms)]]</dt>
+              <template is="dom-repeat" items="[[data.isoforms]]" as="isoform">
+                <dd>[[isoform.name]]
+                  <template is="dom-if" if="[[isoform.synonyms.0]]">
+                    <span class="grey-x"> Alternative name[[_pluralize(isoform.synonyms)]]: </span>
+                    <template is="dom-repeat" items="[[isoform.synonyms]]" as="synonym">
+                      [[synonym.name]]<template is="dom-if" if="[[!_checkIfLast(isoform.synonyms,index)]]">; </template>
                     </template>
                   </template></dd>
               </template>
@@ -295,58 +295,58 @@ Protein overview
         <div class="col-md-1 col-xs-2 text-uppercase grey-x">Gene</div>
         <div class="col-md-9 col-xs-8">
           <dl>
-            <template is="dom-if" if="{{data.geneName.0}}">
-              <template is="dom-repeat" items="{{data.geneName}}" as="geneName">
-                <template is="dom-if" if="{{geneName.name}}">
+            <template is="dom-if" if="[[data.geneName.0]]">
+              <template is="dom-repeat" items="[[data.geneName]]" as="geneName">
+                <template is="dom-if" if="[[geneName.name]]">
                   <dt>Recommended name</dt>
-                  <dd>{{geneName.name}}</dd>
+                  <dd>[[geneName.name]]</dd>
                 </template>
-                <template is="dom-if" if="{{geneName.synonyms.0}}">
-                  <dt>Alternative name{{_pluralize(geneName.synonyms)}}</dt>
-                  <template is="dom-repeat" items="{{geneName.synonyms}}" as="synonym">
-                    <dd> {{synonym.name}}</dd>
+                <template is="dom-if" if="[[geneName.synonyms.0]]">
+                  <dt>Alternative name[[_pluralize(geneName.synonyms)]]</dt>
+                  <template is="dom-repeat" items="[[geneName.synonyms]]" as="synonym">
+                    <dd> [[synonym.name]]</dd>
                   </template>
                 </template>
-                <template is="dom-if" if="{{geneName.orf.0}}">
-                  <dt>ORF name{{_pluralize(geneName.orf)}}</dt>
-                  <template is="dom-repeat" items="{{geneName.orf}}" as="orf">
-                    <dd> {{orf.name}}</dd>
+                <template is="dom-if" if="[[geneName.orf.0]]">
+                  <dt>ORF name[[_pluralize(geneName.orf)]]</dt>
+                  <template is="dom-repeat" items="[[geneName.orf]]" as="orf">
+                    <dd> [[orf.name]]</dd>
                   </template>
                 </template>
-                <template is="dom-if" if="{{!_checkIfLast(data.geneName,index)}}">
+                <template is="dom-if" if="[[!_checkIfLast(data.geneName,index)]]">
                   <br>
                 </template>
               </template>
             </template>
-            <template is="dom-if" if="{{!data.geneName.0}}">
+            <template is="dom-if" if="[[!data.geneName.0]]">
               <dt>Recommended name</dt>
               <dd>None assigned yet</dd>
             </template>
           </dl>
         </div>
       </div>
-      <template is="dom-if" if="{{data.families.0}}">
+      <template is="dom-if" if="[[data.families.0]]">
       <div id="family-full" class="row">
         <div class="col-md-1 col-xs-2 text-uppercase grey-x">Family</div>
         <div class="col-md-9 col-xs-8">
           <dl>
-            <template is="dom-repeat" items="{{data.families}}" as="familyroot">
-              <template is="dom-if" if="{{familyroot.superfamily}}">
+            <template is="dom-repeat" items="[[data.families]]" as="familyroot">
+              <template is="dom-if" if="[[familyroot.superfamily]]">
                 <dt>Superfamily</dt>
-                <dd><div id="collapseInfosFull{{familyroot.superfamily.accession}}">
-                  <a href="{{nxUrl}}/term/{{familyroot.superfamily.accession}}">{{familyroot.superfamily.name}}</a>
+                <dd><div id="collapseInfosFull[[familyroot.superfamily.accession]]">
+                  <a href="[[nxUrl]]/term/[[familyroot.superfamily.accession]]">[[familyroot.superfamily.name]]</a>
                 </div></dd>
               </template>
-              <template is="dom-if" if="{{familyroot.family}}">
+              <template is="dom-if" if="[[familyroot.family]]">
                 <dt>Family</dt>
-                <dd><div id="collapseInfosFull{{familyroot.family.accession}}">
-                  <a href="{{nxUrl}}/term/{{familyroot.family.accession}}">{{familyroot.family.name}}</a>
+                <dd><div id="collapseInfosFull[[familyroot.family.accession]]">
+                  <a href="[[nxUrl]]/term/[[familyroot.family.accession]]">[[familyroot.family.name]]</a>
                 </div></dd>
               </template>
-              <template is="dom-if" if="{{familyroot.subfamily}}">
+              <template is="dom-if" if="[[familyroot.subfamily]]">
                 <dt>Subfamily</dt>
-                <dd><div id="collapseInfosFull{{familyroot.subfamily.accession}}">
-                  <a href="{{nxUrl}}/term/{{familyroot.subfamily.accession}}">{{familyroot.subfamily.name}}</a>
+                <dd><div id="collapseInfosFull[[familyroot.subfamily.accession]]">
+                  <a href="[[nxUrl]]/term/[[familyroot.subfamily.accession]]">[[familyroot.subfamily.name]]</a>
                 </div></dd>
               </template>
             </template>
@@ -359,25 +359,25 @@ Protein overview
         <div class="col-md-9 col-xs-8">
           <dl>
             <dt>neXtProt</dt>
-            <dd>Integrated {{data.integDate}}</dd>
-            <dd>Last updated {{data.lastUpdate}}</dd>
+            <dd>Integrated [[data.integDate]]</dd>
+            <dd>Last updated [[data.lastUpdate]]</dd>
             <dt>UniProtKB</dt>
-            <dd>Integrated {{data.UniprotIntegDate}}</dd>
-            <dd>Last updated {{data.UniprotLastUpdate}}</dd>
-            <dd>Entry version {{data.version}}</dd>
-            <template is="dom-if" if="{{data.lastSeqUpdate}}">
-              <dd>Last sequence update {{data.lastSeqUpdate}}</dd>
+            <dd>Integrated [[data.UniprotIntegDate]]</dd>
+            <dd>Last updated [[data.UniprotLastUpdate]]</dd>
+            <dd>Entry version [[data.version]]</dd>
+            <template is="dom-if" if="[[data.lastSeqUpdate]]">
+              <dd>Last sequence update [[data.lastSeqUpdate]]</dd>
             </template>
-            <dd>Sequence version {{data.seqVersion}}</dd>
-            <dd><template is="dom-if" if="{{data.accessionNumber}}"><div id="{{data.accessionNumber}}">
-              <a href="{{_linkToHistory(data.accessionNumber)}}" class="ext-link" target="_blank" >Complete UniProtKB history</a></div>
+            <dd>Sequence version [[data.seqVersion]]</dd>
+            <dd><template is="dom-if" if="[[data.accessionNumber]]"><div id="[[data.accessionNumber]]">
+              <a href="[[_linkToHistory(data.accessionNumber)]]" class="ext-link" target="_blank" >Complete UniProtKB history</a></div>
             </template></dd>
           </dl>
         </div>
       </div>
     </div>
     </iron-collapse>
-    <p class="paragraph"><template is="dom-if" if="{{data.proteineEvidence}}">{{data.proteineEvidence}}. {{data.proteineEvidenceCaution}}</template></p>
+    <p class="paragraph"><template is="dom-if" if="[[data.proteineEvidence]]">[[data.proteineEvidence]]. [[data.proteineEvidenceCaution]]</template></p>
   </template>
   <script>
     Polymer({
@@ -455,7 +455,6 @@ Protein overview
       ready: function(){
         var nx = new Nextprot.Client("nextprot-overview", "Calipho Group");
         this.nxUrl = nx.getNeXtProtUrl();
-        //this.nxEntry = nx.getEntryName();
         var self=this;
         nx.getProteinOverview(self.nxConfig.entry).then(function (data) {
           self._loadData(data, self.nxConfig.entry, self.nxUrl);
@@ -463,6 +462,7 @@ Protein overview
           var responseText = JSON.parse(error.responseText);
           self.$.proteinTitle.innerHTML = "<h3>"+responseText.message+"</h3>";
         });
+        this.nxEntry = nx.getEntryName();
       },
       _loadData: function(overview, nxUrl){
         var EC = [];
@@ -522,7 +522,7 @@ Protein overview
           "version": overview.history.uniprotVersion,
           "seqVersion": overview.history.sequenceVersion,
           "lastSeqUpdate": overview.history.lastSequenceUpdate,
-          "accessionNumber": this.nxConfig.entry
+          "accessionNumber": this.nxEntry
         };
       },
       toggle: function(){
@@ -544,6 +544,7 @@ Protein overview
         return false;
       },
       _linkToHistory: function(accession){
+        console.log(accession);
         return "http://www.uniprot.org/uniprot/" + accession.slice(3) + "?version=*";
       },
       _pluralize: function(item){
