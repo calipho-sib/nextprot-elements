@@ -36,22 +36,31 @@ View listing medical annotations.
         <div class="row nxSection">
             <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}}></isoform-selector>
             <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] feature-list='[
-      {
-          "APIRef": "variant",
-          "metadata": {
-          "name": "Variant",
-          "className": "variant",
-          "color": "rgba(0,255,154,0.3)",
-          "type": "unique",
-          "filter": "Variant"
-          }
-      }
-    ]'></triple-viewer>
+              {
+                "APIRef": "sequence",
+                "metadata": {"name": "Sequence"}
+              },
+              {
+                  "APIRef": "variant",
+                  "metadata": {
+                  "name": "Variant",
+                  "className": "variant",
+                  "color": "rgba(0,255,154,0.3)",
+                  "type": "unique",
+                  "filter": "Variant"
+                  }
+              },
+              {
+                "APIRef": "isoform-mapping",
+                "metadata": {}
+              }
+            ]'>
+            </triple-viewer>
         </div>
         <div class="row">
             <div id="nxAnnotations" class="col-md-12">
                 <generic-annotation-section id="annotationElement" section="medical" goldOnly="{{goldOnly}}"
-                                            categories='["DISEASE", "PHARMACEUTICAL", "MISCELLANEOUS"]'
+                                            categories='["DISEASE", "VARIANT-INFO", "PHARMACEUTICAL", "MISCELLANEOUS"]'
                                             count="{{annotationsCount}}" nx-config="{{nxConfig}}">
                 </generic-annotation-section>
             </div>
@@ -59,14 +68,16 @@ View listing medical annotations.
         <div class="row">
             <div id="nxKeywords" class="col-md-12">
                 <keywords-section categories='["Disease", "Technical term"]'
-                                  nx-config="{{nxConfig}}" count="{{keywordsCount}}">
+                                  nx-config="{{nxConfig}}"
+                                  count="{{keywordsCount}}">
+                    <!--exceptions='["KW-0002", "KW-0021", "KW-0181", "KW-0903", "KW-0895", "KW-0374", "KW-0511", "KW-0814"]'-->
                 </keywords-section>
             </div>
         </div>
         <div class="row">
             <div id="nxXrefs" class="col-md-12">
                 <xrefs-section categories='["GeneReviews", "CTD", "MIM", "DrugBank", "PharmGKB", "Orphanet",
-                "Allergome", "DMDM", "BioMuta"]' nx-config="{{nxConfig}}" count="{{xrefsCount}}">
+                "Allergome", "DMDM", "BioMuta", "MalaCards"]' nx-config="{{nxConfig}}" count="{{xrefsCount}}">
                 </xrefs-section>
             </div>
         </div>
