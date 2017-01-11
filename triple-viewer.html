@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="evidence-item.html">
 <link rel="import" href="quality-label.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
@@ -104,7 +105,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 font-size:11px;
                 background:#fff;
                 padding:5px 15px;
-                height:600px;
+                height:525px;
                 border: 1px solid #cfd9db;
                 border-radius:4px;
                 margin:10px 0px;
@@ -140,7 +141,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             #seqViewer {
                 background:#fff;
                 padding:5px 15px;
-                height:600px;
+                height:525px;
                 border: 1px solid #cfd9db;
                 border-radius:4px;
             }
@@ -211,6 +212,24 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 line-height: 0.8;
                 vertical-align:top;
             }
+            .center {
+                position: absolute;
+                margin: 45px 40%;
+            }
+            paper-spinner-lite {
+                --paper-spinner-stroke-width: 3px;
+            }
+            #featTableSpinner {
+                height: 45px;
+                width: 45px;
+            }
+            #featViewerSpinner {
+                position: absolute;
+                margin-left: 240px;
+                margin-top: 16px;
+                height: 32px;
+                width: 32px;
+            }
         </style>
         <div class="row">
             <div id="featureViewer">
@@ -222,14 +241,15 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     <div class="filter-body">
                         <div id="filtering" class="all-filters">
                             <button class="btn btn-default btn-sm" id="allFilters" on-tap="filterAll">All/None</button>
-                            <template is="dom-repeat" items="{{_toArray(activeFiltering)}}" as="filter">
-                                <label class="filter-box" on-mouseover="highlightCategories" on-mouseout="dimCategories">
-                                    <input type="checkbox" id={{filter.name}} value="option1" on-change="toggleFiltering" checked>{{filter.value}}
+                            <template is="dom-repeat" items="[[_toArray(activeFiltering)]]" as="filter">
+                                <label class="filter-box" on-mouseover="_highlightCategories" on-mouseout="_dimCategories">
+                                    <input type="checkbox" id=[[filter.name]] value="option1" on-change="_toggleFiltering" checked>[[filter.value]]
                                 </label>
                             </template>
                         </div>
                     </div>
                 </div>
+                <paper-spinner-lite id="featViewerSpinner" class="size" active></paper-spinner-lite>
             </div>
         </div>
         <div class="row">
@@ -245,12 +265,15 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             <th colspan="2" class="col-md-2 text-align-left">Evidence</th>
                         </tr>
                         </thead>
+                        <tbody><tr colspan="5">
+                                <div class="center"><paper-spinner-lite id="featTableSpinner" class="size" active></paper-spinner-lite></div>
+                        </tr></tbody>
                         <template is="dom-repeat" items="[[_toArray(groupedFeatures)]]" as="featureGroup">
                             <tbody>
                             <tr class$="[[_formatClassName(featureGroup.name, featureGroup.name)]]">
                                 <th colspan="6" class="general-info table-section-header"><div class="grey-x">[[featureGroup.name]]</div></th>
                             </tr>
-                            <template is="dom-repeat" items="[[featureGroup.value]]" as="feature">
+                            <template is="dom-repeat" id="featureTableTemplate" items="[[featureGroup.value]]" as="feature" filter="_filterGold">
                                 <tr id=[[feature.id]] class$="[[_formatClassName(feature.category, feature.group)]] general-info">
                                     <td>[[feature.category]]</td>
                                     <td class="text-align-right"><a class="featPosition" on-tap="tvSelection">
@@ -332,28 +355,35 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 activeFiltering: {
                     type: Array,
                     value: {}
+                },
+                goldOnly: {
+                    type: Boolean,
+                    observer: "_reloadFeatureTable"
                 }
             },
             ready: function() {
                 this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
-                this.nxEntry = this.nxConfig.entry || this.nx.getEntryName();
+                this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
                 if(!this.isoName) this.isoName = this.nxEntry+"-1";
-                var self=this;
+
+                var self=this
+                Promise.all(self.getFeaturesByView())
+                        .then(function (oneData) {
+                            self.getFeaturesByIsoform(oneData);
+                            self.addFiltering();
+                            self.addFeatures();
+                            self.$.featViewerSpinner.active = false;
+                            self.fillTable();
+                            self.$.featTableSpinner.active = false;
+                        });
                 this.nx.getProteinSequence(this.nxEntry).then(
                     function (data) {
                         self.sequences = data;
+                        self._renderFeatureViewer();
                         self.getMetadataByView();
-                        Promise.all(self.getFeaturesByView())
-                            .then(function (oneData) {
-                                self.getFeaturesByIsoform(oneData);
-                                self._renderFeatureViewer();
-                                self.addFiltering();
-                                self.addFeatures();
-                                self.fillTable();
-                                self.tvSelection();
-                                self.eventTV();
-                            });
-                        }
+                        self.tvSelection();
+                        self.eventTV();
+                    }
                 ).catch(function (err) {
                     // catch any error that happened so far
                     console.log("Argh, broken: " + err.message);
@@ -362,14 +392,17 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             },
             reloadSVG: function(){
                 if (this.ft) {
+                    this.$.featTableSpinner.active = true;
                     $("#featureViewer svg").remove();
                     this.ft.clearInstance();
                     this._renderFeatureViewer();
                     this.addFeatures();
                     if ($(".zoomUnit").length) $(".zoomUnit").text("1");
                     d3.selectAll('div.selectedRect').remove();
+                    this.fillTable();
                     this.tvSelection();
                     this.eventTV();
+                    this.$.featTableSpinner.active = false;
                 }
             },
             getFeaturesByIsoform: function(isoforms){
@@ -532,11 +565,14 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     this.featuresLength = number;
                 };
             },
-            highlightCategories: function(mouseEvent){
+            _reloadFeatureTable: function(){
+                this.$$("#featureTableTemplate").render();
+            },
+            _highlightCategories: function(mouseEvent){
                 var srcElementId =  mouseEvent.srcElement.id || mouseEvent.srcElement.childNodes[1].id;
                 this.ft.showFilteredFeature(srcElementId, "#795B42", document.location.href);
             },
-            dimCategories: function(mouseEvent){
+            _dimCategories: function(mouseEvent){
                 var srcElementId =  mouseEvent.srcElement.id || mouseEvent.srcElement.childNodes[1].id;
                 this.ft.hideFilteredFeature(srcElementId, "#795B42", document.location.href);
             },
@@ -562,16 +598,20 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 this.applyFiltering();
                 this.reloadSVG();
             },
-            toggleFiltering: function() {
+            _filterGold: function(item){
+                if (this.goldOnly) return item.quality==="gold";
+                return true;
+            },
+            _toggleFiltering: function() {
                 if (!$("#filtering input:checkbox:not(:checked)").length) {
                     $("#filtering").addClass("all-filters");
                 } else {
                     $("#filtering").removeClass("all-filters");
                 }
-                this.applyFiltering();
+                this._applyFiltering();
                 this.reloadSVG();
             },
-            applyFiltering: function() {
+            _applyFiltering: function() {
                 for (var filter in this.activeFiltering) {
                     if ($("#"+filter).prop("checked")) {
                         $("."+filter).show();
@@ -596,7 +636,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     self.seqView.selection(position[0],position[1],"#C50063");
                     self.ft.addRectSelection(svgId);
 
-                    self.scrollAuto(".stringSelected", ".scroller",200);
+                    self._scrollAuto(".stringSelected", ".scroller",200);
                 });
             },
             eventTV: function() {
@@ -606,23 +646,16 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     self.fvSelection(d.detail);
                 });
             },
-            onFeatureSelected: function() {
-                var self = this;
-                this.ft.onFeatureSelected(function(d){
-                    self.fvSelection(d.detail);
-                });
-                this.tvSelection();
-            },
             fvSelection: function(d) {
                 this.seqView.selection(d.start - 1,d.end,"#C50063");
                 var featSelectedID = "#" + d.id;
                 $(".tableHighlight").removeClass("tableHighlight");
                 $(featSelectedID).addClass("tableHighlight");
 
-                this.scrollAuto(featSelectedID, "#featTableScroller",70);
-                this.scrollAuto(".stringSelected", ".scroller",200);
+                this._scrollAuto(featSelectedID, "#featTableScroller",70);
+                this._scrollAuto(".stringSelected", ".scroller",200);
             },
-            scrollAuto: function(elem, container, shiftTop) {
+            _scrollAuto: function(elem, container, shiftTop) {
                 var ElementTop = $(elem).position().top-shiftTop;
                 var scrollPosition = $(container).scrollTop();
                 var scrollingLength = ElementTop + scrollPosition;
@@ -664,7 +697,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     for (i in feature.source){
                         var evidence = feature.source[i];
                         var evidenceItem = document.createElement("evidence-item");
-                        evidenceItem.setAttribute("index", new Number(i+1));
+                        evidenceItem.setAttribute("index", new Number(i)+1);
                         evidenceItem.data=evidence;
                         container.appendChild(evidenceItem);
                         this.updateStyles();
