@@ -95,10 +95,10 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                             <a id="[[isoform.uniqueName]]" class="isoformNames" href="#[[isoform.uniqueName]]" data-args$="[[isoform.uniqueName]]" data-toggle="tab" title="[[isoform.mainEntityName.value]]" on-tap="displayIsoform">[[isoform.uniqueName]]</a>
                         </li>
                     </template>
-                    <template id="menu" is="dom-if" if="[[isoforms.more]]">
+                    <template id="menu" is="dom-if" if="[[isoforms.more.length]]">
                         <x-select>
                             <li>
-                                <a class="isoformNames" aria-expanded="false" on-tap="_showMoreIsoforms">
+                                <a id="moreIsoformsTab" class="isoformNames" on-tap="_showMoreIsoforms">
                                     <span style="margin-right:5px;" class="caret"></span><span id="extendIsoformChoice">More</span>
                                 </a>
                             </li>
@@ -379,7 +379,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                                 d3.selectAll("." + data.isoformAc + "Rect").style("fill", "#74EB78");
                                 self.reload(data.isoformAc);
                                 var isoSelection = $('#nx-isoformChoice #' + data.isoformAc).tab('show');
-                                if (isoSelection.parent().parent().is("#moreIsoforms")) $("#extendIsoformChoice").text(data.isoformAc);
+                                if (isoSelection.parent().parent().is("#moreIsoforms")) $('#nx-isoformChoice #moreIsoformsTab').tab('show'); $("#extendIsoformChoice").text(data.isoformAc);
 
                             });
 
