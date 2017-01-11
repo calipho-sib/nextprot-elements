@@ -600,6 +600,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 this.reloadSVG();
             },
             _filterGold: function(item){
+                console.log(item);
                 if (this.goldOnly) return item.quality==="gold";
                 return true;
             },
