@@ -32,11 +32,17 @@
     </div>
     <script>
         function toggleGoldOnly(){
-            var element = document.querySelector("generic-annotation-section");
-            if(element.hasAttribute("gold-only")){
-                element.removeAttribute("gold-only");
+            var gasElement = document.querySelector("generic-annotation-section");
+            var tvElement = document.querySelector("triple-viewer");
+            if(gasElement.hasAttribute("gold-only")){
+                gasElement.removeAttribute("gold-only");
             } else{
-                element.setAttribute("gold-only","true");
+                gasElement.setAttribute("gold-only","true");
+            }
+            if(tvElement.hasAttribute("gold-only")){
+                tvElement.removeAttribute("gold-only");
+            } else{
+                tvElement.setAttribute("gold-only","true");
             }
         }
     </script>
