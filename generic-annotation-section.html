@@ -51,122 +51,121 @@ Annotation section used in function, medical, and expression views.
             }
         </style>
         <div class="category-main">
-            <template is="dom-if" if="{{data}}">
+            <template is="dom-if" if="[[data]]">
                 <button id="evidenceButton" class="btn btn-default" on-click="_toggleAllEvidences">
-                    <template is="dom-if" if="{{evidencesShown}}">
+                    <template is="dom-if" if="[[evidencesShown]]">
                         <iron-icon icon="arrow-drop-up"></iron-icon>
                         hide evidences
                     </template>
-                    <template is="dom-if" if="{{!evidencesShown}}">
+                    <template is="dom-if" if="[[!evidencesShown]]">
                         <iron-icon icon="arrow-drop-down"></iron-icon>
                         show evidences
                     </template>
                 </button>
             </template>
             <paper-spinner-lite id="spinner" active></paper-spinner-lite>
-            <template is="dom-repeat" items="{{_toArray(data)}}" as="category">
+            <template is="dom-repeat" items="[[_toArray(data)]]" as="category">
                 <div class="row category-row">
-                    <div class="col-lg-1 col-md-12 col-sm-12 col-xs-12">
-                        <h4 class="hidden-sm hidden-xs annotation-category-title"> {{category.name}}</h4>
-                        <h4 class="hidden-lg hidden-md annotation-category-title"> {{category.name}}</h4>
+                    <div class="col-xl-1 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <h4 class="annotation-category-title"> [[category.name]]</h4>
                     </div>
-                    <div class="col-lg-11 col-md-10 col-sm-12 col-xs-12">
-                        <template is="dom-repeat" items="{{_toArray(category.value)}}" as="annotation" sort="_sortBinary" filter="_filterGold" initial-count="1" target-framerate="1">
-                            <template is="dom-if" if="{{annotation.value.newSection}}">
-                                <div class="grey-x">Interactions for Isoform {{annotation.value.isoformSpecific}}</div>
+                    <div>
+                        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" sort="_sortBinary" filter="_filterGold" initial-count="1" target-framerate="1">
+                            <template is="dom-if" if="[[annotation.value.newSection]]">
+                                <div class="grey-x">Interactions for Isoform [[annotation.value.isoformSpecific]]</div>
                             </template>
                             <div class="row annotation-row">
-                                <div class="col-lg-10 col-md-10 col-sm-9 col-xs-9">
+                                <div class="col-xl-11 col-lg-10 col-md-10 col-sm-10 col-xs-10">
                                     <div class="annotation-title-container">
-                                        <template is="dom-if" if="{{annotation.value.chemicalName}}">
-                                            <template is="dom-if" if="{{_checkIfChebi(annotation.value.database)}}">
+                                        <template is="dom-if" if="[[annotation.value.chemicalName]]">
+                                            <template is="dom-if" if="[[_checkIfChebi(annotation.value.database)]]">
                                                 <p class="annotation-title col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-transform: capitalize">
-                                                    {{annotation.value.chemicalName}}
-                                                    <a href="https://www.ebi.ac.uk/chebi/searchId.do?chebiId={{annotation.value.accession}}" class="ext-link" target="_blank">{{annotation.value.accession}}</a>
-                                                    <quality-label quality="{{annotation.value.qualityQualifier}}"></quality-label>
+                                                    [[annotation.value.chemicalName]]
+                                                    <a href="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=[[annotation.value.accession]]" class="ext-link" target="_blank">[[annotation.value.accession]]</a>
+                                                    <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                 </p>
                                             </template>
                                         </template>
                                         <template is="dom-if" if="{{annotation.value.cvTermAccessionCode}}">
-                                            <p class="annotation-title" inner-h-t-m-l="{{_boldPattern(annotation.value.description, 'Contributes to')}}"></p>
+                                            <p class="annotation-title" inner-h-t-m-l="[[_boldPattern(annotation.value.description, 'Contributes to')]]"></p>
                                             <div class="annotation-labels">
-                                                <a class="accession-code-link" href="/term/{{annotation.value.cvTermAccessionCode}}">{{annotation.value.cvTermAccessionCode}}</a>
-                                                <button id="description-button-{{annotation.value.id}}" class="btn btn-sm btn-info" type="button" on-click="_toggle">Definition</button>
-                                                <quality-label quality="{{annotation.value.qualityQualifier}}"></quality-label>
+                                                <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCode]]</a>
+                                                <button id="description-button-[[annotation.value.id]]" class="btn btn-sm btn-info" type="button" on-click="_toggle">Definition</button>
+                                                <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                             </div>
                                         </template>
-                                        <template is="dom-if" if="{{annotation.value.parentXref}}">
+                                        <template is="dom-if" if="[[annotation.value.parentXref]]">
                                             <p class="annotation-title col-lg-9 col-sm-7 col-xs-6">{{annotation.value.description}}</p>
                                             <div class="col-lg-3 col-md-4 col-sm-5 col-xs-6 right">
-                                                <a class="accession-code-link btn btn-sm selectable" href="{{annotation.value.parentXref.resolvedUrl}}">{{annotation.value.parentXref.accession}}</a>
+                                                <a class="accession-code-link btn btn-sm selectable" href="[[annotation.value.parentXref.resolvedUrl]]">[[annotation.value.parentXref.accession]]</a>
                                             </div>
                                         </template>
-                                        <template is="dom-if" if="{{!_checkIfContainsAccessionOrXref(annotation.value)}}">
-                                            <p class="annotation-title" inner-h-t-m-l="{{annotation.value.description}}">
-                                                <template is="dom-if" if="{{!_isBinaryInteractionOrCofactor(annotation.value.category)}}">
-                                                    <quality-label quality="{{annotation.value.qualityQualifier}}"></quality-label>
+                                        <template is="dom-if" if="[[!_checkIfContainsAccessionOrXref(annotation.value)]]">
+                                            <p class="annotation-title" inner-h-t-m-l="[[annotation.value.description]]">
+                                                <template is="dom-if" if="[[!_isBinaryInteractionOrCofactor(annotation.value.category)]]">
+                                                    <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                 </template>
                                             </p>
-                                            <template is="dom-if" if="{{annotation.value.selfInteraction}}">
+                                            <template is="dom-if" if="[[annotation.value.selfInteraction]]">
                                                 <p class="annotation-title col-lg-12 col-md-12 col-sm-12 col-xs-12">Itself</p>
                                             </template>
-                                            <template is="dom-if" if="{{annotation.value.geneName}}">
+                                            <template is="dom-if" if="[[annotation.value.geneName]]">
                                                 <p class="annotation-title col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                    <template is="dom-if" if="{{_checkIfNextprot(annotation.value.database)}}">
-                                                        <a href="{{annotation.value.url}}">{{annotation.value.geneName}}</a>
-                                                        <template is="dom-if" if="{{annotation.value.proteinName}}">
-                                                            >> {{annotation.value.proteinName}}
+                                                    <template is="dom-if" if="[[_checkIfNextprot(annotation.value.database)]]">
+                                                        <a href="[[annotation.value.url]]">[[annotation.value.geneName]]</a>
+                                                        <template is="dom-if" if="[[annotation.value.proteinName]]">
+                                                            >> [[annotation.value.proteinName]]
                                                         </template>
                                                     </template>
-                                                    <template is="dom-if" if="{{!_checkIfNextprot(annotation.value.database)}}">
-                                                        {{annotation.value.geneName}} >> {{annotation.value.database}}: <a href="{{annotation.value.url}}" class="ext-link">{{annotation.value.accession}}</a>
+                                                    <template is="dom-if" if="[[!_checkIfNextprot(annotation.value.database)]]">
+                                                        [[annotation.value.geneName]] >> [[annotation.value.database]]: <a href="[[annotation.value.url]]" class="ext-link">[[annotation.value.accession]]</a>
                                                     </template>
-                                                    <template is="dom-if" if="{{annotation.value.interactantIsoform}}">
-                                                        <span class="isoform-label">Isoform {{annotation.value.interactantIsoform}}</span>
+                                                    <template is="dom-if" if="[[annotation.value.interactantIsoform]]">
+                                                        <span class="isoform-label">Isoform [[annotation.value.interactantIsoform]]</span>
                                                     </template>
-                                                    <template is="dom-if" if="{{annotation.value.xeno}}">
+                                                    <template is="dom-if" if="[[annotation.value.xeno]]">
                                                         <span class="xeno-label">Xeno</span>
                                                     </template>
-                                                    <quality-label quality="{{annotation.value.qualityQualifier}}"></quality-label>
+                                                    <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                 </p>
                                             </template>
                                         </template>
                                     </div>
-                                    <iron-collapse id="description-container-{{annotation.value.id}}">
+                                    <iron-collapse id="description-container-[[annotation.value.id]]">
                                         <div class="well blue-well">
-                                            {{annotation.value.cvTermDescription}}
+                                            [[annotation.value.cvTermDescription]]
                                         </div>
                                     </iron-collapse>
-                                    <iron-collapse id="evidences-container-{{annotation.value.id}}">
+                                    <iron-collapse id="evidences-container-[[annotation.value.id]]">
                                         <div class="evidences-container hidden-xs">
-                                            <template is="dom-repeat" items="{{annotation.value.evidences}}" as="evidence">
-                                                <evidence-item data="{{evidence}}" index="{{_getIndex(index)}}"></evidence-item>
+                                            <template is="dom-repeat" items="[[annotation.value.evidences]]" as="evidence">
+                                                <evidence-item data="[[evidence]]" index="[[_getIndex(index)]]"></evidence-item>
                                             </template>
                                         </div>
                                     </iron-collapse>
                                 </div>
                                 <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3">
                                     <div class="show-references-button">
-                                        <a id="evidences-button-{{annotation.value.id}}" class="btn hidden-xs hidden-sm" on-click="_toggle">
-                                            <p class="show-references-button-counter">{{_countItems(annotation.value.evidences)}}</p>
+                                        <a id="evidences-button-[[annotation.value.id]]" class="btn hidden-xs hidden-sm" on-click="_toggle">
+                                            <p class="show-references-button-counter">[[_countItems(annotation.value.evidences)]]</p>
                                             <p class="show-references-button-label">ev</p>
                                         </a>
-                                        <a id="evidences-button-sm-{{annotation.value.id}}" class="btn hidden-xl hidden-lg hidden-md" on-click="_toggle">
-                                            <p class="show-references-button-counter">{{_countItems(annotation.value.evidences)}}</p>
+                                        <a id="evidences-button-sm-[[annotation.value.id]]" class="btn hidden-xl hidden-lg hidden-md" on-click="_toggle">
+                                            <p class="show-references-button-counter">[[_countItems(annotation.value.evidences)]]</p>
                                             <p class="show-references-button-label">ev</p>
                                         </a>
                                         <div class="reference-label-container">
-                                            <template is="dom-repeat" items="{{annotation.value.evidenceSources}}" as="source">
-                                                <div class="reference-label">{{source}}</div>
+                                            <template is="dom-repeat" items="[[annotation.value.evidenceSources]]" as="source">
+                                                <div class="reference-label">[[source]]</div>
                                             </template>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <iron-collapse id="evidences-container-sm-{{annotation.value.id}}" opened>
+                            <iron-collapse id="evidences-container-sm-[[annotation.value.id]]" opened>
                                 <div class="evidence-container hidden-lg hidden-md">
-                                    <template is="dom-repeat" items="{{annotation.value.evidences}}" as="evidence">
-                                        <evidence-item data="{{evidence}}" index="{{_getIndex(index)}}"></evidence-item>
+                                    <template is="dom-repeat" items="[[annotation.value.evidences]]" as="evidence">
+                                        <evidence-item data="[[evidence]]" index="[[_getIndex(index)]]"></evidence-item>
                                     </template>
                                 </div>
                             </iron-collapse>

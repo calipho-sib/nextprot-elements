@@ -37,7 +37,7 @@ Keywords section present on function, medical, sequence, and structures pages.
       <template is="dom-repeat" items="{{_toArray(data)}}" as="category">
         <template is="dom-repeat" items="{{_toArray(category.value)}}" as="annotations">
         <div class="row category-row">
-          <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+          <div class="col-xl-1 col-lg-2 col-md-2 col-sm-12 col-xs-12">
             <h4 class="hidden-sm hidden-xs annotation-category-title text-align-right"> {{annotations.name}}</h4>
             <h4 class="hidden-xl hidden-lg hidden-md annotation-category-title text-align-left"> {{annotation.name}}</h4>
           </div>
@@ -135,7 +135,7 @@ Keywords section present on function, medical, sequence, and structures pages.
           });
         }
         return null;
-      },
+      }
     });
   </script>
 </dom-module>
