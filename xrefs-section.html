@@ -29,38 +29,37 @@ Exteranl links section present in function, medical, expression, interactions, s
       <paper-spinner-lite id="spinner" active></paper-spinner-lite>
     </div>
     <div class="category-main">
-      <template is="dom-repeat" items="{{_toArray(data)}}" as="category">
-      <template is="dom-repeat" items="{{_toArray(category.value)}}" as="annotations">
+      <template is="dom-repeat" items="[[_toArray(data)]]" as="category">
+      <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotations">
       <div class="row">
-        <div class="col-lg-4 col-md-2 col-sm-12 col-xs-12">
-          <h4 class="hidden-sm hidden-xs annotation-category-title text-align-right"> {{annotations.name}}</h4>
-          <h4 class="hidden-lg hidden-md annotation-category-title text-align-left"> {{annotations.name}}</h4>
+        <div class="col-xl-1 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <h4 class="annotation-category-title text-align-left"> [[annotations.name]]</h4>
         </div>
-        <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12">
-            <template is="dom-repeat" items="{{annotations.value}}" as="annotation">
+        <div class="col-xl-11 col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <template is="dom-repeat" items="[[annotations.value]]" as="annotation">
               <div class="row annotation-row">
-                <div class="col-md-3 col-sm-3 col-xs-4 annotation-title-container">
-                  <p class="annotation-title">{{annotation.name}}</p>
+                <div class="annotation-title-container col-lg-5 col-md-6 col-sm-6 col-xs-6">
+                  <p class="annotation-title">[[annotation.name]]</p>
                 </div>
-                <div class="col-md-9 col-sm-9 col-xs-8">
-                  <template is="dom-repeat" items="{{annotation.xrefs}}" as="xref">
+                <div class="col-lg-7 col-md-6 col-sm-6 col-xs-6">
+                  <template is="dom-repeat" items="[[annotation.xrefs]]" as="xref">
                   <div class="btn-group hidden-xs" role="group">
-                    <template is="dom-if" if="{{xref.prefix}}">
-                      <label class="btn btn-xs prefix-label">{{xref.prefix}}</label>
+                    <template is="dom-if" if="[[xref.prefix]]">
+                      <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
                     </template>
-                    <a class="btn btn-xs selectable ext-link" href="{{xref.url}}" target="_blank">{{xref.accession}}</a>
-                    <template is="dom-if" if="{{xref.suffix}}">
-                      <label class="suffix-label">{{xref.suffix}}</label>
+                    <a class="btn btn-xs selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
+                    <template is="dom-if" if="[[xref.suffix]]">
+                      <label class="suffix-label">[[xref.suffix]]</label>
                     </template>
                   </div>
                   <div class="row hidden-lg hidden-md hidden-sm">
                     <div class="btn-group col-xs-12 no-padding" role="group">
-                      <template is="dom-if" if="{{xref.prefix}}">
-                        <label class="btn btn-xs prefix-label">{{xref.prefix}}</label>
+                      <template is="dom-if" if="[[xref.prefix]]">
+                        <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
                       </template>
-                      <a class="btn btn-xs selectable ext-link" href="{{xref.url}}" target="_blank">{{xref.accession}}</a>
-                      <template is="dom-if" if="{{xref.suffix}}">
-                        <label class="suffix-label">{{xref.suffix}}</label>
+                      <a class="btn btn-xs selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
+                      <template is="dom-if" if="[[xref.suffix]]">
+                        <label class="suffix-label">[[xref.suffix]]</label>
                       </template>
                     </div>
                   </div>
@@ -70,7 +69,7 @@ Exteranl links section present in function, medical, expression, interactions, s
             </template>
         </div>
       </div>
-      <template is="dom-if" if="{_checkIfLast(data,index)}}">
+      <template is="dom-if" if="[[_checkIfLast(data,index)]]">
         <hr class="bottom-line">
       </template>
       </template>

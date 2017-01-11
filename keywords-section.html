@@ -30,31 +30,30 @@ Keywords section present on function, medical, sequence, and structures pages.
       }
     </style>
     <div id="keywords-header" class="category-header">
-      <h4 id="{{title}}-title" class="category-title">Keywords</h4>
+      <h4 id="[[title]]-title" class="category-title">Keywords</h4>
       <paper-spinner-lite id="spinner" active></paper-spinner-lite>
     </div>
     <div class="category-main">
-      <template is="dom-repeat" items="{{_toArray(data)}}" as="category">
-        <template is="dom-repeat" items="{{_toArray(category.value)}}" as="annotations">
+      <template is="dom-repeat" items="[[_toArray(data)]]" as="category">
+        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotations">
         <div class="row category-row">
-          <div class="col-xl-1 col-lg-2 col-md-2 col-sm-12 col-xs-12">
-            <h4 class="hidden-sm hidden-xs annotation-category-title text-align-right"> {{annotations.name}}</h4>
-            <h4 class="hidden-xl hidden-lg hidden-md annotation-category-title text-align-left"> {{annotation.name}}</h4>
+          <div class="col-xl-1 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <h4 class="annotation-category-title text-align-left"> [[annotations.name]]</h4>
           </div>
-          <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-              <template is="dom-repeat" items="{{annotations.value}}" as="annotation">
+          <div class="col-xl-11 col-lg-9 col-md-9 col-sm-12 col-xs-12">
+              <template is="dom-repeat" items="[[annotations.value]]" as="annotation">
                 <div class="row annotation-row">
                   <div class="annotation-title-container">
-                    <p class="annotation-title">{{annotation.cvTermName}}</p>
-                    <div class="annotation-labels col-md-6 col-sm-6 col-xs-6">
-                      <button id="{{annotation.cvTermAccessionCode}}-button" class="btn btn-info" on-click="toggle">Definition</button>
-                      <a class="accession-code-link btn selectable" href="/db/term/{{annotation.cvTermAccessionCode}}">{{annotation.cvTermAccessionCode}}</a>
+                    <p class="annotation-title col-lg-5 col-md-6 col-sm-6 col-xs-6">[[annotation.cvTermName]]</p>
+                    <div class="annotation-labels col-lg-7 col-md-6 col-sm-6 col-xs-6">
+                      <button id="[[annotation.cvTermAccessionCode]]-button" class="btn btn-sm btn-info" on-click="toggle">Definition</button>
+                      <a class="accession-code-link btn selectable" href="/db/term/[[annotation.cvTermAccessionCode]]">[[annotation.cvTermAccessionCode]]</a>
                     </div>
                   </div>
                 </div>
-                <iron-collapse id="{{annotation.cvTermAccessionCode}}-container">
+                <iron-collapse id="[[annotation.cvTermAccessionCode]]-container">
                   <div class="well blue-well">
-                    {{annotation.cvTermDescription}}
+                    [[annotation.cvTermDescription]]
                   </div>
                 </iron-collapse>
               </template>

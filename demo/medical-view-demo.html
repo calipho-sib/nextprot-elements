@@ -18,13 +18,27 @@
     </style>
 </head>
 <body>
-<div class="vertical-section-container centered">
-    <h3>Basic medical-view demo</h3>
-    <demo-snippet>
-        <template>
-            <medical-view nx-config='{"entry": "NX_P04637"}'></medical-view>
-        </template>
-    </demo-snippet>
-</div>
+    <div class="vertical-section-container centered">
+        <h3>Basic medical-view demo</h3>
+        <h4><span>
+            <label>Gold only</label>
+            <input type="checkbox" onchange="toggleGoldOnly()" style="margin-left: 20px;">
+        </span></h4>
+        <demo-snippet>
+            <template>
+                <medical-view nx-config='{"entry": "NX_Q15848"}'></medical-view>
+            </template>
+        </demo-snippet>
+    </div>
+    <script>
+        function toggleGoldOnly(){
+            var element = document.querySelector("generic-annotation-section");
+            if(element.hasAttribute("gold-only")){
+                element.removeAttribute("gold-only");
+            } else{
+                element.setAttribute("gold-only","true");
+            }
+        }
+    </script>
 </body>
 </html>

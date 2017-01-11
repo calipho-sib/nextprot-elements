@@ -75,7 +75,7 @@ Annotation section used in function, medical, and expression views.
                                 <div class="grey-x">Interactions for Isoform [[annotation.value.isoformSpecific]]</div>
                             </template>
                             <div class="row annotation-row">
-                                <div class="col-xl-11 col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                                <div class="col-xl-11 col-lg-10 col-md-9 col-sm-7 col-xs-7">
                                     <div class="annotation-title-container">
                                         <template is="dom-if" if="[[annotation.value.chemicalName]]">
                                             <template is="dom-if" if="[[_checkIfChebi(annotation.value.database)]]">
@@ -95,8 +95,8 @@ Annotation section used in function, medical, and expression views.
                                             </div>
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.parentXref]]">
-                                            <p class="annotation-title col-lg-9 col-sm-7 col-xs-6">{{annotation.value.description}}</p>
-                                            <div class="col-lg-3 col-md-4 col-sm-5 col-xs-6 right">
+                                            <p class="annotation-title col-lg-9 col-sm-9 col-xs-8">{{annotation.value.description}}</p>
+                                            <div class="col-lg-3 col-md-4 col-sm-3 col-xs-4 right">
                                                 <a class="accession-code-link btn btn-sm selectable" href="[[annotation.value.parentXref.resolvedUrl]]">[[annotation.value.parentXref.accession]]</a>
                                             </div>
                                         </template>
@@ -144,7 +144,7 @@ Annotation section used in function, medical, and expression views.
                                         </div>
                                     </iron-collapse>
                                 </div>
-                                <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3">
+                                <div class="col-lg-2 col-md-3 col-sm-5 col-xs-5">
                                     <div class="show-references-button">
                                         <a id="evidences-button-[[annotation.value.id]]" class="btn hidden-xs hidden-sm" on-click="_toggle">
                                             <p class="show-references-button-counter">[[_countItems(annotation.value.evidences)]]</p>
