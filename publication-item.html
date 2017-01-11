@@ -34,23 +34,23 @@ Publication item demo
       p {
         margin: 0 0 5px;
       }
-      button[pushed] .pubDisplayStatus:before {
+      span[pushed] .pubDisplayStatus:before {
         content:"Hide";
         display:inline-block;
-        width:29px;
       }
-      button .pubDisplayStatus:before {
+      span .pubDisplayStatus:before {
         content:"Show";
-      }
-      .btn-xs {
-        font-size: 10px;
-        border-radius: 2px;
       }
       .publication-container {
         padding-left: 15px;
         margin-top: 5px;
         margin-bottom: 15px;
         border-left:1px solid darkgray;
+      }
+      .abstract-button {
+        background-color:#337ab7;
+        color:white;
+        border-radius: 2px;
       }
       #abstractHeader {
         color: #666;
@@ -85,9 +85,9 @@ Publication item demo
         </template>
       </template>
       <template is="dom-if" if="{{data.abstractText}}">
-        <button id="collapseButton" class="btn btn-primary btn-xs" type="button" on-tap="_toggleAbstract">
+        <span id="collapseButton" class="colored-label abstract-button" on-tap="_toggleAbstract">
           <span class="pubDisplayStatus"> </span>abstract
-        </button>
+        </span>
       </template>
       <iron-collapse id="collapseAbstract" opened="{{showAbstract}}">
         <template is="dom-if" if="{{data.abstractText}}">

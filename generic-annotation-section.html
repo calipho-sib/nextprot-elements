@@ -33,12 +33,10 @@ Annotation section used in function, medical, and expression views.
             :host {
                 display: block;
             }
-
             #evidenceButton {
                 padding: 0px 5px 0px 0px;
                 margin-bottom: 10px;
             }
-
             .xeno-label, .isoform-label {
                 color: #999;
                 border: 1px solid;
@@ -52,7 +50,7 @@ Annotation section used in function, medical, and expression views.
         </style>
         <div class="category-main">
             <template is="dom-if" if="[[data]]">
-                <button id="evidenceButton" class="btn btn-default" on-click="_toggleAllEvidences">
+                <button id="evidenceButton" class="btn btn-default" on-tap="_toggleAllEvidences">
                     <template is="dom-if" if="[[evidencesShown]]">
                         <iron-icon icon="arrow-drop-up"></iron-icon>
                         hide evidences
@@ -90,7 +88,7 @@ Annotation section used in function, medical, and expression views.
                                             <p class="annotation-title" inner-h-t-m-l="[[_boldPattern(annotation.value.description, 'Contributes to')]]"></p>
                                             <div class="annotation-labels">
                                                 <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCode]]</a>
-                                                <button id="description-button-[[annotation.value.id]]" class="btn btn-sm btn-info" type="button" on-click="_toggle">Definition</button>
+                                                <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
                                                 <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                             </div>
                                         </template>
@@ -146,11 +144,11 @@ Annotation section used in function, medical, and expression views.
                                 </div>
                                 <div class="col-lg-2 col-md-3 col-sm-5 col-xs-5">
                                     <div class="show-references-button">
-                                        <a id="evidences-button-[[annotation.value.id]]" class="btn hidden-xs hidden-sm" on-click="_toggle">
+                                        <a id="evidences-button-[[annotation.value.id]]" class="btn hidden-xs hidden-sm" on-tap="_toggle">
                                             <p class="show-references-button-counter">[[_countItems(annotation.value.evidences)]]</p>
                                             <p class="show-references-button-label">ev</p>
                                         </a>
-                                        <a id="evidences-button-sm-[[annotation.value.id]]" class="btn hidden-xl hidden-lg hidden-md" on-click="_toggle">
+                                        <a id="evidences-button-sm-[[annotation.value.id]]" class="btn hidden-xl hidden-lg hidden-md" on-tap="_toggle">
                                             <p class="show-references-button-counter">[[_countItems(annotation.value.evidences)]]</p>
                                             <p class="show-references-button-label">ev</p>
                                         </a>
