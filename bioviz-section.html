@@ -1,0 +1,70 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<script>
+    //Load JQuery if necessary
+    if(typeof jQuery === "undefined"){
+        (function(){
+            var newscript = document.createElement('script');
+            newscript.src = '../../jquery/dist/jquery.min.js';
+            document.getElementsByTagName('head')[0].appendChild(newscript);
+        })();
+    }
+</script>
+<script src="../nextprot-js/src/nextprot-core.js"></script>
+<script src="../nextprot-js/src/nextprot-utils.js"></script>
+<script src="../lib/bio-viz/dist/bio-viz.bundle.js"></script>
+<!--
+`bioviz-section`
+Element joining bioviz viewer and 3D structures table
+
+@demo demo/bioviz-section-demo.html
+-->
+<dom-module id="bioviz-section">
+    <link rel="stylesheet" type="text/css" href="../lib/bio-viz/css/style.css">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+        </style>
+        <div id="bioviz-container"></div>
+    </template>
+    <script>
+        Polymer({
+            is: 'bioviz-section',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                nxEntry: {
+                    type: String,
+                    observer: "_setDefaultIsoform"
+                },
+                isoform: {
+                    type: String,
+                    observer: "_onIsoformChange"
+                },
+                selection: {
+                    type: Object,
+                    observer: "highlight"
+                }
+            },
+            attached: function() {
+                this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
+                this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
+                this.bv = new nxBioViz();
+                this.bv.init("#bioviz-container", this.isoform);
+            },
+            highlight: function() {
+                this.bv.highlightFromRange([this.selection.start, this.selection.end]);
+            },
+            _setDefaultIsoform: function() {
+                this.isoform = this.nxEntry+"-1";
+            },
+            _onIsoformChange: function() {
+                if (this.$.bioviz) this.bv.reloadTable(this.isoform);
+            }
+        });
+    </script>
+</dom-module>

@@ -17,8 +17,8 @@
 <script src="../sequence-viewer/dist/sequence-viewer.min.js"></script>
 <script src="../d3/d3.min.js"></script>
 <script src="../bootstrap/js/tooltip.js"></script>
-<script src="../nextprot/src/nextprot-core.js"></script>
-<script src="../nextprot/src/nextprot-utils.js"></script>
+<script src="../nextprot-js/src/nextprot-core.js"></script>
+<script src="../nextprot-js/src/nextprot-utils.js"></script>
 <!--
 `triple-viewer`
 Complex element joining nextprot feature viewer, feature table and sequence viewer
@@ -281,7 +281,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     </a></td>
                                     <td class="text-align-right">[[feature.length]]</td>
                                     <td><span inner-h-t-m-l="[[feature.link]]"></span>
-                                        <span inner-h-t-m-l="[[feature.crossRef]]"></span>
+                                        <template is="dom-if" if="[[feature.crossRef]]">
+                                            <span inner-h-t-m-l="[[feature.crossRef]]"></span>
+                                        </template>
                                         <template is="dom-if" if="[[!feature.proteotypicity]]">
                                             <span class="nonProteotypic">found in other entries</span>
                                         </template>
@@ -329,6 +331,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 isoName: {
                     type: String,
                     observer: "reloadSVG"
+                },
+                selection: {
+                  type: Object,
+                  notify: true
                 },
                 featuresByIsoform: {
                     type: Array,
@@ -600,7 +606,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 this.reloadSVG();
             },
             _filterGold: function(item){
-                console.log(item);
                 if (this.goldOnly) return item.quality==="gold";
                 return true;
             },
@@ -636,6 +641,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 
                     position[0]-=1;
                     self.seqView.selection(position[0],position[1],"#C50063");
+                    self.selection = {'start': position[0], 'end': position[1]};
                     self.ft.addRectSelection(svgId);
 
                     self._scrollAuto(".stringSelected", ".scroller",200);
@@ -644,6 +650,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             eventTV: function() {
                 var self=this;
                 self.ft.onFeatureSelected(function(d){
+                    self.selection = d.detail;
                     // update isoform selector
                     self.fvSelection(d.detail);
                 });
@@ -666,6 +673,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             _getUniqueListOfEvidenceSources: function(evidenceList) {
                 var evidenceSourceList = [];
                 evidenceList.forEach(function(evidence){
+                    if (evidence.assignedBy.toLowerCase()=="uniprotkb") evidence.assignedBy="UniProtKB";
                     if(evidenceSourceList.indexOf(evidence.assignedBy) < 0) {
                         evidenceSourceList.push(evidence.assignedBy);
                     }
