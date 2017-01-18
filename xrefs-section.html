@@ -32,9 +32,11 @@ Exteranl links section present in function, medical, expression, interactions, s
       <template is="dom-repeat" items="[[_toArray(data)]]" as="category">
       <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotations">
       <div class="row">
-        <div class="col-xl-1 col-lg-3 col-md-3 col-sm-12 col-xs-12">
-          <h4 class="annotation-category-title text-align-left"> [[annotations.name]]</h4>
-        </div>
+        <template is="dom-if" if="[[_checkCategories()]]">
+          <div class="col-xl-1 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <h4 class="annotation-category-title text-align-left"> [[annotations.name]]</h4>
+          </div>
+        </template>
         <div class="col-xl-11 col-lg-9 col-md-9 col-sm-12 col-xs-12">
             <template is="dom-repeat" items="[[annotations.value]]" as="annotation">
               <div class="row annotation-row">
@@ -322,6 +324,10 @@ Exteranl links section present in function, medical, expression, interactions, s
         if(array.length-1===index) return true;
         return false;
       },
+      _checkCategories: function(){
+        if(this.data.length>1 || Object.keys(this.data[0])[0].toLowerCase()!="other") return true;
+        return false;
+      }
     });
   </script>
 </dom-module>
