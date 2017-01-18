@@ -29,7 +29,7 @@ Exteranl links section present in function, medical, expression, interactions, s
       <paper-spinner-lite id="spinner" active></paper-spinner-lite>
     </div>
     <div class="category-main">
-      <template is="dom-repeat" items="[[_toArray(data)]]" as="category">
+      <template is="dom-repeat" items="[[_toArray(data)]]" as="category" sort="_sortCategories">
       <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotations">
       <div class="row">
         <template is="dom-if" if="[[_checkCategories()]]">
@@ -120,14 +120,11 @@ Exteranl links section present in function, medical, expression, interactions, s
             else dataObject[k.databaseCategory] = [k];
           }
         });
-        //sort data alphabetically
         self.data = Object.keys(dataObject).map(function (key) {
           var temp = {};
           temp[key] = dataObject[key];
           return temp
         });
-
-        self.data.sort(this._sortAlpha);
         this.data = this.data.map(function(t){
           t[Object.keys(t)[0]] = self._filterExceptions(t[Object.keys(t)[0]]);
           return t;
@@ -304,10 +301,14 @@ Exteranl links section present in function, medical, expression, interactions, s
         }
         return newTypeList;
       },
-      _sortAlpha: function(a,b){
-        var textA = Object.keys(a)[0].toUpperCase();
-        var textB = Object.keys(b)[0].toUpperCase();
-        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      _sortCategories: function(a,b){
+        var firstCategoryName = Object.keys(a.value)[0];
+        var secondCategoryName = Object.keys(b.value)[0];
+        if (firstCategoryName.toLowerCase() == "other" &&
+            secondCategoryName.toLowerCase() != "other") return 1;
+        if (secondCategoryName.toLowerCase() == "other" &&
+                firstCategoryName.toLowerCase() != "other") return -1;
+        return firstCategoryName.toLowerCase() > secondCategoryName.toLowerCase() ? 1 : -1;
       },
       _toArray: function(obj) {
         if (typeof obj === 'object') {
