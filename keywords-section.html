@@ -41,7 +41,7 @@ Keywords section present on function, medical, sequence, and structures pages.
             <h4 class="annotation-category-title text-align-left"> [[annotations.name]]</h4>
           </div>
           <div class="col-xl-11 col-lg-9 col-md-9 col-sm-12 col-xs-12">
-              <template is="dom-repeat" items="[[annotations.value]]" as="annotation">
+              <template is="dom-repeat" items="[[annotations.value]]" as="annotation" sort="_sortAlphabetically">
                 <div class="row annotation-row">
                   <div class="annotation-title-container">
                     <p class="annotation-title col-lg-5 col-md-6 col-sm-6 col-xs-6">[[annotation.cvTermName]]</p>
@@ -108,17 +108,18 @@ Keywords section present on function, medical, sequence, and structures pages.
             else data[k.cvTermType] = [k];
           }
         });
-        this.data = Object.keys(data).map(function (key) {
+        data = Object.keys(data).map(function (key) {
           var temp = {};
           temp[key] = data[key];
           return temp
         });
-        this.data.sort(function (a, b) {
+        data.sort(function (a, b) {
           var textA = Object.keys(a)[0].toUpperCase();
           var textB = Object.keys(b)[0].toUpperCase();
-          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+          return (textA < textB) ? -1 : 1;
         });
-        this.data.forEach(function(d){d[Object.keys(d)[0]].forEach(function(d2){count+=1;})});
+        data.forEach(function(d){d[Object.keys(d)[0]].forEach(function(d2){count+=1;})});
+        this.data = data;
         this.count = count;
       },
       toggle: function(mouseEvent){
@@ -134,6 +135,9 @@ Keywords section present on function, medical, sequence, and structures pages.
           });
         }
         return null;
+      },
+      _sortAlphabetically: function(a,b){
+        return a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1;
       }
     });
   </script>
