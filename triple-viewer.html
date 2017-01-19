@@ -706,6 +706,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 if(container.childElementCount===0){
                     for (i in feature.source){
                         var evidence = feature.source[i];
+                        if(evidence.crossRef) {
+                            evidence.resourceAccession = evidence.crossRef.name;
+                            evidence.url = evidence.crossRef.url;
+                        }
                         var evidenceItem = document.createElement("evidence-item");
                         evidenceItem.setAttribute("index", new Number(i)+1);
                         evidenceItem.data=evidence;
