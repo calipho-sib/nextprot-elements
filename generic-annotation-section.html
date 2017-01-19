@@ -100,7 +100,7 @@ Annotation section used in function, medical, and expression views.
                                             </div>
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.parentXref]]">
-                                            <p class="annotation-title col-lg-8 col-md-8 ol-sm-8 col-xs-8">{{annotation.value.description}}</p>
+                                            <p class="annotation-title col-lg-8 col-md-8 ol-sm-8 col-xs-8">[[annotation.value.description]]</p>
                                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 right">
                                                 <a class="accession-code-link btn btn-sm selectable" href="[[annotation.value.parentXref.resolvedUrl]]">[[annotation.value.parentXref.accession]]</a>
                                             </div>
@@ -114,7 +114,10 @@ Annotation section used in function, medical, and expression views.
                                                     <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8" inner-h-t-m-l="[[annotation.value.description]]"></div>
                                                 </template>
                                             <p class="annotation-title">
-                                                <template is="dom-if" if="[[!_isBiophysicochemicalProperty(annotation.value.category)]]">
+                                                <template is="dom-if" if="[[!_isBinaryInteractionOrCofactorOrBiophysical(annotation.value.category)]]">
+                                                    <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
+                                                        <span class="isoform-label">Isoform [[annotation.value.isoformSpecific]]</span>
+                                                    </template>
                                                     <span inner-h-t-m-l="[[annotation.value.description]]"></span>
                                                 </template>
                                                 <template is="dom-if" if="[[!_isBinaryInteractionOrCofactorOrBiophysical(annotation.value.category)]]">
@@ -151,13 +154,15 @@ Annotation section used in function, medical, and expression views.
                                             [[annotation.value.cvTermDescription]]
                                         </div>
                                     </iron-collapse>
-                                    <iron-collapse id="evidences-container-[[annotation.value.id]]">
-                                        <div class="evidences-container hidden-xs">
-                                            <template is="dom-repeat" items="[[annotation.value.evidences]]" as="evidence">
-                                                <evidence-item data="[[evidence]]" index="[[_getIndex(index)]]"></evidence-item>
-                                            </template>
-                                        </div>
-                                    </iron-collapse>
+                                    <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
+                                        <iron-collapse id="evidences-container-[[annotation.value.id]]">
+                                            <div class="evidences-container hidden-xs">
+                                                <template is="dom-repeat" items="[[annotation.value.evidences]]" as="evidence">
+                                                    <evidence-item data="[[evidence]]" index="[[_getIndex(index)]]"></evidence-item>
+                                                </template>
+                                            </div>
+                                        </iron-collapse>
+                                    </template>
                                 </div>
                                 <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
                                     <div class="col-lg-2 col-md-3 col-sm-5 col-xs-5">
@@ -258,6 +263,7 @@ Annotation section used in function, medical, and expression views.
                 data = {};
                 var self = this;
                 bpSection = false;
+                bpDepSection = false;
                 data_annot.forEach(function (a) {
                     if (a.category=="cofactor") {
                         a.chemicalName = a.bioObject.properties["chemical name"] ?
@@ -275,13 +281,19 @@ Annotation section used in function, medical, and expression views.
                         if(a.category=="kinetic KM") a.label="K<sub>M</sub>";
                         a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="KINETIC PARAMETERS";
                         if(!bpSection) {a.newBpSection=true; bpSection=true;}
-
                     }
+                    if (a.category=="pH dependence" || a.category=="temperature dependence") {
+                        if(a.category=="temperature dependence") a.label="Temperature";
+                        if(a.category=="pH dependence") a.label="pH";
+                        a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="DEPENDENCE";
+                        if(!bpDepSection) {a.newBpSection=true; bpDepSection=true;}
+                    }
+                    {}
                     if (a.category=="kinetic Vmax" ) {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="KINETIC PARAMETERS"; a.label="V<sub>Max</sub>"};
                     if (a.category=="kinetic note" ) {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="KINETIC PARAMETERS";};
-                    if (a.category=="pH dependence") {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="DEPENDENCE"; a.label="pH";}
                     if (a.category=="absorption max") {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="ABSORPTION"; a.label="Abs max";}
                     if (a.category=="absorption note") {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="ABSORPTION";}
+                    if (a.category=="redox potential") {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="REDOX POTENTIAL";}
                     if(Object.keys(self.categoryTitles).indexOf(a.category)!=-1) a.category = self.categoryTitles[a.category];
                     if (a.description) a.description= a.description.charAt(0).toUpperCase()+ self._addPubmedLink(a.description).slice(1);
                     if (a.cvTermName) a.cvTermName=a.cvTermName.charAt(0).toUpperCase()+a.cvTermName.slice(1);
@@ -301,14 +313,13 @@ Annotation section used in function, medical, and expression views.
                         if(obj.negativeEvidence==true && !a.description.startsWith("<b>Not </b>")) a.description = "<b>Not </b>"+a.description
                     });
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
-                    if (a.category=="Binary Interactions") {
+                    if (a.category=="overview" || a.category=="Binary Interactions") {
                         for (i in a.targetingIsoformsMap){
                             var isoform = a.targetingIsoformsMap[i];
                             if (isoform.specificity=="SPECIFIC"){
                                 a.isoformSpecific = data_isoforms[isoform.isoformAccession].mainEntityName.name;
                             }
                         }
-
                     }
                     data[a.category].push({
                         id: a.annotationId,
@@ -340,32 +351,8 @@ Annotation section used in function, medical, and expression views.
                 this.data = data;
             },
             _sort: function(a,b) {
-                if (a.value.category=="BIOPHYSICOCHEMICAL PROPERTIES") {
-                    if(a.value.subcategory=="ABSORPTION" && b.value.subcategory!="ABSORPTION") return -1;
-                    if(a.value.subcategory=="ABSORPTION" && b.value.subcategory=="ABSORPTION") {
-                        if(a.value.label){
-                            a.value.newBpSection=true;
-                            b.value.newBpSection=false;
-                            return -1;
-                        }
-                        a.value.newBpSection=false;
-                        b.value.newBpSection=true;
-                        return 1;
-                    }
-                    if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="KINETIC PARAMETERS") {
-                        if(a.value.id > b.value.id) {
-                            //a.value.newBpSection=false;
-                            //b.value.newBpSection=true;
-                            return 1;
-                        }
-                        //a.value.newBpSection=true;
-                        //b.value.newBpSection=false;
-                        return -1;
-                    }
-                    if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="ABSORPTION") return 1;
-                    if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="DEPENDENCE") return -1;
-                    if(a.value.subcategory=="DEPENDENCE" && b.value.subcategory!="DEPENDENCE") {a.value.newBpSection=true; return 1;}
-                }
+                if (a.value.category=="OVERVIEW") this._sortOverview(a,b);
+                if (a.value.category=="BIOPHYSICOCHEMICAL PROPERTIES") this._sortBiophysicochemical(a,b);
                 if (a.value.category!="BINARY INTERACTIONS" && a.value.category!="ENZYMATIC ACTIVITY") return a.value.description.toLowerCase() > b.value.description.toLowerCase() ? 1 : -1;
                 if (a.value.isoformSpecific && !b.value.isoformSpecific) return 1
                 if (!a.value.isoformSpecific && b.value.isoformSpecific) return -1
@@ -390,6 +377,31 @@ Annotation section used in function, medical, and expression views.
                 if (a.value.geneName)
                 return a.value.geneName.toLowerCase() > b.value.geneName.toLowerCase() ? 1 : -1;
 
+            },
+            _sortOverview: function(a,b) {
+                return (a.value.isoformSpecific && !b.value.isoformSpecific) ? 1 : -1;
+            },
+            _sortBiophysicochemical: function(a,b) {
+                if(a.value.subcategory=="ABSORPTION" && b.value.subcategory!="ABSORPTION") return -1;
+                if(a.value.subcategory=="ABSORPTION" && b.value.subcategory=="ABSORPTION") {
+                    if(a.value.label){
+                        a.value.newBpSection=true;
+                        b.value.newBpSection=false;
+                        return -1;
+                    }
+                    a.value.newBpSection=false;
+                    b.value.newBpSection=true;
+                    return 1;
+                }
+                if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="KINETIC PARAMETERS") {
+                    if(a.value.id > b.value.id) {
+                        return 1;
+                    }
+                    return -1;
+                }
+                if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="ABSORPTION") return 1;
+                if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="DEPENDENCE") return -1;
+                if(a.value.subcategory=="DEPENDENCE" && b.value.subcategory!="DEPENDENCE") {a.value.newBpSection=true; return 1;}
             },
             _filterGold: function(item){
                 if (this.goldOnly) return item.value.qualityQualifier==="GOLD";
@@ -433,7 +445,7 @@ Annotation section used in function, medical, and expression views.
                         "qualityQualifier": e.qualityQualifier,
                         "numberOfExperiments": e.numberOfExperiments,
                         "url": getUrl(e.resourceId),
-                        "publication": self._getPublication(publi[e.publicationMD5])
+                        "publication": self._getPublication(publi[e.resourceId])
                     }
                 })
             },
@@ -520,14 +532,16 @@ Annotation section used in function, medical, and expression views.
                 return str.toLowerCase().replace(" ", "-");
             },
             _addPubmedLink: function(text){
-                var pmidRegexp = /PubMed:\d{8,9}\.{0,1}\d{0,1}/
-                var match = pmidRegexp.exec(text);
-                if (match!=null) {
-                    var pmid = match[0].split(":")[1];
-                    return text.replace(
-                        pmid,
-                        ' <a href="https://www.ncbi.nlm.nih.gov/pubmed/'+pmid+'" class="ext-link style-scope generic-annotation-section" target="_blank">'+pmid+'</a>'
-                    );
+                var pmidRegexp = /PubMed:\d{7,9}\.{0,1}\d{0,1}/g
+                var matches = text.match(pmidRegexp);
+                if (matches) {
+                    for (var i in matches){
+                        var pmid = matches[i].split(":")[1];
+                        text = text.replace(
+                            matches[i],
+                            'PubMed: <a href="https://www.ncbi.nlm.nih.gov/pubmed/'+pmid+'" class="ext-link style-scope generic-annotation-section" target="_blank">'+pmid+'</a>'
+                        );
+                    }
                 }
                 return text;
 
