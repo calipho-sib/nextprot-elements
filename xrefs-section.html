@@ -281,6 +281,10 @@ Exteranl links section present in function, medical, expression, interactions, s
               newTypeList.push(refseq);
             }
           }
+          else if (typeList[elem].databaseName === "Reactome"
+            || typeList[elem].databaseName === "KEGGPathway") {
+            continue;
+          }
           else {
             var suffix = "";
             if (typeList[elem].properties.length>0){
