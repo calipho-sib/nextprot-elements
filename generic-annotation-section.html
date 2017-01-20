@@ -92,7 +92,10 @@ Annotation section used in function, medical, and expression views.
                                             </template>
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.cvTermAccessionCode]]">
-                                            <p class="annotation-title" inner-h-t-m-l="[[_boldPattern(annotation.value.description, 'Contributes to')]]"></p>
+                                            <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
+                                                <span class="annotation-title isoform-label">Isoform [[annotation.value.isoformSpecific]]</span>
+                                            </template>
+                                            <p class="annotation-title" inner-h-t-m-l="[[annotation.value.description]]"></p>
                                             <div class="annotation-labels">
                                                 <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCode]]</a>
                                                 <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
@@ -102,7 +105,7 @@ Annotation section used in function, medical, and expression views.
                                         <template is="dom-if" if="[[annotation.value.parentXref]]">
                                             <p class="annotation-title col-lg-8 col-md-8 ol-sm-8 col-xs-8">[[annotation.value.description]]</p>
                                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 right">
-                                                <a class="accession-code-link btn btn-sm selectable" href="[[annotation.value.parentXref.resolvedUrl]]">[[annotation.value.parentXref.accession]]</a>
+                                                <a class="accession-code-link btn btn-sm ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
                                             </div>
                                         </template>
                                         <template is="dom-if" if="[[!_checkIfContainsAccessionOrXref(annotation.value)]]">
@@ -154,30 +157,34 @@ Annotation section used in function, medical, and expression views.
                                             [[annotation.value.cvTermDescription]]
                                         </div>
                                     </iron-collapse>
-                                    <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
-                                        <iron-collapse id="evidences-container-[[annotation.value.id]]">
-                                            <div class="evidences-container hidden-xs">
-                                                <template is="dom-repeat" items="[[annotation.value.evidences]]" as="evidence">
-                                                    <evidence-item data="[[evidence]]" index="[[_getIndex(index)]]"></evidence-item>
-                                                </template>
-                                            </div>
-                                        </iron-collapse>
+                                    <template is="dom-if" if="[[!_isPathway(annotation.value.category)]]">
+                                        <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
+                                            <iron-collapse id="evidences-container-[[annotation.value.id]]">
+                                                <div class="evidences-container hidden-xs">
+                                                    <template is="dom-repeat" items="[[annotation.value.evidences]]" as="evidence">
+                                                        <evidence-item data="[[evidence]]" index="[[_getIndex(index)]]"></evidence-item>
+                                                    </template>
+                                                </div>
+                                            </iron-collapse>
+                                        </template>
                                     </template>
                                 </div>
-                                <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
-                                    <div class="col-lg-2 col-md-3 col-sm-5 col-xs-5">
-                                        <div class="show-references-button">
-                                            <a id="evidences-button-[[annotation.value.id]]" class="btn" on-tap="_toggle">
-                                                <p class="show-references-button-counter">[[_countItems(annotation.value.evidences)]]</p>
-                                                <p class="show-references-button-label">ev</p>
-                                            </a>
-                                            <div class="reference-label-container">
-                                                <template is="dom-repeat" items="[[annotation.value.evidenceSources]]" as="source">
-                                                    <div class="reference-label">[[source]]</div>
-                                                </template>
+                                <template is="dom-if" if="[[!_isPathway(annotation.value.category)]]">
+                                    <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
+                                        <div class="col-lg-2 col-md-3 col-sm-5 col-xs-5">
+                                            <div class="show-references-button">
+                                                <a id="evidences-button-[[annotation.value.id]]" class="btn" on-tap="_toggle">
+                                                    <p class="show-references-button-counter">[[_countItems(annotation.value.evidences)]]</p>
+                                                    <p class="show-references-button-label">ev</p>
+                                                </a>
+                                                <div class="reference-label-container">
+                                                    <template is="dom-repeat" items="[[annotation.value.evidenceSources]]" as="source">
+                                                        <div class="reference-label">[[source]]</div>
+                                                    </template>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </template>
                                 </template>
                             </div>
                             <iron-collapse id="evidences-container-sm-[[annotation.value.id]]" opened>
@@ -240,13 +247,13 @@ Annotation section used in function, medical, and expression views.
                             self.annotationsByCategory = categories;
                             self._getAnnotationsByView();
                             self.$.spinner.removeAttribute('active');
-                        });//.catch(function (err) {
+                        }).catch(function (err) {
                             // catch any error that happened so far
-                            //console.log("Argh, broken: " + err.message);
-                            //console.log("Error at line : " + err.stack);
-                            //self.$.spinner.removeAttribute('active');
-                            //self.count = 0;
-                        //});
+                            console.log("Argh, broken: " + err.message);
+                            console.log("Error at line : " + err.stack);
+                            self.$.spinner.removeAttribute('active');
+                            self.count = 0;
+                        });
             },
             _getAnnotationsByView: function() {
                 var data_xrefs = [];
@@ -310,10 +317,11 @@ Annotation section used in function, medical, and expression views.
                     a.xeno = a.database!="neXtProt" ? true : false;
                     if (!data.hasOwnProperty(a.category)) data[a.category]=[];
                     a.evidences.forEach(function(obj){
+                        if(obj.goQualifier==="contributes_to") a.description = a.description.replace("Contributes to", "<b>Contributes to</b>");
                         if(obj.negativeEvidence==true && !a.description.startsWith("<b>Not </b>")) a.description = "<b>Not </b>"+a.description
                     });
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
-                    if (a.category=="overview" || a.category=="Binary Interactions") {
+                    if (["overview", "Binary Interactions", "go molecular function", "go biological process"].indexOf(a.category)!==-1) {
                         for (i in a.targetingIsoformsMap){
                             var isoform = a.targetingIsoformsMap[i];
                             if (isoform.specificity=="SPECIFIC"){
@@ -351,35 +359,20 @@ Annotation section used in function, medical, and expression views.
                 this.data = data;
             },
             _sort: function(a,b) {
-                if (a.value.category=="OVERVIEW") this._sortOverview(a,b);
-                if (a.value.category=="BIOPHYSICOCHEMICAL PROPERTIES") this._sortBiophysicochemical(a,b);
-                if (a.value.category!="BINARY INTERACTIONS" && a.value.category!="ENZYMATIC ACTIVITY") return a.value.description.toLowerCase() > b.value.description.toLowerCase() ? 1 : -1;
-                if (a.value.isoformSpecific && !b.value.isoformSpecific) return 1
-                if (!a.value.isoformSpecific && b.value.isoformSpecific) return -1
-                if (a.value.isoformSpecific && b.value.isoformSpecific && b.value.isoformSpecific===a.value.isoformSpecific){
-                    if(a.value.geneName.toLowerCase() > b.value.geneName.toLowerCase()) {
-                        a.value.newSection=false;
-                        b.value.newSection=true;
-                    } else {
-                        a.value.newSection=true;
-                        b.value.newSection=false;
-                    }
-                }
-                if (a.value.isoformSpecific && b.value.isoformSpecific && a.value.isoformSpecific!==b.value.isoformSpecific){
-                    a.value.newSection=true;
-                    b.value.newSection=true;
-                    return a.value.isoformSpecific.toLowerCase() > b.value.isoformSpecific.toLowerCase() ? 1 : -1;
-                }
-                if (a.value.selfInteraction) return -1;
-                if (b.value.selfInteraction) return 1;
-                if (a.value.geneName=="-") return 1;
-                if (b.value.geneName=="-") return -1;
-                if (a.value.geneName)
-                return a.value.geneName.toLowerCase() > b.value.geneName.toLowerCase() ? 1 : -1;
-
+                if (a.value.category==="OVERVIEW") return this._sortOverview(a,b);
+                if (a.value.category==="BIOPHYSICOCHEMICAL PROPERTIES") return this._sortBiophysicochemical(a,b);
+                if (a.value.category==="BINARY INTERACTIONS") return this._sortBinaryInteractions();
+                if (a.value.category!=="ENZYMATIC ACTIVITY") return this._sortAlphabetically(a,b);
+            },
+            _sortAlphabetically: function(a,b) {
+                if(a.value.description.startsWith("<b>") || b.value.description.startsWith("<b>"))
+                    return a.value.description.replace("<b>Contributes to</b> ","").replace("<b>Not </b>","").toLowerCase()
+                    > b.value.description.replace("<b>Contributes to</b> ","").replace("<b>Not </b>","").toLowerCase() ? 1 : -1;
+                return a.value.description.toLowerCase() > b.value.description.toLowerCase() ? 1 : -1;
             },
             _sortOverview: function(a,b) {
-                return (a.value.isoformSpecific && !b.value.isoformSpecific) ? 1 : -1;
+                if (a.value.isoformSpecific && !b.value.isoformSpecific) return 1;
+                if (b.value.isoformSpecific && !a.value.isoformSpecific) return -1;
             },
             _sortBiophysicochemical: function(a,b) {
                 if(a.value.subcategory=="ABSORPTION" && b.value.subcategory!="ABSORPTION") return -1;
@@ -402,6 +395,30 @@ Annotation section used in function, medical, and expression views.
                 if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="ABSORPTION") return 1;
                 if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="DEPENDENCE") return -1;
                 if(a.value.subcategory=="DEPENDENCE" && b.value.subcategory!="DEPENDENCE") {a.value.newBpSection=true; return 1;}
+            },
+            _sortBinaryInteractions: function(a,b){
+                if (a.value.isoformSpecific && !b.value.isoformSpecific) return 1
+                if (!a.value.isoformSpecific && b.value.isoformSpecific) return -1
+                if (a.value.isoformSpecific && b.value.isoformSpecific && b.value.isoformSpecific===a.value.isoformSpecific){
+                    if(a.value.geneName.toLowerCase() > b.value.geneName.toLowerCase()) {
+                        a.value.newSection=false;
+                        b.value.newSection=true;
+                    } else {
+                        a.value.newSection=true;
+                        b.value.newSection=false;
+                    }
+                }
+                if (a.value.isoformSpecific && b.value.isoformSpecific && a.value.isoformSpecific!==b.value.isoformSpecific){
+                    a.value.newSection=true;
+                    b.value.newSection=true;
+                    return a.value.isoformSpecific.toLowerCase() > b.value.isoformSpecific.toLowerCase() ? 1 : -1;
+                }
+                if (a.value.selfInteraction) return -1;
+                if (b.value.selfInteraction) return 1;
+                if (a.value.geneName=="-") return 1;
+                if (b.value.geneName=="-") return -1;
+                if (a.value.geneName)
+                    return a.value.geneName.toLowerCase() > b.value.geneName.toLowerCase() ? 1 : -1;
             },
             _filterGold: function(item){
                 if (this.goldOnly) return item.value.qualityQualifier==="GOLD";
@@ -523,10 +540,13 @@ Annotation section used in function, medical, and expression views.
                 return databaseName.toLowerCase()==="chebi";
             },
             _isBinaryInteractionOrCofactorOrBiophysical: function (category){
-                return (category==="BINARY INTERACTIONS" || category==="COFACTOR" || category==="BIOPHYSICOCHEMICAL PROPERTIES");
+                return (["BINARY INTERACTIONS", "COFACTOR", "BIOPHYSICOCHEMICAL PROPERTIES"].indexOf(category)!==-1);
             },
             _isBiophysicochemicalProperty: function(category){
                 return category==="BIOPHYSICOCHEMICAL PROPERTIES";
+            },
+            _isPathway: function(category){
+                return ["UNIPATHWAYS", "KEGG PATHWAYS", "REACTOME PATHWAYS"].indexOf(category)!==-1;
             },
             _stringToId: function(str){
                 return str.toLowerCase().replace(" ", "-");
