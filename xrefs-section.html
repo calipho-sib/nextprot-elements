@@ -111,7 +111,7 @@ Exteranl links section present in function, medical, expression, interactions, s
       },
       getXrefByView: function(list) {
         this.count = 0;
-        this.data = [];
+        data = [];
         var dataObject = {};
         var self = this;
         list.forEach(function (k) {
@@ -120,17 +120,18 @@ Exteranl links section present in function, medical, expression, interactions, s
             else dataObject[k.databaseCategory] = [k];
           }
         });
-        self.data = Object.keys(dataObject).map(function (key) {
+        data = Object.keys(dataObject).map(function (key) {
           var temp = {};
           temp[key] = dataObject[key];
           return temp
         });
-        this.data = this.data.map(function(t){
+        data = data.map(function(t){
           t[Object.keys(t)[0]] = self._filterExceptions(t[Object.keys(t)[0]]);
           return t;
         });
-        self.data.forEach(function(x){
-          var cat = x[Object.keys(x)[0]];
+        for (var i in data) {
+          var cat = data[i][Object.keys(data[i])[0]];
+          if (cat.length===0) data.splice(i, 1);
           cat.forEach(function(x2){self.count+=1;})
           cat.sort(function (a,b){
             var dbA = a.name.toUpperCase();
@@ -147,7 +148,8 @@ Exteranl links section present in function, medical, expression, interactions, s
             else if (accA > accB) return 1;
             else return 0;
           })
-        })
+        }
+        this.data = data;
       },
       _filterExceptions: function(typeList) {
         var newTypeList = [];

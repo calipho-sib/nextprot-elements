@@ -46,6 +46,11 @@ Annotation section used in function, medical, and expression views.
                 border: 1px solid;
                 border-radius: 2px;
                 padding: 0px 2px;
+            }
+            .front-label {
+                margin-right: 5px;
+            }
+            .end-label {
                 margin-left: 5px;
             }
             .grey-x {
@@ -93,7 +98,7 @@ Annotation section used in function, medical, and expression views.
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.cvTermAccessionCode]]">
                                             <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
-                                                <span class="annotation-title isoform-label">Isoform [[annotation.value.isoformSpecific]]</span>
+                                                <span class="annotation-title isoform-label front-label">Isoform [[annotation.value.isoformSpecific]]</span>
                                             </template>
                                             <p class="annotation-title" inner-h-t-m-l="[[annotation.value.description]]"></p>
                                             <div class="annotation-labels">
@@ -119,7 +124,7 @@ Annotation section used in function, medical, and expression views.
                                             <p class="annotation-title">
                                                 <template is="dom-if" if="[[!_isBinaryInteractionOrCofactorOrBiophysical(annotation.value.category)]]">
                                                     <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
-                                                        <span class="isoform-label">Isoform [[annotation.value.isoformSpecific]]</span>
+                                                        <span class="isoform-label front-label">Isoform [[annotation.value.isoformSpecific]]</span>
                                                     </template>
                                                     <span inner-h-t-m-l="[[annotation.value.description]]"></span>
                                                 </template>
@@ -142,10 +147,10 @@ Annotation section used in function, medical, and expression views.
                                                         [[annotation.value.geneName]] >> [[annotation.value.database]]: <a href="[[annotation.value.url]]" class="ext-link">[[annotation.value.accession]]</a>
                                                     </template>
                                                     <template is="dom-if" if="[[annotation.value.interactantIsoform]]">
-                                                        <span class="isoform-label">Isoform [[annotation.value.interactantIsoform]]</span>
+                                                        <span class="isoform-label end-label">Isoform [[annotation.value.interactantIsoform]]</span>
                                                     </template>
                                                     <template is="dom-if" if="[[annotation.value.xeno]]">
-                                                        <span class="xeno-label">Xeno</span>
+                                                        <span class="xeno-label end-label">Xeno</span>
                                                     </template>
                                                     <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                 </p>
@@ -271,21 +276,29 @@ Annotation section used in function, medical, and expression views.
                 var self = this;
                 bpSection = false;
                 bpDepSection = false;
-                data_annot.forEach(function (a) {
+                absSection = false;
+                rdxSection = false;
+                for (var i in data_annot) {
+                    var a = data_annot[i];
                     if (a.category=="cofactor") {
                         a.chemicalName = a.bioObject.properties["chemical name"] ?
                                 a.bioObject.properties["chemical name"] : undefined;
                         a.prefix = "It requires the following cofactor "
                     }
-                    if (a.category=="catalytic activity") a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reaction";
+                    if (a.category=="catalytic activity" && (data_annot[i-1].category!="enzymatic activity" || i==0)) {
+                        a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reaction";
+                    } else if (a.category=="catalytic activity" && i!=0 && data_annot[i-1].category=="enzymatic activity") {
+                        data["enzymatic activity"][0].prefix = "This protein acts as an enzyme. It is known to catalyze the following reactions"
+                    }
                     if (a.category=="enzyme regulation") a.prefix = "It is regulated in the following manner";
                     if(a.category=="pathway") a.category=self._getUniqueListOfEvidenceSources(a.evidences)+" pathways";
                     if(a.category.toLowerCase()=="uniprot pathways") a.category="UNIPATHWAYS";
                     if(a.category=="subcellular location info") {
                         a.category="";
                         a.description = "<b>Note:</b> "+ a.description;}
-                    if (a.category=="kinetic KM" || a.category=="kinetic note") {
+                    if (["kinetic KM", "kinetic Vmax", "kinetic note"].indexOf(a.category)!==-1) {
                         if(a.category=="kinetic KM") a.label="K<sub>M</sub>";
+                        if(a.category=="kinetic Vmax") a.label="V<sub>Max</sub>";
                         a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="KINETIC PARAMETERS";
                         if(!bpSection) {a.newBpSection=true; bpSection=true;}
                     }
@@ -295,12 +308,15 @@ Annotation section used in function, medical, and expression views.
                         a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="DEPENDENCE";
                         if(!bpDepSection) {a.newBpSection=true; bpDepSection=true;}
                     }
-                    {}
-                    if (a.category=="kinetic Vmax" ) {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="KINETIC PARAMETERS"; a.label="V<sub>Max</sub>"};
-                    if (a.category=="kinetic note" ) {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="KINETIC PARAMETERS";};
-                    if (a.category=="absorption max") {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="ABSORPTION"; a.label="Abs max";}
-                    if (a.category=="absorption note") {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="ABSORPTION";}
-                    if (a.category=="redox potential") {a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="REDOX POTENTIAL";}
+                    if (["absorption max", "absorption note"].indexOf(a.category)!==-1) {
+                        if (a.category=="absorption max") a.label="Abs(max)";
+                        a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="ABSORPTION";
+                        if(!absSection) {a.newBpSection=true; absSection=true;}
+                    }
+                    if (a.category=="redox potential") {
+                        a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="REDOX POTENTIAL";
+                        if(!rdxSection) {a.newBpSection=true; rdxSection=true;}
+                    }
                     if(Object.keys(self.categoryTitles).indexOf(a.category)!=-1) a.category = self.categoryTitles[a.category];
                     if (a.description) a.description= a.description.charAt(0).toUpperCase()+ self._addPubmedLink(a.description).slice(1);
                     if (a.cvTermName) a.cvTermName=a.cvTermName.charAt(0).toUpperCase()+a.cvTermName.slice(1);
@@ -317,13 +333,13 @@ Annotation section used in function, medical, and expression views.
                     a.xeno = a.database!="neXtProt" ? true : false;
                     if (!data.hasOwnProperty(a.category)) data[a.category]=[];
                     a.evidences.forEach(function(obj){
-                        if(obj.goQualifier==="contributes_to") a.description = a.description.replace("Contributes to", "<b>Contributes to</b>");
-                        if(obj.negativeEvidence==true && !a.description.startsWith("<b>Not </b>")) a.description = "<b>Not </b>"+a.description
+                        if(obj.goQualifier==="contributes_to" && !a.description.startsWith("<b>Contributes to</b>")) a.description = a.description.replace("Contributes to", "<b>Contributes to</b>");
+                        if(obj.negativeEvidence==true && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b> "+a.description
                     });
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
                     if (["overview", "Binary Interactions", "go molecular function", "go biological process"].indexOf(a.category)!==-1) {
-                        for (i in a.targetingIsoformsMap){
-                            var isoform = a.targetingIsoformsMap[i];
+                        for (j in a.targetingIsoformsMap){
+                            var isoform = a.targetingIsoformsMap[j];
                             if (isoform.specificity=="SPECIFIC"){
                                 a.isoformSpecific = data_isoforms[isoform.isoformAccession].mainEntityName.name;
                             }
@@ -354,7 +370,7 @@ Annotation section used in function, medical, and expression views.
                         isoformSpecific: a.isoformSpecific,
                         interactantIsoform: a.interactantIsoform
                     });
-                });
+                }
                 Object.keys(data).forEach(function(d){self.count+=data[d].length;});
                 this.data = data;
             },
@@ -366,8 +382,8 @@ Annotation section used in function, medical, and expression views.
             },
             _sortAlphabetically: function(a,b) {
                 if(a.value.description.startsWith("<b>") || b.value.description.startsWith("<b>"))
-                    return a.value.description.replace("<b>Contributes to</b> ","").replace("<b>Not </b>","").toLowerCase()
-                    > b.value.description.replace("<b>Contributes to</b> ","").replace("<b>Not </b>","").toLowerCase() ? 1 : -1;
+                    return a.value.description.replace("<b>Contributes to</b> ","").replace("<b>Not</b> ","").toLowerCase()
+                    > b.value.description.replace("<b>Contributes to</b> ","").replace("<b>Not</b> ","").toLowerCase() ? 1 : -1;
                 return a.value.description.toLowerCase() > b.value.description.toLowerCase() ? 1 : -1;
             },
             _sortOverview: function(a,b) {
@@ -378,15 +394,13 @@ Annotation section used in function, medical, and expression views.
                 if(a.value.subcategory=="ABSORPTION" && b.value.subcategory!="ABSORPTION") return -1;
                 if(a.value.subcategory=="ABSORPTION" && b.value.subcategory=="ABSORPTION") {
                     if(a.value.label){
-                        a.value.newBpSection=true;
-                        b.value.newBpSection=false;
                         return -1;
                     }
-                    a.value.newBpSection=false;
-                    b.value.newBpSection=true;
                     return 1;
                 }
                 if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="KINETIC PARAMETERS") {
+                    if(a.value.label == "K<sub>M</sub>" && b.value.label == "V<sub>Max</sub>") return -1;
+                    if(a.value.label == "V<sub>Max</sub>" && b.value.label == "K<sub>M</sub>") return 1;
                     if(a.value.id > b.value.id) {
                         return 1;
                     }
@@ -394,7 +408,7 @@ Annotation section used in function, medical, and expression views.
                 }
                 if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="ABSORPTION") return 1;
                 if(a.value.subcategory=="KINETIC PARAMETERS" && b.value.subcategory=="DEPENDENCE") return -1;
-                if(a.value.subcategory=="DEPENDENCE" && b.value.subcategory!="DEPENDENCE") {a.value.newBpSection=true; return 1;}
+                if(a.value.subcategory=="DEPENDENCE" && b.value.subcategory!="DEPENDENCE") return 1;
             },
             _sortBinaryInteractions: function(a,b){
                 if (a.value.isoformSpecific && !b.value.isoformSpecific) return 1
@@ -516,9 +530,6 @@ Annotation section used in function, medical, and expression views.
             _toggle: function(mouseEvent){
                 var srcElementId = mouseEvent.target.id || mouseEvent.target.parentNode.id;
                 this.$$("#"+srcElementId.replace('button','container')).toggle();
-            },
-            _boldPattern: function(str, pattern){
-                return str.replace(pattern, "<b>"+pattern+"</b>");
             },
             _isNewPathwayCategory: function(category, name){
                 if (category=="pathway" && this.pathwayCategory!=new String(name).split('_')[0]) {
