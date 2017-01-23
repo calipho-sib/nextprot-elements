@@ -674,6 +674,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 var evidenceSourceList = [];
                 evidenceList.forEach(function(evidence){
                     if (evidence.assignedBy.toLowerCase()=="uniprotkb") evidence.assignedBy="UniProtKB";
+                    if (evidence.assignedBy.toLowerCase()=="nextprot") evidence.assignedBy="neXtProt";
                     if(evidenceSourceList.indexOf(evidence.assignedBy) < 0) {
                         evidenceSourceList.push(evidence.assignedBy);
                     }
