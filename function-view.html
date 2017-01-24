@@ -23,6 +23,9 @@ View listing protein function annotations.
         background:#ECF0F1;
         overflow-y: auto;
       }
+      isoform-selector {
+        margin: 0 -20px;
+      }
     </style>
     <div class="row">
       <div id="nxOverview" class="col-md-12">
@@ -34,14 +37,14 @@ View listing protein function annotations.
     </div>
     <div class="row">
       <div id="nxAnnotations" class="col-md-12">
-        <isoform-selector nx-config="{{nxConfig}}"></isoform-selector>
+        <isoform-selector nx-config="{{nxConfig}}" iso-name="{{isoform}}" show-all-tab></isoform-selector>
         <generic-annotation-section id="annotationElement" section="function" goldOnly="{{goldOnly}}"
                                     categories='["FUNCTION-INFO", "CATALYTIC-ACTIVITY", "COFACTOR",
                                       "ENZYME-REGULATION", "GO-MOLECULAR-FUNCTION", "GO-BIOLOGICAL-PROCESS",
                                       "PATHWAY", "ALLERGEN", "MISCELLANEOUS", "CAUTION", "BIOPHYSICOCHEMICAL-PROPERTY"]'
                                     category-titles='{"function": "overview", "catalytic activity": "enzymatic activity", "enzyme regulation": "enzymatic activity",
                                     "cofactor": "enzymatic activity", "miscellaneous": "note", "subunit": "overview", "BinaryInteraction": "Binary Interactions"}'
-                                    count="{{annotationsCount}}" nx-config="{{nxConfig}}">
+                                    count="{{annotationsCount}}" nx-config="{{nxConfig}}" isoform="[[isoform]]">
         </generic-annotation-section>
       </div>
     </div>
@@ -54,8 +57,8 @@ View listing protein function annotations.
     </div>
     <div class="row">
       <div id="nxXrefs" class="col-md-12">
-        <xrefs-section categories='["BRENDA", "CAZy", "KEGGPathway", "MEROPS", "PeroxiBase",
-          "BioCyc", "Reactome","Pathway_Interaction_DB", "REBASE", "TCDB", "GeneWiki", "SABIO-RK",
+        <xrefs-section categories='["BRENDA", "CAZy", "MEROPS", "PeroxiBase",
+          "BioCyc", "Pathway_Interaction_DB", "REBASE", "TCDB", "GeneWiki", "SABIO-RK",
           "GenomeRNAi", "GuidetoPHARMACOLOGY", "PRO","MoonProt", "ESTHER", "SwissLipids"]' nx-config="{{nxConfig}}" count="{{xrefsCount}}">
         </xrefs-section>
       </div>

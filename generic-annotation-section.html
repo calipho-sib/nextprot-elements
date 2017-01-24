@@ -77,7 +77,7 @@ Annotation section used in function, medical, and expression views.
                         <h4 class="annotation-category-title"> [[category.name]]</h4>
                     </div>
                     <div id="[[_stringToId(category.name)]]-section">
-                        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" sort="_sort" filter="_filterGold" initial-count="10" target-framerate="1">
+                        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" sort="_sort" filter="_filter" initial-count="10" target-framerate="1">
                             <template is="dom-if" if="[[annotation.value.newSection]]">
                                 <div class="grey-x">Interactions for Isoform [[annotation.value.isoformSpecific]]</div>
                             </template>
@@ -236,6 +236,10 @@ Annotation section used in function, medical, and expression views.
                 count: {
                     type: Number,
                     notify: true
+                },
+                isoform: {
+                    type: String,
+                    observer: "_getAnnotationsByView"
                 }
             },
             ready: function(){
@@ -250,7 +254,6 @@ Annotation section used in function, medical, and expression views.
                 Promise.all(apiCall)
                         .then(function (categories) {
                             self.annotationsByCategory = categories;
-                            self._getAnnotationsByView();
                             self.$.spinner.removeAttribute('active');
                         }).catch(function (err) {
                             // catch any error that happened so far
@@ -337,12 +340,11 @@ Annotation section used in function, medical, and expression views.
                         if(obj.negativeEvidence==true && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b> "+a.description
                     });
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
-                    if (["overview", "Binary Interactions", "go molecular function", "go biological process"].indexOf(a.category)!==-1) {
-                        for (j in a.targetingIsoformsMap){
-                            var isoform = a.targetingIsoformsMap[j];
-                            if (isoform.specificity=="SPECIFIC"){
-                                a.isoformSpecific = data_isoforms[isoform.isoformAccession].mainEntityName.name;
-                            }
+                    for (j in a.targetingIsoformsMap){
+                        var isoform = a.targetingIsoformsMap[j];
+                        if (isoform.specificity=="SPECIFIC"){
+                            a.isoformAccession = isoform.isoformAccession;
+                            a.isoformSpecific = data_isoforms[isoform.isoformAccession].mainEntityName.name;
                         }
                     }
                     data[a.category].push({
@@ -368,6 +370,7 @@ Annotation section used in function, medical, and expression views.
                         evidenceSources: self._getUniqueListOfEvidenceSources(a.evidences),
                         qualityQualifier: a.qualityQualifier,
                         isoformSpecific: a.isoformSpecific,
+                        isoformAccession: a.isoformAccession,
                         interactantIsoform: a.interactantIsoform
                     });
                 }
@@ -377,7 +380,7 @@ Annotation section used in function, medical, and expression views.
             _sort: function(a,b) {
                 if (a.value.category==="OVERVIEW") return this._sortOverview(a,b);
                 if (a.value.category==="BIOPHYSICOCHEMICAL PROPERTIES") return this._sortBiophysicochemical(a,b);
-                if (a.value.category==="BINARY INTERACTIONS") return this._sortBinaryInteractions();
+                if (a.value.category==="BINARY INTERACTIONS") return this._sortBinaryInteractions(a,b);
                 if (a.value.category!=="ENZYMATIC ACTIVITY") return this._sortAlphabetically(a,b);
             },
             _sortAlphabetically: function(a,b) {
@@ -434,8 +437,15 @@ Annotation section used in function, medical, and expression views.
                 if (a.value.geneName)
                     return a.value.geneName.toLowerCase() > b.value.geneName.toLowerCase() ? 1 : -1;
             },
+            _filter: function(item){
+                return (this._filterGold(item) && this._filterIsoform(item));
+            },
             _filterGold: function(item){
                 if (this.goldOnly) return item.value.qualityQualifier==="GOLD";
+                return true;
+            },
+            _filterIsoform: function(item){
+                if (this.isoform!=="all") return (item.value.isoformAccession===this.isoform || !item.value.isoformSpecific);
                 return true;
             },
             _toggleAllEvidences: function(){
