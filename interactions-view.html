@@ -22,12 +22,12 @@ View listing protein interaction annotations.
     </style>
     <div class="row">
       <div id="nxOverview" class="col-md-12">
-        <protein-overview nx-config="{{nxConfig}}"></protein-overview>
+        <protein-overview nx-config="[[nxConfig]]" nx-entry="{{nxEntry}}"></protein-overview>
       </div>
     </div>
     <div class="row nxSection">
-      <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}}></isoform-selector>
-      <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] feature-list='[{"APIRef": "interacting-region",
+      <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}}></isoform-selector>
+      <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]] feature-list='[{"APIRef": "interacting-region",
           "metadata": {
           "name": "Interacting region",
           "className": "intregion",
@@ -280,14 +280,14 @@ View listing protein interaction annotations.
           "metadata": {}
           }]'></triple-viewer>
     </div>
-    <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no interaction information available in neXtProt for {{nxEntry}}.
+    <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no interaction information available in neXtProt for [[nxEntry]].
       Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
     </div>
     <div class="row">
       <div id="nxAnnotations" class="col-md-12">
-        <generic-annotation-section section="interactions" goldOnly="{{goldOnly}}" nx-config="{{nxConfig}}" nx-entry="{{nxEntry}}" count="{{annotationsCount}}"
+        <generic-annotation-section section="interactions" goldOnly="[[goldOnly]]" nx-config="[[nxConfig]]" isoform="[[isoName]]"
                                     categories='["INTERACTION-INFO", "ENZYME-REGULATION", "COFACTOR", "BINARY-INTERACTION"]'
-                                    category-titles='{"subunit": "overview", "BinaryInteraction": "Binary Interactions"}'>
+                                    category-titles='{"subunit": "overview", "BinaryInteraction": "Binary Interactions"}' count="{{annotationsCount}}">
         </generic-annotation-section>
         <!--filterAnnot:{annot-> (annot.getAnnotationCategory() == AnnotationCategory.MISCELLANEOUS &&
         !annot.getMiscellaneousSubCategory().equals('interaction'))? false:true;-->
@@ -295,13 +295,13 @@ View listing protein interaction annotations.
     </div>
     <div class="row">
       <div id="nxKeywords" class="col-md-12">
-        <keywords-section categories='["Ligand"]' count="{{keywordsCount}}"  nx-config="{{nxConfig}}">
+        <keywords-section categories='["Ligand"]' nx-config="[[nxConfig]]" count="{{keywordsCount}}">
         </keywords-section>
       </div>
     </div>
     <div class="row">
       <div id="nxXrefs" class="col-md-12">
-        <xrefs-section categories='["BindingDB","DIP","IntAct","MINT","STRING","SignaLink","BioGrid"]' count="{{xrefsCount}}"  nx-config="{{nxConfig}}">
+        <xrefs-section categories='["BindingDB","DIP","IntAct","MINT","STRING","SignaLink","BioGrid"]' nx-config="[[nxConfig]]" count="{{xrefsCount}}">
         </xrefs-section>
       </div>
     </div>

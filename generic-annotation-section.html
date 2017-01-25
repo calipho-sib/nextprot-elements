@@ -222,6 +222,10 @@ Annotation section used in function, medical, and expression views.
                     type: Object,
                     value: {}
                 },
+                annotationsByCategory: {
+                    type: Array,
+                    value: []
+                },
                 section: {
                     type: String
                 },
@@ -239,7 +243,7 @@ Annotation section used in function, medical, and expression views.
                 },
                 isoform: {
                     type: String,
-                    observer: "_getAnnotationsByView"
+                    observer: "_reloadIsoform"
                 }
             },
             ready: function(){
@@ -254,6 +258,7 @@ Annotation section used in function, medical, and expression views.
                 Promise.all(apiCall)
                         .then(function (categories) {
                             self.annotationsByCategory = categories;
+                            self._getAnnotationsByView();
                             self.$.spinner.removeAttribute('active');
                         }).catch(function (err) {
                             // catch any error that happened so far
@@ -263,12 +268,15 @@ Annotation section used in function, medical, and expression views.
                             self.count = 0;
                         });
             },
+            _reloadIsoform: function(){
+                if(this.count) this._getAnnotationsByView();
+            },
             _getAnnotationsByView: function() {
                 var data_xrefs = [];
                 var data_publi = [];
                 var data_isoforms = [];
                 var data_annot = [];
-                this.count = 0;
+                var count = 0;
                 this.annotationsByCategory.forEach(function(d) {
                     Object.assign(data_xrefs, d.xrefs);
                     Object.assign(data_publi, d.publi);
@@ -374,8 +382,9 @@ Annotation section used in function, medical, and expression views.
                         interactantIsoform: a.interactantIsoform
                     });
                 }
-                Object.keys(data).forEach(function(d){self.count+=data[d].length;});
+                Object.keys(data).forEach(function(d){count+=data[d].length;});
                 this.data = data;
+                this.count = count;
             },
             _sort: function(a,b) {
                 if (a.value.category==="OVERVIEW") return this._sortOverview(a,b);
@@ -445,7 +454,7 @@ Annotation section used in function, medical, and expression views.
                 return true;
             },
             _filterIsoform: function(item){
-                if (this.isoform!=="all") return (item.value.isoformAccession===this.isoform || !item.value.isoformSpecific);
+                if (this.isoform && this.isoform!=="all") return (item.value.isoformAccession===this.isoform || !item.value.isoformSpecific);
                 return true;
             },
             _toggleAllEvidences: function(){
