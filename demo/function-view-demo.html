@@ -21,12 +21,28 @@
 
     <div class="vertical-section-container centered">
       <h3>Basic function-view Demo</h3>
+      <h4><span><label>Gold only</label><input type="checkbox" onchange="toggleGoldOnly()" style="margin-left: 20px;"></span></h4>
       <demo-snippet>
         <template>
           <function-view nx-config='{"entry": "P52701"}'></function-view>
         </template>
       </demo-snippet>
     </div>
-
+    <script>
+      function toggleGoldOnly(){
+        var gasElement = document.querySelector("generic-annotation-section");
+        var tvElement = document.querySelector("triple-viewer");
+        if(gasElement.hasAttribute("gold-only")){
+          gasElement.removeAttribute("gold-only");
+        } else{
+          gasElement.setAttribute("gold-only","true");
+        }
+        if(tvElement.hasAttribute("gold-only")){
+          tvElement.removeAttribute("gold-only");
+        } else{
+          tvElement.setAttribute("gold-only","true");
+        }
+      }
+    </script>
   </body>
 </html>
