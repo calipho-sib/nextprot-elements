@@ -1,0 +1,90 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="protein-overview.html">
+<link rel="import" href="publication-item.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="../pagination-table/pagination-table.html">
+<script src="../nextprot-js/src/nextprot-core.js"></script>
+<!--
+`publications-view`
+Publications listing used in curated and additional publications pages.
+
+@demo demo/publications-view-demo.html
+-->
+<dom-module id="publications-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+            #container {
+                padding: 10px 0;
+                border: 1px solid red;
+            }
+        </style>
+        <div class="row">
+            <div id="nxOverview" class="col-md-12">
+                <protein-overview nx-config="{{nxConfig}}"></protein-overview>
+            </div>
+        </div>
+        <div class="row">
+            <div class="nxSection col-md-12">
+                <div id="publications-header" class="category-header">
+                    <h4 id="publications-title" class="category-title">
+                        <template is="dom-if" if="[[curated]]">Curated</template>
+                        <template is="dom-if" if="[[!curated]]">Additional</template>
+                        publications</h4>
+                    <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+                </div>
+                <pagination-table items="{{items}}" layout="publication-item" custom-style="border: 1px solid red;"></pagination-table>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'publications-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                items: {
+                    type: Array,
+                    notify: true
+                },
+                curated: {
+                    type: Boolean,
+                    value: true
+                },
+                count: {
+                    type: Number,
+                    notify: true
+                }
+            },
+            attached: function (){
+                this.nx = new Nextprot.Client("neXtprot publications view", "Calipho Group");
+                var self = this;
+                this.nx.getEntry(this.nxConfig.entry)
+                    .then(function (data) {
+                        var publications = [];
+                        data.publications.forEach(function(publication){
+                            if (self.curated && publication.isCurated) {
+                                publications.push(publication);
+                            } else if (!self.curated && !publication.isCurated) {
+                                publications.push(publication);
+                            }
+                        });
+                        self.items = publications;
+                        self.count = publications.length;
+                        self.$.spinner.active = false;
+                    }).catch(function (err) {
+                        // catch any error that happened so far
+                        console.log("Argh, broken: " + err.message);
+                        console.log("Error at line : " + err.stack);
+                        self.$.spinner.active = false;
+                        self.count = 0;
+                    });
+            }
+        });
+    </script>
+</dom-module>
