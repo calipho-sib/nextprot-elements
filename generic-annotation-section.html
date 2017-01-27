@@ -251,9 +251,7 @@ Annotation section used in function, medical, and expression views.
                 var nx = new Nextprot.Client("neXtprot annotation loader", "Calipho Group");
                 var apiCall = [];
                 var self = this;
-                this.categories.forEach(function(a){
-                    apiCall.push(nx.getAnnotationsByCategory(self.nxConfig.entry, a))
-                });
+                for (var i in this.categories) apiCall.push(nx.getAnnotationsByCategory(self.nxConfig.entry, this.categories[i]))
                 var self = this;
                 Promise.all(apiCall)
                         .then(function (categories) {
@@ -277,12 +275,12 @@ Annotation section used in function, medical, and expression views.
                 var data_isoforms = [];
                 var data_annot = [];
                 var count = 0;
-                this.annotationsByCategory.forEach(function(d) {
-                    Object.assign(data_xrefs, d.xrefs);
-                    Object.assign(data_publi, d.publi);
-                    Object.assign(data_isoforms, d.isoforms);
-                    $.merge(data_annot, d.annot);
-                });
+                for(var i in this.annotationsByCategory) {
+                    Object.assign(data_xrefs, this.annotationsByCategory[i].xrefs);
+                    Object.assign(data_publi, this.annotationsByCategory[i].publi);
+                    Object.assign(data_isoforms, this.annotationsByCategory[i].isoforms);
+                    $.merge(data_annot, this.annotationsByCategory[i].annot);
+                };
                 data = {};
                 var self = this;
                 bpSection = false;
@@ -343,10 +341,10 @@ Annotation section used in function, medical, and expression views.
                     a.selfInteraction = a.propertiesMap.selfInteraction ? a.propertiesMap.selfInteraction[0].value : false;
                     a.xeno = a.database!="neXtProt" ? true : false;
                     if (!data.hasOwnProperty(a.category)) data[a.category]=[];
-                    a.evidences.forEach(function(obj){
-                        if(obj.goQualifier==="contributes_to" && !a.description.startsWith("<b>Contributes to</b>")) a.description = a.description.replace("Contributes to", "<b>Contributes to</b>");
-                        if(obj.negativeEvidence==true && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b> "+a.description
-                    });
+                    for(var j in a.evidences){
+                        if(a.evidences[j].goQualifier==="contributes_to" && !a.description.startsWith("<b>Contributes to</b>")) a.description = a.description.replace("Contributes to", "<b>Contributes to</b>");
+                        if(a.evidences[j].negativeEvidence==true && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b> "+a.description
+                    };
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
                     for (j in a.targetingIsoformsMap){
                         var isoform = a.targetingIsoformsMap[j];
@@ -382,7 +380,7 @@ Annotation section used in function, medical, and expression views.
                         interactantIsoform: a.interactantIsoform
                     });
                 }
-                Object.keys(data).forEach(function(d){count+=data[d].length;});
+                for (var i in Object.keys(data)) count+=data[Object.keys(data)[i]].length;
                 this.data = data;
                 this.count = count;
             },
@@ -518,12 +516,12 @@ Annotation section used in function, medical, and expression views.
             },
             _getUniqueListOfEvidenceSources: function(evidenceList){
                 var evidenceSourceList = [];
-                evidenceList.forEach(function(evidence){
-                    if (evidence.assignedBy.endsWith("_PTW")) evidence.assignedBy = evidence.assignedBy.replace("_PTW","");
-                    if(evidenceSourceList.indexOf(evidence.assignedBy) < 0) {
-                        evidenceSourceList.push(evidence.assignedBy);
+                for (var i in evidenceList){
+                    if (evidenceList[i].assignedBy.endsWith("_PTW")) evidenceList[i].assignedBy = evidenceList[i].assignedBy.replace("_PTW","");
+                    if(evidenceSourceList.indexOf(evidenceList[i].assignedBy) < 0) {
+                        evidenceSourceList.push(evidenceList[i].assignedBy);
                     }
-                });
+                }
                 return evidenceSourceList;
             },
             _checkIfContainsAccessionOrXref: function(annotation){
