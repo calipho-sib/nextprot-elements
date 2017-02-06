@@ -1,7 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="protein-overview.html">
 <link rel="import" href="generic-annotation-section.html">
-<link rel="import" href="isoform-selector.html">
 <link rel="import" href="keywords-section.html">
 <link rel="import" href="xrefs-section.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
@@ -23,9 +22,6 @@ View listing protein function annotations.
         background:#ECF0F1;
         overflow-y: auto;
       }
-      isoform-selector {
-        margin: 0 -20px;
-      }
     </style>
     <div class="row">
       <div id="nxOverview" class="col-md-12">
@@ -37,15 +33,14 @@ View listing protein function annotations.
     </div>
     <div class="row">
       <div id="nxAnnotations" class="col-md-12">
-        <isoform-selector nx-config="[[nxConfig]]" iso-name="{{isoform}}" show-all-tab></isoform-selector>
         <generic-annotation-section id="annotationElement" section="function" goldOnly="[[goldOnly]]"
                                     categories='["FUNCTION-INFO", "CATALYTIC-ACTIVITY", "COFACTOR",
                                       "ENZYME-REGULATION", "BIOPHYSICOCHEMICAL-PROPERTY", "GO-MOLECULAR-FUNCTION", "GO-BIOLOGICAL-PROCESS",
                                       "PATHWAY", "ALLERGEN", "MISCELLANEOUS", "CAUTION"]'
                                     category-titles='{"function": "overview", "catalytic activity": "enzymatic activity", "enzyme regulation": "enzymatic activity",
                                     "cofactor": "enzymatic activity", "miscellaneous": "note", "subunit": "overview", "BinaryInteraction": "Binary Interactions"}'
-                                    nx-config="[[nxConfig]]" isoform="[[isoform]]" count="{{annotationsCount}}">
-        </generic-annotation-section><!--add category TRANSPORT-ACTIVITY after CATALYTIC-ACTIVITY and "transport activity": "enzymatic activity" in category titles-->
+                                    nx-config="[[nxConfig]]" count="{{annotationsCount}}">
+        </generic-annotation-section><!--when API is ready, add category TRANSPORT-ACTIVITY after CATALYTIC-ACTIVITY and "transport activity": "enzymatic activity" in category titles-->
       </div>
     </div>
     <div class="row">
