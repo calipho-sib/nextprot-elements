@@ -1,0 +1,111 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="blast-styles.html">
+<!--
+`blast-item`
+Blast item demo
+
+@demo demo/blast-item-demo.html
+-->
+<dom-module id="blast-item">
+    <template>
+        <style include="blast-styles">
+            :host {
+                background:#ECF0F1;
+            }
+            .collapse-content {
+                background-color: #F3F5FC;
+            }
+            .item-line {
+                margin-top: 10px;
+                border-bottom: #ebeffa 1px solid;
+            }
+            .details-line {
+                margin: 0px 5px 5px 7px;
+            }
+            font-large-x {
+                font-size: 120%;
+            }
+            svg {
+                margin-top: 5px;
+            }
+        </style>
+        <div class="item-line">
+            <div class="row">
+                <div class="col-lg-6">
+                    <a href="https://www.nextprot.org/entry/[[data.description.0.entry_accession]]" target="_parent" class="font-large-x">
+                        [[data.description.0.isoform_accession]] [[data.description.0.title]]
+                    </a><br/>
+                    <svg height="20" width="95%"><rect height="12" width="100%" fill$="[[data.color]]" on-tap="_pointIdentity"></rect></svg>
+                </div>
+                <div class="col-lg-2 nomargin hright">
+                    <svg height="22" width="95%"><rect y="16" height="6" width="100%" fill$="[[data.color]]" on-tap="_pointIdentity"></rect></svg>
+                </div>
+                <div class="col-lg-1 nomargin hright">[[data.hsps.0.align_len]]aa</div>
+                <div class="col-lg-1 nomargin hright">[[data.hsps.0.identity_percent]]%</div>
+                <div class="col-lg-1 nomargin hright">[[data.hsps.0.score]]</div>
+                <div class="col-lg-1 hright">[[data.hsps.0.evalue]]</div>
+            </div>
+            <iron-collapse opened="[[showAlignment]]">
+                <div class="collapse-content">
+                    <div class="details-line">
+                        <span class="quiet">score </span>
+                        <span class="bold">[[data.hsps.0.bit_score]] bits ([[data.hsps.0.score]])</span><span class="quiet">, identities </span>
+                        <span class="bold">[[data.hsps.0.identity]]/[[data.hsps.0.align_len]]</span><span class="quiet">, positives </span>
+                        <span class="bold">[[data.hsps.0.positive]]/[[data.hsps.0.align_len]]</span><span class="quiet">, gaps </span>
+                        <span class="bold">[[data.hsps.0.gaps]]/[[data.hsps.0.align_len]]</span>
+                    </div>
+                    <div>
+                        <template is="dom-repeat" items="[[_formatAlignment(data.hsps.0)]]" as="line">
+                            <div>
+                                <span class="pre small"> [[line.0]]</span><br/>
+                                <span class="pre small"> [[line.1]]</span><br/>
+                                <span class="pre small"> [[line.2]]</span><br/>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </iron-collapse>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'blast-item',
+            properties: {
+                data: {
+                    type: Object
+                },
+                showAlignment: {
+                    type: Boolean,
+                    value: true
+                },
+                seqCharPerLine: {
+                    type: Number,
+                    value: 80
+                }
+            },
+            _formatAlignment: function(hit){
+                var index=0;
+                var formatedSeq = [];
+                var max_label_len = hit.query_to >= hit.hit_to ? hit.query_to.toString().length : hit.hit_to.toString().length;
+                while (index<hit.qseq.length) {
+                    var query_start = hit.query_from+index;
+                    var query_max = new Number(query_start+this.seqCharPerLine);
+                    var query_end = hit.query_to<=query_max ? hit.query_to : query_max-1;
+                    var hit_start = hit.hit_from+index;
+                    var hit_max = new Number(hit_start+this.seqCharPerLine);
+                    var hit_end = hit.hit_to<=hit_max ? hit.hit_to : hit_max-1;
+                    formatedSeq.push([
+                        "query   "+" ".repeat(max_label_len-query_start.toString().length)+query_start+" "+hit.qseq.slice(index,index+this.seqCharPerLine)+" "+query_end,
+                        "        "+" ".repeat(max_label_len+1)+(hit.midline.slice(index,index+this.seqCharPerLine)),
+                        "subject "+" ".repeat(max_label_len-hit_start.toString().length)+hit_start+" "+hit.hseq.slice(index,index+this.seqCharPerLine)+" "+hit_end]);
+                    index+=this.seqCharPerLine;
+                }
+                return formatedSeq;
+            },
+            _pointIdentity: function(event){
+                this.domHost.domHost.pointIdentity(this.data.hsps[0].identity_percent);
+            }
+        });
+    </script>
+</dom-module>

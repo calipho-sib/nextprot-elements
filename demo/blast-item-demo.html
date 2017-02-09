@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <title>publication-item demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../blast-item.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .vertical-section-container {
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+<div class="vertical-section-container centered">
+    <h3>blast-item demo</h3>
+    <demo-snippet>
+        <template>
+            <blast-item data='{
+"description" : [ {
+"title" : "Carbonic anhydrase 2 (CA2) [NX_P00918-1]",
+"entry_accession" : "NX_P00918",
+"isoform_accession" : "NX_P00918-1",
+"isoform_name" : "Iso 1",
+"protein_name" : "Carbonic anhydrase 2",
+"gene_name" : "CA2"
+} ],
+"len" : 260,
+"hsps" : [ {
+"bit_score" : 536.569,
+"score" : 1381,
+"evalue" : 0.0,
+"identity" : 260,
+"positive" : 260,
+"query_from" : 1,
+"query_to" : 260,
+"hit_from" : 1,
+"hit_to" : 260,
+"align_len" : 260,
+"gaps" : 0,
+"qseq" : "MSHHWGYGKHNGPEHWHKDFPIAKGERQSPVDIDTHTAKYDPSLKPLSVSYDQATSLRILNNGHAFNVEFDDSQDKAVLKGGPLDGTYRLIQFHFHWGSLDGQGSEHTVDKKKYAAELHLVHWNTKYGDFGKAVQQPDGLAVLGIFLKVGSAKPGLQKVVDVLDSIKTKGKSADFTNFDPRGLLPESLDYWTYPGSLTTPPLLECVTWIVLKEPISVSSEQVLKFRKLNFNGEGEPEELMVDNWRPAQPLKNRQIKASFK",
+"hseq" : "MSHHWGYGKHNGPEHWHKDFPIAKGERQSPVDIDTHTAKYDPSLKPLSVSYDQATSLRILNNGHAFNVEFDDSQDKAVLKGGPLDGTYRLIQFHFHWGSLDGQGSEHTVDKKKYAAELHLVHWNTKYGDFGKAVQQPDGLAVLGIFLKVGSAKPGLQKVVDVLDSIKTKGKSADFTNFDPRGLLPESLDYWTYPGSLTTPPLLECVTWIVLKEPISVSSEQVLKFRKLNFNGEGEPEELMVDNWRPAQPLKNRQIKASFK",
+"midline" : "MSHHWGYGKHNGPEHWHKDFPIAKGERQSPVDIDTHTAKYDPSLKPLSVSYDQATSLRILNNGHAFNVEFDDSQDKAVLKGGPLDGTYRLIQFHFHWGSLDGQGSEHTVDKKKYAAELHLVHWNTKYGDFGKAVQQPDGLAVLGIFLKVGSAKPGLQKVVDVLDSIKTKGKSADFTNFDPRGLLPESLDYWTYPGSLTTPPLLECVTWIVLKEPISVSSEQVLKFRKLNFNGEGEPEELMVDNWRPAQPLKNRQIKASFK",
+"identity_percent" : 100.0
+} ]
+}'></blast-item>
+        </template>
+    </demo-snippet>
+</div>
+</body>
+</html>
