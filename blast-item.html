@@ -20,8 +20,15 @@ Blast item demo
                 margin-top: 10px;
                 border-bottom: #ebeffa 1px solid;
             }
+            .hsp-container {
+                border-bottom: solid lightgray 1px;
+                margin-bottom: 10px;
+            }
             .details-line {
-                margin: 0px 5px 5px 7px;
+                margin: 5px 5px 5px 7px;
+            }
+            .hsp-segment {
+                margin: 5px 0;
             }
             font-large-x {
                 font-size: 120%;
@@ -31,39 +38,44 @@ Blast item demo
             }
         </style>
         <div class="item-line">
-            <div class="row">
+            <div class="row" on-tap="_toggleAlignment">
                 <div class="col-lg-6">
                     <a href="https://www.nextprot.org/entry/[[data.description.0.entry_accession]]" target="_parent" class="font-large-x">
                         [[data.description.0.isoform_accession]] [[data.description.0.title]]
                     </a><br/>
-                    <svg height="20" width="95%"><rect height="12" width="100%" fill$="[[data.color]]" on-tap="_pointIdentity"></rect></svg>
+                    <!--<rect x$="[[hsp.query_from]]" y="20" width$="[[hsp.query_to]]" height="12" fill$="[[hsp.color]]" on-mouseover="_pointIdentity"></rect>-->
+                    <svg height="20" width="95%"><rect x="0" y="0" width="100%" height="12" fill$="[[data.hsps.0.color]]" on-mouseover="_pointIdentity"></rect></svg>
                 </div>
                 <div class="col-lg-2 nomargin hright">
-                    <svg height="22" width="95%"><rect y="16" height="6" width="100%" fill$="[[data.color]]" on-tap="_pointIdentity"></rect></svg>
+                    <svg height="22" width="95%"><rect y="16" height="6" width="100%" fill$="[[data.hsps.0.color]]" on-mouseover="_pointIdentity"></rect></svg>
                 </div>
-                <div class="col-lg-1 nomargin hright">[[data.hsps.0.align_len]]aa</div>
-                <div class="col-lg-1 nomargin hright">[[data.hsps.0.identity_percent]]%</div>
-                <div class="col-lg-1 nomargin hright">[[data.hsps.0.score]]</div>
-                <div class="col-lg-1 hright">[[data.hsps.0.evalue]]</div>
+                <div class="col-lg-1 nomargin hright">[[data.len]]aa</div>
+                <div class="col-lg-1 nomargin hright">[[identity_percent]]%</div>
+                <div class="col-lg-1 nomargin hright">[[score]]</div>
+                <div class="col-lg-1 hright">[[_toExponential(evalue)]]</div>
             </div>
-            <iron-collapse opened="[[showAlignment]]">
+            <iron-collapse id="alignmentContainer" opened="[[showAlignment]]">
                 <div class="collapse-content">
-                    <div class="details-line">
-                        <span class="quiet">score </span>
-                        <span class="bold">[[data.hsps.0.bit_score]] bits ([[data.hsps.0.score]])</span><span class="quiet">, identities </span>
-                        <span class="bold">[[data.hsps.0.identity]]/[[data.hsps.0.align_len]]</span><span class="quiet">, positives </span>
-                        <span class="bold">[[data.hsps.0.positive]]/[[data.hsps.0.align_len]]</span><span class="quiet">, gaps </span>
-                        <span class="bold">[[data.hsps.0.gaps]]/[[data.hsps.0.align_len]]</span>
-                    </div>
-                    <div>
-                        <template is="dom-repeat" items="[[_formatAlignment(data.hsps.0)]]" as="line">
-                            <div>
-                                <span class="pre small"> [[line.0]]</span><br/>
-                                <span class="pre small"> [[line.1]]</span><br/>
-                                <span class="pre small"> [[line.2]]</span><br/>
+                    <template is="dom-repeat" items="[[data.hsps]]" as="hsp">
+                        <div class="hsp-container">
+                            <div class="details-line">
+                                <span class="quiet">score </span>
+                                <span class="bold">[[hsp.bit_score]] bits ([[hsp.score]])</span><span class="quiet">, identities </span>
+                                <span class="bold">[[hsp.identity]]/[[hsp.align_len]]</span><span class="quiet">, positives </span>
+                                <span class="bold">[[hsp.positive]]/[[hsp.align_len]]</span><span class="quiet">, gaps </span>
+                                <span class="bold">[[hsp.gaps]]/[[hsp.align_len]]</span>
                             </div>
-                        </template>
-                    </div>
+                            <div>
+                                <template is="dom-repeat" items="[[_formatAlignment(hsp)]]" as="segment">
+                                    <div class="hsp-segment">
+                                        <span class="pre small"> [[segment.0]]</span><br/>
+                                        <span class="pre small"> [[segment.1]]</span><br/>
+                                        <span class="pre small"> [[segment.2]]</span><br/>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </iron-collapse>
         </div>
@@ -73,7 +85,8 @@ Blast item demo
             is: 'blast-item',
             properties: {
                 data: {
-                    type: Object
+                    type: Object,
+                    observer: "_computeValues"
                 },
                 showAlignment: {
                     type: Boolean,
@@ -83,6 +96,17 @@ Blast item demo
                     type: Number,
                     value: 80
                 }
+            },
+            _computeValues: function(){
+                this.score=0;
+                this.evalue=0;
+                this.identity_percent=0;
+                for (var i in this.data.hsps){
+                    this.score+=this.data.hsps[i].score;
+                    this.evalue+=this.data.hsps[i].evalue;
+                    this.identity_percent+=this.data.hsps[i].identity_percent;
+                }
+                this.identity_percent=(Math.round(this.identity_percent*10)/10).toFixed(1);
             },
             _formatAlignment: function(hit){
                 var index=0;
@@ -103,8 +127,14 @@ Blast item demo
                 }
                 return formatedSeq;
             },
+            _toggleAlignment: function(){
+                this.$.alignmentContainer.toggle();
+            },
             _pointIdentity: function(event){
                 this.domHost.domHost.pointIdentity(this.data.hsps[0].identity_percent);
+            },
+            _toExponential: function(num){
+                return new Number(num).toExponential(1);
             }
         });
     </script>
