@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="blast-styles.html">
+<script src="../d3/d3.min.js"></script>
 <!--
 `blast-item`
 Blast item demo
@@ -43,11 +44,11 @@ Blast item demo
                     <a href="https://www.nextprot.org/entry/[[data.description.0.entry_accession]]" target="_parent" class="font-large-x">
                         [[data.description.0.isoform_accession]] [[data.description.0.title]]
                     </a><br/>
-                    <!--<rect x$="[[hsp.query_from]]" y="20" width$="[[hsp.query_to]]" height="12" fill$="[[hsp.color]]" on-mouseover="_pointIdentity"></rect>-->
-                    <svg height="20" width="95%"><rect x="0" y="0" width="100%" height="12" fill$="[[data.hsps.0.color]]" on-mouseover="_pointIdentity"></rect></svg>
+                    <div id="querySvgContainer"></div>
                 </div>
                 <div class="col-lg-2 nomargin hright">
-                    <svg height="22" width="95%"><rect y="16" height="6" width="100%" fill$="[[data.hsps.0.color]]" on-mouseover="_pointIdentity"></rect></svg>
+                    <div id="targetSvgContainer"></div>
+                    <!--<svg height="22" width="95%"><rect y="12" height="6" width="100%" fill$="[[data.hsps.0.color]]" on-mouseover="_pointIdentity"></rect></svg>-->
                 </div>
                 <div class="col-lg-1 nomargin hright">[[data.len]]aa</div>
                 <div class="col-lg-1 nomargin hright">[[identity_percent]]%</div>
@@ -86,7 +87,7 @@ Blast item demo
             properties: {
                 data: {
                     type: Object,
-                    observer: "_computeValues"
+                    observer: "_initialize"
                 },
                 showAlignment: {
                     type: Boolean,
@@ -97,7 +98,7 @@ Blast item demo
                     value: 80
                 }
             },
-            _computeValues: function(){
+            _initialize: function(){
                 this.score=0;
                 this.evalue=0;
                 this.identity_percent=0;
@@ -107,6 +108,92 @@ Blast item demo
                     this.identity_percent+=this.data.hsps[i].identity_percent;
                 }
                 this.identity_percent=(Math.round(this.identity_percent*10)/10).toFixed(1);
+                this._querySvgGraph();
+                this._targetSvgGraph();
+            },
+            _querySvgGraph: function(){
+                var svg = d3.select(this).select("#querySvgContainer")
+                    .append("svg")
+                    .style("border", "1px solid black")
+                    .attr("width", "100%")
+                    .attr("height", "12")
+                    .style("margin-top", "4px");;
+                this.data.hsps.sort(this._sort);
+                var lastPosition = "0%";
+                for (var i in this.data.hsps) {
+                    var queryFrom = Math.round(((this.data.hsps[i].query_from/this.data.queryLength)*100)).toString()+"%";
+                    var queryTo = Math.round((((this.data.hsps[i].query_to - this.data.hsps[i].query_from)/this.data.queryLength)*100)).toString()+"%";
+                    if (queryFrom>=lastPosition) {
+                        var rect = svg.append("rect")
+                            .attr("x", lastPosition)
+                            .attr("y", "0")
+                            .attr("width", (queryFrom.replace("%",'')-lastPosition.replace("%",'')).toString()+"%")
+                            .attr("height", "12")
+                            .attr('fill', "#f0f0f0");
+                    }
+                    var self=this;
+                    var rect = svg.append("rect")
+                        .attr("id", "abc")
+                        .attr("x", queryFrom)
+                        .attr("y", "0")
+                        .attr("width", queryTo)
+                        .attr("height", "12")
+                        .attr('fill', this.data.hsps[i].color)
+                        .on("mouseover", function() {
+                            self.domHost.domHost.pointIdentity(self.data.hsps[i].identity_percent);
+                        });
+
+                    lastPosition = (new Number(queryFrom.replace("%",''))+new Number(queryTo.replace("%",''))).toString()+"%";
+                }
+                var rect = svg.append("rect")
+                        .attr("x", lastPosition)
+                        .attr("y", "0")
+                        .attr("width", "100%")
+                        .attr("height", "12")
+                        .attr('fill', "#f0f0f0");
+            },
+            _targetSvgGraph: function(){
+                var svg = d3.select(this).select("#targetSvgContainer")
+                        .append("svg")
+                        .style("border", "1px solid black")
+                        .attr("width", "95%")
+                        .attr("height", "6")
+                        .style("margin-top", "20px");
+                this.data.hsps.sort(this._sort);
+                var lastPosition = "0%";
+                for (var i in this.data.hsps) {
+                    var hitFrom = Math.round(((this.data.hsps[i].hit_from/this.data.len)*100)).toString()+"%";
+                    var hitTo = Math.round((((this.data.hsps[i].hit_to - this.data.hsps[i].hit_from)/this.data.len)*100)).toString()+"%";
+                    if (hitFrom>=lastPosition) {
+                        var rect = svg.append("rect")
+                                .attr("x", lastPosition)
+                                .attr("y", "0")
+                                .attr("width", (hitFrom.replace("%",'')-lastPosition.replace("%",'')).toString()+"%")
+                                .attr("height", "12")
+                                .attr('fill', "#f0f0f0");
+                    }
+                    var self=this;
+                    var rect = svg.append("rect")
+                            .attr("x", hitFrom)
+                            .attr("y", "0")
+                            .attr("width", hitTo)
+                            .attr("height", "6")
+                            .attr('fill', this.data.hsps[i].color)
+                            .on("mouseover", function() {
+                                self.domHost.domHost.pointIdentity(self.data.hsps[i].identity_percent);
+                            });
+
+                    lastPosition = (new Number(hitFrom.replace("%",''))+new Number(hitTo.replace("%",''))).toString()+"%";
+                }
+                var rect = svg.append("rect")
+                        .attr("x", lastPosition)
+                        .attr("y", "0")
+                        .attr("width", "100%")
+                        .attr("height", "12")
+                        .attr('fill', "#f0f0f0");
+            },
+            _sort: function(a,b){
+                return a.query_from> b.query_from? 1:-1;
             },
             _formatAlignment: function(hit){
                 var index=0;
@@ -129,9 +216,6 @@ Blast item demo
             },
             _toggleAlignment: function(){
                 this.$.alignmentContainer.toggle();
-            },
-            _pointIdentity: function(event){
-                this.domHost.domHost.pointIdentity(this.data.hsps[0].identity_percent);
             },
             _toExponential: function(num){
                 return new Number(num).toExponential(1);

@@ -149,18 +149,19 @@ View presenting blast search results annotations.
             attached: function(){
                 var nx = new Nextprot.Client("neXtProt blast view", "Calipho Group");
                 this.entry = nx.getEntryName(this.nxConfig.entry);
+                this._colorScale();
                 var self=this;
                 nx.getBlastBySequence(this.sequence, this.title, this.matrix, this.evalue, this.gapopen, this.gapextend)
                     .then(function (response) {
                         self.data=response.data;
                         for (var i in self.data.results.search.hits) {
+                            self.data.results.search.hits[i].queryLength =  self.data.params.sequence.length;
                             for (var j in self.data.results.search.hits[i].hsps){
                                 self.data.results.search.hits[i].hsps[j].color = self.scale(self.data.results.search.hits[i].hsps[j].identity_percent);
                             }
                         }
                         self.async(function(){self.results = self.data.results.search.hits;});
                     });
-                this._colorScale();
             },
             _colorScale: function(){
                 var svg = d3.select(this).select("#chart").append("svg")
