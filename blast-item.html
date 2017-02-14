@@ -133,14 +133,14 @@ Blast item demo
                     }
                     var self=this;
                     var rect = svg.append("rect")
-                        .attr("id", "abc")
+                        .attr("index", i)
                         .attr("x", queryFrom)
                         .attr("y", "0")
                         .attr("width", queryTo)
                         .attr("height", "12")
                         .attr('fill', this.data.hsps[i].color)
-                        .on("mouseover", function() {
-                            self.domHost.domHost.pointIdentity(self.data.hsps[i].identity_percent);
+                        .on("mouseover", function(e) {
+                            self.domHost.domHost.pointIdentity(e["data.hsps"][this.attributes[0].value].identity_percent);
                         });
 
                     lastPosition = (new Number(queryFrom.replace("%",''))+new Number(queryTo.replace("%",''))).toString()+"%";
@@ -148,7 +148,7 @@ Blast item demo
                 var rect = svg.append("rect")
                         .attr("x", lastPosition)
                         .attr("y", "0")
-                        .attr("width", "100%")
+                        .attr("width", (100-lastPosition.replace("%",'')).toString()+"%")
                         .attr("height", "12")
                         .attr('fill', "#f0f0f0");
             },
@@ -174,13 +174,14 @@ Blast item demo
                     }
                     var self=this;
                     var rect = svg.append("rect")
+                            .attr("index", i)
                             .attr("x", hitFrom)
                             .attr("y", "0")
                             .attr("width", hitTo)
                             .attr("height", "6")
                             .attr('fill', this.data.hsps[i].color)
-                            .on("mouseover", function() {
-                                self.domHost.domHost.pointIdentity(self.data.hsps[i].identity_percent);
+                            .on("mouseover", function(e) {
+                                self.domHost.domHost.pointIdentity(e["data.hsps"][this.attributes[0].value].identity_percent);
                             });
 
                     lastPosition = (new Number(hitFrom.replace("%",''))+new Number(hitTo.replace("%",''))).toString()+"%";
@@ -188,7 +189,7 @@ Blast item demo
                 var rect = svg.append("rect")
                         .attr("x", lastPosition)
                         .attr("y", "0")
-                        .attr("width", "100%")
+                        .attr("width", (100-lastPosition.replace("%",'')).toString()+"%")
                         .attr("height", "12")
                         .attr('fill', "#f0f0f0");
             },
