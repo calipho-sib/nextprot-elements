@@ -59,8 +59,15 @@ View presenting blast search results annotations.
                 <paper-spinner-lite id="spinner" active></paper-spinner-lite>
                 <template is="dom-if" if="[[data]]">
                     <p><b>Blast</b></p>
-                    <p><span class="quiet bold">from protein [[entry]]</span><template is="dom-if" if="[[isoform]]">, isoform [[isoform]]</template></p>
-                    <p><span class="quiet bold">Blast sequence</span>  <span class="black pre">[[_shortenedSequence()]]</span> <span class="quiet bold">([[data.params.sequence.length]] AA)</span></p>
+                    <p><span class="quiet bold">
+                        <template is="dom-if" if="[[entry]]">from protein [[entry]]</template>
+                        <template is="dom-if" if="[[isoform]]">, isoform [[isoform]]</template>
+                    </span></p>
+                    <p>
+                        <span class="quiet bold">Blast sequence</span>
+                        <span class="black pre">[[_shortenedSequence()]]</span>
+                        <span class="quiet bold">([[data.params.sequence.length]] AA)</span>
+                    </p>
                     <div class="quiet">
                         <p>Query in all human sequences in neXtProt ([[data.results.search.stat.db_num]] sequences, [[data.results.search.stat.db_len]] amino acids)</p>
                         <p>Similarity matrix: [[data.params.matrix]]</p>
@@ -110,8 +117,7 @@ View presenting blast search results annotations.
                     value: {}
                 },
                 sequence: {
-                    type: String,
-                    value: "MDLSALRVEEVQNVINAMQKILECPICLELIKEPVSTKCDHIFCKFCMLKLLNQKKGPSQCPLCKNDITKRSLQESTRFSQLVEELLKIICAFQLDTGLEYANSYNFAKKENNSPEHLKDEVSIIQSMGYRNRAKRLLQSEPENPSLQETSLSVQLSNLGTVRTLRTKQRIQPQKTSVYIELGSDSSEDTVNKATYCSVGDQELLQITPQGTRDEISLDSAKKAACEFSETDVTNTEHHQPSNNDLNTTEKRAAERHPEKYQGSSVSNLHVEPCGTNTHASSLQHENSSLLLTKDRMNVEKAEFCNKSKQPGLARSQHNRWAGSKETCNDRRTPSTEKKVDLNADPLCERKEWNKQKLPCSENPRDTEDVPWITLNSSIQKVNEWFSRSDELLGSDDSHDGESESNAKVADVLDVLNEVDEYSGSSEKIDLLASDPHEALICKSERVHSKSVESNIEDKIFGKTYRKKASLPNLSHVTENLIIGAFVTEPQIIQERPLTNKLKRKRRPTSGLHPEDFIKKADLAVQKTPEMINQGTNQTEQNGQVMNITNSGHENKTKGDSIQNEKNPNPIESLEKESAFKTKAEPISSSISNMELELNIHNSKAPKKNRLRRKSSTRHIHALELVVSRNLSPPNCTELQIDSCSSSEEIKKKKYNQMPVRHSRNLQLMEGKEPATGAKKSNKPNEQTSKRHDSDTFPELKLTNAPGSFTKCSNTSELKEFVNPSLPREEKEEKLETVKVSNNAEDPKDLMLSGERVLQTERSVESSSISLVPGTDYGTQESISLLEVSTLGKAKTEPNKCVSQCAAFENPKGLIHGCSKDNRNDTEGFKYPLGHEVNHSRETSIEMEESELDAQYLQNTFKVSKRQSFAPFSNPGNAEEECATFSAHSGSLKKQSPKVTFECEQKEENQGKNESNIKPVQTVNITAGFPVVGQKDKPVDNAKCSIKGGSRFCLSSQFRGNETGLITPNKHGLLQNPYRIPPLFPIKSFVKTKCKKNLLEENFEEHSMSPEREMGNENIPSTVSTISRNNIRENVFKEASSSNINEVGSSTNEVGSSINEIGSSDENIQAELGRNRGPKLNAMLRLGVLQPEVYKQSLPGSNCKHPEIKKQEYEEVVQTVNTDFSPYLISDNLEQPMGSSHASQVCSETPDDLLDDGEIKEDTSFAENDIKESSAVFSKSVQKGELSRSPSPFTHTHLAQGYRRGAKKLESSEENLSSEDEELPCFQHLLFGKVNNIPSQSTRHSTVATECLSKNTEENLLSLKNSLNDCSNQVILAKASQEHHLSEETKCSASLFSSQCSELEDLTANTNTQDPFLIGSSKQMRHQSESQGVGLSDKELVSDDEERGTGLEENNQEEQSMDSNLGEAASGCESETSVSEDCSGLSSQSDILTTQQRDTMQHNLIKLQQEMAELEAVLEQHGSQPSNSYPSIISDSSALEDLRNPEQSTSEKAVLTSQKSSEYPISQNPEGLSADKFEVSADSSTSKNKEPGVERSSPSKCPSLDDRWYMHSCSGSLQNRNYPSQEELIKVVDVEEQQLEESGPHDLTETSYLPRQDLEGTPYLESGISLFSDDPESDPSEDRAPESARVGNIPSSTSALKVPQLKVAESAQSPAAAHTTDTAGYNAMEESVSREKPELTASTERVNKRMSMVVSGLTPEEFMLVYKFARKHHITLTNLITEETTHVVMKTDAEFVCERTLKYFLGIAGGKWVVSYFWVTQSIKERKMLNEHDFEVRGDVVNGRNHQGPKRARESQDRKIFRGLEICCYGPFTNMPTDQLEWMVQLCGASVVKELSSFTLGTGVHPIVVVQPDAWTEDNGFHAIGQMCEAPVVTREWVLDSVALYQCQELDTYLIPQIPHSHY"
+                    type: String
                 },
                 title: {
                     type: String,
@@ -119,6 +125,12 @@ View presenting blast search results annotations.
                 },
                 isoform: {
                     type: String
+                },
+                begin: {
+                    type: Number
+                },
+                end: {
+                    type: Number
                 },
                 matrix: {
                     type: String,
@@ -151,22 +163,31 @@ View presenting blast search results annotations.
             },
             attached: function(){
                 var nx = new Nextprot.Client("neXtProt blast view", "Calipho Group");
-                this.entry = nx.getEntryName(this.nxConfig.entry);
                 var self=this;
-                nx.getBlastBySequence(this.sequence, this.title, this.matrix, this.evalue, this.gapopen, this.gapextend)
-                    .then(function (response) {
-                        self.data=response.data;
-                        self._colorScale();
-                        for (var i in self.data.results.search.hits) {
-                            self.data.results.search.hits[i].queryLength =  self.data.params.sequence.length;
-                            for (var j in self.data.results.search.hits[i].hsps){
-                                self.data.results.search.hits[i].hsps[j].color = self.scale(self.data.results.search.hits[i].hsps[j].identity_percent);
-                            }
-                        }
-                        self.async(function(){self.results = self.data.results.search.hits;});
-                        self.$.spinner.active = false;
-                        self.$.spinner.style = "display:none;";
-                    });
+                if (this.isoform) {
+                    nx.getBlastByIsoform(this.isoform, this.matrix, this.evalue, this.gapopen, this.gapextend, this.begin, this.end)
+                        .then(function(response){self._processResponse(response)});
+                    this.entry = this.isoform.split("-")[0];
+                } else if(this.sequence){
+                    nx.getBlastBySequence(this.sequence, this.title, this.matrix, this.evalue, this.gapopen, this.gapextend)
+                        .then(function(response){self._processResponse(response)});
+                    this.entry = this.nxConfig.entry;
+                    this.isoform = "";
+                }
+            },
+            _processResponse: function(response){
+                this.data=response.data;
+                this._colorScale();
+                for (var i in this.data.results.search.hits) {
+                    this.data.results.search.hits[i].queryLength =  this.data.params.sequence.length;
+                    for (var j in this.data.results.search.hits[i].hsps){
+                        this.data.results.search.hits[i].hsps[j].color = this.scale(this.data.results.search.hits[i].hsps[j].identity_percent);
+                    }
+                }
+                var self=this;
+                this.async(function(){self.results = self.data.results.search.hits;});
+                this.$.spinner.active = false;
+                this.$.spinner.style = "display:none;";
             },
             _colorScale: function(){
                 var svg = d3.select(this).select("#chart").append("svg")
