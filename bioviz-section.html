@@ -4,15 +4,20 @@
     //Load JQuery if necessary
     if(typeof jQuery === "undefined"){
         (function(){
-            var newscript = document.createElement('script');
-            newscript.src = '../../jquery/dist/jquery.min.js';
-            document.getElementsByTagName('head')[0].appendChild(newscript);
+            var jqueryScript = document.createElement('script');
+            jqueryScript.src = '../../jquery/dist/jquery.min.js';
+            document.getElementsByTagName('head')[0].appendChild(jqueryScript);
         })();
     }
 </script>
+<script src="../jquery-ui/jquery-ui.min.js"></script>
+<script src="../bootstrap/js/tooltip.js"></script>
+<script src="../bootstrap/js/popover.js"></script>
 <script src="../nextprot-js/src/nextprot-core.js"></script>
 <script src="../nextprot-js/src/nextprot-utils.js"></script>
-<script src="../lib/bio-viz/dist/bio-viz.bundle.js"></script>
+<script src="../handlebars/handlebars.min.js"></script>
+<script src="bio-viz/biovizJS/library/jquery.ui-contextmenu.min.js"></script>
+<script src="bio-viz/dist/bio-viz.min.js"></script>
 <!--
 `bioviz-section`
 Element joining bioviz viewer and 3D structures table
@@ -20,7 +25,9 @@ Element joining bioviz viewer and 3D structures table
 @demo demo/bioviz-section-demo.html
 -->
 <dom-module id="bioviz-section">
-    <link rel="stylesheet" type="text/css" href="../lib/bio-viz/css/style.css">
+    <link rel="stylesheet" type="text/css" href="bio-viz/css/style.css">
+    <link rel="stylesheet" type="text/css" href="bio-viz/dist/bio-viz.min.css">
+    <link rel="stylesheet" type="text/css" href="bio-viz/biovizJS/css/bioviz-theme/jquery-ui.min.css">
     <template>
         <style include="nextprot-elements-shared-styles">
             :host {
