@@ -13,7 +13,7 @@
         })();
     }
 </script>
-<script src="../feature-viewer/src/feature-viewer.js"></script>
+<script src="../feature-viewer/dist/feature-viewer.min.js"></script>
 <script src="../sequence-viewer/dist/sequence-viewer.min.js"></script>
 <script src="../d3/d3.min.js"></script>
 <script src="../bootstrap/js/tooltip.js"></script>
@@ -413,6 +413,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 }
             },
             getFeaturesByIsoform: function(isoforms){
+                this.featuresForViewer=[];
                 this.isofroms=isoforms[0];
                 for (var i=1; i<isoforms.length-1;i++) {
                     var feat = NXUtils.convertMappingsToIsoformMap(isoforms[i],this.metaData[i].name,this.metaData[i].filter, "");
