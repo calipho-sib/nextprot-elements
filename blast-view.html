@@ -3,7 +3,7 @@
 <link rel="import" href="../iron-selector/iron-selector.html">
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
-<link rel="import" href="../pagination-table/pagination-table.html">
+<link rel="import" href="paginator-element.html">
 <link rel="import" href="blast-styles.html">
 <link rel="import" href="d3-styles.html">
 <script>
@@ -105,7 +105,7 @@ View presenting blast search results annotations.
                 </div>
             </template>
             <div class="col-lg-12">
-                <pagination-table items="{{results}}" layout="blast-item" bind-attribute="showAlignment" bind-value="[[showAlignment]]" page-size="[[pageSize]]" from="{{from}}" to="{{to}}"></pagination-table>
+                <paginator-element items="{{results}}" layout="blast-item" bind-attribute="showAlignment" bind-value="[[showAlignment]]" page-size="[[pageSize]]" from="{{from}}" to="{{to}}"></paginator-element>
             </div>
     </template>
     <script>
@@ -134,7 +134,8 @@ View presenting blast search results annotations.
                 },
                 matrix: {
                     type: String,
-                    value: "BLOSUM62"
+                    value: "BLOSUM62",
+                    observer: "_checkMatrix"
                 },
                 evalue: {
                     type: Number,
@@ -176,6 +177,10 @@ View presenting blast search results annotations.
                 }
             },
             _processResponse: function(response){
+                if (response.error) {
+                    this.$.blastParameters.innerHTML = Object.keys(response.error.causes);
+                    return false;
+                }
                 this.data=response.data;
                 this._colorScale();
                 for (var i in this.data.results.search.hits) {
@@ -188,6 +193,10 @@ View presenting blast search results annotations.
                 this.async(function(){self.results = self.data.results.search.hits;});
                 this.$.spinner.active = false;
                 this.$.spinner.style = "display:none;";
+            },
+            _checkMatrix: function(newValue, oldValue){
+                var matrices = ["BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM90", "PAM250", "PAM30", "PAM70"];
+                if (matrices.indexOf(newValue) === -1) this.matrix = oldValue;
             },
             _colorScale: function(){
                 var svg = d3.select(this).select("#chart").append("svg")
