@@ -79,8 +79,9 @@ View presenting blast search results annotations.
                     </div>
                 </template>
                 <div id="chart"></div>
+                <span class="quiet bold">[[params.message]]</span>
             </div>
-            <template is="dom-if" if="[[params]]">
+            <template is="dom-if" if="[[results.length]]">
                 <div class="column control-header">
                     <div class="col-lg-6">Sequences [[from]] to [[to]] of [[results.length]]</div>
                     <div class="col-lg-1">
@@ -200,6 +201,7 @@ View presenting blast search results annotations.
                 response.data.params.version = response.data.version;
                 response.data.params.db_num = response.data.results.search.stat.db_num;
                 response.data.params.db_len = response.data.results.search.stat.db_len;
+                response.data.params.message = response.data.results.search.message;
                 this.params=response.data.params;
                 var self=this;
                 this.async(function(){self.results = response.data.results.search.hits;});
