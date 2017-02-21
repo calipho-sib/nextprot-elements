@@ -58,7 +58,7 @@ View presenting blast search results annotations.
         </style>
             <div class="blast-parameters">
                 <paper-spinner-lite id="spinner" active></paper-spinner-lite>
-                <template is="dom-if" if="[[data]]">
+                <template is="dom-if" if="[[params]]">
                     <p><b>Blast</b></p>
                     <p><span class="quiet bold">
                         <template is="dom-if" if="[[entry]]">from protein [[entry]]</template>
@@ -67,18 +67,18 @@ View presenting blast search results annotations.
                     <p>
                         <span class="quiet bold">Blast sequence</span>
                         <span class="black pre">[[_shortenedSequence()]]</span>
-                        <span class="quiet bold">([[data.params.sequence.length]] AA)</span>
+                        <span class="quiet bold">([[params.sequence.length]] AA)</span>
                     </p>
                     <div class="quiet">
-                        <p>Query in all human sequences in neXtProt ([[data.results.search.stat.db_num]] sequences, [[data.results.search.stat.db_len]] amino acids)</p>
-                        <p>Similarity matrix: [[data.params.matrix]]</p>
-                        <p>Expect: [[data.params.expect]]; filter: [[_getFilterState()]]; gap-open: [[data.params.gap_open]]; gap-extend: [[data.params.gap_extend]]</p>
-                        <p>Program version: [[data.version]]</p>
+                        <p>Query in all human sequences in neXtProt ([[params.db_num]] sequences, [[params.db_len]] amino acids)</p>
+                        <p>Similarity matrix: [[params.matrix]]</p>
+                        <p>Expect: [[params.expect]]; filter: [[_getFilterState()]]; gap-open: [[params.gap_open]]; gap-extend: [[params.gap_extend]]</p>
+                        <p>Program version: [[params.version]]</p>
                     </div>
                 </template>
                 <div id="chart"></div>
             </div>
-            <template is="dom-if" if="[[data]]">
+            <template is="dom-if" if="[[params]]">
                 <div class="column control-header">
                     <div class="col-lg-6">Sequences [[from]] to [[to]] of [[results.length]]</div>
                     <div class="col-lg-1">
@@ -165,6 +165,10 @@ View presenting blast search results annotations.
             },
             attached: function(){
                 var nx = new Nextprot.Client("neXtProt blast view", "Calipho Group");
+                if (this.nxConfig.isoform) this.isoform = this.nxConfig.isoform;
+                if (this.nxConfig.sequence) this.sequence = this.nxConfig.sequence;
+                if (this.nxConfig.begin) this.begin = this.nxConfig.begin;
+                if (this.nxConfig.end) this.end = this.nxConfig.end;
                 var self=this;
                 if (this.isoform) {
                     nx.getBlastByIsoform(this.isoform, this.matrix, this.evalue, this.gapopen, this.gapextend, this.begin, this.end)
@@ -178,22 +182,26 @@ View presenting blast search results annotations.
                 }
             },
             _processResponse: function(response){
+                this.$.spinner.active = false;
+                this.$.spinner.style = "display:none;";
                 if (response.error) {
                     this.$.blastParameters.innerHTML = Object.keys(response.error.causes);
                     return false;
                 }
-                this.data=response.data;
                 this._colorScale();
-                for (var i in this.data.results.search.hits) {
-                    this.data.results.search.hits[i].queryLength =  this.data.params.sequence.length;
-                    for (var j in this.data.results.search.hits[i].hsps){
-                        this.data.results.search.hits[i].hsps[j].color = this.scale(this.data.results.search.hits[i].hsps[j].identity_percent);
+                for (var i in response.data.results.search.hits) {
+                    response.data.results.search.hits[i].queryLength =  response.data.params.sequence.length;
+                    for (var j in response.data.results.search.hits[i].hsps){
+                        response.data.results.search.hits[i].hsps[j].color = this.scale(response.data.results.search.hits[i].hsps[j].identity_percent);
                     }
                 }
+                response.data.params.version = response.data.version;
+                response.data.params.db_num = response.data.results.search.stat.db_num;
+                response.data.params.db_len = response.data.results.search.stat.db_len;
+                this.params=response.data.params;
                 var self=this;
-                this.async(function(){self.results = self.data.results.search.hits;});
-                this.$.spinner.active = false;
-                this.$.spinner.style = "display:none;";
+                this.async(function(){self.results = response.data.results.search.hits;});
+
             },
             _checkMatrix: function(newValue, oldValue){
                 var matrices = ["BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM90", "PAM250", "PAM30", "PAM70"];
@@ -220,12 +228,12 @@ View presenting blast search results annotations.
 
             },
             _shortenedSequence: function(){
-                var sequenceLength = this.data.params.sequence.length;
-                if (sequenceLength>55) return this.data.params.sequence.substring(0,27)+"..."+this.data.params.sequence.substring(sequenceLength-27, sequenceLength)
-                return this.data.params.sequence;
+                var sequenceLength = this.params.sequence.length;
+                if (sequenceLength>55) return this.params.sequence.substring(0,27)+"..."+this.params.sequence.substring(sequenceLength-27, sequenceLength)
+                return this.params.sequence;
             },
             _getFilterState: function(){
-                return this.data.params.filter === "F" ? "false" : "true";
+                return this.params.filter === "F" ? "false" : "true";
             },
             _changePageSize: function(evt){
                 this.pageSize = new Number(evt.srcElement[evt.srcElement.selectedIndex].value);
