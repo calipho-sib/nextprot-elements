@@ -121,7 +121,7 @@ Blast item demo
                 this.data.hsps.sort(this._sort);
                 var lastPosition = "0%";
                 for (var i in this.data.hsps) {
-                    var queryFrom = Math.round(((this.data.hsps[i].query_from/this.data.queryLength)*100)).toString()+"%";
+                    var queryFrom = Math.round((((this.data.hsps[i].query_from-1)/this.data.queryLength)*100)).toString()+"%";
                     var queryTo = Math.round((((this.data.hsps[i].query_to - this.data.hsps[i].query_from)/this.data.queryLength)*100)).toString()+"%";
                     if (queryFrom>=lastPosition) {
                         var rect = svg.append("rect")
