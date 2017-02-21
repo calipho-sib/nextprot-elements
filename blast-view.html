@@ -49,7 +49,7 @@ View presenting blast search results annotations.
             .toggle-label {
                 padding: 5px 10px 5px 3px;
             }
-            .blast-parameters {
+            #blastParametersContainer {
                 background-color: white;
                 border-bottom: solid grey 1px;
                 padding-left: 15px;
@@ -58,7 +58,7 @@ View presenting blast search results annotations.
                 margin: 10px 0 50px;
             }
         </style>
-            <div class="blast-parameters">
+            <div id="blastParametersContainer">
                 <paper-spinner-lite id="spinner" active></paper-spinner-lite>
                 <template is="dom-if" if="[[params]]">
                     <p><b>Blast</b></p>
@@ -188,7 +188,7 @@ View presenting blast search results annotations.
                 this.$.spinner.active = false;
                 this.$.spinner.style = "display:none;";
                 if (response.error) {
-                    this.$.blastParameters.innerHTML = Object.keys(response.error.causes);
+                    this.$.blastParametersContainer.innerHTML = '<span class="quiet bold">'+Object.values(response.error.causes)+'</span>';
                     return false;
                 }
                 this._colorScale();
