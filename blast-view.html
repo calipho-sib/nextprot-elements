@@ -197,7 +197,10 @@ View presenting blast search results annotations.
             },
             _checkMatrix: function(newValue, oldValue){
                 var matrices = ["BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM90", "PAM250", "PAM30", "PAM70"];
-                if (matrices.indexOf(newValue) === -1) this.matrix = oldValue;
+                if (matrices.indexOf(newValue) === -1) {
+                    console.warn(this.matrix+" is not recognized as a valid BLAST substitution matrix. "+oldValue+" matrix will be used instead.");
+                    this.matrix = oldValue;
+                }
             },
             _colorScale: function(){
                 var svg = d3.select(this).select("#chart").append("svg")
