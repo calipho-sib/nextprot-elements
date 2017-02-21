@@ -254,7 +254,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             </div>
         </div>
         <div class="row">
-            <div id="featuresTable" class="col-md-6">
+            <div id="featuresTable" class="col-md-6" hidden>
                 <div id="featTableScroller" class="section-scroller">
                     <table id="featTable" class="table table-striped table-fixed">
                         <thead>
@@ -317,7 +317,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 </div>
             </div>
             <div class="col-md-6 right-block">
-                <div id="seqViewer"></div>
+                <div id="seqViewer" hidden></div>
             </div>
         </div>
     </template>
@@ -366,6 +366,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 goldOnly: {
                     type: Boolean,
                     observer: "_reloadFeatureTable"
+                },
+                count: {
+                    type: Number,
+                    notify: true
                 }
             },
             ready: function() {
@@ -375,26 +379,25 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 
                 var self=this
                 Promise.all(self.getFeaturesByView())
-                        .then(function (oneData) {
-                            self.getFeaturesByIsoform(oneData);
-                            self.addFiltering();
-                            self.addFeatures();
-                            self.$.featViewerSpinner.active = false;
-                            self.fillTable();
-                            self.$.featTableSpinner.active = false;
-                        });
-                this.nx.getProteinSequence(this.nxEntry).then(
-                    function (data) {
-                        self.sequences = data;
+                    .then(function (oneData) {
+                    self.sequences = oneData[0];
+                    self.getMetadataByView();
+                    self.getFeaturesByIsoform(oneData);
+                    if(Object.keys(self.featuresForViewer[0]).length){
+                        self.count = Object.keys(self.featuresForViewer[0]).length;
                         self._renderFeatureViewer();
-                        self.getMetadataByView();
                         self.tvSelection();
                         self.eventTV();
+                        self.addFiltering();
+                        self.addFeatures();
+                        self.$.featViewerSpinner.active = false;
+                        self.$.featuresTable.hidden = false;
+                        self.$.seqViewer.hidden = false;
+                        self.fillTable();
+                        self.$.featTableSpinner.active = false;
+                    }else{
+                        self.count = 0;
                     }
-                ).catch(function (err) {
-                    // catch any error that happened so far
-                    console.log("Argh, broken: " + err.message);
-                    console.log("Error at line : " + err.stack);
                 });
             },
             reloadSVG: function(){
@@ -575,7 +578,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             },
             _reloadFeatureTable: function(){
                 this.fillTable();
-                this.$$("#featureTableTemplate").render();
+                if(this.$$("#featureTableTemplate")) this.$$("#featureTableTemplate").render();
             },
             _highlightCategories: function(mouseEvent){
                 var srcElementId =  mouseEvent.srcElement.id || mouseEvent.srcElement.childNodes[1].id;

@@ -25,260 +25,28 @@ View listing protein interaction annotations.
         <protein-overview nx-config="[[nxConfig]]" nx-entry="{{nxEntry}}"></protein-overview>
       </div>
     </div>
-    <div class="row nxSection">
+    <div id="nxPositionalAnnotations" class="row nxSection" hidden>
       <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}}></isoform-selector>
-      <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]] feature-list='[{"APIRef": "interacting-region",
-          "metadata": {
+      <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]] feature-list='[
+      {
+        "APIRef": "sequence",
+        "metadata": {"name": "Sequence"}
+      },
+      {
+        "APIRef": "interacting-region",
+        "metadata": {
           "name": "Interacting region",
           "className": "intregion",
           "color": "#B3C2F0",
           "type": "rect",
           "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "miscellaneous-region",
-          "metadata": {
-          "name": "Region",
-          "className": "miscregion",
-          "color": "#B3C2B3",
-          "type": "rect",
-          "filter": "Region"
-          }
-          },
-          {"APIRef": "disulfide-bond",
-          "metadata": {
-          "name": "Disulfide bond",
-          "className": "disulfbond",
-          "color": "#B3C2F0",
-          "type": "path",
-          "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "domain",
-          "metadata": {
-          "name": "Domain",
-          "className": "domain",
-          "color": "#B3C2C2",
-          "type": "rect",
-          "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "repeat",
-          "metadata": {
-          "name": "Repeat",
-          "className": "repeat",
-          "color": "#98B7D5",
-          "type": "rect",
-          "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "calcium-binding-region",
-          "metadata": {
-          "name": "Calcium binding",
-          "className": "calcium",
-          "color": "#B3C2E1",
-          "type": "rect",
-          "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "zinc-finger-region",
-          "metadata": {
-          "name": "Zinc finger",
-          "className": "calcium",
-          "color": "#B3C2E1",
-          "type": "rect",
-          "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "dna-binding-region",
-          "metadata": {
-          "name": "DNA binding",
-          "className": "dnabind",
-          "color": "#B3C2FF",
-          "type": "rect",
-          "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "nucleotide-phosphate-binding-region",
-          "metadata": {
-          "name": "Nucleotide binding",
-          "className": "nucleobind",
-          "color": "#B3D1B3",
-          "type": "rect",
-          "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "coiled-coil-region",
-          "metadata": {
-          "name": "Coiled-coil",
-          "className": "coiledcoil",
-          "color": "#B3D1C2",
-          "type": "rect",
-          "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "short-sequence-motif",
-          "metadata": {
-          "name": "Sequence motif",
-          "className": "motif",
-          "color": "#B3D1D1",
-          "type": "rect",
-          "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "compositionally-biased-region",
-          "metadata": {
-          "name": "Composition bias",
-          "className": "biased",
-          "color": "#B3D1E1",
-          "type": "rect",
-          "filter": "Region"
-          }
-          },
-          {
-          "APIRef": "topological-domain",
-          "metadata": {
-          "name": "Top domain",
-          "className": "topodomain",
-          "color": "#A5DBA5",
-          "type": "rect",
-          "filter": "Topology"
-          }
-          },
-          {
-          "APIRef": "transmembrane-region",
-          "metadata": {
-          "name": "Membrane",
-          "className": "membrane",
-          "color": "#A5DBB7",
-          "type": "rect",
-          "filter": "Topology"
-          }
-          },
-          {
-          "APIRef": "miscellaneous-site",
-          "metadata": {
-          "name": "Site",
-          "className": "site",
-          "color": "#B3F0E1",
-          "type": "unique",
-          "filter": "Site"
-          }
-          },
-          {
-          "APIRef": "active-site",
-          "metadata": {
-          "name": "Active site",
-          "className": "actSite",
-          "color": "#B3F0F0",
-          "type": "unique",
-          "filter": "Site"
-          }
-          },
-          {
-          "APIRef": "binding-site",
-          "metadata": {
-          "name": "Binding site",
-          "className": "bindsite",
-          "color": "#82E6FF",
-          "type": "unique",
-          "filter": "Site"
-          }
-          },
-          {
-          "APIRef": "cleavage-site",
-          "metadata": {
-          "name": "Cleavage site",
-          "className": "cleavsite",
-          "color": "#B3FFB3",
-          "type": "unique",
-          "filter": "Site"
-          }
-          },
-          {
-          "APIRef": "metal-binding-site",
-          "metadata": {
-          "name": "Metal binding",
-          "className": "metal",
-          "color": "#B3FFC2",
-          "type": "unique",
-          "filter": "Site"
-          }
-          },
-          {
-          "APIRef": "variant",
-          "metadata": {
-          "name": "Variant",
-          "className": "variant",
-          "color": "rgba(0,255,154,0.3)",
-          "type": "unique",
-          "filter": "Variant"
-          }
-          },
-          {
-          "APIRef": "mutagenesis",
-          "metadata": {
-          "name": "Mutagenesis",
-          "className": "mutagenesis",
-          "color": "#73FFE3",
-          "type": "unique",
-          "filter": "Variant"
-          }
-          },
-          {
-          "APIRef": "sequence-conflict",
-          "metadata": {
-          "name": "Conflict",
-          "className": "seqconflict",
-          "color": "#6FFFFF",
-          "type": "unique",
-          "filter": "Conflict"
-          }
-          },
-          {
-          "APIRef": "beta-strand",
-          "metadata": {
-          "name": "Beta strand",
-          "className": "betastrand",
-          "color": "#B3F0C2",
-          "type": "rect",
-          "filter": "Secondary structure"
-          }
-          },
-          {
-          "APIRef": "helix",
-          "metadata": {
-          "name": "Helix",
-          "className": "helix",
-          "color": "#B3F0D1",
-          "type": "rect",
-          "filter": "Secondary structure"
-          }
-          },
-          {
-          "APIRef": "turn",
-          "metadata": {
-          "name": "Turn",
-          "className": "turn",
-          "color": "#B3F0E1",
-          "type": "rect",
-          "filter": "Secondary structure"
-          }
-          },
-          {
-          "APIRef": "isoform-mapping",
-          "metadata": {}
-          }]'></triple-viewer>
+        }
+      },
+      {
+        "APIRef": "isoform-mapping",
+        "metadata": {}
+      }
+    ]' count="{{positionalAnnotationsCount}}"></triple-viewer>
     </div>
     <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no interaction information available in neXtProt for [[nxEntry]].
       Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
@@ -329,6 +97,10 @@ View listing protein interaction annotations.
           type: Number,
           observer: "_checkAnnotations"
         },
+        positionalAnnotationsCount: {
+          type: Number,
+          observer: "_checkPositionalAnnotations"
+        },
         keywordsCount: {
           type: Number,
           observer: "_checkKeywords"
@@ -345,6 +117,13 @@ View listing protein interaction annotations.
         } else {
           this.$.nxAnnotations.hidden=false;
           this.$.noDataWarning.hidden=true;
+        }
+      },
+      _checkPositionalAnnotations: function(){
+        if(this.positionalAnnotationsCount===0){
+          this.$.nxPositionalAnnotations.hidden=true;
+        } else {
+          this.$.nxPositionalAnnotations.hidden=false;
         }
       },
       _checkKeywords: function(){
