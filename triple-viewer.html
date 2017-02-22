@@ -417,6 +417,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             },
             getFeaturesByIsoform: function(isoforms){
                 this.featuresForViewer=[];
+                this.featuresByIsoform=[];
                 this.isofroms=isoforms[0];
                 for (var i=1; i<isoforms.length-1;i++) {
                     var feat = NXUtils.convertMappingsToIsoformMap(isoforms[i],this.metaData[i].name,this.metaData[i].filter, "");
