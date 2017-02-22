@@ -187,6 +187,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             #seqViewer .seqpI>.seqValue{
                 background-color:#92896F;
             }
+            #evidence-row {
+                display: table-row;
+            }
             .evidenceNumber {
                 background: #7CBA0F;
                 padding: 4px 8px;
@@ -307,7 +310,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                         <td></td>
                                     </template>
                                 </tr>
-                                <tr class$="[[_formatClassName(feature.category, feature.group)]] detailed-info">
+                                <tr id="evidence-row" class$="[[_formatClassName(feature.category, feature.group)]] detailed-info">
                                     <td colspan="6" id="[[feature.id]]-evidence-container" class="table-row-evidence"></td>
                                 </tr>
                             </template>
