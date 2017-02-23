@@ -25,12 +25,42 @@ View listing protein interaction annotations.
         <protein-overview nx-config="[[nxConfig]]" nx-entry="{{nxEntry}}"></protein-overview>
       </div>
     </div>
-    <div id="nxPositionalAnnotations" class="row nxSection" hidden>
+    <div id="nxPositionalAnnotations" class="row nxSection">
       <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}}></isoform-selector>
       <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]] feature-list='[
       {
         "APIRef": "sequence",
         "metadata": {"name": "Sequence"}
+      },
+      {
+        "APIRef": "calcium-binding-region",
+        "metadata": {
+          "name": "Calcium binding",
+          "className": "calcium",
+          "color": "#B3C2E1",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "dna-binding-region",
+        "metadata": {
+          "name": "DNA binding",
+          "className": "dnabind",
+          "color": "#B3C2FF",
+          "type": "rect",
+          "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "nucleotide-phosphate-binding-region",
+        "metadata": {
+          "name": "Nucleotide binding",
+          "className": "nucleobind",
+          "color": "#B3D1B3",
+          "type": "rect",
+          "filter": "Region"
+        }
       },
       {
         "APIRef": "interacting-region",
@@ -40,6 +70,26 @@ View listing protein interaction annotations.
           "color": "#B3C2F0",
           "type": "rect",
           "filter": "Region"
+        }
+      },
+      {
+        "APIRef": "binding-site",
+        "metadata": {
+          "name": "Binding site",
+          "className": "bindsite",
+          "color": "#82E6FF",
+          "type": "unique",
+          "filter": "Site"
+        }
+      },
+      {
+        "APIRef": "metal-binding-site",
+        "metadata": {
+          "name": "Metal binding",
+          "className": "metal",
+          "color": "#B3FFC2",
+          "type": "unique",
+          "filter": "Site"
         }
       },
       {
