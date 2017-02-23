@@ -244,7 +244,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     </div>
                     <div class="filter-body">
                         <div id="filtering" class="all-filters">
-                            <button class="btn btn-default btn-sm" id="allFilters" on-tap="filterAll">All/None</button>
+                            <button class="btn btn-default btn-sm" id="allFilters" on-tap="_filterAll">All/None</button>
                             <template is="dom-repeat" items="[[_toArray(activeFiltering)]]" as="filter">
                                 <label class="filter-box" on-mouseover="_highlightCategories" on-mouseout="_dimCategories">
                                     <input type="checkbox" id=[[filter.name]] value="option1" on-change="_toggleFiltering" checked>[[filter.value]]
@@ -257,7 +257,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             </div>
         </div>
         <div class="row">
-            <div id="featuresTable" class="col-md-6" hidden>
+            <div id="featuresTable" class="col-md-6">
                 <div id="featTableScroller" class="section-scroller">
                     <table id="featTable" class="table table-striped table-fixed">
                         <thead>
@@ -320,7 +320,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 </div>
             </div>
             <div class="col-md-6 right-block">
-                <div id="seqViewer" hidden></div>
+                <div id="seqViewer"></div>
             </div>
         </div>
     </template>
@@ -372,6 +372,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 },
                 count: {
                     type: Number,
+                    value: 0,
                     notify: true
                 }
             },
@@ -379,46 +380,43 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
                 this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
                 if(!this.isoName) this.isoName = this.nxEntry+"-1";
-
                 var self=this
-                Promise.all(self.getFeaturesByView())
+                Promise.all(self._getFeaturesByView())
                     .then(function (oneData) {
                     self.sequences = oneData[0];
-                    self.getMetadataByView();
-                    self.getFeaturesByIsoform(oneData);
-                    if(Object.keys(self.featuresForViewer[0]).length){
-                        self.count = Object.keys(self.featuresForViewer[0]).length;
-                        self._renderFeatureViewer();
-                        self.tvSelection();
-                        self.eventTV();
-                        self.addFiltering();
-                        self.addFeatures();
+                    self._getMetadataByView();
+                    self._getFeaturesByIsoform(oneData);
+                    for(var i in self.featuresForViewer){
+                        self.count+= Object.keys(self.featuresForViewer[i]).length
+                    }
+                    if(self.count){
+                        self.reloadSVG();
+                        self._addFiltering();
                         self.$.featViewerSpinner.active = false;
-                        self.$.featuresTable.hidden = false;
-                        self.$.seqViewer.hidden = false;
-                        self.fillTable();
                         self.$.featTableSpinner.active = false;
-                    }else{
-                        self.count = 0;
                     }
                 });
             },
             reloadSVG: function(){
-                if (this.ft) {
+                Polymer.RenderStatus.afterNextRender(this.$.featureViewer, () => {
                     this.$.featTableSpinner.active = true;
                     $("#featureViewer svg").remove();
-                    this.ft.clearInstance();
-                    this._renderFeatureViewer();
-                    this.addFeatures();
-                    if ($(".zoomUnit").length) $(".zoomUnit").text("1");
-                    d3.selectAll('div.selectedRect').remove();
-                    this.fillTable();
-                    this.tvSelection();
-                    this.eventTV();
+                    this._fillTable();
+                    if(this.featuresLength) {
+                        this.hidden=false;
+                        this._renderFeatureViewer();
+                        this._addFeatures();
+                        if ($(".zoomUnit").length) $(".zoomUnit").text("1");
+                        d3.selectAll('div.selectedRect').remove();
+                        this.tvSelection();
+                        this.eventTV();
+                    }else{
+                        this.hidden=true;
+                    }
                     this.$.featTableSpinner.active = false;
-                }
+                });
             },
-            getFeaturesByIsoform: function(isoforms){
+            _getFeaturesByIsoform: function(isoforms){
                 this.featuresForViewer=[];
                 this.featuresByIsoform=[];
                 this.isofroms=isoforms[0];
@@ -429,7 +427,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     this.featuresByIsoform.push(feat);
                 }
             },
-            getFeaturesByView: function() {
+            _getFeaturesByView: function() {
                 var featuresForViewer = [];
                 for (var feat in this.featureList) {
                     switch (this.featureList[feat].APIRef) {
@@ -449,13 +447,13 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 }
                 return featuresForViewer;
             },
-            getMetadataByView: function() {
+            _getMetadataByView: function() {
                 this.metaData = [];
                 for (var i = 0; i < this.featureList.length - 1; i++) {
                     this.metaData.push(this.featureList[i].metadata);
                 }
             },
-            addFiltering: function() {
+            _addFiltering: function() {
                 var activeFiltering = {};
                 for (var i=0;i<this.featuresForViewer.length;i++) {
                     if (Object.keys(this.featuresForViewer[i]).length !== 0) {
@@ -530,7 +528,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 
                 $('#seqViewer [data-toggle="tooltip"]').tooltip();
             },
-            addFeatures: function() {
+            _addFeatures: function() {
                 for (var i=0;i<this.featuresForViewer.length;i++) {
                     if (Object.keys(this.featuresForViewer[i]).length !== 0 && this.featuresForViewer[i].hasOwnProperty(this.isoName) && this.filterOptions[this.featuresForViewer[i][this.isoName].filter.split(" ").join("_")] === true) {
                         var feature = jQuery.extend({}, this.featuresForViewer[i][this.isoName]);
@@ -538,7 +536,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     }
                 }
             },
-            fillTable: function() {
+            _fillTable: function() {
                 if ($("#featuresTable").length > 0) {
                     var number = 0;
                     var features = {};
@@ -581,7 +579,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 };
             },
             _reloadFeatureTable: function(){
-                this.fillTable();
+                this._fillTable();
                 if(this.$$("#featureTableTemplate")) this.$$("#featureTableTemplate").render();
             },
             _highlightCategories: function(mouseEvent){
@@ -592,26 +590,21 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 var srcElementId =  mouseEvent.srcElement.id || mouseEvent.srcElement.childNodes[1].id;
                 this.ft.hideFilteredFeature(srcElementId, "#795B42", document.location.href);
             },
-            filterAll: function() {
+            _filterAll: function() {
                 if ($("#filtering").hasClass("all-filters")){
-
                     $("#filtering input[type=checkbox]").prop("checked", false);
-
                     for(var key in this.filterOptions) {
                         this.filterOptions[key] = false;
                     }
                     $("#filtering").removeClass("all-filters");
-                }
-                else {
-
+                } else {
                     $("#filtering input[type=checkbox]").prop("checked", true);
-
                     for(var key in this.filterOptions) {
                         this.filterOptions[key] = true;
                     }
                     $("#filtering").addClass("all-filters");
                 }
-                this.applyFiltering();
+                this._applyFiltering();
                 this.reloadSVG();
             },
             _filterGold: function(item){
