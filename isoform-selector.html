@@ -293,8 +293,10 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 for (var i in visibleTabs){
                     if (this.isoName===visibleTabs[i].isoformAccession) isoformVisible = true;
                 }
-                if (!isoformVisible && this.isoName!=="all") this.$$("#extendIsoformChoice").innerHTML = this.isoName;
-                else if (this.$$("#extendIsoformChoice")) {
+                if (!isoformVisible && this.isoName!=="all") {
+                    this.$$("#extendIsoformChoice").innerHTML = this.isoName;
+                    $('#nx-isoformChoice #moreIsoformsTab').tab('show');
+                } else if (this.$$("#extendIsoformChoice")) {
                     this.$$("#extendIsoformChoice").innerHTML = "More";
                     this.toggleClass("active", false, this.$$("#moreIsoformsTab"));
                 }
@@ -399,7 +401,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                                 d3.selectAll("." + data.isoformAc + "Rect").style("fill", "#74EB78");
                                 self.reload(data.isoformAc);
                                 var isoSelection = $('#nx-isoformChoice #' + data.isoformAc).tab('show');
-                                if (isoSelection.parent().parent().is("#moreIsoforms")) $('#nx-isoformChoice #moreIsoformsTab').tab('show'); $("#extendIsoformChoice").text(data.isoformAc);
+                                //if (isoSelection.parent().parent().is("#moreIsoforms")) $('#nx-isoformChoice #moreIsoformsTab').tab('show'); $("#extendIsoformChoice").text(data.isoformAc);
 
                             });
 
