@@ -117,7 +117,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                                 <div class="dropdown-content">
                                     <template id="menu" is="dom-repeat" items="[[isoforms.more]]" as="isoform">
                                         <li role="presentation">
-                                            <a class="isoformNames" href="#[[isoform.uniqueName]]" data-args$="[[isoform.uniqueName]]" title="[[isoform.mainEntityName.value]]" on-tap="displayIsoform">[[isoform.uniqueName]]</a>
+                                            <a class="isoformNames" data-args$="[[isoform.uniqueName]]" title="[[isoform.mainEntityName.value]]" on-tap="displayIsoform">[[isoform.uniqueName]]</a>
                                         </li>
                                     </template>
                                 </div>
@@ -168,6 +168,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             ready: function(){
                 var nx = new Nextprot.Client("neXtprot isoform selector", "Calipho Group");
                 var nxEntry = this.nxConfig.entry || nx.getEntryName();
+                this.isoName = window.location.hash.slice(1);
                 var self=this;
                 nx.getIsoformMapping(nxEntry).then(
                     function(data){
@@ -216,7 +217,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                             return listIsoforms;
                         }())
                     };
-                    this.isoName = this.showAllTab ? this.isoName="all" : datas.isoforms.visible[0].uniqueName;
+                    if(!this.isoName) this.isoName = this.showAllTab ? this.isoName="all" : datas.isoforms.visible[0].uniqueName;
                     this.isoforms = datas.isoforms;
                     /////////// EventListener to change isoform
                     this.isoform;
@@ -288,6 +289,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             displayIsoform: function(isoIdentifier) {
                 if(isoIdentifier.target) isoIdentifier = isoIdentifier.target.getAttribute("data-args");
                 this.isoName = isoIdentifier;
+                history.pushState(null, null, window.location.pathname+window.location.search+"#"+this.isoName);
                 var visibleTabs = Object.values(this.isoforms.visible);
                 var isoformVisible = false;
                 for (var i in visibleTabs){
@@ -462,7 +464,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             },
             _navTabClass: function(index){
                 var classList = "isoform-selector";
-                return classList+(index===0 && !this.showAllTab?" active":"");
+                return classList+(this.sequences[index].isoformAccession===this.isoName && !this.showAllTab?" active":"");
             }
         });
     </script>
