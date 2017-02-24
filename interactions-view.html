@@ -161,7 +161,7 @@ View listing protein interaction annotations.
         }
       },
       _checkAnnotations: function(){
-        if(!this.annotationsCount && !this.positionalAnnotationsCount){
+        if(this.annotationsCount===0 && this.positionalAnnotationsCount===0){
           this.$.noDataWarning.hidden=false;
         } else {
           this.$.noDataWarning.hidden=true;
