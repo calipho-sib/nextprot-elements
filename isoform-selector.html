@@ -69,8 +69,19 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             .nav.isoform-selector>li.isoform-selector>a.isoform-selector {
                 padding: 10px 15px 5px;
             }
+            li.active>a, li.active>a:focus, li.active>a:hover {
+                color: #555;
+                cursor: default;
+                background-color: #fff;
+                border: 1px solid #ddd;
+                border-bottom-color: transparent;
+                border-radius: 4px 4px 0 0;
+            }
             .row {
                 margin: 15px 20px;
+            }
+            x-select.isoform-selector {
+                display: inline-flex;
             }
             #nx-isoformChoice {
                 margin-bottom: -5px;
@@ -86,7 +97,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 <div class="navbar-brand">Isoforms</div>
                 <ul id="navTabs" class="nav nav-tabs">
                     <template is="dom-if" if="[[showAllTab]]">
-                        <li class-list="[[_navTabClass(-1)]]">
+                        <li class="isoform-selector active">
                             <a id="allIsoforms" class="isoformNames" data-args="all" data-toggle="tab" on-tap="displayIsoform">All</a>
                         </li>
                     </template>
@@ -97,8 +108,8 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                     </template>
                     <template id="menu" is="dom-if" if="[[isoforms.more.length]]">
                         <x-select>
-                            <li class="active">
-                                <a id="moreIsoformsTab" class="isoformNames active" data-toggle="tab" on-tap="_showMoreIsoforms">
+                            <li id="moreIsoformsTab">
+                                <a class="isoformNames" data-toggle="tab" on-tap="_showMoreIsoforms">
                                     <span style="margin-right:5px;" class="caret"></span><span id="extendIsoformChoice">More</span>
                                 </a>
                             </li>
@@ -277,6 +288,16 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             displayIsoform: function(isoIdentifier) {
                 if(isoIdentifier.target) isoIdentifier = isoIdentifier.target.getAttribute("data-args");
                 this.isoName = isoIdentifier;
+                var visibleTabs = Object.values(this.isoforms.visible);
+                var isoformVisible = false;
+                for (var i in visibleTabs){
+                    if (this.isoName===visibleTabs[i].isoformAccession) isoformVisible = true;
+                }
+                if (!isoformVisible && this.isoName!=="all") this.$$("#extendIsoformChoice").innerHTML = this.isoName;
+                else if (this.$$("#extendIsoformChoice")) {
+                    this.$$("#extendIsoformChoice").innerHTML = "More";
+                    this.toggleClass("active", false, this.$$("#moreIsoformsTab"));
+                }
                 var isoContainer = this.$$("#isoformDisplayed #isoContainer")
                 if(isoContainer) isoContainer.innerHTML="";
                 if (!$('#isoContainer').length > 0) {
@@ -438,8 +459,8 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 this.$.isoformMapContainer.toggle();
             },
             _navTabClass: function(index){
-                var classList = "isoform-selector "
-                return classList+((index===-1 || (index===0 && !this.showAllTab))?"active":"");
+                var classList = "isoform-selector";
+                return classList+(index===0 && !this.showAllTab?" active":"");
             }
         });
     </script>
