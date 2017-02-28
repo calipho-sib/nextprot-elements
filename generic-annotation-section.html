@@ -286,16 +286,18 @@ Annotation section used in function, medical, and expression views.
                 var self = this;
                 for (var i in data_annot) {
                     var a = data_annot[i];
-                    if (a.category==="go molecular function" && a.cvTermAccessionCode=="GO:0003674") continue;
-                    if (a.category==="go biological process" && a.cvTermAccessionCode=="GO:0008150") continue;
-                    if (a.category==="caution" && a.description=="Product of a dubious CDS prediction.") continue;
-                    if (a.category==="caution" && a.description=="Product of a dubious gene prediction.") continue;
-                    if (a.category==="caution" && a.description=="Could be the product of a pseudogene.") continue;
-                    if (a.category==="caution" && a.description.startsWith("It is uncertain whether Met")) continue;
-                    if (a.category==="miscellaneous" && a.description.toLowerCase().match(/.*antibod.*/)) continue;
-                    if (a.category==="miscellaneous" && a.description.toLowerCase().match(/.*antigen.*/)) continue;
-                    if (a.category==="miscellaneous" && a.description.toLowerCase().match(/.*\sbind.*/)) continue;
-                    if (a.category==="miscellaneous" && a.description.toLowerCase().match(/^bind.*/)) continue;
+                    if (this.section==="function"){
+                        if (a.category==="go molecular function" && a.cvTermAccessionCode=="GO:0003674") continue;
+                        if (a.category==="go biological process" && a.cvTermAccessionCode=="GO:0008150") continue;
+                        if (a.category==="caution" && a.description=="Product of a dubious CDS prediction.") continue;
+                        if (a.category==="caution" && a.description=="Product of a dubious gene prediction.") continue;
+                        if (a.category==="caution" && a.description=="Could be the product of a pseudogene.") continue;
+                        if (a.category==="caution" && a.description.startsWith("It is uncertain whether Met")) continue;
+                        if (a.category==="miscellaneous" && a.description.toLowerCase().match(/.*antibod.*/)) continue;
+                        if (a.category==="miscellaneous" && a.description.toLowerCase().match(/.*antigen.*/)) continue;
+                        if (a.category==="miscellaneous" && a.description.toLowerCase().match(/.*\sbind.*/)) continue;
+                        if (a.category==="miscellaneous" && a.description.toLowerCase().match(/^bind.*/)) continue;
+                    }
                     if (a.properties) {
                         for (var j in a.properties) if(a.properties[j].name==="rank") a.rank=a.properties[j].value;
                     }
