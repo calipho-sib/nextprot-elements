@@ -109,10 +109,11 @@ Annotation section used in function, medical, and expression views.
                                             </div>
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.parentXref]]">
-                                            <p class="annotation-title col-lg-8 col-md-8 ol-sm-8 col-xs-8">[[annotation.value.description]]</p>
-                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 right">
-                                                <a class="accession-code-link btn btn-sm ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
-                                            </div>
+                                            <p class="annotation-title">[[annotation.value.description]]</p>
+                                            <template is="dom-if" if="[[!_isTransportActivity(annotation.value.category)]]">
+                                                    <a class="accession-code-link btn btn-sm ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
+                                            </template>
+                                            <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                         </template>
                                         <template is="dom-if" if="[[!_checkIfContainsAccessionOrXref(annotation.value)]]">
                                                 <template is="dom-if" if="[[_isBiophysicochemicalProperty(annotation.value.category)]]">
@@ -405,7 +406,7 @@ Annotation section used in function, medical, and expression views.
                 return a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1;
             },
             _sortByRank: function(a,b) {
-                return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
+                return parseInt(a.rank) < parseInt(b.rank) ? 1 : -1;
             },
             _sortBiophysicochemical: function(a,b) {
                 if(a.subcategory=="ABSORPTION" && b.subcategory!="ABSORPTION") return -1;
@@ -588,6 +589,9 @@ Annotation section used in function, medical, and expression views.
             },
             _isPathway: function(category){
                 return ["UNIPATHWAYS", "KEGG PATHWAYS", "REACTOME PATHWAYS"].indexOf(category)!==-1;
+            },
+            _isTransportActivity: function(category){
+                return category==="TRANSPORT ACTIVITY";
             },
             _isNewSubcategory: function(annotations,index){
                 return index===0 || annotations[index].subcategory!==annotations[index-1].subcategory;
