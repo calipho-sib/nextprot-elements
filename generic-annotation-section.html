@@ -78,7 +78,7 @@ Annotation section used in function, medical, and expression views.
                         <h4 class="annotation-category-title"> [[category.name]]</h4>
                     </div>
                     <div id="[[_stringToId(category.name)]]-section">
-                        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" filter="_filter" initial-count="10" target-framerate="1">
+                        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" filter="_filter" initial-count="1" target-framerate="1">
                             <template is="dom-if" if="[[annotation.value.newSection]]">
                                 <div class="grey-x">Interactions for Isoform [[annotation.value.isoformSpecific]]</div>
                             </template>
@@ -250,12 +250,12 @@ Annotation section used in function, medical, and expression views.
             },
             ready: function(){
                 if(this.evidencesShown===undefined) this._toggleAllEvidences();
-                var nx = new Nextprot.Client("neXtprot annotation loader", "Calipho Group");
-                var apiCall = [];
-                var self = this;
-                for (var i in this.categories) apiCall.push(nx.getAnnotationsByCategory(self.nxConfig.entry, this.categories[i]))
-                var self = this;
-                Promise.all(apiCall)
+                Polymer.RenderStatus.afterNextRender(this, () => {
+                    var nx = new Nextprot.Client("neXtprot annotation loader", "Calipho Group");
+                    var apiCall = [];
+                    for (var i in this.categories) apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i]))
+                    var self = this;
+                    Promise.all(apiCall)
                         .then(function (categories) {
                             self.annotationsByCategory = categories;
                             self._getAnnotationsByView();
@@ -267,6 +267,7 @@ Annotation section used in function, medical, and expression views.
                             self.$.spinner.removeAttribute('active');
                             self.count = 0;
                         });
+                });
             },
             _reloadIsoform: function(){
                 if(this.count) this._getAnnotationsByView();
