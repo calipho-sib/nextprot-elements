@@ -390,7 +390,8 @@ Annotation section used in function, medical, and expression views.
                 }
                 for (var i in Object.keys(data)) {
                     var category = Object.keys(data)[i];
-                    if (["OVERVIEW", "ENZYMATIC ACTIVITY", "COFACTOR", "NOTE", "CAUTION"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].sort(this._sortByRank);
+                    if (["ENZYMATIC ACTIVITY", "COFACTOR", "NOTE", "CAUTION"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].sort(this._sortByRank);
+                    else if (category.toUpperCase()==="OVERVIEW") data[category] = data[Object.keys(data)[i]].sort(this._sortOverview);
                     else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].sort(this._sortBiophysicochemical);
                     else if (category.toUpperCase()==="BINARY INTERACTIONS") data[category] = data[Object.keys(data)[i]].sort(this._sortBinaryInteractions);
                     else data[category] = data[Object.keys(data)[i]].sort(this._sortAlphabetically);
@@ -406,7 +407,10 @@ Annotation section used in function, medical, and expression views.
                 return a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1;
             },
             _sortByRank: function(a,b) {
-                return parseInt(a.rank) < parseInt(b.rank) ? 1 : -1;
+                return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
+            },
+            _sortOverview: function(a,b){
+                return (a.isoformSpecific && !b.isoformSpecific)?1:-1;
             },
             _sortBiophysicochemical: function(a,b) {
                 if(a.subcategory=="ABSORPTION" && b.subcategory!="ABSORPTION") return -1;
