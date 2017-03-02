@@ -102,7 +102,7 @@ Annotation section used in function, medical, and expression views.
                                             </template>
                                             <p class="annotation-title" inner-h-t-m-l="[[annotation.value.description]]"></p>
                                             <div class="annotation-labels">
-                                                <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCode]]</a>
+                                                <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
                                                 <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
                                                 <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                             </div>
@@ -110,7 +110,7 @@ Annotation section used in function, medical, and expression views.
                                         <template is="dom-if" if="[[annotation.value.parentXref]]">
                                             <p class="annotation-title">[[annotation.value.description]]</p>
                                             <template is="dom-if" if="[[!_isTransportActivity(annotation.value.category)]]">
-                                                    <a class="accession-code-link btn btn-sm ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
+                                                    <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
                                             </template>
                                             <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                         </template>
@@ -299,6 +299,8 @@ Annotation section used in function, medical, and expression views.
                         if (a.category==="miscellaneous" && a.description.toLowerCase().match(/.*\sbind.*/)) continue;
                         if (a.category==="miscellaneous" && a.description.toLowerCase().match(/^bind.*/)) continue;
                     }
+                    if (a.cvTermAccessionCode && a.apicategory==="CATALYTIC_ACTIVITY") a.cvTermAccessionCodeLabel="EC "+a.cvTermAccessionCode;
+                    else if (a.cvTermAccessionCode) a.cvTermAccessionCodeLabel=a.cvTermAccessionCode;
                     if (a.properties) {
                         for (var j in a.properties) if(a.properties[j].name==="rank") a.rank=a.properties[j].value;
                     }
@@ -369,6 +371,7 @@ Annotation section used in function, medical, and expression views.
                         label: a.label || null,
                         prefix: a.prefix,
                         cvTermAccessionCode: a.cvTermAccessionCode,
+                        cvTermAccessionCodeLabel: a.cvTermAccessionCodeLabel,
                         cvTermDescription: a.cvTermDescription,
                         selfInteraction: a.selfInteraction=="true",
                         rank: a.rank,
