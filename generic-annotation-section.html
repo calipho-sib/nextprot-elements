@@ -90,10 +90,9 @@ Annotation section used in function, medical, and expression views.
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.chemicalName]]">
                                             <template is="dom-if" if="[[_checkIfChebi(annotation.value.database)]]">
-                                                <p class="annotation-title col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-transform: capitalize">
+                                                <p class="annotation-title" style="text-transform: capitalize">
                                                     [[annotation.value.chemicalName]]
                                                     <a href="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=[[annotation.value.accession]]" class="ext-link" target="_blank">[[annotation.value.accession]]</a>
-                                                    <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                 </p>
                                             </template>
                                         </template>
