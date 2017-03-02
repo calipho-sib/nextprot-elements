@@ -309,7 +309,7 @@ Annotation section used in function, medical, and expression views.
                                 a.bioObject.properties["chemical name"] : undefined;
                         a.prefix = "It requires the following cofactor "
                     }
-                    if (a.category=="catalytic activity" && (data_annot[i-1].category!="enzymatic activity" || i==0)) {
+                    if (a.category=="catalytic activity" && (i===0 || (i>0 && data_annot[i-1].category!="enzymatic activity"))) {
                         a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reaction";
                     } else if (a.category=="catalytic activity" && i!=0 && data_annot[i-1].category=="enzymatic activity") {
                         data["enzymatic activity"][0].prefix = "This protein acts as an enzyme. It is known to catalyze the following reactions"
