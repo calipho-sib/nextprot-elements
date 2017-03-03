@@ -447,9 +447,10 @@ Annotation section used in function, medical, and expression views.
                     }
                     return -1;
                 }
-                if(a.subcategory=="KINETIC PARAMETERS" && b.subcategory=="ABSORPTION") return 1;
-                if(a.subcategory=="KINETIC PARAMETERS" && b.subcategory=="DEPENDENCE") return -1;
+                if(a.subcategory==="KINETIC PARAMETERS" && b.subcategory==="ABSORPTION") return 1;
+                if(a.subcategory==="KINETIC PARAMETERS" && b.subcategory==="DEPENDENCE") return -1;
                 if(a.subcategory=="DEPENDENCE" && b.subcategory!="DEPENDENCE") return 1;
+                if(a.subcategory==="DEPENDENCE" && b.subcategory==="DEPENDENCE" && b.label==="pH") return 1;
             },
             _sortBinaryInteractions: function(a,b){
                 if (a.isoformSpecific && !b.isoformSpecific) return 1
