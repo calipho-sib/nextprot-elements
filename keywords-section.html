@@ -44,7 +44,7 @@ Keywords section present on function, medical, sequence, and structures pages.
               <template is="dom-repeat" items="[[annotations.value]]" as="annotation" sort="_sortAlphabetically">
                 <div class="row annotation-row">
                   <div class="annotation-title-container">
-                    <p class="annotation-title col-lg-5 col-md-6 col-sm-6 col-xs-6">[[annotation.cvTermName]]</p>
+                    <p class="annotation-title col-lg-2 col-md-3 col-sm-3 col-xs-12">[[annotation.cvTermName]]</p>
                     <div class="annotation-labels col-lg-7 col-md-6 col-sm-6 col-xs-6">
                       <span id="[[annotation.cvTermAccessionCode]]-button" class="colored-label definition-button" on-tap="toggle">Definition</span>
                       <a class="accession-code-link btn selectable" href="/db/term/[[annotation.cvTermAccessionCode]]">[[annotation.cvTermAccessionCode]]</a>
