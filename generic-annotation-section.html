@@ -438,7 +438,7 @@ Annotation section used in function, medical, and expression views.
                         return (a.description.toLowerCase().split("for ")[1] > b.description.toLowerCase().split("for ")[1]) ? 1: -1;
                     }
                     if(a.label == "V<sub>max</sub>" && b.label == "V<sub>max</sub>") {
-                        return (a.description.toLowerCase().split("enzyme toward ")[1] > b.description.toLowerCase().split("enzyme toward ")[1]) ? 1: -1;
+                        return (a.description.toLowerCase().split("enzyme ")[1] > b.description.toLowerCase().split("enzyme ")[1]) ? 1: -1;
                     }
                     if(a.label == "K<sub>M</sub>" && b.label == "V<sub>max</sub>") return -1;
                     if(a.label == "V<sub>max</sub>" && b.label == "K<sub>M</sub>") return 1;
