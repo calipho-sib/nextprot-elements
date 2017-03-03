@@ -23,6 +23,10 @@ Exteranl links section present in function, medical, expression, interactions, s
       :host {
         display: block;
       }
+      .inline-group {
+        display: inline-flex;
+        margin: 2px 5px;
+      }
     </style>
     <div id="xrefs-header" class="category-header">
       <h4 id="xrefs-title" class="category-title">Further external links</h4>
@@ -33,41 +37,41 @@ Exteranl links section present in function, medical, expression, interactions, s
       <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotations">
       <div class="row">
         <template is="dom-if" if="[[_checkCategories()]]">
-          <div class="col-xl-1 col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <div class="col-xl-1 col-lg-3 col-md-12 col-sm-12 col-xs-12">
             <h4 class="annotation-category-title text-align-left"> [[annotations.name]]</h4>
           </div>
         </template>
-        <div class="col-xl-11 col-lg-9 col-md-9 col-sm-12 col-xs-12">
+        <div class="col-xl-11 col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <template is="dom-repeat" items="[[annotations.value]]" as="annotation">
               <div class="row annotation-row">
-                <div class="annotation-title-container col-lg-5 col-md-6 col-sm-6 col-xs-6">
-                  <p class="annotation-title">[[annotation.name]]</p>
+                <div class="annotation-title-container col-lg-2 col-md-3 col-sm-3 col-xs-12">
+                  <div class="annotation-title">[[annotation.name]]</div>
                 </div>
-                <div class="col-lg-7 col-md-6 col-sm-6 col-xs-6">
+                <div class="col-lg-10 col-md-9 col-sm-9 col-xs-12">
                   <template is="dom-repeat" items="[[annotation.xrefs]]" as="xref">
-                  <div class="btn-group hidden-xs" role="group">
-                    <template is="dom-if" if="[[xref.prefix]]">
-                      <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
-                    </template>
-                    <a class="btn btn-xs selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
-                    <template is="dom-if" if="[[xref.suffix]]">
-                      <label class="suffix-label">[[xref.suffix]]</label>
-                    </template>
-                  </div>
-                  <div class="row hidden-lg hidden-md hidden-sm">
-                    <div class="btn-group col-xs-12 no-padding" role="group">
+                    <div class="hidden-xs inline-group" role="group">
                       <template is="dom-if" if="[[xref.prefix]]">
                         <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
                       </template>
-                      <a class="btn btn-xs selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
+                      <a class="selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
                       <template is="dom-if" if="[[xref.suffix]]">
                         <label class="suffix-label">[[xref.suffix]]</label>
                       </template>
                     </div>
-                  </div>
+                    <div class="hidden-lg hidden-md hidden-sm inline-group">
+                      <div class="col-xs-12 no-padding" role="group">
+                        <template is="dom-if" if="[[xref.prefix]]">
+                          <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
+                        </template>
+                        <a class="selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
+                        <template is="dom-if" if="[[xref.suffix]]">
+                          <label class="suffix-label">[[xref.suffix]]</label>
+                        </template>
+                      </div>
+                    </div>
                   </template>
                 </div>
-              </div>
+                </div>
             </template>
         </div>
       </div>
