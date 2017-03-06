@@ -13,8 +13,8 @@
 <script src="../jquery-ui/jquery-ui.min.js"></script>
 <script src="../bootstrap/js/tooltip.js"></script>
 <script src="../bootstrap/js/popover.js"></script>
-<script src="../nextprot-js/src/nextprot-core.js"></script>
-<script src="../nextprot-js/src/nextprot-utils.js"></script>
+<script src="../nextprot/src/nextprot-core.js"></script>
+<script src="../nextprot/src/nextprot-utils.js"></script>
 <script src="../handlebars/handlebars.min.js"></script>
 <script src="bio-viz/biovizJS/library/jquery.ui-contextmenu.min.js"></script>
 <script src="bio-viz/dist/bio-viz.min.js"></script>
@@ -32,6 +32,13 @@ Element joining bioviz viewer and 3D structures table
         <style include="nextprot-elements-shared-styles">
             :host {
                 display: block;
+            }
+            .ext-link:after {
+                content: "\f08e";
+                font-family: "FontAwesome";
+                font-size: 11px;
+                margin-left: 5px;
+                vertical-align: middle;
             }
         </style>
         <div id="bioviz-container"></div>

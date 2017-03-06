@@ -4,7 +4,7 @@
 <link rel="import" href="publication-item.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="../pagination-table/pagination-table.html">
-<script src="../nextprot-js/src/nextprot-core.js"></script>
+<script src="../nextprot/src/nextprot-core.js"></script>
 <!--
 `publications-view`
 Publications listing used in curated and additional publications pages.
@@ -36,7 +36,7 @@ Publications listing used in curated and additional publications pages.
                         publications</h4>
                     <paper-spinner-lite id="spinner" active></paper-spinner-lite>
                 </div>
-                <pagination-table items="{{items}}" layout="publication-item" custom-style="border: 1px solid red;"></pagination-table>
+                <pagination-table items="{{items}}" layout="publication-item" page-size="20" custom-style="border: 1px solid red;"></pagination-table>
             </div>
         </div>
     </template>
