@@ -168,6 +168,7 @@ View presenting blast search results annotations.
             },
             attached: function(){
                 var nx = new Nextprot.Client("neXtProt blast view", "Calipho Group");
+                if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                 if (this.nxConfig.isoform) this.isoform = this.nxConfig.isoform;
                 if (this.nxConfig.sequence) this.sequence = this.nxConfig.sequence;
                 if (this.nxConfig.begin) this.begin = this.nxConfig.begin;

@@ -100,6 +100,7 @@ Exteranl links section present in function, medical, expression, interactions, s
       },
       ready: function(){
         var nx = new Nextprot.Client("xref-section", "ndu");
+        if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
         var self=this;
         nx.getAnnotationsByCategory(self.nxConfig.entry, "xref")
           .then(function (data) {

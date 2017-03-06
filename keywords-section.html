@@ -85,6 +85,7 @@ Keywords section present on function, medical, sequence, and structures pages.
       },
       ready: function(){
         var nx = new Nextprot.Client("keywords-section", "ndu");
+        if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
         var self=this;
         nx.getAnnotationsByCategory(self.nxConfig.entry, "keyword")
           .then(function (data) {

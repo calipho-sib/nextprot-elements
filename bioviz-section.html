@@ -66,6 +66,7 @@ Element joining bioviz viewer and 3D structures table
             },
             attached: function() {
                 this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
+                if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                 this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
                 this.bv = new nxBioViz();
                 this.bv.init("#bioviz-container", this.isoform);

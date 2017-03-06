@@ -456,6 +456,7 @@ Protein overview
       },
       ready: function(){
         var nx = new Nextprot.Client("nextprot-overview", "Calipho Group");
+        if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
         this.nxUrl = nx.getNeXtProtUrl();
         var self=this;
         nx.getProteinOverview(self.nxConfig.entry).then(function (data) {
