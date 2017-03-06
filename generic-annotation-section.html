@@ -251,6 +251,7 @@ Annotation section used in function, medical, and expression views.
                 if(this.evidencesShown===undefined) this._toggleAllEvidences();
                 Polymer.RenderStatus.afterNextRender(this, () => {
                     var nx = new Nextprot.Client("neXtprot annotation loader", "Calipho Group");
+                    if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                     var apiCall = [];
                     for (var i in this.categories) apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i]))
                     var self = this;
