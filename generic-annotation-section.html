@@ -21,7 +21,7 @@
         (function(){
             var nextprotScript = document.createElement('script');
             nextprotScript.type = 'text/javascript';
-            nextprotScript.src = '../nextprot/src/nextprot-core.js';
+            nextprotScript.src = '../../nextprot/src/nextprot-core.js';
             (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(nextprotScript);
         })();
     }
@@ -295,7 +295,7 @@ Annotation section used in function, medical, and expression views.
                 data = {};
                 var self = this;
                 var annotCategoryList = [];
-                for (var v in Object.values(data_annot)) annotCategoryList.push(data_annot[v].category);
+                for (var v in this._objectValues(data_annot)) annotCategoryList.push(data_annot[v].category);
                 annotCategoryCount = annotCategoryList.reduce( function (prev, item) {
                     if ( item in prev ) prev[item] ++;
                     else prev[item] = 1;
@@ -578,6 +578,15 @@ Annotation section used in function, medical, and expression views.
                     });
                 }
                 return null;
+            },
+            _objectValues: function(obj) {
+                var vals = [];
+                for( var key in obj ) {
+                    if ( obj.hasOwnProperty(key) ) {
+                        vals.push(obj[key]);
+                    }
+                }
+                return vals;
             },
             _getIndex: function(index){
                 return index+1;
