@@ -10,9 +10,17 @@
       newscript.src = 'https://code.jquery.com/jquery-2.2.4.min.js';
       (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(newscript);
     })();
+    //Load Nextprot if necessary
+    if(typeof Nextprot === "undefined"){
+      (function(){
+        var nextprotScript = document.createElement('script');
+        nextprotScript.type = 'text/javascript';
+        nextprotScript.src = '../nextprot/src/nextprot-core.js';
+        (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(nextprotScript);
+      })();
+    }
   }
 </script>
-<script src="../nextprot/src/nextprot-core.js"></script>
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
 <!--
