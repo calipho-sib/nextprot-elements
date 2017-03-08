@@ -9,17 +9,19 @@
 <link rel="import" href="../neon-animation/animations/slide-from-left-animation.html">
 <link rel="import" href="../neon-animation/animations/slide-left-animation.html">
 <link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
-<link rel="import" href="nextprot-elements-shared-styles.html">
-
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <script>
   //Load JQuery if necessary
   if(typeof jQuery === "undefined"){
     (function(){
-        var jqueryScript = document.createElement('script');
-        jqueryScript.src = '../../jquery/dist/jquery.min.js';
-        document.getElementsByTagName('head')[0].appendChild(jqueryScript);
+      var jqueryScript = document.createElement('script');
+      jqueryScript.src = '../../jquery/dist/jquery.min.js';
+      document.getElementsByTagName('head')[0].appendChild(jqueryScript);
     })();
   }
+</script>
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<script>
   //Load Nextprot if necessary
   if(typeof Nextprot === "undefined"){
     (function(){
@@ -35,7 +37,6 @@
     })();
   }
 </script>
-
 
 <!--
 `protein-overview`
@@ -102,6 +103,7 @@ Protein overview
           </template>
           <template is="dom-if" if="[[data.recommendedProteinName.mainShortName]]">([[data.recommendedProteinName.mainShortName]])</template>
         </template>
+        <paper-spinner-lite id="spinner" active></paper-spinner-lite>
       </h3>
     </div>
     <iron-collapse id="collapseInfosLess" opened="{{!extended}}">
@@ -473,9 +475,11 @@ Protein overview
         var self=this;
         nx.getProteinOverview(self.nxConfig.entry).then(function (data) {
           self._loadData(data, self.nxConfig.entry, self.nxUrl);
+          self.$.spinner.active=false;
         }, function(error){
           var responseText = JSON.parse(error.responseText);
           self.$.proteinTitle.innerHTML = "<h3>"+responseText.message+"</h3>";
+          self.$.spinner.active=false;
         });
         this.nxEntry = nx.getEntryName();
       },
