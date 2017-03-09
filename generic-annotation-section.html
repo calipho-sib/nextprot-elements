@@ -41,14 +41,7 @@ Annotation section used in function, medical, and expression views.
         <style include="nextprot-elements-shared-styles">
             :host {
                 display: block;
-            }
-            #evidenceButton {
-                padding: 0px 5px 0px 0px;
-                margin-bottom: 10px;
-            }
-            #biophysicochemical-properties-section {
-                border: 1px solid #E7EAEC;
-                margin-top: 2em;
+                min-height: 35px;
             }
             .xeno-label, .isoform-label {
                 color: #999;
@@ -65,17 +58,29 @@ Annotation section used in function, medical, and expression views.
             .grey-x {
                 margin-bottom: 10px;
             }
+            #evidenceButton {
+                float: right;
+                padding: 0px 5px 0px 0px;
+                margin-bottom: -15px;
+            }
+            #spinner {
+                position: absolute;
+            }
+            #biophysicochemical-properties-section {
+                border: 1px solid #E7EAEC;
+                margin-top: 2em;
+            }
         </style>
         <div class="category-main">
             <template is="dom-if" if="[[data]]">
                 <button id="evidenceButton" class="btn btn-default" on-tap="_toggleAllEvidences">
                     <template is="dom-if" if="[[evidencesShown]]">
                         <iron-icon icon="arrow-drop-up"></iron-icon>
-                        hide evidences
+                        Hide evidences
                     </template>
                     <template is="dom-if" if="[[!evidencesShown]]">
                         <iron-icon icon="arrow-drop-down"></iron-icon>
-                        show evidences
+                        Show evidences
                     </template>
                 </button>
             </template>
