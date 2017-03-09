@@ -247,20 +247,19 @@ Protein overview
             </template>
             <template is="dom-if" if="[[data.functionalRegionNames]]">
               <template is="dom-repeat" items="[[data.functionalRegionNames]]" as="functionalRegionName">
-              <dt>Include the following [[functionalRegionNames.names.length]] functional region[[_pluralize(functionalRegionNames.names)]]</dt>
+              <dt>Include the following [[functionalRegionName.names.length]] functional region[[_pluralize(functionalRegionName.names)]]</dt>
                 <template is="dom-repeat" items="[[functionalRegionName.names]]" as="regionName">
                   <dd> [[regionName.name]]
-                    <template is="dom-repeat" items="[[regionName.synonyms]]" as="synonym">
-                      <template is="dom-if" if="[[synonym.EC]]">[<template is="dom-repeat" items="[[synonyms.EC]]" as="ec">
-                        <div class="ec-link">
-                          <a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a></div><template is="dom-if" if="[[!_checkIfLast(synonym.EC,index)]]">,</template>
-                      </template>]</template>
-                    <template is="dom-repeat" items="[[synonyms.full.0]]" as="full">
-                        <span><span class="grey-x">Alternative name[[_pluralize(full)]]:</span>
-                          <template is="dom-repeat" items="[[full]]" as="f">
-                            [[f]]<template is="dom-if" if="[[!_checkIfLast(full.f,index)]]">; </template>
-                          </template></span>
-                      </template>
+                    <template is="dom-if" if="[[regionName.synonyms.EC]]">[<template is="dom-repeat" items="[[regionName.synonyms.EC]]" as="ec">
+                      <div class="ec-link">
+                        <a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a></div><template is="dom-if" if="[[!_checkIfLast(regionName.synonyms.EC,index)]]">,</template>
+                    </template>]</template>
+                    <template is="dom-if" if="[[regionName.synonyms.full]]">
+                      <span><span class="grey-x">Alternative name[[_pluralize(regionName.synonyms.full)]]:</span>
+                        <template is="dom-repeat" items="[[regionName.synonyms.full]]" as="full">
+                          [[full]]<template is="dom-if" if="[[!_checkIfLast(regionName.synonyms.full,index)]]">; </template>
+                        </template>
+                      </span>
                     </template>
                   </dd>
                 </template>
