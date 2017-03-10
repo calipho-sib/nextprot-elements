@@ -526,9 +526,9 @@ Annotation section used in function, medical, and expression views.
                 }
                 var self = this;
                 return ev.map(function(e){
+                    if (e.goAssignedBy) e.assignedBy = e.goAssignedBy;
                     e.assignedBy=e.assignedBy.replace('NextProt', 'neXtProt');
                     e.assignedBy=e.assignedBy.replace('Uniprot', 'UniProt');
-                    e.assignedBy=e.assignedBy.replace('GO_central', 'RefGenome');
                     e.assignedBy=e.assignedBy.replace('KEGG_PTW', 'KEGG');
                     e.numberOfExperiments = e.properties ? e.properties.numberOfExperiments : undefined;
                     return {
