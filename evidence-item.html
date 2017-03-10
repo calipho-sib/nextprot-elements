@@ -53,26 +53,26 @@ Block element representing an evidence record.
                 color: #999;
             }
         </style>
-        <template is="dom-if" if="{{data.evidenceCodeName}}">
+        <template is="dom-if" if="[[data.evidenceCodeName]]">
             <div class="evidence-container">
-                <div class="evidence-arrow">&#10549;</div>  Evidence {{index}}:
-                <span class="colored-label evidence-code-name">{{data.evidenceCodeName}}</span>
-                <span class="colored-label evidence-source">{{_getSource()}}</span>
-                <quality-label quality={{data.qualityQualifier}}></quality-label>
+                <div class="evidence-arrow">&#10549;</div>  Evidence [[index]]:
+                <span class="colored-label evidence-code-name">[[data.evidenceCodeName]]</span>
+                <span class="colored-label evidence-source">[[data.assignedBy]]</span>
+                <quality-label quality=[[data.qualityQualifier]]></quality-label>
                 <div class="border-left">
-                    <template is="dom-if" if="{{data.numberOfExperiments}}">
+                    <template is="dom-if" if="[[data.numberOfExperiments]]">
                         <div class="evidence-accession">
-                            <p class="experiments-line">Number of experiments: {{data.numberOfExperiments}}</p>
+                            <p class="experiments-line">Number of experiments: [[data.numberOfExperiments]]</p>
                         </div>
                     </template>
-                    <template is="dom-if" if="{{data.resourceAccession}}">
+                    <template is="dom-if" if="[[data.resourceAccession]]">
                         <div class="evidence-accession">
-                            <p><a href="{{data.url}}" class="ext-link" target='_blank'>{{data.resourceAccession}}</a></p>
+                            <p><a href="[[data.url]]" class="ext-link" target='_blank'>[[data.resourceAccession]]</a></p>
                         </div>
                     </template>
-                    <template is="dom-if" if="{{data.publication}}">
+                    <template is="dom-if" if="[[data.publication]]">
                         <div class="evidence-publication">
-                            <publication-item data="{{data.publication}}"></publication-item>
+                            <publication-item data="[[data.publication]]"></publication-item>
                         </div>
                     </template>
                 </div>
@@ -89,9 +89,6 @@ Block element representing an evidence record.
                 index: {
                     type: Number
                 }
-            },
-            _getSource: function(){
-                return this.data.resourceDb || this.data.assignedBy;
             }
         });
     </script>
