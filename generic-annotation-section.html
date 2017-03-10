@@ -61,10 +61,10 @@ Annotation section used in function, medical, and expression views.
             #evidenceButton {
                 float: right;
                 padding: 0px 5px 0px 0px;
-                margin-bottom: -15px;
+                margin-top: -5px;
             }
-            #spinner {
-                position: absolute;
+            #notice {
+                margin: 0 0 0 25px;
             }
             #biophysicochemical-properties-section {
                 border: 1px solid #E7EAEC;
@@ -84,7 +84,7 @@ Annotation section used in function, medical, and expression views.
                     </template>
                 </button>
             </template>
-            <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+            <div id="notice" class="grey-x"><i>Annotations in this section apply to all the isoforms if not specified otherwise.</i><paper-spinner-lite id="spinner" active></paper-spinner-lite></div>
             <template is="dom-repeat" items="[[_toArray(data)]]" as="category">
                 <div class="row category-row">
                     <div class="col-xl-1 col-lg-12 col-md-12 col-sm-12 col-xs-12">
