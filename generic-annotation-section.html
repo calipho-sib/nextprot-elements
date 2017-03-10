@@ -141,9 +141,9 @@ Annotation section used in function, medical, and expression views.
                                                         <span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
                                                     </template>
                                                     <span inner-h-t-m-l="[[annotation.value.description]]"></span>
-                                                </template>
-                                                <template is="dom-if" if="[[!_isBinaryInteractionOrCofactorOrBiophysical(annotation.value.category)]]">
-                                                    <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                    <template is="dom-if" if="[[!_isBinaryInteractionOrCofactorOrBiophysical(annotation.value.category)]]">
+                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                    </template>
                                                 </template>
                                             </p>
                                             <template is="dom-if" if="[[annotation.value.selfInteraction]]">
