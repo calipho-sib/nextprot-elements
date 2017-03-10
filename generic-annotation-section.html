@@ -111,7 +111,7 @@ Annotation section used in function, medical, and expression views.
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.cvTermAccessionCode]]">
                                             <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
-                                                <span class="annotation-title isoform-label front-label">Isoform [[annotation.value.isoformSpecific]]</span>
+                                                <span class="annotation-title isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
                                             </template>
                                             <p class="annotation-title" inner-h-t-m-l="[[annotation.value.description]]"></p>
                                             <div class="annotation-labels">
@@ -138,7 +138,7 @@ Annotation section used in function, medical, and expression views.
                                             <p class="annotation-title">
                                                 <template is="dom-if" if="[[!_isBinaryInteractionOrCofactorOrBiophysical(annotation.value.category)]]">
                                                     <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
-                                                        <span class="isoform-label front-label">Isoform [[annotation.value.isoformSpecific]]</span>
+                                                        <span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
                                                     </template>
                                                     <span inner-h-t-m-l="[[annotation.value.description]]"></span>
                                                 </template>
@@ -384,7 +384,8 @@ Annotation section used in function, medical, and expression views.
                         var isoform = a.targetingIsoformsMap[j];
                         if (isoform.specificity=="SPECIFIC"){
                             a.isoformAccession = isoform.isoformAccession;
-                            a.isoformSpecific = data_isoforms[isoform.isoformAccession].mainEntityName.name;
+                            if (a.isoformSpecific!==undefined) a.isoformSpecific = a.isoformSpecific.replace(/^Isoform(?!s)/, "Isoforms")+" and " + data_isoforms[isoform.isoformAccession].mainEntityName.name;
+                            else a.isoformSpecific = "Isoform "+ data_isoforms[isoform.isoformAccession].mainEntityName.name;
                         }
                     }
                     data[a.category].push({
