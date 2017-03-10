@@ -35,6 +35,9 @@ Exteranl links section present in function, medical, expression, interactions, s
         display: inline-flex;
         margin: 2px 5px;
       }
+      .suffix-label {
+        margin-top: -3px;
+      }
     </style>
     <div id="xrefs-header" class="category-header">
       <h4 id="xrefs-title" class="category-title">Further external links</h4>
@@ -167,8 +170,7 @@ Exteranl links section present in function, medical, expression, interactions, s
       _filterExceptions: function(typeList) {
         var newTypeList = [];
         for (elem in typeList){
-          if (typeList[elem].databaseName === "IntAct"
-          || typeList[elem].databaseName === "BioGrid"){
+          if (["IntAct", "BioGrid", "ESTHER"].indexOf(typeList[elem].databaseName)!==-1){
             if(typeList[elem].properties.length>0){
               newTypeList.push({
                 name: typeList[elem].databaseName,
