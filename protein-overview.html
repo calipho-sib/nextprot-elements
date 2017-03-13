@@ -112,15 +112,11 @@ Protein overview
         <div id="synonym-less" class="row">
           <div class="col-md-3 col-xs-3 grey-x text-align-right">Protein also known as :</div>
           <div class="col-md-9 col-xs-9">
-            [[data.recommendedProteinName.mainSynonymName.name]]
-            <template is="dom-if" if="[[data.recommendedProteinName.mainSynonymName.synonym]]"> ([[data.recommendedProteinName.mainSynonymName.synonym]]) </template>
-            <template is="dom-if" if="[[data.recommendedProteinName.others.0]]">; </template>
+              [[data.recommendedProteinName.mainSynonymName.name]]<template is="dom-if" if="[[data.recommendedProteinName.mainSynonymName.synonym]]">([[data.recommendedProteinName.mainSynonymName.synonym]])</template><template is="dom-if" if="[[data.recommendedProteinName.others.0]]">; </template><template is="dom-if" if="[[!data.recommendedProteinName.others.0]]">. </template>
             <template is="dom-repeat" items="[[data.recommendedProteinName.others]]" as="others">
               [[others.type]][[_pluralize(others.names)]]:
               <template is="dom-repeat" items="[[others.names]]" as="nameArray">
-                [[nameArray.name]]<template is="dom-if" if="[[!_checkIfLast(others.names,index)]]">,</template>
-              </template>
-              <template is="dom-if" if="[[!_checkIfLast(others,index)]]">; </template>
+                [[nameArray.name]]<template is="dom-if" if="[[!_checkIfLast(others.names,index)]]">,</template></template><template is="dom-if" if="[[!_checkIfLast(others,index)]]">. </template>
             </template>
           </div>
         </div>
@@ -135,7 +131,7 @@ Protein overview
                 <template is="dom-repeat" items="[[others.names]]" as="nameArray">
                   [[nameArray.name]]<template is="dom-if" if="[[!_checkIfLast(others.names,index)]]">,</template>
                 </template>
-                <template is="dom-if" if="[[!_checkIfLast(others,index)]]">; </template>
+                <template is="dom-if" if="[[!_checkIfLast(others,index)]]">. </template>
               </template>
             </div>
           </div>
