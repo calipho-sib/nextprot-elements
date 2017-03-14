@@ -45,51 +45,40 @@ Exteranl links section present in function, medical, expression, interactions, s
     </div>
     <div class="category-main">
       <template is="dom-repeat" items="[[_toArray(data)]]" as="category" sort="_sortCategories">
-      <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotations">
-      <div class="row">
-        <template is="dom-if" if="[[_checkCategories()]]">
-          <div class="col-xl-1 col-lg-3 col-md-12 col-sm-12 col-xs-12">
-            <h4 class="annotation-category-title text-align-left"> [[annotations.name]]</h4>
-          </div>
-        </template>
-        <div class="col-xl-11 col-lg-9 col-md-12 col-sm-12 col-xs-12">
-            <template is="dom-repeat" items="[[annotations.value]]" as="annotation">
-              <div class="row annotation-row">
-                <div class="annotation-title-container col-lg-2 col-md-3 col-sm-3 col-xs-12">
-                  <div class="annotation-title">[[annotation.name]]</div>
-                </div>
-                <div class="col-lg-10 col-md-9 col-sm-9 col-xs-12">
-                  <template is="dom-repeat" items="[[annotation.xrefs]]" as="xref">
-                    <div class="hidden-xs inline-group" role="group">
-                      <template is="dom-if" if="[[xref.prefix]]">
-                        <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
-                      </template>
-                      <a class="selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
-                      <template is="dom-if" if="[[xref.suffix]]">
-                        <label class="suffix-label">[[xref.suffix]]</label>
-                      </template>
-                    </div>
-                    <div class="hidden-lg hidden-md hidden-sm inline-group">
-                      <div class="col-xs-12 no-padding" role="group">
-                        <template is="dom-if" if="[[xref.prefix]]">
-                          <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
-                        </template>
-                        <a class="selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
-                        <template is="dom-if" if="[[xref.suffix]]">
-                          <label class="suffix-label">[[xref.suffix]]</label>
-                        </template>
-                      </div>
-                    </div>
-                  </template>
-                </div>
-                </div>
+        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotations">
+          <div class="row">
+            <template is="dom-if" if="[[_checkCategories()]]">
+              <div>
+                <h4 class="annotation-category-title text-align-left"> [[annotations.name]]</h4>
+              </div>
             </template>
-        </div>
-      </div>
-      <template is="dom-if" if="[[_checkIfLast(data,index)]]">
-        <hr class="bottom-line">
-      </template>
-      </template>
+            <div>
+              <template is="dom-repeat" items="[[annotations.value]]" as="annotation">
+                <div class="row annotation-row">
+                  <div class="annotation-title-container">
+                    <div class="annotation-title">[[annotation.name]]</div>
+                    <div>
+                      <template is="dom-repeat" items="[[annotation.xrefs]]" as="xref">
+                        <div class="hidden-xs inline-group" role="group">
+                          <template is="dom-if" if="[[xref.prefix]]">
+                            <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
+                          </template>
+                          <a class="selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
+                          <template is="dom-if" if="[[xref.suffix]]">
+                            <label class="suffix-label">[[xref.suffix]]</label>
+                          </template>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+          <template is="dom-if" if="[[_checkIfLast(data,index)]]">
+            <hr class="bottom-line">
+          </template>
+        </template>
       </template>
     </div>
   </template>
@@ -114,16 +103,16 @@ Exteranl links section present in function, medical, expression, interactions, s
         if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
         var self=this;
         nx.getAnnotationsByCategory(self.nxConfig.entry, "xref")
-          .then(function (data) {
-            self.getXrefByView(Object.keys(data.xrefs).map(function(k) { return data.xrefs[k] }));
-            self.$.spinner.active = false;
-          }).catch(function (err) {
-            // catch any error that happened so far
-            console.log("Argh, broken: " + err.message);
-            console.log("Error at line : " + err.stack);
-            self.$.spinner.active = false;
-            self.count = 0;
-          });
+                .then(function (data) {
+                  self.getXrefByView(Object.keys(data.xrefs).map(function(k) { return data.xrefs[k] }));
+                  self.$.spinner.active = false;
+                }).catch(function (err) {
+                  // catch any error that happened so far
+                  console.log("Argh, broken: " + err.message);
+                  console.log("Error at line : " + err.stack);
+                  self.$.spinner.active = false;
+                  self.count = 0;
+                });
       },
       getXrefByView: function(list) {
         this.count = 0;
@@ -299,7 +288,7 @@ Exteranl links section present in function, medical, expression, interactions, s
             }
           }
           else if (typeList[elem].databaseName === "Reactome"
-            || typeList[elem].databaseName === "KEGGPathway") {
+                  || typeList[elem].databaseName === "KEGGPathway") {
             continue;
           }
           else {
@@ -326,7 +315,7 @@ Exteranl links section present in function, medical, expression, interactions, s
         var firstCategoryName = Object.keys(a.value)[0];
         var secondCategoryName = Object.keys(b.value)[0];
         if (firstCategoryName.toLowerCase() == "other" &&
-            secondCategoryName.toLowerCase() != "other") return 1;
+                secondCategoryName.toLowerCase() != "other") return 1;
         if (secondCategoryName.toLowerCase() == "other" &&
                 firstCategoryName.toLowerCase() != "other") return -1;
         return firstCategoryName.toLowerCase() > secondCategoryName.toLowerCase() ? 1 : -1;
