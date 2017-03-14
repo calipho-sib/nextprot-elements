@@ -378,8 +378,11 @@ Annotation section used in function, medical, and expression views.
                         a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="REDOX POTENTIAL";
                     }
                     if(Object.keys(self.categoryTitles).indexOf(a.category)!=-1) a.category = self.categoryTitles[a.category];
-                    if (a.description && !a.description.startsWith("mRNA")) a.description= a.description.charAt(0).toUpperCase()+ self._addPubmedLink(a.description).slice(1);
-                    if (a.cvTermName && !a.cvTermName.startsWith("mRNA")) a.cvTermName=a.cvTermName.charAt(0).toUpperCase()+a.cvTermName.slice(1);
+                    dontCapitalize = ["mRNA", "tRNA", "rRNA", "dsDNA", "ssDNA", "siRNA", "snRNA", "ssRNA", "tmRNA",
+                    "dAMP", "dADP", "dATP", "dCMP", "dCDP", "dCTP", "dGMP", "dGDP", "dGTP",
+                    "dTMP", "dTDP", "dTTP", "cAMP", "cGMP", "hnRNP", "snRNP", "bZIP", "cTAGE", "eIF", "mTERF"]
+                    if (a.description && dontCapitalize.indexOf(a.description.split(" ")[0])===-1) a.description= a.description.charAt(0).toUpperCase()+ self._addPubmedLink(a.description).slice(1);
+                    if (a.cvTermName && dontCapitalize.indexOf(a.cvTermName.split(" ")[0])===-1) a.cvTermName=a.cvTermName.charAt(0).toUpperCase()+a.cvTermName.slice(1);
                     if (a.bioObject) {
                         a.geneName=a.bioObject.properties.geneName;
                         a.proteinName=a.bioObject.properties.proteinName;
