@@ -55,9 +55,6 @@ Annotation section used in function, medical, and expression views.
             .end-label {
                 margin-left: 5px;
             }
-            .grey-x {
-                margin-bottom: 10px;
-            }
             .annotation-container {
                 float: left;
                 display: inline;
@@ -75,14 +72,14 @@ Annotation section used in function, medical, and expression views.
                 margin: 0px 200px 15px 0px;
             }
             .blue-well {
-                margin: 10px 200px 10px 0px;
+                margin: 10px 190px 10px 10px;
             }
             @media (max-width: 1080px) {
                 .evidences-container {
                     margin: 0px 25px 20px 0px;
                 }
                 .blue-well {
-                    margin: 10px 10px 10px 0px;
+                    margin: 10px 15px 10px 10px;
                 }
             }
             #evidenceButton {
@@ -122,11 +119,11 @@ Annotation section used in function, medical, and expression views.
                                 <div class="grey-x">Interactions for Isoform [[annotation.value.isoformSpecific]]</div>
                             </template>
                             <div class="row annotation-row">
+                                <template is="dom-if" if="[[annotation.value.prefix]]">
+                                    <div class="grey-x">[[annotation.value.prefix]]</div>
+                                </template>
                                 <div class="annotation-container">
                                     <div class="annotation-title-container">
-                                        <template is="dom-if" if="[[annotation.value.prefix]]">
-                                            <div class="grey-x">[[annotation.value.prefix]]</div>
-                                        </template>
                                         <template is="dom-if" if="[[annotation.value.chemicalName]]">
                                             <template is="dom-if" if="[[_checkIfChebi(annotation.value.database)]]">
                                                 <p class="annotation-title" style="text-transform: capitalize">
@@ -395,8 +392,9 @@ Annotation section used in function, medical, and expression views.
                     a.xeno = a.database!="neXtProt" ? true : false;
                     if (!data.hasOwnProperty(a.category)) data[a.category]=[];
                     for(var j in a.evidences){
-                        if(a.evidences[j].goQualifier==="contributes_to" && !a.description.startsWith("<b>Contributes to</b>")) a.description = a.description.replace("Contributes to", "<b>Contributes to</b>");
-                        if(a.evidences[j].negativeEvidence==true && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b> "+a.description
+                        if(a.evidences[j].goQualifier==="contributes_to" && !a.description.startsWith("<i>Contributes to</i>")) a.description = a.description.replace("Contributes to", "<i>Contributes to</i>");
+                        if(a.evidences[j].goQualifier==="colocalizes" && !a.description.startsWith("<i>Colocalizes</i>")) a.description = a.description.replace("Colocalizes", "<i>Colocalizes</i>");
+                        if(a.evidences[j].negativeEvidence==true && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b> "+a.description.charAt(0).toLowerCase()+a.description.slice(1);
                     };
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
                     for (j in a.targetingIsoformsMap){
