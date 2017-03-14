@@ -393,13 +393,13 @@ Annotation section used in function, medical, and expression views.
                     if (!data.hasOwnProperty(a.category)) data[a.category]=[];
                     for(var j in a.evidences){
                         if(a.evidences[j].goQualifier==="contributes_to" && !a.description.startsWith("<i>Contributes to</i>")) a.description = a.description.replace("Contributes to", "<i>Contributes to</i>");
-                        if(a.evidences[j].goQualifier==="colocalizes" && !a.description.startsWith("<i>Colocalizes</i>")) a.description = a.description.replace("Colocalizes", "<i>Colocalizes</i>");
+                        if(a.evidences[j].goQualifier==="colocalizes_with" && !a.description.startsWith("<i>Colocalizes with</i>")) a.description = a.description.replace("Colocalizes with", "<i>Colocalizes with</i>");
                         if(a.evidences[j].negativeEvidence==true && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b> "+a.description.charAt(0).toLowerCase()+a.description.slice(1);
                     };
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
                     for (j in a.targetingIsoformsMap){
                         var isoform = a.targetingIsoformsMap[j];
-                        if (isoform.specificity=="SPECIFIC"){
+                        if (this._objectValues(a.targetingIsoformsMap).length < this._objectValues(data_isoforms).length){
                             a.isoformAccession = isoform.isoformAccession;
                             if (a.isoformSpecific!==undefined) a.isoformSpecific = a.isoformSpecific.replace(/^Isoform(?!s)/, "Isoforms")+" and " + data_isoforms[isoform.isoformAccession].mainEntityName.name;
                             else a.isoformSpecific = "Isoform "+ data_isoforms[isoform.isoformAccession].mainEntityName.name;
@@ -582,6 +582,8 @@ Annotation section used in function, medical, and expression views.
                 var evidenceSourceList = [];
                 for (var i in evidenceList){
                     if (evidenceList[i].assignedBy.endsWith("_PTW")) evidenceList[i].assignedBy = evidenceList[i].assignedBy.replace("_PTW","");
+                    if (evidenceList[i].assignedBy==="Human protein atlas subcellular localization") evidenceList[i].assignedBy="HPA subcell";
+                    if (evidenceList[i].assignedBy==="Alzheimers_University_of_Toronto") evidenceList[i].assignedBy="Alzheimers UoT";
                     if(evidenceSourceList.indexOf(evidenceList[i].assignedBy) < 0) {
                         evidenceSourceList.push(evidenceList[i].assignedBy);
                     }
