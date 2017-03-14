@@ -383,6 +383,7 @@ Annotation section used in function, medical, and expression views.
                     "dTMP", "dTDP", "dTTP", "cAMP", "cGMP", "hnRNP", "snRNP", "bZIP", "cTAGE", "eIF", "mTERF"]
                     if (a.description && dontCapitalize.indexOf(a.description.split(" ")[0])===-1) a.description= a.description.charAt(0).toUpperCase()+ self._addPubmedLink(a.description).slice(1);
                     if (a.cvTermName && dontCapitalize.indexOf(a.cvTermName.split(" ")[0])===-1) a.cvTermName=a.cvTermName.charAt(0).toUpperCase()+a.cvTermName.slice(1);
+                    if (a.category.toLowerCase()==="transport activity") a.category = "TCDB TRANSPORT CLASSIFICATION";
                     if (a.bioObject) {
                         a.geneName=a.bioObject.properties.geneName;
                         a.proteinName=a.bioObject.properties.proteinName;
@@ -652,7 +653,7 @@ Annotation section used in function, medical, and expression views.
                 return category==="BIOPHYSICOCHEMICAL PROPERTIES";
             },
             _isPathwayOrTcdb: function(category){
-                return ["UNIPATHWAYS", "KEGG PATHWAYS", "REACTOME PATHWAYS", "TRANSPORT ACTIVITY"].indexOf(category)!==-1;
+                return ["UNIPATHWAYS", "KEGG PATHWAYS", "REACTOME PATHWAYS", "TCDB TRANSPORT CLASSIFICATION"].indexOf(category)!==-1;
             },
             _isNewSubcategory: function(annotations,index){
                 return index===0 || annotations[index].subcategory!==annotations[index-1].subcategory;
