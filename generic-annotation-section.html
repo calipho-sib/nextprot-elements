@@ -145,10 +145,10 @@ Annotation section used in function, medical, and expression views.
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.parentXref]]">
                                             <p class="annotation-title">[[annotation.value.description]]</p>
-                                            <template is="dom-if" if="[[!_isTransportActivity(annotation.value.category)]]">
+                                            <div class="annotation-labels">
                                                 <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
-                                            </template>
-                                            <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                            </div>
                                         </template>
                                         <template is="dom-if" if="[[!_checkIfContainsAccessionOrXref(annotation.value)]]">
                                             <template is="dom-if" if="[[_isBiophysicochemicalProperty(annotation.value.category)]]">
@@ -195,7 +195,7 @@ Annotation section used in function, medical, and expression views.
                                         </template>
                                     </div>
                                 </div>
-                                <template is="dom-if" if="[[!_isPathway(annotation.value.category)]]">
+                                <template is="dom-if" if="[[!_isPathwayOrTcdb(annotation.value.category)]]">
                                     <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
                                         <div class="evidences-button-container">
                                             <div class="show-references-button">
@@ -218,7 +218,7 @@ Annotation section used in function, medical, and expression views.
                                     [[annotation.value.cvTermDescription]]
                                 </div>
                             </iron-collapse>
-                            <template is="dom-if" if="[[!_isPathway(annotation.value.category)]]">
+                            <template is="dom-if" if="[[!_isPathwayOrTcdb(annotation.value.category)]]">
                                 <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
                                     <iron-collapse id="evidences-container-[[annotation.value.id]]">
                                         <div class="evidences-container">
@@ -651,11 +651,8 @@ Annotation section used in function, medical, and expression views.
             _isBiophysicochemicalProperty: function(category){
                 return category==="BIOPHYSICOCHEMICAL PROPERTIES";
             },
-            _isPathway: function(category){
-                return ["UNIPATHWAYS", "KEGG PATHWAYS", "REACTOME PATHWAYS"].indexOf(category)!==-1;
-            },
-            _isTransportActivity: function(category){
-                return category==="TRANSPORT ACTIVITY";
+            _isPathwayOrTcdb: function(category){
+                return ["UNIPATHWAYS", "KEGG PATHWAYS", "REACTOME PATHWAYS", "TRANSPORT ACTIVITY"].indexOf(category)!==-1;
             },
             _isNewSubcategory: function(annotations,index){
                 return index===0 || annotations[index].subcategory!==annotations[index-1].subcategory;
