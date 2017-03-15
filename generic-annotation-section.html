@@ -139,18 +139,20 @@ Annotation section used in function, medical, and expression views.
                                             <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
                                                 <span class="annotation-title isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
                                             </template>
-                                            <p class="annotation-title" inner-h-t-m-l="[[annotation.value.description]]"></p>
+                                            <div class="annotation-title"><p inner-h-t-m-l="[[annotation.value.description]]"></p>
                                             <div class="annotation-labels">
                                                 <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
                                                 <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
                                                 <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
-                                            </div>
+                                            </div></div>
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.parentXref]]">
-                                            <p class="annotation-title">[[annotation.value.description]]</p>
-                                            <div class="annotation-labels">
-                                                <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
-                                                <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                            <div class="annotation-title">
+                                                    <p>[[annotation.value.description]]</p>
+                                                    <div class="annotation-labels">
+                                                        <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
+                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                    </div>
                                             </div>
                                         </template>
                                         <template is="dom-if" if="[[!_checkIfContainsAccessionOrXref(annotation.value)]]">
@@ -161,7 +163,7 @@ Annotation section used in function, medical, and expression views.
                                                 <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4" inner-h-t-m-l="[[annotation.value.label]]"></div>
                                                 <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8" inner-h-t-m-l="[[annotation.value.description]]"></div>
                                             </template>
-                                            <p class="annotation-title">
+                                            <p class="annotation-title justify">
                                                 <template is="dom-if" if="[[!_isBinaryInteractionOrCofactorOrBiophysical(annotation.value.category)]]">
                                                     <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
                                                         <span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
