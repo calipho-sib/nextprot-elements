@@ -125,6 +125,8 @@ Keywords section present on function, medical, sequence, and structures pages.
           temp[key] = data[key];
           return temp
         });
+        var sortCategories = this._categorySorter(this.categories);
+        data = data.sort(sortCategories);
         data.forEach(function(d){d[Object.keys(d)[0]].forEach(function(d2){count+=1;})});
         this.data = data;
         this.count = count;
@@ -146,6 +148,11 @@ Keywords section present on function, medical, sequence, and structures pages.
       },
       _sortAlphabetically: function(a,b){
         return a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1;
+      },
+      _categorySorter: function(categories){
+        return function(a,b){
+          return categories.indexOf(Object.keys(a)[0]) > categories.indexOf(Object.keys(b)[0])? 1 : -1;
+        }
       }
     });
   </script>
