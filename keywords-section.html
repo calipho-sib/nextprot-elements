@@ -125,11 +125,6 @@ Keywords section present on function, medical, sequence, and structures pages.
           temp[key] = data[key];
           return temp
         });
-        data.sort(function (a, b) {
-          var textA = Object.keys(a)[0].toUpperCase();
-          var textB = Object.keys(b)[0].toUpperCase();
-          return (textA < textB) ? -1 : 1;
-        });
         data.forEach(function(d){d[Object.keys(d)[0]].forEach(function(d2){count+=1;})});
         this.data = data;
         this.count = count;
