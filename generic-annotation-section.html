@@ -399,9 +399,9 @@ Annotation section used in function, medical, and expression views.
                     a.xeno = a.database!="neXtProt" ? true : false;
                     if (!data.hasOwnProperty(a.category)) data[a.category]=[];
                     for(var j in a.evidences){
-                        if(a.evidences[j].goQualifier==="contributes_to" && !a.description.startsWith("<i>Contributes to</i>")) a.description = a.description.replace("Contributes to", "<i>Contributes to</i>");
-                        if(a.evidences[j].goQualifier==="colocalizes_with" && !a.description.startsWith("<i>Colocalizes with</i>")) a.description = a.description.replace("Colocalizes with", "<i>Colocalizes with</i>");
-                        if(a.evidences[j].negativeEvidence==true && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b> "+a.description.charAt(0).toLowerCase()+a.description.slice(1);
+                        if(a.evidences[j].goQualifier==="contributes_to" && !a.description.startsWith("<i>Contributes to</i>&nbsp;")) a.description = a.description.replace("Contributes to ", "<i>Contributes to</i>&nbsp;");
+                        if(a.evidences[j].goQualifier==="colocalizes_with" && !a.description.startsWith("<i>Colocalizes with</i>&nbsp;")) a.description = a.description.replace("Colocalizes with ", "<i>Colocalizes with</i>&nbsp;");
+                        if(a.evidences[j].negativeEvidence==true && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b>&nbsp;"+a.description.charAt(0).toLowerCase()+a.description.slice(1);
                     };
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
                     for (j in a.targetingIsoformsMap){
