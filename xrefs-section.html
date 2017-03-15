@@ -36,7 +36,7 @@ Exteranl links section present in function, medical, expression, interactions, s
         margin: 2px 5px;
       }
       .suffix-label {
-        margin-top: -3px;
+        margin-top: -2px;
       }
     </style>
     <div id="xrefs-header" class="category-header">
@@ -59,7 +59,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                     <div class="annotation-title">[[annotation.name]]</div>
                     <div>
                       <template is="dom-repeat" items="[[annotation.xrefs]]" as="xref">
-                        <div class="hidden-xs inline-group" role="group">
+                        <div class="inline-group" role="group">
                           <template is="dom-if" if="[[xref.prefix]]">
                             <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
                           </template>
