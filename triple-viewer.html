@@ -411,7 +411,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 });
             },
             reloadSVG: function(){
-                Polymer.RenderStatus.afterNextRender(this.$.featureViewer, () => {
+                Polymer.RenderStatus.afterNextRender(this.$.featureViewer, function() {
                     this.$.featTableSpinner.active = true;
                     $("#featureViewer svg").remove();
                     this._fillTable();

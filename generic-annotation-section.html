@@ -283,24 +283,24 @@ Annotation section used in function, medical, and expression views.
             },
             ready: function(){
                 if(this.evidencesShown===undefined) this._toggleAllEvidences();
-                Polymer.RenderStatus.afterNextRender(this, () => {
+                Polymer.RenderStatus.afterNextRender(this, function() {
                     var nx = new Nextprot.Client("neXtprot annotation loader", "Calipho Group");
-                if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
-                var apiCall = [];
-                for (var i in this.categories) apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i]))
-                var self = this;
-                Promise.all(apiCall)
-                        .then(function (categories) {
-                            self.annotationsByCategory = categories;
-                            self._getAnnotationsByView();
-                            self.$.spinner.removeAttribute('active');
-                        }).catch(function (err) {
-                            // catch any error that happened so far
-                            console.log("Argh, broken: " + err.message);
-                            console.log("Error at line : " + err.stack);
-                            self.$.spinner.removeAttribute('active');
-                            self.count = 0;
-                        });
+                    if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
+                    var apiCall = [];
+                    for (var i in this.categories) apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i]))
+                    var self = this;
+                    Promise.all(apiCall)
+                            .then(function (categories) {
+                                self.annotationsByCategory = categories;
+                                self._getAnnotationsByView();
+                                self.$.spinner.removeAttribute('active');
+                            }).catch(function (err) {
+                                // catch any error that happened so far
+                                console.log("Argh, broken: " + err.message);
+                                console.log("Error at line : " + err.stack);
+                                self.$.spinner.removeAttribute('active');
+                                self.count = 0;
+                            });
                 });
             },
             _reloadIsoform: function(){
