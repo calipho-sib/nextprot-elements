@@ -32,6 +32,7 @@
             nextprotUtilsScript.src = '../../nextprot/src/nextprot-utils.js';
             (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(nextprotUtilsScript);
         })();
+    }
 </script>
 <!--
 `triple-viewer`
@@ -411,22 +412,23 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 });
             },
             reloadSVG: function(){
+                var self = this;
                 Polymer.RenderStatus.afterNextRender(this.$.featureViewer, function() {
-                    this.$.featTableSpinner.active = true;
+                    self.$.featTableSpinner.active = true;
                     $("#featureViewer svg").remove();
-                    this._fillTable();
-                    if(this.featuresLength) {
-                        this.hidden=false;
-                        this._renderFeatureViewer();
-                        this._addFeatures();
+                    self._fillTable();
+                    if(self.featuresLength) {
+                        self.hidden=false;
+                        self._renderFeatureViewer();
+                        self._addFeatures();
                         if ($(".zoomUnit").length) $(".zoomUnit").text("1");
                         d3.selectAll('div.selectedRect').remove();
-                        this.tvSelection();
-                        this.eventTV();
+                        self.tvSelection();
+                        self.eventTV();
                     }else{
-                        this.hidden=true;
+                        self.hidden=true;
                     }
-                    this.$.featTableSpinner.active = false;
+                    self.$.featTableSpinner.active = false;
                 });
             },
             _getFeaturesByIsoform: function(isoforms){
