@@ -52,8 +52,8 @@ Blast item demo
                 </div>
                 <div class="col-lg-1 nomargin hright">[[data.len]]aa</div>
                 <div class="col-lg-1 nomargin hright">[[identity_percent]]%</div>
-                <div class="col-lg-1 nomargin hright">[[score]]</div>
-                <div class="col-lg-1 hright">[[_toExponential(evalue)]]</div>
+                <div class="col-lg-1 nomargin hright">[[data.global.total_score]]</div>
+                <div class="col-lg-1 hright">[[_toExponential(data.global.min_evalue)]]</div>
             </div>
             <iron-collapse id="alignmentContainer" opened="[[showAlignment]]">
                 <div class="collapse-content">
@@ -99,15 +99,7 @@ Blast item demo
                 }
             },
             _initialize: function(){
-                this.score=0;
-                this.evalue=0;
-                this.identity_percent=0;
-                for (var i in this.data.hsps){
-                    this.score+=this.data.hsps[i].score;
-                    this.evalue+=this.data.hsps[i].evalue;
-                    this.identity_percent+=this.data.hsps[i].identity_percent;
-                }
-                this.identity_percent=(Math.round(this.identity_percent*10)/10).toFixed(1);
+                this.identity_percent=(Math.round(this.data.global.identity_percent*10)/10).toFixed(1);
                 this._querySvgGraph();
                 this._targetSvgGraph();
             },
