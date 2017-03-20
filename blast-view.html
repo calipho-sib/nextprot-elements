@@ -1,9 +1,12 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="blast-item.html">
-<link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/image-icons.html">
+<link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../shibui-dropdown-menu/shibui-dropdown-menu.html">
 <link rel="import" href="paginator-element.html">
+<link rel="import" href="blast-item.html">
 <link rel="import" href="blast-styles.html">
 <link rel="import" href="d3-styles.html">
 <script>
@@ -54,6 +57,26 @@ View presenting blast search results annotations.
             p {
                 margin: 0 0 5px;
             }
+            .btn-sm {
+                padding: 1px 3px 0 0;
+                margin: 0 5px 3px 5px;
+                background: var(--paper-indigo-500);
+                color: white;
+            }
+            iron-icon {
+                padding-bottom: 2px;
+                color: var(--paper-indigo-500);
+            }
+            button > iron-icon {
+                color: white;
+                zoom: 75%;
+            }
+            .number-input {
+                width: 40px;
+                border-radius: 5px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+            }
             .mode-toggle {
                 display: inline-flex;
                 margin-top: -3px;
@@ -61,13 +84,32 @@ View presenting blast search results annotations.
             .toggle-label {
                 padding: 5px 10px 5px 3px;
             }
+            .control-header {
+                margin: 10px 0 50px;
+            }
+            #acceptButton {
+                zoom: 125%;
+            }
             #blastParametersContainer {
                 background-color: white;
                 border-bottom: solid grey 1px;
                 padding-left: 15px;
             }
-            .control-header {
-                margin: 10px 0 50px;
+            #matrixDropdown {
+                margin-left: 5px;
+                color: var(--paper-indigo-500);
+                border-bottom: 1px solid var(--paper-indigo-500);
+            }
+            #shortenedSequence {
+                color: var(--paper-indigo-500);
+            }
+            paper-toggle-button > div#toggleBar {
+                height: 104%;
+                width: 74%;
+            }
+            paper-toggle-button > div#toggleButton {
+                width: 70%;
+                margin-top: 3px;
             }
         </style>
             <div id="blastParametersContainer">
@@ -80,17 +122,31 @@ View presenting blast search results annotations.
                     </span></p>
                     <p>
                         <span class="quiet bold">Blast sequence</span>
-                        <span class="black pre">[[_shortenedSequence()]]</span>
-                        <span class="quiet bold">([[params.sequence.length]] AA)</span>
+                        <span id="sequenceContainer">
+                            <span id="shortenedSequence" class="pre" on-tap="_editSequence">[[_shortenedSequence()]]</span>
+                            <iron-icon id="editButton" icon="image:edit" on-tap="_editSequence"></iron-icon>
+                            <iron-autogrow-textarea id="sequenceEditor" value="[[sequence]]" hidden></iron-autogrow-textarea>
+                            <iron-icon id="acceptButton" icon="done" on-tap="_updateSequence" hidden></iron-icon>
+                        </span>
+                        <span class="quiet bold">([[sequence.length]] AA)</span>
                     </p>
                     <div class="quiet">
                         <p>Query in all human sequences in neXtProt ([[params.db_num]] sequences, [[params.db_len]] amino acids)</p>
-                        <p>Similarity matrix: [[params.matrix]]</p>
-                        <p>Expect: [[params.expect]]; filter: [[_getFilterState()]]; gap-open: [[params.gap_open]]; gap-extend: [[params.gap_extend]]</p>
+                        Similarity matrix:
+                        <shibui-dropdown-menu value="[[matrix]]">
+                            <p id="matrixDropdown" slot="trigger">[[matrix]]<iron-icon icon="arrow-drop-down"></iron-icon></p>
+                            <template is="dom-repeat" items="[[matrices]]" >
+                                <a value="[[item]]" on-tap="_setMatrix">[[item]]</a>
+                            </template>
+                        </shibui-dropdown-menu>
+                        <p class="blast-params">
+                            Expect: <input class="number-input" value="[[evalue]]" on-change="_setEvalue"> ; filter: [[_getFilterState()]]; gap-open: <input class="number-input" value="{{gapopen}}"> ; gap-extend: <input class="number-input" value="[[gapextend]]">
+                            <button class="btn btn-sm"on-tap="getBySequence"><iron-icon icon="icons:autorenew"></iron-icon>&nbsp;Refresh</button>
+                        </p>
                         <p>Program version: [[params.version]]</p>
                     </div>
                 </template>
-                <div id="chart"></div>
+                <div id="scale"></div>
                 <span class="quiet bold">[[params.message]]</span>
             </div>
             <template is="dom-if" if="[[results.length]]">
@@ -176,26 +232,38 @@ View presenting blast search results annotations.
                 results: {
                     type: Array,
                     notify: true
+                },
+                matrices: {
+                    type: Array,
+                    value: ["BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM90", "PAM250", "PAM30", "PAM70"]
                 }
             },
             attached: function(){
-                var nx = new Nextprot.Client("neXtProt blast view", "Calipho Group");
+                this.nx = new Nextprot.Client("neXtProt blast view", "Calipho Group");
                 if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                 if (this.nxConfig.isoform) this.isoform = this.nxConfig.isoform;
                 if (this.nxConfig.sequence) this.sequence = this.nxConfig.sequence;
                 if (this.nxConfig.begin) this.begin = this.nxConfig.begin;
                 if (this.nxConfig.end) this.end = this.nxConfig.end;
+                if (this.isoform) this.getByIsoform();
+                else if(this.sequence) this.getBySequence();
+            },
+            getByIsoform: function(){
+                var self = this;
+                this.nx.getBlastByIsoform(this.isoform, this.matrix, this.evalue, this.gapopen, this.gapextend, this.begin, this.end)
+                        .then(function(response){
+                            Polymer.RenderStatus.afterNextRender(self, function() {self._processResponse(response)});
+                        });
+                this.entry = this.isoform.split("-")[0];
+            },
+            getBySequence: function(){
                 var self=this;
-                if (this.isoform) {
-                    nx.getBlastByIsoform(this.isoform, this.matrix, this.evalue, this.gapopen, this.gapextend, this.begin, this.end)
-                        .then(function(response){self._processResponse(response)});
-                    this.entry = this.isoform.split("-")[0];
-                } else if(this.sequence){
-                    nx.getBlastBySequence(this.sequence, this.title, this.matrix, this.evalue, this.gapopen, this.gapextend)
-                        .then(function(response){self._processResponse(response)});
-                    this.entry = this.nxConfig.entry;
-                    this.isoform = "";
-                }
+                this.nx.getBlastBySequence(this.sequence, this.title, this.matrix, this.evalue, this.gapopen, this.gapextend)
+                        .then(function(response){
+                            Polymer.RenderStatus.afterNextRender(self, function() {self._processResponse(response)});
+                        });
+                this.entry = this.nxConfig.entry;
+                this.isoform = undefined;
             },
             _processResponse: function(response){
                 this.$.spinner.active = false;
@@ -204,7 +272,7 @@ View presenting blast search results annotations.
                     this.$.blastParametersContainer.innerHTML = '<span class="quiet bold">'+Object.values(response.error.causes)+'</span>';
                     return false;
                 }
-                this._colorScale();
+                if(!this.$$("#scale").children.length) this._colorScale();
                 for (var i in response.data.results.search.hits) {
                     response.data.results.search.hits[i].queryLength =  response.data.params.sequence.length;
                     for (var j in response.data.results.search.hits[i].hsps){
@@ -216,38 +284,64 @@ View presenting blast search results annotations.
                 response.data.params.db_len = response.data.results.search.stat.db_len;
                 response.data.params.message = response.data.results.search.message;
                 this.params=response.data.params;
-                var self=this;
-                this.async(function(){self.results = response.data.results.search.hits;});
+                this.evalue=this.params.expect;
+                this.gapopen=this.params.gap_open;
+                this.gapextend=this.params.gap_extend;
+                this.sequence = this.params.sequence;
+                Polymer.RenderStatus.afterNextRender(this, function() {
+                    this.results = response.data.results.search.hits;
+                });
 
             },
+            _setMatrix: function(event){
+              this.matrix = event.srcElement.value;
+            },
             _checkMatrix: function(newValue, oldValue){
-                var matrices = ["BLOSUM45", "BLOSUM50", "BLOSUM62", "BLOSUM80", "BLOSUM90", "PAM250", "PAM30", "PAM70"];
-                if (matrices.indexOf(newValue) === -1) {
-                    console.warn(this.matrix+" is not recognized as a valid BLAST substitution matrix. "+oldValue+" matrix will be used instead.");
-                    this.matrix = oldValue;
-                }
+                this.async(function(){
+                    if (this.matrices.indexOf(newValue) === -1) {
+                        console.warn(this.matrix+" is not recognized as a valid BLAST substitution matrix. "+oldValue+" matrix will be used instead.");
+                        this.matrix = oldValue;
+                    }
+                });
+            },
+            _setEvalue: function(){
+                this.evalue = event.srcElement.value;
             },
             _colorScale: function(){
-                var svg = d3.select(this).select("#chart").append("svg")
+                var svg = d3.select(this).select("#scale").append("svg")
                         .attr("width",600).attr("height",50)
                         .append("text").text("Color code for identity (%)").attr("x", 0).attr("y", 20);
 
-                this.scale = d3.scale.linear().range(["red","orange","yellow","green"]).domain([0,35,70,100]);
+                this.scale = d3.scale.linear().range(["red","tomato","yellow","green"]).domain([0,35,70,100]);
 
                 colorbar = Colorbar()
                         .origin([190,5])
                         .scale(this.scale).barlength(400).thickness(10)
                         .orient("horizontal");
 
-                bar = d3.select(this).select("#chart").select("svg").append("g").attr("id", "colorbar");
+                bar = d3.select(this).select("#scale").select("svg").append("g").attr("id", "colorbar");
 
                 this.colorbarObject = d3.select(this).select("#colorbar").call(colorbar);
 
             },
             _shortenedSequence: function(){
-                var sequenceLength = this.params.sequence.length;
-                if (sequenceLength>55) return this.params.sequence.substring(0,27)+"..."+this.params.sequence.substring(sequenceLength-27, sequenceLength)
-                return this.params.sequence;
+                var sequenceLength = this.sequence.length;
+                if (sequenceLength>55) return this.sequence.substring(0,27)+"..."+this.sequence.substring(sequenceLength-27, sequenceLength)
+                return this.sequence;
+            },
+            _editSequence: function(){
+                this.$$("#sequenceEditor").hidden = false;
+                this.$$("#acceptButton").hidden = false;
+                this.$$("#shortenedSequence").hidden = true;
+                this.$$("#editButton").hidden = true;
+            },
+            _updateSequence: function(event){
+                this.sequence = this.$$("#sequenceEditor").value;
+                this.$$("#shortenedSequence").innerHTML = this._shortenedSequence();
+                this.$$("#sequenceEditor").hidden = true;
+                this.$$("#acceptButton").hidden = true;
+                this.$$("#shortenedSequence").hidden = false;
+                this.$$("#editButton").hidden = false;
             },
             _getFilterState: function(){
                 return this.params.filter === "F" ? "false" : "true";
