@@ -169,16 +169,14 @@ Annotation section used in function, medical, and expression views.
                                                         <span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
                                                     </template>
                                                     <span inner-h-t-m-l="[[annotation.value.description]]"></span>
-                                                    <template is="dom-if" if="[[!_isBinaryInteractionOrCofactorOrBiophysical(annotation.value.category)]]">
-                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
-                                                    </template>
+                                                    <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                 </template>
                                             </p>
                                             <template is="dom-if" if="[[annotation.value.selfInteraction]]">
-                                                <p class="annotation-title col-lg-12 col-md-12 col-sm-12 col-xs-12">Itself</p>
+                                                <p class="annotation-title">Itself</p>
                                             </template>
                                             <template is="dom-if" if="[[annotation.value.geneName]]">
-                                                <p class="annotation-title col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <p class="annotation-title">
                                                     <template is="dom-if" if="[[_checkIfNextprot(annotation.value.database)]]">
                                                         <a href="[[annotation.value.url]]">[[annotation.value.geneName]]</a>
                                                         <template is="dom-if" if="[[annotation.value.proteinName]]">
