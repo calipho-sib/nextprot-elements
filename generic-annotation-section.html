@@ -164,7 +164,7 @@ Annotation section used in function, medical, and expression views.
                                                 <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8" inner-h-t-m-l="[[annotation.value.description]]"></div>
                                             </template>
                                             <p class="annotation-title justify">
-                                                <template is="dom-if" if="[[!_isBinaryInteractionOrCofactorOrBiophysical(annotation.value.category)]]">
+                                                <template is="dom-if" if="[[!_isBinaryInteractionOrBiophysical(annotation.value.category)]]">
                                                     <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
                                                         <span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
                                                     </template>
@@ -319,7 +319,7 @@ Annotation section used in function, medical, and expression views.
                 data = {};
                 var self = this;
                 var annotCategoryList = [];
-                for (var v in this._objectValues(data_annot)) annotCategoryList.push(data_annot[v].category);
+                for (var v in this._objectValues(data_annot)) annotCategoryList.push(data_annot[v].apicategory);
                 annotCategoryCount = annotCategoryList.reduce( function (prev, item) {
                     if ( item in prev ) prev[item] ++;
                     else prev[item] = 1;
@@ -328,65 +328,77 @@ Annotation section used in function, medical, and expression views.
                 for (var i in data_annot) {
                     var a = data_annot[i];
                     if (this.section==="function"){
-                        if (a.category==="go molecular function" && a.cvTermAccessionCode=="GO:0003674") continue;
-                        if (a.category==="go biological process" && a.cvTermAccessionCode=="GO:0008150") continue;
-                        if (a.category==="caution" && a.description=="Product of a dubious CDS prediction.") continue;
-                        if (a.category==="caution" && a.description=="Product of a dubious gene prediction.") continue;
-                        if (a.category==="caution" && a.description=="Could be the product of a pseudogene.") continue;
-                        if (a.category==="caution" && a.description.startsWith("It is uncertain whether Met")) continue;
-                        if (a.category==="miscellaneous" && a.description.toLowerCase().match(/.*antibod.*/)) continue;
-                        if (a.category==="miscellaneous" && a.description.toLowerCase().match(/.*antigen.*/)) continue;
-                        if (a.category==="miscellaneous" && a.description.toLowerCase().match(/.*\sbind.*/)) continue;
-                        if (a.category==="miscellaneous" && a.description.toLowerCase().match(/^bind.*/)) continue;
+                        if (a.apicategory==="GO_MOLECULAR_FUNCTION" && a.cvTermAccessionCode=="GO:0003674") continue;
+                        if (a.apicategory==="GO_BIOLOGICAL_PROCESS" && a.cvTermAccessionCode=="GO:0008150") continue;
+                        if (a.apicategory==="CAUTION" && a.description=="Product of a dubious CDS prediction.") continue;
+                        if (a.apicategory==="CAUTION" && a.description=="Product of a dubious gene prediction.") continue;
+                        if (a.apicategory==="CAUTION" && a.description=="Could be the product of a pseudogene.") continue;
+                        if (a.apicategory==="CAUTION" && a.description.startsWith("It is uncertain whether Met")) continue;
+                        if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*antibod.*/)) continue;
+                        if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*antigen.*/)) continue;
+                    }
+                    if (["function", "interactions"].indexOf(this.section)!==-1){
+                        if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*\sbind.*/)) continue;
+                        if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/^bind.*/)) continue;
                     }
                     if (a.cvTermAccessionCode && a.apicategory==="CATALYTIC_ACTIVITY") a.cvTermAccessionCodeLabel="EC "+a.cvTermAccessionCode;
                     else if (a.cvTermAccessionCode) a.cvTermAccessionCodeLabel=a.cvTermAccessionCode;
                     if (a.properties) {
                         for (var j in a.properties) if(a.properties[j].name==="rank") a.rank=a.properties[j].value;
                     }
-                    if (a.category==="cofactor") {
+                    if (a.apicategory==="COFACTOR") {
                         a.chemicalName = a.bioObject.properties["chemical name"] ?
                                 a.bioObject.properties["chemical name"] : undefined;
-                        if (a.rank==1 &&  annotCategoryCount["cofactor"]>1) a.prefix = "It requires the following cofactors "
+                        if (a.rank==1 &&  annotCategoryCount["COFACTOR"]>1) a.prefix = "It requires the following cofactors "
                         else if (a.rank==1) a.prefix = "It requires the following cofactor "
                         a.rank = 100+ a.rank;
                     }
-                    if (a.category=="catalytic activity" && a.rank==1 && annotCategoryCount["catalytic activity"]>1) a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reactions";
-                    else if (a.category=="catalytic activity" && a.rank==1) a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reaction";
-                    if (a.category=="enzyme regulation") {
-                        if (a.rank==1 &&  annotCategoryCount["enzyme regulation"]>1) a.prefix = "It is regulated in the following manners "
+                    if (a.apicategory==="CATALYTIC_ACTIVITY" && a.rank==1 && annotCategoryCount["CATALYTIC_ACTIVITY"]>1) a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reactions";
+                    else if (a.apicategory=="CATALYTIC_ACTIVITY" && a.rank==1) a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reaction";
+                    if (a.apicategory==="ENZYME_REGULATION") {
+                        if (a.rank==1 &&  annotCategoryCount["ENZYME_REGULATION"]>1) a.prefix = "It is regulated in the following manners "
                         if (a.rank==1) a.prefix = "It is regulated in the following manner";
                         a.rank = 200+ a.rank;
                     }
-                    if(a.category=="pathway") a.category=self._getUniqueListOfEvidenceSources(a.evidences)+" pathways";
-                    if(a.category.toLowerCase()=="uniprot pathways") a.category="UNIPATHWAYS";
-                    if(a.category=="subcellular location info") {
-                        a.category="";
-                        a.description = "<b>Note:</b> "+ a.description;}
-                    if (["kinetic KM", "kinetic Vmax", "kinetic note"].indexOf(a.category)!==-1) {
-                        if(a.category=="kinetic KM") a.label="K<sub>M</sub>";
-                        if(a.category=="kinetic Vmax") a.label="V<sub>max</sub>";
-                        a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="KINETIC PARAMETERS";
+                    if(a.apicategory==="PATHWAY") a.apicategory=self._getUniqueListOfEvidenceSources(a.evidences)+" pathways";
+                    if(a.apicategory==="UNIPROT_PATHWAYS") a.categoryLabel="UNIPATHWAYS";
+                    if(a.apicategory==="SUBCELLULAR_LOCATION_NOTE") {
+                        a.categoryLabel="";
+                        a.description = "<b>Note:</b> "+ a.description;
                     }
-                    if (a.category=="pH dependence" || a.category=="temperature dependence") {
-                        if(a.category=="temperature dependence") a.label="Temperature";
-                        if(a.category=="pH dependence") a.label="pH";
-                        a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="DEPENDENCE";
+                    if (["KINETIC_KM", "KINETIC_VMAX", "KINETIC_NOTE"].indexOf(a.apicategory)!==-1) {
+                        if(a.apicategory==="KINETIC_KM") a.label="K<sub>M</sub>";
+                        if(a.apicategory==="KINETIC_VMAX") a.label="V<sub>max</sub>";
+                        a.categoryLabel= "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.apicategory= "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.subcategory="KINETIC PARAMETERS";
                     }
-                    if (["absorption max", "absorption note"].indexOf(a.category)!==-1) {
-                        if (a.category=="absorption max") a.label="&lambda;<sub>max</sub>";
-                        a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="ABSORPTION";
+                    if (["PH_DEPENDENCE", "TEMPERATURE_DEPENDENCE"].indexOf(a.apicategory)!==-1) {
+                        if(a.apicategory==="TEMPERATURE_DEPENDENCE") a.label="Temperature";
+                        if(a.apicategory==="PH_DEPENDENCE") a.label="pH";
+                        a.categoryLabel = "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.apicategory= "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.subcategory="DEPENDENCE";
                     }
-                    if (a.category=="redox potential") {
-                        a.category= "BIOPHYSICOCHEMICAL PROPERTIES"; a.subcategory="REDOX POTENTIAL";
+                    if (["ABSORPTION_MAX", "ABSORPTION_NOTE"].indexOf(a.apicategory)!==-1) {
+                        if (a.apicategory=="ABSORPTION_MAX") a.label="&lambda;<sub>max</sub>";
+                        a.categoryLabel = "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.apicategory= "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.subcategory="ABSORPTION";
                     }
-                    if(Object.keys(self.categoryTitles).indexOf(a.category)!=-1) a.category = self.categoryTitles[a.category];
+                    if (a.apicategory=="REDOX_POTENTIAL") {
+                        a.categoryLabel = "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.apicategory= "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.subcategory="REDOX POTENTIAL";
+                    }
+                    if(Object.keys(self.categoryTitles).indexOf(a.apicategory)!=-1) a.categoryLabel = self.categoryTitles[a.apicategory];
+                    else a.cateogryLabel = a.category.toUpperCase();
                     dontCapitalize = ["mRNA", "tRNA", "rRNA", "dsDNA", "ssDNA", "siRNA", "snRNA", "ssRNA", "tmRNA",
                     "dAMP", "dADP", "dATP", "dCMP", "dCDP", "dCTP", "dGMP", "dGDP", "dGTP",
                     "dTMP", "dTDP", "dTTP", "cAMP", "cGMP", "hnRNP", "snRNP", "bZIP", "cTAGE", "eIF", "mTERF"]
                     if (a.description && dontCapitalize.indexOf(a.description.split(" ")[0])===-1) a.description= a.description.charAt(0).toUpperCase()+ self._addPubmedLink(a.description).slice(1);
                     if (a.cvTermName && dontCapitalize.indexOf(a.cvTermName.split(" ")[0])===-1) a.cvTermName=a.cvTermName.charAt(0).toUpperCase()+a.cvTermName.slice(1);
-                    if (a.category.toLowerCase()==="transport activity") a.category = "TCDB TRANSPORT CLASSIFICATION";
+                    if (a.apicategory==="TRANSPORT_ACTIVITY") a.categoryLabel = "TCDB TRANSPORT CLASSIFICATION";
                     if (a.bioObject) {
                         a.geneName=a.bioObject.properties.geneName;
                         a.proteinName=a.bioObject.properties.proteinName;
@@ -397,7 +409,8 @@ Annotation section used in function, medical, and expression views.
                     }
                     a.selfInteraction = a.propertiesMap.selfInteraction ? a.propertiesMap.selfInteraction[0].value : false;
                     a.xeno = a.database!="neXtProt" ? true : false;
-                    if (!data.hasOwnProperty(a.category)) data[a.category]=[];
+                    if(!a.categoryLabel) a.categoryLabel = a.apicategory.replace(/_/g, " ");
+                    if (!data.hasOwnProperty(a.categoryLabel)) data[a.categoryLabel]=[];
                     for(var j in a.evidences){
                         if(a.evidences[j].goQualifier==="contributes_to" && !a.description.startsWith("<i>Contributes to</i>&nbsp;")) a.description = a.description.replace("Contributes to ", "<i>Contributes to</i>&nbsp;");
                         if(a.evidences[j].goQualifier==="colocalizes_with" && !a.description.startsWith("<i>Colocalizes with</i>&nbsp;")) a.description = a.description.replace("Colocalizes with ", "<i>Colocalizes with</i>&nbsp;");
@@ -412,10 +425,10 @@ Annotation section used in function, medical, and expression views.
                             else a.isoformSpecific = "Isoform "+ data_isoforms[isoform.isoformAccession].mainEntityName.name;
                         }
                     }
-                    data[a.category].push({
+                    data[a.categoryLabel].push({
                         id: a.annotationId,
                         description: a.description || a.cvTermName,
-                        category: a.category.toUpperCase(),
+                        category: a.apicategory,
                         subcategory: a.subcategory,
                         label: a.label || null,
                         prefix: a.prefix,
@@ -442,10 +455,10 @@ Annotation section used in function, medical, and expression views.
                 }
                 for (var i in Object.keys(data)) {
                     var category = Object.keys(data)[i];
-                    if (["ENZYMATIC ACTIVITY", "COFACTOR", "NOTE", "CAUTION"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].sort(this._sortByRank);
-                    else if (category.toUpperCase()==="OVERVIEW") data[category] = data[Object.keys(data)[i]].sort(this._sortOverview);
+                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].sort(this._sortByRank);
+                    else if (category==="INTERACTIONS") data[category] = data[Object.keys(data)[i]].sort(this._sortOverview);
                     else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].sort(this._sortBiophysicochemical);
-                    else if (category.toUpperCase()==="BINARY INTERACTIONS") data[category] = data[Object.keys(data)[i]].sort(this._sortBinaryInteractions);
+                    else if (category==="PROTEIN-PROTEIN INTERACTION") data[category] = data[Object.keys(data)[i]].sort(this._sortBinaryInteractions);
                     else data[category] = data[Object.keys(data)[i]].sort(this._sortAlphabetically);
                     count+=data[Object.keys(data)[i]].length;
                 }
@@ -631,7 +644,7 @@ Annotation section used in function, medical, and expression views.
                 this.$$("#"+srcElementId.replace('button','container')).toggle();
             },
             _isNewPathwayCategory: function(category, name){
-                if (category=="pathway" && this.pathwayCategory!=new String(name).split('_')[0]) {
+                if (category==="PATHWAY" && this.pathwayCategory!=new String(name).split('_')[0]) {
                     this.pathwayCategory = new String(name).split('_')[0];
                     return true;
                 }
@@ -649,8 +662,8 @@ Annotation section used in function, medical, and expression views.
             _checkIfChebi: function(databaseName){
                 return databaseName.toLowerCase()==="chebi";
             },
-            _isBinaryInteractionOrCofactorOrBiophysical: function (category){
-                return (["BINARY INTERACTIONS", "COFACTOR", "BIOPHYSICOCHEMICAL PROPERTIES"].indexOf(category)!==-1);
+            _isBinaryInteractionOrBiophysical: function (category){
+                return (["BINARY_INTERACTION", "BIOPHYSICOCHEMICAL PROPERTIES"].indexOf(category)!==-1);
             },
             _isBiophysicochemicalProperty: function(category){
                 return category==="BIOPHYSICOCHEMICAL PROPERTIES";

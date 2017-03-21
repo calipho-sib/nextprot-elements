@@ -104,11 +104,9 @@ View listing protein interaction annotations.
     <div class="row">
       <div id="nxAnnotations" class="col-md-12">
         <generic-annotation-section section="interactions" goldOnly="[[goldOnly]]" nx-config="[[nxConfig]]" isoform="[[isoName]]"
-                                    categories='["INTERACTION-INFO", "ENZYME-REGULATION", "COFACTOR", "BINARY-INTERACTION"]'
-                                    category-titles='{"subunit": "overview", "BinaryInteraction": "Binary Interactions"}' count="{{annotationsCount}}">
+                                    categories='["INTERACTION-INFO", "ENZYME-REGULATION", "BINARY-INTERACTION", "COFACTOR", "SMALL-MOLECULE-INTERACTION", "MISCELLANEOUS"]'
+                                    category-titles='{"INTERACTION_INFO": "INTERACTIONS", "BINARY_INTERACTION": "PROTEIN-PROTEIN INTERACTION", "COFACTOR": "PROTEIN-COFACTOR INTERACTION", "SMALL_MOLECULE_INTERACTION": "PROTEIN-DRUG INTERACTION", "MISCELLANEOUS": "NOTE"}' count="{{annotationsCount}}">
         </generic-annotation-section>
-        <!--filterAnnot:{annot-> (annot.getAnnotationCategory() == AnnotationCategory.MISCELLANEOUS &&
-        !annot.getMiscellaneousSubCategory().equals('interaction'))? false:true;-->
       </div>
     </div>
     <div class="row">
