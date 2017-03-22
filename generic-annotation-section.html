@@ -287,7 +287,10 @@ Annotation section used in function, medical, and expression views.
                     var nx = new Nextprot.Client("neXtprot annotation loader", "Calipho Group");
                     if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                     var apiCall = [];
-                    for (var i in this.categories) apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i]))
+                    for (var i in this.categories) {
+                        if (typeof this.categories[i]==="object") apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i][0], this.categories[i][1]));
+                        else apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i]));
+                    }
                     var self = this;
                     Promise.all(apiCall)
                             .then(function (categories) {
@@ -313,6 +316,10 @@ Annotation section used in function, medical, and expression views.
                 var data_annot = [];
                 var count = 0;
                 for(var i in this.annotationsByCategory) {
+                    if (this.annotationsByCategory[i].childrenOfCvTerm) {
+                        for(var j in this.annotationsByCategory[i].annot)
+                            this.annotationsByCategory[i].annot[j].apicategory=this.annotationsByCategory[i].childrenOfCvTerm;
+                    }
                     Object.assign(data_xrefs, this.annotationsByCategory[i].xrefs);
                     Object.assign(data_publi, this.annotationsByCategory[i].publi);
                     Object.assign(data_isoforms, this.annotationsByCategory[i].isoforms);
