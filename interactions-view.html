@@ -104,8 +104,8 @@ View listing protein interaction annotations.
     <div class="row">
       <div id="nxAnnotations" class="col-md-12">
         <generic-annotation-section section="interactions" goldOnly="[[goldOnly]]" nx-config="[[nxConfig]]" isoform="[[isoName]]"
-                                    categories='["INTERACTION-INFO", "ENZYME-REGULATION", "BINARY-INTERACTION", "COFACTOR", "SMALL-MOLECULE-INTERACTION", "MISCELLANEOUS"]'
-                                    category-titles='{"INTERACTION_INFO": "INTERACTIONS", "BINARY_INTERACTION": "PROTEIN-PROTEIN INTERACTION", "COFACTOR": "PROTEIN-COFACTOR INTERACTION", "SMALL_MOLECULE_INTERACTION": "PROTEIN-DRUG INTERACTION", "MISCELLANEOUS": "NOTE"}' count="{{annotationsCount}}">
+                                    categories='["INTERACTION-INFO", "ENZYME-REGULATION", ["GO-MOLECULAR-FUNCTION", "GO:0005488"], ["GO-MOLECULAR-FUNCTION", "GO:0004872"], "BINARY-INTERACTION", "COFACTOR", "SMALL-MOLECULE-INTERACTION", "MISCELLANEOUS"]'
+                                    category-titles='{"INTERACTION_INFO": "INTERACTIONS", "GO:0005488": "GO BINDING", "GO:0004872": "GO RECEPTOR ACTIVITY", "BINARY_INTERACTION": "PROTEIN-PROTEIN INTERACTION", "COFACTOR": "PROTEIN-COFACTOR INTERACTION", "SMALL_MOLECULE_INTERACTION": "PROTEIN-DRUG INTERACTION", "MISCELLANEOUS": "NOTE"}' count="{{annotationsCount}}">
         </generic-annotation-section>
       </div>
     </div>
