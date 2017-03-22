@@ -431,7 +431,7 @@ Annotation section used in function, medical, and expression views.
                         if ((a.apicategory==="BINARY_INTERACTION" && isoform.specificity==="SPECIFIC")
                         || (a.apicategory!=="BINARY_INTERACTION" && this._objectValues(a.targetingIsoformsMap).length < this._objectValues(data_isoforms).length)){
                             a.isoformAccession = isoform.isoformAccession;
-                            if (a.isoformSpecific!==undefined) a.isoformSpecific = a.isoformSpecific.replace(/^Isoform(?!s)/, "Isoforms")+" and " + data_isoforms[isoform.isoformAccession].mainEntityName.name;
+                            if (a.isoformSpecific!==undefined && !a.isoformSpecific.match(data_isoforms[isoform.isoformAccession].mainEntityName.name)) a.isoformSpecific = a.isoformSpecific.replace(/^Isoform(?!s)/, "Isoforms")+" and " + data_isoforms[isoform.isoformAccession].mainEntityName.name;
                             else a.isoformSpecific = "Isoform "+ data_isoforms[isoform.isoformAccession].mainEntityName.name;
                             a.newSection = true;
                         }
