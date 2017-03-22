@@ -428,10 +428,12 @@ Annotation section used in function, medical, and expression views.
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
                     for (j in a.targetingIsoformsMap){
                         var isoform = a.targetingIsoformsMap[j];
-                        if (this._objectValues(a.targetingIsoformsMap).length < this._objectValues(data_isoforms).length){
+                        if ((a.apicategory==="BINARY_INTERACTION" && isoform.specificity==="SPECIFIC")
+                        || (a.apicategory!=="BINARY_INTERACTION" && this._objectValues(a.targetingIsoformsMap).length < this._objectValues(data_isoforms).length)){
                             a.isoformAccession = isoform.isoformAccession;
                             if (a.isoformSpecific!==undefined) a.isoformSpecific = a.isoformSpecific.replace(/^Isoform(?!s)/, "Isoforms")+" and " + data_isoforms[isoform.isoformAccession].mainEntityName.name;
                             else a.isoformSpecific = "Isoform "+ data_isoforms[isoform.isoformAccession].mainEntityName.name;
+                            a.newSection = true;
                         }
                     }
                     data[a.categoryLabel].push({
@@ -459,7 +461,8 @@ Annotation section used in function, medical, and expression views.
                         qualityQualifier: a.qualityQualifier,
                         isoformSpecific: a.isoformSpecific,
                         isoformAccession: a.isoformAccession,
-                        interactantIsoform: a.interactantIsoform
+                        interactantIsoform: a.interactantIsoform,
+                        newSection: a.newSection
                     });
                 }
                 for (var i in Object.keys(data)) {
