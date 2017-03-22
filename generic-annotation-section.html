@@ -119,7 +119,7 @@ Annotation section used in function, medical, and expression views.
                     <div id="[[_stringToId(category.name)]]-section">
                         <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" filter="_filter" initial-count="1" target-framerate="1">
                             <template is="dom-if" if="[[annotation.value.newSection]]">
-                                <div class="grey-x">Interactions for Isoform [[annotation.value.isoformSpecific]]</div>
+                                <div class="grey-x">Interactions for [[annotation.value.isoformSpecific]]</div>
                             </template>
                             <div class="row annotation-row">
                                 <template is="dom-if" if="[[annotation.value.prefix]]">
