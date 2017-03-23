@@ -17,7 +17,7 @@
     "iron-icons": "^1.2.0",
     "shibui-dropdown-menu": "https://github.com/ShibuiElements/shibui-dropdown-menu.git#^1.0.0",
     "iron-autogrow-textarea": "^1.0.15",
-    "colorbar": "https://github.com/bmschmidt/colorbar/blob/master/colorbar.js"
+    "colorbar": "http://benschmidt.org/colorbar/colorbar.js"
   },
   "keywords": [
     "web-component",
