@@ -118,7 +118,7 @@ Annotation section used in function, medical, and expression views.
                     </div>
                     <div id="[[_stringToId(category.name)]]-section">
                         <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" filter="_filter" initial-count="1" target-framerate="1">
-                            <template is="dom-if" if="[[annotation.value.newSection]]">
+                            <template is="dom-if" if="[[_isNewIsoformSection(category.value, index)]]">
                                 <div class="grey-x">Interactions for [[annotation.value.isoformSpecific]]</div>
                             </template>
                             <div class="row annotation-row">
@@ -433,7 +433,6 @@ Annotation section used in function, medical, and expression views.
                             a.isoformAccession = isoform.isoformAccession;
                             if (a.isoformSpecific!==undefined && !a.isoformSpecific.match(data_isoforms[isoform.isoformAccession].mainEntityName.name)) a.isoformSpecific = a.isoformSpecific.replace(/^Isoform(?!s)/, "Isoforms")+" and " + data_isoforms[isoform.isoformAccession].mainEntityName.name;
                             else a.isoformSpecific = "Isoform "+ data_isoforms[isoform.isoformAccession].mainEntityName.name;
-                            a.newSection = true;
                         }
                     }
                     data[a.categoryLabel].push({
@@ -462,7 +461,6 @@ Annotation section used in function, medical, and expression views.
                         isoformSpecific: a.isoformSpecific,
                         isoformAccession: a.isoformAccession,
                         interactantIsoform: a.interactantIsoform,
-                        newSection: a.newSection
                     });
                 }
                 for (var i in Object.keys(data)) {
@@ -519,20 +517,7 @@ Annotation section used in function, medical, and expression views.
             _sortBinaryInteractions: function(a,b){
                 if (a.isoformSpecific && !b.isoformSpecific) return 1
                 if (!a.isoformSpecific && b.isoformSpecific) return -1
-                if (a.isoformSpecific && b.isoformSpecific && b.isoformSpecific===a.isoformSpecific){
-                    if(a.geneName.toLowerCase() > b.geneName.toLowerCase()) {
-                        a.newSection=false;
-                        b.newSection=true;
-                    } else {
-                        a.newSection=true;
-                        b.newSection=false;
-                    }
-                }
-                if (a.isoformSpecific && b.isoformSpecific && a.isoformSpecific!==b.isoformSpecific){
-                    a.newSection=true;
-                    b.newSection=true;
-                    return a.isoformSpecific.toLowerCase() > b.isoformSpecific.toLowerCase() ? 1 : -1;
-                }
+                if (a.isoformSpecific && b.isoformSpecific && a.isoformSpecific!==b.isoformSpecific) return a.isoformSpecific.toLowerCase() > b.isoformSpecific.toLowerCase() ? 1 : -1;
                 if (a.selfInteraction) return -1;
                 if (b.selfInteraction) return 1;
                 if (a.geneName=="-") return 1;
@@ -685,6 +670,10 @@ Annotation section used in function, medical, and expression views.
             },
             _isNewSubcategory: function(annotations,index){
                 return index===0 || annotations[index].subcategory!==annotations[index-1].subcategory;
+            },
+            _isNewIsoformSection: function(annotations, index){
+                if (index===0 || annotations[index].category!=="BINARY_INTERACTION") return false;
+                else return annotations[index].isoformSpecific!==annotations[index-1].isoformSpecific;
             },
             _stringToId: function(str){
                 return str.toLowerCase().replace(" ", "-");
