@@ -349,7 +349,6 @@ Annotation section used in function, medical, and expression views.
                         if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/^bind.*/)) continue;
                     }
                     if (this.section==="interactions"){
-                        console.log(a.description);
                         if (a.apicategory==="MISCELLANEOUS" && !(a.description.toLowerCase().match(/.*bind.*/) || a.description.toLowerCase().match(/^bind.*/))) continue;
                     }
                     if (a.cvTermAccessionCode && a.apicategory==="CATALYTIC_ACTIVITY") a.cvTermAccessionCodeLabel="EC "+a.cvTermAccessionCode;
