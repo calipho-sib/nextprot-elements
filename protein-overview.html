@@ -95,11 +95,8 @@ Protein overview
         </template>
         [[data.entryName]]
         <template is="dom-if" if="[[data.recommendedProteinName]]">
-          <template is="dom-if" if="[[data.recommendedProteinName.EC.0]]">[
-            <template is="dom-repeat" items="[[data.recommendedProteinName.EC]]" as="ec">
-              <div class="ec-link">
-                <a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a></div><template is="dom-if" if="[[!_checkIfLast(data.recommendedProteinName.EC,index)]]">,</template>
-            </template>]
+          <template is="dom-if" if="[[data.recommendedProteinName.EC.0]]">
+            [<template is="dom-repeat" items="[[data.recommendedProteinName.EC]]" as="ec"><div class="ec-link"><a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a></div><template is="dom-if" if="[[!_checkIfLast(data.recommendedProteinName.EC,index)]]">,</template></template>]
           </template>
           <template is="dom-if" if="[[data.recommendedProteinName.mainShortName]]">([[data.recommendedProteinName.mainShortName]])</template>
         </template>
