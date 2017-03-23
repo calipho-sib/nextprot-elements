@@ -345,10 +345,12 @@ Annotation section used in function, medical, and expression views.
                         if (a.apicategory==="CAUTION" && a.description.startsWith("It is uncertain whether Met")) continue;
                         if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*antibod.*/)) continue;
                         if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*antigen.*/)) continue;
-                    }
-                    if (["function", "interactions"].indexOf(this.section)!==-1){
                         if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*\sbind.*/)) continue;
                         if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/^bind.*/)) continue;
+                    }
+                    if (this.section==="interactions"){
+                        console.log(a.description);
+                        if (a.apicategory==="MISCELLANEOUS" && !(a.description.toLowerCase().match(/.*bind.*/) || a.description.toLowerCase().match(/^bind.*/))) continue;
                     }
                     if (a.cvTermAccessionCode && a.apicategory==="CATALYTIC_ACTIVITY") a.cvTermAccessionCodeLabel="EC "+a.cvTermAccessionCode;
                     else if (a.cvTermAccessionCode) a.cvTermAccessionCodeLabel=a.cvTermAccessionCode;
