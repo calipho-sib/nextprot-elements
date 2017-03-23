@@ -16,7 +16,8 @@
     "paper-toggle-button": "^1.3.0",
     "iron-icons": "^1.2.0",
     "shibui-dropdown-menu": "https://github.com/ShibuiElements/shibui-dropdown-menu.git#^1.0.0",
-    "iron-autogrow-textarea": "^1.0.15"
+    "iron-autogrow-textarea": "^1.0.15",
+    "colorbar": "https://github.com/bmschmidt/colorbar.git"
   },
   "keywords": [
     "web-component",
