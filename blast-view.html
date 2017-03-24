@@ -115,13 +115,12 @@ View presenting blast search results annotations.
             <div id="blastParametersContainer">
                 <paper-spinner-lite id="spinner" active></paper-spinner-lite>
                 <template is="dom-if" if="[[params]]">
-                    <p><b>Blast</b></p>
                     <p><span class="quiet bold">
                         <template is="dom-if" if="[[entry]]">from protein [[entry]]</template>
                         <template is="dom-if" if="[[isoform]]">, isoform [[isoform]]</template>
                     </span></p>
                     <p>
-                        <span class="quiet bold">Blast sequence</span>
+                        <span class="quiet bold">BLAST sequence</span>
                         <span id="sequenceContainer">
                             <span id="shortenedSequence" class="pre" on-tap="_editSequence">[[_shortenedSequence()]]</span>
                             <iron-icon id="editButton" icon="image:edit" on-tap="_editSequence"></iron-icon>
