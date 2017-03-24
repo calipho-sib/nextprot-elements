@@ -347,8 +347,15 @@ Annotation section used in function, medical, and expression views.
                         if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*antigen.*/)) continue;
                         if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*\sbind.*/)) continue;
                         if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/^bind.*/)) continue;
-                    }
-                    if (this.section==="interactions"){
+                    } else if (this.section==="medical") {
+                        if (a.apicategory==="MISCELLANEOUS"
+                            && !(a.description.toLowerCase().match(/.*antibod.*/)
+                            || a.description.toLowerCase().match(/.*antigen.*/)
+                            || a.description.toLowerCase().match(/.*Yamanaka factors.*/)
+                            || a.description.toLowerCase().match(/.*assess cell proliferation.*/)
+                            || a.description.toLowerCase().match(/.*potential pharmaceutical target.*/)
+                            || a.description.toLowerCase().match(/.*diagnostic marker.*/))) continue;
+                    } else if (this.section==="interactions"){
                         if (a.apicategory==="MISCELLANEOUS" && !(a.description.toLowerCase().match(/.*bind.*/) || a.description.toLowerCase().match(/^bind.*/))) continue;
                     }
                     if (a.cvTermAccessionCode && a.apicategory==="CATALYTIC_ACTIVITY") a.cvTermAccessionCodeLabel="EC "+a.cvTermAccessionCode;

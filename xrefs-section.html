@@ -288,6 +288,23 @@ Exteranl links section present in function, medical, expression, interactions, s
                   || typeList[elem].databaseName === "KEGGPathway") {
             continue;
           }
+          else if (typeList[elem].databaseName === "MIM") {
+            var isGene = false;
+            for (var p in typeList[elem].properties){
+              if(typeList[elem].properties[p].name="value"
+              && typeList[elem].properties[p].value=="gene") isGene = true;
+            }
+            if(!isGene)
+              newTypeList.push({
+                name: typeList[elem].databaseName,
+                xrefs : [{
+                  accession: typeList[elem].accession,
+                  url : typeList[elem].resolvedUrl,
+                  prefix : "",
+                  suffix : suffix
+                }]
+              })
+          }
           else {
             var suffix = "";
             if (typeList[elem].properties.length>0){
