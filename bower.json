@@ -3,20 +3,17 @@
   "main": "nextprot-elements.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
-    "d3": "~3.5.6",
     "iron-collapse": "~1.3.0",
     "iron-icon": "^1.0.12",
-    "bootstrap": "~3.3.7",
-    "font-awesome": "~4.7.0",
+    "iron-icons": "^1.2.0",
+    "iron-dropdown": "^1.5.4",
+    "iron-autogrow-textarea": "^1.0.15",
+    "paper-toggle-button": "^1.3.0",
     "neon-animation": "~1.2.4",
     "paper-spinner": "^1.2.1",
+    "shibui-dropdown-menu": "https://github.com/ShibuiElements/shibui-dropdown-menu.git#^1.0.0",
     "feature-viewer": "^0.1.50",
     "sequence-viewer": "https://github.com/calipho-sib/sequence-viewer.git#blast",
-    "iron-dropdown": "^1.5.4",
-    "paper-toggle-button": "^1.3.0",
-    "iron-icons": "^1.2.0",
-    "shibui-dropdown-menu": "https://github.com/ShibuiElements/shibui-dropdown-menu.git#^1.0.0",
-    "iron-autogrow-textarea": "^1.0.15",
     "colorbar": "http://benschmidt.org/colorbar/colorbar.js"
   },
   "keywords": [
@@ -32,7 +29,10 @@
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
     "web-component-tester": "^4.0.0",
     "jquery-ui": "^1.12.1",
+    "bootstrap": "~3.3.7",
+    "d3": "~3.5.6",
     "nextprot": "x.x.x",
-    "handlebars": "^4.0.5"
+    "handlebars": "^4.0.5",
+    "font-awesome": "~4.7.0"
   }
 }
