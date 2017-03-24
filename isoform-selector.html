@@ -313,7 +313,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 if(isoIdentifier.target) isoIdentifier = isoIdentifier.target.getAttribute("data-args");
                 this.isoName = isoIdentifier;
                 history.pushState(null, null, window.location.pathname+window.location.search+"#"+this.isoName);
-                var visibleTabs = Object.values(this.isoforms.visible);
+                var visibleTabs = this._objectValues(this.isoforms.visible);
                 var isoformVisible = false;
                 for (var i in visibleTabs){
                     if (this.isoName===visibleTabs[i].isoformAccession) isoformVisible = true;
@@ -489,6 +489,15 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             _navTabClass: function(index){
                 var classList = "isoform-selector";
                 return classList+(this.sequences[index].isoformAccession===this.isoName && !this.showAllTab?" active":"");
+            },
+            _objectValues: function(obj) {
+                var vals = [];
+                for( var key in obj ) {
+                    if ( obj.hasOwnProperty(key) ) {
+                        vals.push(obj[key]);
+                    }
+                }
+                return vals;
             }
         });
     </script>
