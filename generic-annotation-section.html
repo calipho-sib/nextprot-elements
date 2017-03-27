@@ -358,6 +358,7 @@ Annotation section used in function, medical, and expression views.
                     if (this.section==="function"){
                         if (a.apicategory==="GO_MOLECULAR_FUNCTION" && a.cvTermAccessionCode=="GO:0003674") continue;
                         if (a.apicategory==="GO_BIOLOGICAL_PROCESS" && a.cvTermAccessionCode=="GO:0008150") continue;
+                        if (a.apicategory==="GO_CELLULAR_COMPONENT" && a.cvTermAccessionCode=="GO:0005575") continue;
                         if (a.apicategory==="CAUTION" && a.description=="Product of a dubious CDS prediction.") continue;
                         if (a.apicategory==="CAUTION" && a.description=="Product of a dubious gene prediction.") continue;
                         if (a.apicategory==="CAUTION" && a.description=="Could be the product of a pseudogene.") continue;
