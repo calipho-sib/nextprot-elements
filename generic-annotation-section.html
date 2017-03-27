@@ -519,7 +519,7 @@ Annotation section used in function, medical, and expression views.
                 }
                 for (var i in Object.keys(data)) {
                     var category = Object.keys(data)[i];
-                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].sort(this._sortByRank);
+                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "SUBCELLULAR LOCATION"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].sort(this._sortByRank);
                     else if (category==="INTERACTIONS") data[category] = data[Object.keys(data)[i]].sort(this._sortOverview);
                     else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].sort(this._sortBiophysicochemical);
                     else if (category==="PROTEIN-PROTEIN INTERACTION") data[category] = data[Object.keys(data)[i]].sort(this._sortBinaryInteractions);
