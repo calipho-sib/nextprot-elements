@@ -77,6 +77,20 @@ Annotation section used in function, medical, and expression views.
             .blue-well {
                 margin: 5px 190px 10px 10px;
             }
+            .right-column-header {
+                display: inline;
+                float: right;
+                margin-right: 180px;
+                text-transform: initial;
+            }
+            .experiments-counter {
+                float: right;
+                color: #999;
+                font-weight: 600;
+                font-size: 1.3em;
+                line-height: 1.3em;
+                padding-right: 30px;
+            }
             @media (max-width: 1080px) {
                 .evidences-container {
                     margin: 0px 25px 20px 0px;
@@ -114,7 +128,11 @@ Annotation section used in function, medical, and expression views.
             <template is="dom-repeat" items="[[_toArray(data)]]" as="category">
                 <div class="row category-row">
                     <div>
-                        <h4 class="annotation-category-title"> [[category.name]]</h4>
+                        <h4 class="annotation-category-title"> [[category.name]]
+                            <template is="dom-if" if="[[_isProteinProteinInteraction(category)]]">
+                                <div class="grey-x right-column-header">Number of IntAct expt.</div>
+                            </template>
+                        </h4>
                     </div>
                     <div id="[[_stringToId(category.name)]]-section">
                         <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" filter="_filter" initial-count="1" target-framerate="1">
@@ -198,6 +216,7 @@ Annotation section used in function, medical, and expression views.
                                                 </template>
                                             </template>
                                         </template>
+                                        <div class="experiments-counter">[[annotation.value.numberOfExperiments]]</div>
                                     </div>
                                 </div>
                                 <template is="dom-if" if="[[!_isPathwayOrTcdb(annotation.value.category)]]">
@@ -443,6 +462,15 @@ Annotation section used in function, medical, and expression views.
                             else a.isoformSpecific = "Isoform "+ data_isoforms[isoform.isoformAccession].mainEntityName.name;
                         }
                     }
+                    var evidences = self._getEvidence(a.evidences, data_xrefs, data_publi);
+                    if (a.apicategory=="BINARY_INTERACTION") {
+                        for (var e in evidences) {
+                            if (evidences[e].numberOfExperiments) {
+                                a.numberOfExperiments = evidences[e].numberOfExperiments;
+                                continue;
+                            }
+                        }
+                    }
                     data[a.categoryLabel].push({
                         id: a.annotationId,
                         description: a.description || a.cvTermName,
@@ -463,12 +491,13 @@ Annotation section used in function, medical, and expression views.
                         url: a.url,
                         database: a.database,
                         parentXref: a.parentXref,
-                        evidences: a.evidences ? self._getEvidence(a.evidences, data_xrefs, data_publi) : [],
+                        evidences: evidences,
                         evidenceSources: self._getUniqueListOfEvidenceSources(a.evidences),
                         qualityQualifier: a.qualityQualifier,
                         isoformSpecific: a.isoformSpecific,
                         isoformAccession: a.isoformAccession,
                         interactantIsoform: a.interactantIsoform,
+                        numberOfExperiments: a.numberOfExperiments
                     });
                 }
                 for (var i in Object.keys(data)) {
@@ -675,6 +704,9 @@ Annotation section used in function, medical, and expression views.
             },
             _isPathwayOrTcdb: function(category){
                 return ["UNIPATHWAYS", "KEGG PATHWAYS", "REACTOME PATHWAYS", "TCDB TRANSPORT CLASSIFICATION"].indexOf(category)!==-1;
+            },
+            _isProteinProteinInteraction: function(category){
+                return category.name==="PROTEIN-PROTEIN INTERACTION";
             },
             _isNewSubcategory: function(annotations,index){
                 return index===0 || annotations[index].subcategory!==annotations[index-1].subcategory;
