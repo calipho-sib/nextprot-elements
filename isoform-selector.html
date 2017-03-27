@@ -246,7 +246,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             },
             _checkIfIsoformExists: function(){
                 for(var i in this.isoforms) {
-                    if (this.isoName === Object.values(this.isoforms)[i].isoformAc) return true;
+                    if (this.isoName === this._objectValues(this.isoforms)[i].isoformAc) return true;
                 }
                 return false;
             },
