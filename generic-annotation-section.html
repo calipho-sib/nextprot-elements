@@ -381,7 +381,7 @@ Annotation section used in function, medical, and expression views.
                     if(a.apicategory==="UNIPROT_PATHWAYS") a.categoryLabel="UNIPATHWAYS";
                     if(a.apicategory==="SUBCELLULAR_LOCATION_NOTE") {
                         a.categoryLabel="";
-                        a.description = "<b>Note:</b> "+ a.description;
+                        if(!a.description.startsWith("<b>Note:</b>")) a.description = "<b>Note:</b> "+ a.description;
                     }
                     if (["KINETIC_KM", "KINETIC_VMAX", "KINETIC_NOTE"].indexOf(a.apicategory)!==-1) {
                         if(a.apicategory==="KINETIC_KM") a.label="K<sub>M</sub>";
