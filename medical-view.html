@@ -54,7 +54,7 @@ View listing medical annotations.
                 "APIRef": "isoform-mapping",
                 "metadata": {}
               }
-            ]'>
+            ]' count="{{positionalAnnotationsCount}}" gold-only="[[goldOnly]]">
             </triple-viewer>
         </div>
         <div class="row">
@@ -114,13 +114,12 @@ View listing medical annotations.
                 }
             },
             _checkAnnotations: function(){
-                if(this.annotationsCount===0){
-                    this.$.nxAnnotations.hidden=true;
-                    this.$.noDataWarning.hidden=false;
-                } else {
-                    this.$.nxAnnotations.hidden=false;
-                    this.$.noDataWarning.hidden=true;
-                }
+                if(!this.annotationsCount) this.$.nxAnnotations.hidden=true;
+                else this.$.nxAnnotations.hidden=false;
+                if(!this.positionalAnnotationsCount) this.$.nxPositionalAnnotations.hidden=true;
+                else this.$.nxPositionalAnnotations.hidden=false;
+                if(this.annotationsCount===0 && this.positionalAnnotationsCount===0) this.$.noDataWarning.hidden=false;
+                else this.$.noDataWarning.hidden=true;
             },
             _checkKeywords: function(){
                 this.keywordsCount===0 ? this.$.nxKeywords.hidden=true : this.$.nxKeywords.hidden=false;
