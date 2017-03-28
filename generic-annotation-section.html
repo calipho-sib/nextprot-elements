@@ -519,8 +519,9 @@ Annotation section used in function, medical, and expression views.
                 }
                 for (var i in Object.keys(data)) {
                     var category = Object.keys(data)[i];
-                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "SUBCELLULAR LOCATION"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].sort(this._sortByRank);
+                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].sort(this._sortByRank);
                     else if (category==="INTERACTIONS") data[category] = data[Object.keys(data)[i]].sort(this._sortOverview);
+                    else if (category==="SUBCELLULAR LOCATION") data[category] = data[Object.keys(data)[i]].sort(this._sortSubcellular);
                     else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].sort(this._sortBiophysicochemical);
                     else if (category==="PROTEIN-PROTEIN INTERACTION") data[category] = data[Object.keys(data)[i]].sort(this._sortBinaryInteractions);
                     else data[category] = data[Object.keys(data)[i]].sort(this._sortAlphabetically);
@@ -540,6 +541,12 @@ Annotation section used in function, medical, and expression views.
             },
             _sortOverview: function(a,b){
                 return (a.isoformSpecific && !b.isoformSpecific)?1:-1;
+            },
+            _sortSubcellular: function(a,b){
+                if(a.rank!==undefined && b.rank!==undefined) return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
+                else if(a.rank===undefined && b.rank===undefined) return a.cvTermName.toLowerCase() > b.cvTermName.toLowerCase() ? 1 : -1;
+                else if(a.rank && b.rank===undefined) return 1;
+                else if(b.rank && a.rank===undefined)return -1;
             },
             _sortBiophysicochemical: function(a,b) {
                 if(a.subcategory=="ABSORPTION" && b.subcategory!="ABSORPTION") return -1;
