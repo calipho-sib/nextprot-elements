@@ -204,7 +204,7 @@ Annotation section used in function, medical, and expression views.
                                                 </template>
                                             </p>
                                             <template is="dom-if" if="[[annotation.value.selfInteraction]]">
-                                                <p class="annotation-title">Itself</p>
+                                                <p class="annotation-title">Itself <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label></p>
                                             </template>
                                             <template is="dom-if" if="[[!annotation.value.selfInteraction]]">
                                                 <template is="dom-if" if="[[annotation.value.geneName]]">
