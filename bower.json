@@ -14,7 +14,7 @@
     "neon-animation": "~1.2.4",
     "paper-spinner": "^1.2.1",
     "shibui-dropdown-menu": "https://github.com/ShibuiElements/shibui-dropdown-menu.git#^1.0.0",
-    "feature-viewer": "^0.1.50",
+    "feature-viewer": "x.x.x",
     "sequence-viewer": "^0.2.28",
     "colorbar": "http://benschmidt.org/colorbar/colorbar.js"
   },
