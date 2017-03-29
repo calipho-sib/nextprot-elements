@@ -118,7 +118,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                     </template>
                     <template id="tablist" is="dom-repeat" items="[[isoforms.visible]]" as="isoform">
                         <li class-list="[[_navTabClass(index)]]">
-                            <a id="[[isoform.uniqueName]]" class="isoformNames" href="#[[isoform.uniqueName]]" data-args$="[[isoform.uniqueName]]" data-toggle="tab" title="[[isoform.mainEntityName.value]]" on-tap="displayIsoform">[[isoform.uniqueName]]</a>
+                            <a id="[[isoform.uniqueName]]" class="isoformNames" data-args$="[[isoform.uniqueName]]" data-toggle="tab" title="[[isoform.mainEntityName.value]]" on-tap="displayIsoform">[[isoform.uniqueName]]</a>
                         </li>
                     </template>
                     <template id="menu" is="dom-if" if="[[isoforms.more.length]]">
@@ -184,7 +184,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 var nx = new Nextprot.Client("neXtprot isoform selector", "Calipho Group");
                 if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                 var nxEntry = this.nxConfig.entry || nx.getEntryName();
-                this.isoName = window.location.hash.slice(1);
+                this.isoName = this.nxConfig.isoform;
                 var self=this;
                 nx.getIsoformMapping(nxEntry).then(
                     function(data){
@@ -312,7 +312,8 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             displayIsoform: function(isoIdentifier) {
                 if(isoIdentifier.target) isoIdentifier = isoIdentifier.target.getAttribute("data-args");
                 this.isoName = isoIdentifier;
-                history.pushState(null, null, window.location.pathname+window.location.search+"#"+this.isoName);
+                if(typeof angular !== 'undefined') angular.element(document).scope().$apply(angular.element(document).injector().get('$location').search('isoform', isoIdentifier))
+                else  history.pushState(null, null, window.location.pathname+"?isoform="+ isoIdentifier);
                 var visibleTabs = this._objectValues(this.isoforms.visible);
                 var isoformVisible = false;
                 for (var i in visibleTabs){
