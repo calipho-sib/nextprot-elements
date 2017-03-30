@@ -22,7 +22,7 @@ View listing protein interaction annotations.
     </style>
     <div class="row">
       <div id="nxOverview" class="col-md-12">
-        <protein-overview nx-config="[[nxConfig]]" nx-entry="{{nxEntry}}"></protein-overview>
+        <protein-overview nx-config="[[nxConfig]]"></protein-overview>
       </div>
     </div>
     <div id="nxPositionalAnnotations" class="row nxSection">
@@ -98,7 +98,7 @@ View listing protein interaction annotations.
       }
     ]' count="{{positionalAnnotationsCount}}" gold-only="[[goldOnly]]"></triple-viewer>
     </div>
-    <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no interaction information available in neXtProt for [[nxEntry]].
+    <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no interaction information available in neXtProt for [[nxConfig.entry]].
       Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
     </div>
     <div class="row">
@@ -130,12 +130,6 @@ View listing protein interaction annotations.
         nxConfig: {
           type: Object,
           value: {}
-        },
-        nxEntry: {
-          type: String
-        },
-        isoName: {
-          type: String
         },
         annotationsCount: {
           type: Number,

@@ -30,12 +30,12 @@ View listing medical annotations.
                 <protein-overview nx-config="[[nxConfig]]"></protein-overview>
             </div>
         </div>
-        <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no medical information available in neXtProt for {{nxConfig.entry}}.
+        <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no medical information available in neXtProt for [[nxConfig.entry]].
             Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
         </div>
         <div class="row nxSection">
             <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}}></isoform-selector>
-            <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] feature-list='[
+            <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] gold-only="[[nxConfig.goldOnly]]" feature-list='[
               {
                 "APIRef": "sequence",
                 "metadata": {"name": "Sequence"}
@@ -54,12 +54,12 @@ View listing medical annotations.
                 "APIRef": "isoform-mapping",
                 "metadata": {}
               }
-            ]' count="{{positionalAnnotationsCount}}" gold-only="[[goldOnly]]">
+            ]' count="{{positionalAnnotationsCount}}">
             </triple-viewer>
         </div>
         <div class="row">
             <div id="nxAnnotations" class="col-md-12">
-                <generic-annotation-section id="annotationElement" section="medical" gold-only="[[goldOnly]]"
+                <generic-annotation-section id="annotationElement" section="medical" gold-only="[[nxConfig.goldOnly]]"
                                             categories='["DISEASE", "VARIANT-INFO", "PHARMACEUTICAL", "ALLERGEN", "MISCELLANEOUS"]'
                                             category-titles='{"MISCELLANEOUS": "NOTE"}'
                                             count="{{annotationsCount}}" nx-config="[[nxConfig]]">
@@ -93,14 +93,11 @@ View listing medical annotations.
                     type: Object,
                     value: {}
                 },
-                isoName: {
-                    type: String
-                },
-                goldOnly: {
-                    type: Boolean,
-                    value: false
-                },
                 annotationsCount: {
+                    type: Number,
+                    observer: "_checkAnnotations"
+                },
+                positionalAnnotationsCount: {
                     type: Number,
                     observer: "_checkAnnotations"
                 },

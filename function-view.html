@@ -33,7 +33,7 @@ View listing protein function annotations.
     </div>
     <div class="row">
       <div id="nxAnnotations" class="col-md-12">
-        <generic-annotation-section id="annotationElement" section="function" gold-only="[[goldOnly]]"
+        <generic-annotation-section id="annotationElement" section="function" gold-only="[[nxConfig.goldOnly]]"
                                     categories='["FUNCTION-INFO", "CATALYTIC-ACTIVITY", "TRANSPORT-ACTIVITY", "ENZYME-REGULATION", "COFACTOR",
                                       "BIOPHYSICOCHEMICAL-PROPERTY", "GO-MOLECULAR-FUNCTION", "GO-BIOLOGICAL-PROCESS",
                                       "PATHWAY", "ALLERGEN", "MISCELLANEOUS", "CAUTION"]'
@@ -66,10 +66,6 @@ View listing protein function annotations.
           type: Object,
           value: {}
         },
-        goldOnly: {
-          type: Boolean,
-          value: false
-        },
         annotationsCount: {
           type: Number,
           observer: "_checkAnnotations"
@@ -84,13 +80,9 @@ View listing protein function annotations.
         }
       },
       _checkAnnotations: function(){
-        if(this.annotationsCount===0){
-          this.$.nxAnnotations.hidden=true;
-          this.$.noDataWarning.hidden=false;
-        } else {
-          this.$.nxAnnotations.hidden=false;
-          this.$.noDataWarning.hidden=true;
-        }
+        if(this.annotationsCount===0) this.$.nxAnnotations.hidden=true;
+        else this.$.nxAnnotations.hidden=false;
+        this.$.noDataWarning.hidden=!this.$.nxAnnotations.hidden;
       },
       _checkKeywords: function(){
         this.keywordsCount===0 ? this.$.nxKeywords.hidden=true : this.$.nxKeywords.hidden=false;
