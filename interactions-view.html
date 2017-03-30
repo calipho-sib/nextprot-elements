@@ -27,7 +27,7 @@ View listing protein interaction annotations.
     </div>
     <div id="nxPositionalAnnotations" class="row nxSection">
       <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}}></isoform-selector>
-      <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]] feature-list='[
+      <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]]  gold-only="[[nxConfig.goldOnly]]" feature-list='[
       {
         "APIRef": "sequence",
         "metadata": {"name": "Sequence"}
@@ -103,7 +103,7 @@ View listing protein interaction annotations.
     </div>
     <div class="row">
       <div id="nxAnnotations" class="col-md-12">
-        <generic-annotation-section section="interactions" gold-only="[[goldOnly]]" nx-config="[[nxConfig]]"
+        <generic-annotation-section section="interactions" gold-only="[[nxConfig.goldOnly]]" nx-config="[[nxConfig]]"
                                     categories='["INTERACTION-INFO", "ENZYME-REGULATION", ["GO-MOLECULAR-FUNCTION", "GO:0005488"], ["GO-MOLECULAR-FUNCTION", "GO:0004872"], "BINARY-INTERACTION", "COFACTOR", "SMALL-MOLECULE-INTERACTION", "MISCELLANEOUS"]'
                                     category-titles='{"INTERACTION_INFO": "INTERACTIONS", "GO:0005488": "GO BINDING", "GO:0004872": "GO RECEPTOR ACTIVITY", "BINARY_INTERACTION": "PROTEIN-PROTEIN INTERACTION", "COFACTOR": "PROTEIN-COFACTOR INTERACTION", "SMALL_MOLECULE_INTERACTION": "PROTEIN-DRUG INTERACTION", "MISCELLANEOUS": "NOTE"}' count="{{annotationsCount}}">
         </generic-annotation-section>
@@ -136,10 +136,6 @@ View listing protein interaction annotations.
         },
         isoName: {
           type: String
-        },
-        goldOnly: {
-          type: Boolean,
-          value: false
         },
         annotationsCount: {
           type: Number,
