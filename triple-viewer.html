@@ -522,7 +522,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     }
                 });
                 //Customize Sequence viewer - raw version
-                this.$$(".fasta-link").setAttribute("href","https://old.nextprot.org/db/entry/" + this.isoName.split("-")[0] + "/fasta?isoform=" + this.isoName.slice(3));
                 var seqHeader = document.createElement("div");
                 seqHeader.setAttribute("class", "seqHeader");
                 this.$$("#seqViewer").insertBefore(seqHeader, this.$$(".sequenceBody"));
