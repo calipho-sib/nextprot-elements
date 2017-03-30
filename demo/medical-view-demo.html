@@ -34,16 +34,10 @@
         function toggleGoldOnly(){
             var gasElement = document.querySelector("generic-annotation-section");
             var tvElement = document.querySelector("triple-viewer");
-            if(gasElement.hasAttribute("gold-only")){
-                gasElement.removeAttribute("gold-only");
-            } else{
-                gasElement.setAttribute("gold-only","true");
-            }
-            if(tvElement.hasAttribute("gold-only")){
-                tvElement.removeAttribute("gold-only");
-            } else{
-                tvElement.setAttribute("gold-only","true");
-            }
+            if(gasElement && gasElement.hasAttribute("gold-only")) gasElement.removeAttribute("gold-only");
+            else if (gasElement) gasElement.setAttribute("gold-only","true");
+            if(tvElement && tvElement.hasAttribute("gold-only")) tvElement.removeAttribute("gold-only");
+            else if (tvElement) tvElement.setAttribute("gold-only","true");
         }
     </script>
 </body>
