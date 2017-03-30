@@ -75,7 +75,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             a.isoform-selector {
                 position: relative;
             }
-            #nx-isoformChoice {
+            #nxIsoformChoice {
                 margin-bottom: -5px;
             }
             #isoformMap {
@@ -84,7 +84,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 padding-top: 8px;
             }
         </style>
-        <div id="nx-isoformChoice" class="col-md-12">
+        <div id="nxIsoformChoice" class="col-md-12">
             <div>
                 <div class="navbar-brand">Isoforms</div>
                 <ul id="navTabs" class="nav nav-tabs">
@@ -157,7 +157,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                     value: false
                 }
             },
-            ready: function(){
+            ready: function() {
                 var nx = new Nextprot.Client("neXtprot isoform selector", "Calipho Group");
                 if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                 var nxEntry = this.nxConfig.entry || nx.getEntryName();
@@ -187,7 +187,6 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             },
             initialize: function () {
                 this.nxIsoformChoice(this.sequences[0]);
-                iFrameWidth = $("#visuContainer").width();
                 this.displayIsoform(this.isoName);
             },
             reload: function (isoID) {
@@ -195,7 +194,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             },
             nxIsoformChoice: function() {
                 var self=this;
-                if (this.$$("#nx-isoformChoice").children.length > 0) {
+                if (this.$$("#nxIsoformChoice").children.length > 0) {
                     var datas = {
                         "isoforms": (function () {
                             var listIsoforms = {
@@ -300,7 +299,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                     var self=this;
                     this.async(function(){
                         self.$$("#extendIsoformChoice").innerHTML = this.isoName;
-                        $('#nx-isoformChoice #moreIsoformsTab').tab('show');
+                        $('#nxIsoformChoice #moreIsoformsTab').tab('show');
                     });
                 } else if (this.$$("#extendIsoformChoice")) {
                     this.$$("#extendIsoformChoice").innerHTML = "More";
@@ -336,9 +335,10 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 var min = getMin();
                 var position = 20;
 
+                this.containerWidth = document.body.offsetWidth-330;
 
                 var margin = {top: 10, right: 50, bottom: 0, left: 50},
-                        width = iFrameWidth - margin.left - margin.right - 17,
+                        width = this.containerWidth - margin.left - margin.right - 17,
                         height = 200 - margin.top - margin.bottom;
                 var coverageLength = 33000;
                 var scaling = d3.scale.linear()
