@@ -1,34 +1,9 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
-<script>
-    //Load JQuery if necessary
-    if(typeof jQuery === "undefined"){
-        (function(){
-            var jqueryScript = document.createElement('script');
-            jqueryScript.src = '../../jquery/dist/jquery.min.js';
-            document.getElementsByTagName('head')[0].appendChild(jqueryScript);
-        })();
-    }
-</script>
+<link rel="import" href="external-scripts.html">
 <script src="../jquery-ui/jquery-ui.min.js"></script>
 <script src="../bootstrap/js/tooltip.js"></script>
 <script src="../bootstrap/js/popover.js"></script>
-<script>
-    //Load Nextprot if necessary
-    if(typeof Nextprot === "undefined"){
-        (function(){
-            var nextprotScript = document.createElement('script');
-            nextprotScript.type = 'text/javascript';
-            nextprotScript.src = '../../nextprot/src/nextprot-core.js';
-            (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(nextprotScript);
-
-            var nextprotUtilsScript = document.createElement('script');
-            nextprotUtilsScript.type = 'text/javascript';
-            nextprotUtilsScript.src = '../../nextprot/src/nextprot-utils.js';
-            (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(nextprotUtilsScript);
-        })();
-    }
-</script>
 <script src="../handlebars/handlebars.min.js"></script>
 <script src="bio-viz/biovizJS/library/jquery.ui-contextmenu.min.js"></script>
 <script src="bio-viz/dist/bio-viz.min.js"></script>

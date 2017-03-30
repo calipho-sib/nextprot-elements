@@ -5,27 +5,8 @@
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="evidence-item.html">
 <link rel="import" href="quality-label.html">
+<link rel="import" href="external-scripts.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
-<script>
-    //Load JQuery if necessary
-    if(typeof jQuery === "undefined"){
-        (function(){
-            var newscript = document.createElement('script');
-            newscript.type = 'text/javascript';
-            newscript.src = '../../jquery/dist/jquery.min.js';
-            (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(newscript);
-        })();
-    }
-    //Load Nextprot if necessary
-    if(typeof Nextprot === "undefined"){
-        (function(){
-            var nextprotScript = document.createElement('script');
-            nextprotScript.type = 'text/javascript';
-            nextprotScript.src = '../../nextprot/src/nextprot-core.js';
-            (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(nextprotScript);
-        })();
-    }
-</script>
 <!--
 `generic-annotation-section`
 Annotation section used in function, medical, and expression views.
@@ -135,7 +116,7 @@ Annotation section used in function, medical, and expression views.
                         </h4>
                     </div>
                     <div id="[[_stringToId(category.name)]]-section">
-                        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" filter="_filter" initial-count="1" target-framerate="1">
+                        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" filter="_filter" initial-count="1" target-framerate="1000">
                             <template is="dom-if" if="[[_isNewIsoformSection(category.value, index)]]">
                                 <div class="grey-x">Interactions for [[annotation.value.isoformSpecific]]</div>
                             </template>

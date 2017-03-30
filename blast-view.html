@@ -9,30 +9,7 @@
 <link rel="import" href="blast-item.html">
 <link rel="import" href="blast-styles.html">
 <link rel="import" href="d3-styles.html">
-<script>
-    //Load JQuery if necessary
-    if(typeof jQuery === "undefined"){
-        (function(){
-            var newscript = document.createElement('script');
-            newscript.src = '../../jquery/dist/jquery.min.js';
-            document.getElementsByTagName('head')[0].appendChild(newscript);
-        })();
-    }
-    //Load Nextprot if necessary
-    if(typeof Nextprot === "undefined"){
-        (function(){
-            var nextprotScript = document.createElement('script');
-            nextprotScript.type = 'text/javascript';
-            nextprotScript.src = '../../nextprot/src/nextprot-core.js';
-            (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(nextprotScript);
-
-            var nextprotUtilsScript = document.createElement('script');
-            nextprotUtilsScript.type = 'text/javascript';
-            nextprotUtilsScript.src = '../../nextprot/src/nextprot-utils.js';
-            (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(nextprotUtilsScript);
-        })();
-    }
-</script>
+<link rel="import" href="external-scripts.html">
 <script src="../d3/d3.min.js"></script>
 <script src="../colorbar/index.js"></script>
 <!--
