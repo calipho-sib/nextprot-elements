@@ -395,6 +395,12 @@ Annotation section used in function, medical, and expression views.
                     }
                     if(a.apicategory==="PATHWAY") a.apicategory=self._getUniqueListOfEvidenceSources(a.evidences)+" pathways";
                     if(a.apicategory==="UNIPROT_PATHWAYS") a.categoryLabel="UNIPATHWAYS";
+                    if(a.apicategory==="SUBCELLULAR_LOCATION") {
+                        for (var j in a.properties) {
+                            if (a.properties[j].name==="long-name") a.cvTermName = a.properties[j].value;
+                            if (a.properties[j].name==="name-modifier") a.description = a.properties[j].value;
+                        }
+                    }
                     if(a.apicategory==="SUBCELLULAR_LOCATION_NOTE") {
                         a.categoryLabel="";
                         if(!a.description.startsWith("<b>Note:</b>")) a.description = "<b>Note:</b> "+ a.description;
