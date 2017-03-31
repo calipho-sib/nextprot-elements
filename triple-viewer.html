@@ -433,6 +433,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         case "isoform-mapping":
                             featuresForViewer.push(this.nx.getIsoformMapping(this.nxEntry));
                             break;
+                        case "variant-medical":
+                            featuresForViewer.push(this.nx.getAnnotationsWithProperty(this.nxEntry, "variant", "disease-related", true));
+                            break;
                         default:
                             featuresForViewer.push(this.nx.getAnnotationsByCategory(this.nxEntry, this.featureList[feat].APIRef));
                             break;
