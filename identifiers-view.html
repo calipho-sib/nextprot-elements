@@ -66,6 +66,7 @@ View listing identifiers annotations.
                 },
                 annotationsCount: {
                     type: Number,
+                    value: -1,
                     observer: "_checkAnnotations"
                 }
             },
@@ -91,13 +92,9 @@ View listing identifiers annotations.
                 //console.log(this.identifiers);
             },
             _checkAnnotations: function(){
-                if(this.annotationsCount===0){
-                    this.$.nxAnnotations.hidden=true;
-                    this.$.noDataWarning.hidden=false;
-                } else {
-                    this.$.nxAnnotations.hidden=false;
-                    this.$.noDataWarning.hidden=true;
-                }
+                if(this.annotationsCount===0) this.$.nxAnnotations.hidden=true;
+                else this.$.nxAnnotations.hidden=false;
+                this.$.noDataWarning.hidden=!this.$.nxAnnotations.hidden;
             },
             _toArray: function(obj) {
                 if (typeof obj === 'object') {
