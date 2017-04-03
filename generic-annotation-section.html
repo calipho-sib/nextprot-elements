@@ -48,6 +48,9 @@ Annotation section used in function, medical, and expression views.
             .annotation-title-container > .isoform-label {
                 margin-top: 3px;
             }
+            .annotation-title > .grey-x {
+                display: inline;
+            }
             .evidences-button-container {
                 display: inline;
                 width: 175px;
@@ -140,13 +143,17 @@ Annotation section used in function, medical, and expression views.
                                             </template>
                                             <template is="dom-if" if="[[_checkIfSubcellularLocation(annotation.value)]]">
                                                 <div class="annotation-title"><p inner-h-t-m-l="[[annotation.value.cvTermName]]"></p>
-                                                    <div class="annotation-labels">
-                                                        <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
-                                                        <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
-                                                        <p inner-h-t-m-l="[[annotation.value.description]]" style="display: inline;"></p>
+                                                    <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
+                                                    <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
+                                                    <template is="dom-if" if="[[annotation.value.nameModifier]]">
+                                                        <p inner-h-t-m-l="[[annotation.value.nameModifier]]"></p>
+                                                    </template>
                                                         <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
-                                                    </div>
                                                 </div>
+                                                <template is="dom-if" if="[[annotation.value.additionalInfoName]]">
+                                                    <div class="row additional-info annotation-title"><div class="grey-x">[[annotation.value.additionalInfoName]]</div> » [[annotation.value.additionalInfoValue]]
+                                                    <a class="accession-code-link" href="/term/[[annotation.value.additionalInfoAccession]]">[[annotation.value.additionalInfoAccession]]</a></div>
+                                                </template>
                                             </template>
                                             <template is="dom-if" if="[[!_checkIfSubcellularLocation(annotation.value)]]">
                                                 <div class="annotation-title"><p inner-h-t-m-l="[[annotation.value.description]]"></p>
@@ -398,7 +405,12 @@ Annotation section used in function, medical, and expression views.
                     if(a.apicategory==="SUBCELLULAR_LOCATION") {
                         for (var j in a.properties) {
                             if (a.properties[j].name==="long-name") a.cvTermName = a.properties[j].value;
-                            if (a.properties[j].name==="name-modifier") a.description = a.properties[j].value;
+                            if (a.properties[j].name==="name-modifier") a.nameModifier = a.properties[j].value;
+                            if (a.properties[j].name==="topology") {
+                                a.additionalInfoName = "TOPOLOGY";
+                                a.additionalInfoValue = a.properties[j].value;
+                                a.additionalInfoAccession = a.properties[j].accession;
+                            }
                         }
                     }
                     if(a.apicategory==="SUBCELLULAR_LOCATION_NOTE") {
@@ -484,6 +496,10 @@ Annotation section used in function, medical, and expression views.
                         cvTermAccessionCode: a.cvTermAccessionCode,
                         cvTermAccessionCodeLabel: a.cvTermAccessionCodeLabel,
                         cvTermName: a.cvTermName,
+                        nameModifier: a.nameModifier,
+                        additionalInfoName: a.additionalInfoName,
+                        additionalInfoValue: a.additionalInfoValue,
+                        additionalInfoAccession: a.additionalInfoAccession,
                         cvTermDescription: a.cvTermDescription,
                         selfInteraction: a.selfInteraction=="true",
                         rank: a.rank,
