@@ -407,8 +407,8 @@ Annotation section used in function, medical, and expression views.
                         for (var j in a.properties) {
                             if (a.properties[j].name==="long-name") a.cvTermName = a.properties[j].value;
                             if (a.properties[j].name==="name-modifier") a.nameModifier = a.properties[j].value;
-                            if (a.properties[j].name==="topology") {
-                                a.additionalInfoName = "TOPOLOGY";
+                            if (["topology", "orientation"].indexOf(a.properties[j].name)!==-1) {
+                                a.additionalInfoName = a.properties[j].name.toUpperCase();
                                 a.additionalInfoValue = a.properties[j].value;
                                 a.additionalInfoAccession = a.properties[j].accession;
                             }
