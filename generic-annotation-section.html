@@ -197,6 +197,7 @@ Annotation section used in function, medical, and expression views.
                                             <template is="dom-if" if="[[!annotation.value.selfInteraction]]">
                                                 <template is="dom-if" if="[[annotation.value.geneName]]">
                                                     <p class="annotation-title">
+                                                        <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
                                                         <template is="dom-if" if="[[_checkIfNextprot(annotation.value.database)]]">
                                                             <a href="[[annotation.value.url]]">[[annotation.value.geneName]]</a>
                                                             <template is="dom-if" if="[[annotation.value.proteinName]]">
@@ -478,6 +479,10 @@ Annotation section used in function, medical, and expression views.
                         }
                     }
                     var evidences = self._getEvidence(a.evidences, data_xrefs, data_publi);
+                    for (var e in evidences) if(e>0 && evidences[e].negative!==evidences[e-1].negative) {
+                        a.conflict = true;
+                        continue;
+                    }
                     if (a.apicategory=="BINARY_INTERACTION") {
                         for (var e in evidences) {
                             if (evidences[e].numberOfExperiments) {
@@ -512,6 +517,7 @@ Annotation section used in function, medical, and expression views.
                         database: a.database,
                         parentXref: a.parentXref,
                         evidences: evidences,
+                        conflict: a.conflict,
                         evidenceSources: self._getUniqueListOfEvidenceSources(a.evidences),
                         qualityQualifier: a.qualityQualifier,
                         isoformSpecific: a.isoformSpecific,

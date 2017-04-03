@@ -33,12 +33,6 @@ Block element representing an evidence record.
                 border-radius: 2px;
                 margin-left: 5px;
             }
-            .negative-evidence {
-                color:red;
-                border: 1px solid red;
-                border-radius: 2px;
-                margin-left: 5px;
-            }
             .evidence-source {
                 background-color: #dedede;
                 color: #999;
@@ -64,7 +58,7 @@ Block element representing an evidence record.
                 <div class="evidence-arrow">&#10549;</div>  Evidence [[index]]:
                 <span class="colored-label evidence-code-name">[[data.evidenceCodeName]]</span>
                 <span class="colored-label evidence-source">[[data.assignedBy]]</span>
-                <template is="dom-if" if="[[data.negative]]"><span class="colored-label negative-evidence">negative evidence</span></template>
+                <template is="dom-if" if="[[data.negative]]"><span class="colored-label warning-label">negative evidence</span></template>
                 <quality-label quality=[[data.qualityQualifier]]></quality-label>
                 <div class="border-left">
                     <template is="dom-if" if="[[data.numberOfExperiments]]">
