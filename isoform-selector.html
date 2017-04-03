@@ -90,12 +90,12 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 <ul id="navTabs" class="nav nav-tabs">
                     <template is="dom-if" if="[[showAllTab]]">
                         <li class="isoform-selector active">
-                            <a id="allIsoforms" class="isoformNames" data-args="all" data-toggle="tab" on-tap="displayIsoform">All</a>
+                            <a id="allIsoforms" class="isoformNames" data-args="all" data-toggle="tab" on-tap="reload">All</a>
                         </li>
                     </template>
                     <template id="tablist" is="dom-repeat" items="[[isoforms.visible]]" as="isoform">
                         <li class-list="[[_navTabClass(index)]]">
-                            <a id="[[isoform.uniqueName]]" class="isoformNames" data-args$="[[isoform.uniqueName]]" data-toggle="tab" title="[[isoform.mainEntityName.value]]" on-tap="displayIsoform">[[isoform.uniqueName]]</a>
+                            <a id="[[isoform.uniqueName]]" class="isoformNames" data-args$="[[isoform.uniqueName]]" data-toggle="tab" title="[[isoform.mainEntityName.value]]" on-tap="reload">[[isoform.uniqueName]]</a>
                         </li>
                     </template>
                     <template id="menu" is="dom-if" if="[[isoforms.more.length]]">
@@ -109,7 +109,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                                 <div class="dropdown-content">
                                     <template id="menu" is="dom-repeat" items="[[isoforms.more]]" as="isoform">
                                         <li role="presentation">
-                                            <a class="isoformNames" data-args$="[[isoform.uniqueName]]" title="[[isoform.mainEntityName.value]]" on-tap="displayIsoform">[[isoform.uniqueName]]</a>
+                                            <a class="isoformNames" data-args$="[[isoform.uniqueName]]" title="[[isoform.mainEntityName.value]]" on-tap="reload">[[isoform.uniqueName]]</a>
                                         </li>
                                     </template>
                                 </div>
@@ -187,10 +187,12 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             },
             initialize: function () {
                 this.nxIsoformChoice(this.sequences[0]);
-                this.displayIsoform(this.isoName);
+                this._displayIsoform(this.isoName);
             },
-            reload: function (isoID) {
-                this.displayIsoform(isoID);
+            reload: function (isoIdentifier) {
+                if(isoIdentifier.target) isoIdentifier = isoIdentifier.target.getAttribute("data-args");
+                this.isoName = isoIdentifier;
+                this._displayIsoform(isoIdentifier);
             },
             nxIsoformChoice: function() {
                 var self=this;
@@ -285,9 +287,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 }
                 return isoformsMapping;
             },
-            displayIsoform: function(isoIdentifier) {
-                if(isoIdentifier.target) isoIdentifier = isoIdentifier.target.getAttribute("data-args");
-                this.isoName = isoIdentifier;
+            _displayIsoform: function(isoIdentifier) {
                 if(typeof angular !== 'undefined') angular.element(document).scope().$apply(angular.element(document).injector().get('$location').search('isoform', isoIdentifier))
                 else  history.pushState(null, null, window.location.pathname+"?isoform="+ isoIdentifier);
                 var visibleTabs = this._objectValues(this.isoforms.visible);
