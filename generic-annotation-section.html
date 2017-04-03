@@ -150,10 +150,6 @@ Annotation section used in function, medical, and expression views.
                                                     </template>
                                                         <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                 </div>
-                                                <template is="dom-if" if="[[annotation.value.additionalInfoName]]">
-                                                    </br><div class="row additional-info annotation-title"><div class="grey-x">[[annotation.value.additionalInfoName]]</div> » [[annotation.value.additionalInfoValue]]
-                                                    <a class="accession-code-link" href="/term/[[annotation.value.additionalInfoAccession]]">[[annotation.value.additionalInfoAccession]]</a></div>
-                                                </template>
                                             </template>
                                             <template is="dom-if" if="[[!_checkIfSubcellularLocation(annotation.value)]]">
                                                 <div class="annotation-title"><p inner-h-t-m-l="[[annotation.value.description]]"></p>
@@ -219,6 +215,10 @@ Annotation section used in function, medical, and expression views.
                                             </template>
                                         </template>
                                     </div>
+                                    <template is="dom-if" if="[[annotation.value.additionalInfoName]]">
+                                        <div class="row additional-info annotation-title"><div class="grey-x">[[annotation.value.additionalInfoName]]</div> » [[annotation.value.additionalInfoValue]]
+                                        <a class="accession-code-link" href="/term/[[annotation.value.additionalInfoAccession]]">[[annotation.value.additionalInfoAccession]]</a></div>
+                                    </template>
                                     <div class="experiments-counter">[[annotation.value.numberOfExperiments]]</div>
                                 </div>
                                 <template is="dom-if" if="[[!_isPathwayOrTcdb(annotation.value.category)]]">
