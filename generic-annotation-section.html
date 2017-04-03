@@ -218,8 +218,8 @@ Annotation section used in function, medical, and expression views.
                                                 </template>
                                             </template>
                                         </template>
-                                        <div class="experiments-counter">[[annotation.value.numberOfExperiments]]</div>
                                     </div>
+                                    <div class="experiments-counter">[[annotation.value.numberOfExperiments]]</div>
                                 </div>
                                 <template is="dom-if" if="[[!_isPathwayOrTcdb(annotation.value.category)]]">
                                     <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
