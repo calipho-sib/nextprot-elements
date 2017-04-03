@@ -215,9 +215,9 @@ Annotation section used in function, medical, and expression views.
                                             </template>
                                         </template>
                                     </div>
-                                    <template is="dom-if" if="[[annotation.value.additionalInfoName]]">
-                                        <div class="row additional-info annotation-title"><div class="grey-x">[[annotation.value.additionalInfoName]]</div> » [[annotation.value.additionalInfoValue]]
-                                        <a class="accession-code-link" href="/term/[[annotation.value.additionalInfoAccession]]">[[annotation.value.additionalInfoAccession]]</a></div>
+                                    <template is="dom-repeat" items="[[annotation.value.additionalInfo]]" as="additionalInfo">
+                                        <div class="row additional-info annotation-title"><div class="grey-x">[[additionalInfo.name]]</div> » [[additionalInfo.value]]
+                                        <a class="accession-code-link" href="/term/[[additionalInfo.accession]]">[[additionalInfo.accession]]</a></div>
                                     </template>
                                     <div class="experiments-counter">[[annotation.value.numberOfExperiments]]</div>
                                 </div>
@@ -408,9 +408,11 @@ Annotation section used in function, medical, and expression views.
                             if (a.properties[j].name==="long-name") a.cvTermName = a.properties[j].value;
                             if (a.properties[j].name==="name-modifier") a.nameModifier = a.properties[j].value;
                             if (["topology", "orientation"].indexOf(a.properties[j].name)!==-1) {
-                                a.additionalInfoName = a.properties[j].name.toUpperCase();
-                                a.additionalInfoValue = a.properties[j].value;
-                                a.additionalInfoAccession = a.properties[j].accession;
+                                if(!a.additionalInfo) a.additionalInfo = [];
+                                a.additionalInfo.push({
+                                        name: a.properties[j].name.toUpperCase(),
+                                        value: a.properties[j].value,
+                                        accession: a.properties[j].accession});
                             }
                         }
                     }
@@ -502,9 +504,7 @@ Annotation section used in function, medical, and expression views.
                         cvTermAccessionCodeLabel: a.cvTermAccessionCodeLabel,
                         cvTermName: a.cvTermName,
                         nameModifier: a.nameModifier,
-                        additionalInfoName: a.additionalInfoName,
-                        additionalInfoValue: a.additionalInfoValue,
-                        additionalInfoAccession: a.additionalInfoAccession,
+                        additionalInfo: a.additionalInfo,
                         cvTermDescription: a.cvTermDescription,
                         selfInteraction: a.selfInteraction=="true",
                         rank: a.rank,
