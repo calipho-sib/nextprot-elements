@@ -496,7 +496,7 @@ Annotation section used in function, medical, and expression views.
                             }
                         }
                     }
-                    if (a.qualityQualifier==="gold") this.containsGoldEv[a.categoryLabel] = true;
+                    if (a.qualityQualifier==="GOLD") this.containsGoldEv[a.categoryLabel] = true;
                     data[a.categoryLabel].push({
                         id: a.annotationId,
                         description: a.description || a.cvTermName,
@@ -682,7 +682,7 @@ Annotation section used in function, medical, and expression views.
                 return evidenceSourceList;
             },
             _checkCategoryLabel: function(category){
-                return (this.containsGoldEv[category] || this.goldOnly!==true);
+                return this.containsGoldEv[category] || this.goldOnly!==true;
             },
             _checkIfContainsAccessionOrXref: function(annotation){
                 return Boolean(annotation.cvTermAccessionCode || annotation.parentXref);
