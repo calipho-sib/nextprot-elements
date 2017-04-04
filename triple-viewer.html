@@ -364,7 +364,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 },
                 count: {
                     type: Number,
-                    value: 0,
                     notify: true
                 }
             },
@@ -378,9 +377,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     self.sequences = oneData[0];
                     self._getMetadataByView();
                     self._getFeaturesByIsoform(oneData);
+                    var count = 0;
                     for(var i in self.featuresForViewer){
-                        self.count+= Object.keys(self.featuresForViewer[i]).length
+                        count+= Object.keys(self.featuresForViewer[i]).length
                     }
+                    self.count = count;
                     if(self.count){
                         self.reloadSVG();
                         self._addFiltering();
