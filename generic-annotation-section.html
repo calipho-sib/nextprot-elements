@@ -474,14 +474,12 @@ Annotation section used in function, medical, and expression views.
                         if(a.evidences[j].negativeEvidence==true && a.description && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b>&nbsp;"+a.description.charAt(0).toLowerCase()+a.description.slice(1);
                     };
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
-                    for (j in a.targetingIsoformsMap){
-                        var isoform = a.targetingIsoformsMap[j];
-                        if ((a.apicategory==="BINARY_INTERACTION" && isoform.specificity==="SPECIFIC")
-                        || (a.apicategory!=="BINARY_INTERACTION" && this._objectValues(a.targetingIsoformsMap).length < this._objectValues(data_isoforms).length)){
-                            a.isoformAccession = isoform.isoformAccession;
-                            if (a.isoformSpecific!==undefined && !a.isoformSpecific.match(data_isoforms[isoform.isoformAccession].mainEntityName.name)) a.isoformSpecific = a.isoformSpecific.replace(/^Isoform(?!s)/, "Isoforms")+" and " + data_isoforms[isoform.isoformAccession].mainEntityName.name;
-                            else a.isoformSpecific = "Isoform "+ data_isoforms[isoform.isoformAccession].mainEntityName.name;
+                    if(a.isoformsDisplayedAsSpecific){
+                        if(a.isoformsDisplayedAsSpecific.length>1) for(var iso in a.isoformsDisplayedAsSpecific) {
+                            if(!a.isoformSpecific) a.isoformSpecific = "Isoforms "+data_isoforms[a.isoformsDisplayedAsSpecific[iso]].mainEntityName.name;
+                            else a.isoformSpecific = a.isoformSpecific+", "+data_isoforms[a.isoformsDisplayedAsSpecific[iso]].mainEntityName.name;
                         }
+                        else if (a.isoformsDisplayedAsSpecific.length===1) a.isoformSpecific = "Isoform "+ data_isoforms[a.isoformsDisplayedAsSpecific[0]].mainEntityName.name;
                     }
                     var evidences = self._getEvidence(a.evidences, data_xrefs, data_publi);
                     for (var e in evidences) if(e>0 && evidences[e].negative!==evidences[e-1].negative) {
