@@ -110,7 +110,8 @@ Annotation section used in function, medical, and expression views.
             </template>
             <div id="notice" class="grey-x"><i>Annotations in this section apply to all the isoforms if not specified otherwise.</i><paper-spinner-lite id="spinner" active></paper-spinner-lite></div>
             <template is="dom-repeat" items="[[_toArray(data)]]" as="category">
-                <div class="row category-row">
+                <template is="dom-if" if="[[_checkCategoryLabel(category.name)]]">
+                    <div class="row category-row">
                     <div>
                         <h4 class="annotation-category-title"> [[category.name]]
                             <template is="dom-if" if="[[_isProteinProteinInteraction(category)]]">
@@ -258,6 +259,7 @@ Annotation section used in function, medical, and expression views.
                         </template>
                     </div>
                 </div>
+                </template>
             </template>
         </div>
     </template>
@@ -336,6 +338,7 @@ Annotation section used in function, medical, and expression views.
                 var data_isoforms = [];
                 var data_annot = [];
                 var count = 0;
+                this.containsGoldEv = {};
                 for(var i in this.annotationsByCategory) {
                     if (this.annotationsByCategory[i].childrenOfCvTerm) {
                         for(var j in this.annotationsByCategory[i].annot)
@@ -493,6 +496,7 @@ Annotation section used in function, medical, and expression views.
                             }
                         }
                     }
+                    if (a.qualityQualifier==="gold") this.containsGoldEv[a.categoryLabel] = true;
                     data[a.categoryLabel].push({
                         id: a.annotationId,
                         description: a.description || a.cvTermName,
@@ -676,6 +680,9 @@ Annotation section used in function, medical, and expression views.
                     }
                 }
                 return evidenceSourceList;
+            },
+            _checkCategoryLabel: function(category){
+                return (this.containsGoldEv[category] || this.goldOnly!==true);
             },
             _checkIfContainsAccessionOrXref: function(annotation){
                 return Boolean(annotation.cvTermAccessionCode || annotation.parentXref);
