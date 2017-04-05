@@ -406,7 +406,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                                 svgIsoform.selectAll("rect").style("fill", "#C2DEC8");
                                 d3.selectAll("." + data.isoformAc + "Rect").style("fill", "#74EB78");
                                 self.reload(data.isoformAc);
-                                var isoSelection = $('#nx-isoformChoice #' + data.isoformAc).tab('show');
+                                var isoSelection = $('#'+data.isoformAc).tab('show');
                             });
 
                     rectsProGroup
@@ -462,7 +462,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 svgIso.attr("height", position + 10 + "px");
             },
             _toggleIsoformMap: function() {
-                this.$.isoformMapContainer.toggle();
+                this.$$("#isoformMapContainer").toggle();
             },
             _navTabClass: function(index){
                 var classList = "isoform-selector";
