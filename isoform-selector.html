@@ -285,7 +285,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 return isoformsMapping;
             },
             _displayIsoform: function(isoIdentifier) {
-                if(typeof angular !== 'undefined') angular.element(document).scope().$apply(angular.element(document).injector().get('$location').search('isoform', isoIdentifier))
+                if(typeof angular !== 'undefined') angular.element(document.getElementById("main")).scope().$apply(angular.element(document.getElementById("main")).injector().get('$location').search('isoform', isoIdentifier));
                 else  history.pushState(null, null, window.location.pathname+"?isoform="+ isoIdentifier);
                 var visibleTabs = this._objectValues(this.isoforms.visible);
                 var isoformVisible = false;
