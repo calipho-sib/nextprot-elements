@@ -412,10 +412,12 @@ Annotation section used in function, medical, and expression views.
                             if (a.properties[j].name==="name-modifier") a.nameModifier = a.properties[j].value;
                             if (["topology", "orientation"].indexOf(a.properties[j].name)!==-1) {
                                 if(!a.additionalInfo) a.additionalInfo = [];
-                                a.additionalInfo.push({
+                                if (a.properties.length > a.additionalInfo.length) {
+                                    a.additionalInfo.push({
                                         name: a.properties[j].name.toUpperCase(),
                                         value: a.properties[j].value,
                                         accession: a.properties[j].accession});
+                                }
                             }
                         }
                     }

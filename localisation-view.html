@@ -3,6 +3,7 @@
 <link rel="import" href="isoform-selector.html">
 <link rel="import" href="triple-viewer.html">
 <link rel="import" href="generic-annotation-section.html">
+<link rel="import" href="keywords-section.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <!--
 `localisation-view`
@@ -83,6 +84,12 @@ View listing protein function annotations.
                 </generic-annotation-section>
             </div>
         </div>
+        <div class="row">
+            <div id="nxKeywords" class="col-md-12">
+                <keywords-section categories='["Cellular component"]' nx-config="[[nxConfig]]" count="{{keywordsCount}}">
+                </keywords-section>
+            </div>
+        </div>
     </template>
     <script>
         Polymer({
@@ -101,6 +108,10 @@ View listing protein function annotations.
                     type: Number,
                     value: -1,
                     observer: "_checkAnnotations"
+                },
+                keywordsCount: {
+                    type: Number,
+                    observer: "_checkKeywords"
                 }
             },
             _checkAnnotations: function(){
@@ -110,6 +121,9 @@ View listing protein function annotations.
                 else this.$.nxPositionalAnnotations.hidden=false;
                 if(this.annotationsCount===0 && this.positionalAnnotationsCount===0) this.$.noDataWarning.hidden=false;
                 else this.$.noDataWarning.hidden=true;
+            },
+            _checkKeywords: function(){
+                this.keywordsCount===0 ? this.$.nxKeywords.hidden=true : this.$.nxKeywords.hidden=false;
             }
         });
     </script>
