@@ -511,12 +511,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 this.$$(".seqHeader").appendChild(seqLenContainer);
                 this.$$(".seqHeader").appendChild(massContainer);
                 this.$$(".seqHeader").appendChild(isoElectricPointContainer);
-
-                this.$$("#seqViewer .inputSearchSeq").setAttribute("placeholder","Search in sequence...");
-                this.$$(".inputSearchSeq").setAttribute("data-toggle","tooltip");
-                this.$$("#seqViewer .inputSearchSeq").setAttribute("data-placement","top");
-                this.$$("#seqViewer .inputSearchSeq").setAttribute("title","Regex supported");
-
+                document.querySelector("#seqViewer .inputSearchSeq").setAttribute("placeholder","Search in sequence...");
+                document.querySelector(".inputSearchSeq").setAttribute("data-toggle","tooltip");
+                document.querySelector("#seqViewer .inputSearchSeq").setAttribute("data-placement","top");
+                document.querySelector("#seqViewer .inputSearchSeq").setAttribute("title","Regex supported");
                 $('#seqViewer [data-toggle="tooltip"]').tooltip();
             },
             _addFeatures: function() {
