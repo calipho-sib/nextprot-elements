@@ -168,7 +168,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                         nx.getProteinSequence(nxEntry).then(
                             function (sequences) {
                                 self.sequences = sequences;
-                                self.initialize();
+                                self._initialize();
                             }
                         )
                     }
@@ -182,14 +182,14 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             _showMoreIsoforms: function(){
                 this.$$("#moreIsoforms").toggle();
             },
-            initialize: function () {
+            _initialize: function () {
                 this.nxIsoformChoice(this.sequences[0]);
                 this._displayIsoform(this.isoName);
             },
             reload: function (isoIdentifier) {
                 if(isoIdentifier.target) isoIdentifier = isoIdentifier.target.getAttribute("data-args");
                 this.isoName = isoIdentifier;
-                this._displayIsoform(isoIdentifier);
+                this._changeIsoform();
             },
             nxIsoformChoice: function() {
                 var self=this;
@@ -213,7 +213,6 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                     this.isoforms = datas.isoforms;
                     /////////// EventListener to change isoform
                     this.isoform;
-
                     $(document).ready(function(){
                         $('.isoformNames').tooltip({trigger: "hover"});
                     });
@@ -284,9 +283,11 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 }
                 return isoformsMapping;
             },
+            _changeIsoform: function(){
+                if(typeof angular !== 'undefined') angular.element(document.getElementById("main")).scope().$apply(angular.element(document.getElementById("main")).injector().get('$location').search('isoform', this.isoName));
+                else  history.pushState(null, null, window.location.pathname+"?isoform="+ this.isoName);
+            },
             _displayIsoform: function(isoIdentifier) {
-                if(typeof angular !== 'undefined') angular.element(document.getElementById("main")).scope().$apply(angular.element(document.getElementById("main")).injector().get('$location').search('isoform', isoIdentifier));
-                else  history.pushState(null, null, window.location.pathname+"?isoform="+ isoIdentifier);
                 var visibleTabs = this._objectValues(this.isoforms.visible);
                 var isoformVisible = false;
                 for (var i in visibleTabs){
@@ -429,6 +430,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 for (var name in self.isoformMapping) {
                     fillSVGIsoform(self.isoformMapping[name], name);
                 }
+
                 $(window).resize(function () {
                     updateIsoSVG();
                 });
