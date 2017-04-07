@@ -48,6 +48,9 @@ Annotation section used in function, medical, and expression views.
             .annotation-title-container > .isoform-label {
                 margin-top: 3px;
             }
+            .BINARY_INTERACTION {
+                max-width: calc(100% - 55px);
+            }
             .annotation-title > .grey-x {
                 display: inline;
             }
@@ -129,7 +132,7 @@ Annotation section used in function, medical, and expression views.
                                     <div class="grey-x">[[annotation.value.prefix]]</div>
                                 </template>
                                 <div class="annotation-container">
-                                    <div class="annotation-title-container">
+                                    <div class$="annotation-title-container [[annotation.value.category]]">
                                         <template is="dom-if" if="[[annotation.value.chemicalName]]">
                                             <template is="dom-if" if="[[_checkIfChebi(annotation.value.database)]]">
                                                 <p class="annotation-title" style="text-transform: capitalize">
