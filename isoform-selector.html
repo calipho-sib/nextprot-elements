@@ -14,108 +14,26 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             :host {
                 display: block;
             }
-            ul:first-child {
-                @extend: .active;
-            }
-            x-select {
-                display: inline-block;
-            }
             iron-dropdown {
                 background: white;
                 margin-top: 35px;
                 padding: 10px 0;
                 border-radius: 5px;
             }
-            .navbar-brand {
-                padding: 10px 15px;
-                color:#C50063;
-                height:auto;
-                font-size:20px;
-            }
-            .nav {
-                border:none;
-            }
-            .dropdown {
-                z-index:2;
-            }
-            .isoformNames {
-                z-index: 1;
-                display: block;
-                padding: 10px 15px 7px;
-                text-decoration: none;
-            }
-            .isoformNames:hover {
-                background-color: #F5F5F5;
-                text-decoration: none;
-            }
-            .nav-tabs.isoform-selector>li.isoform-selector {
-                display: inline-block;
-                float: none;
-            }
-            .nav.isoform-selector>li.isoform-selector>a.isoform-selector {
-                padding: 10px 15px 5px;
-            }
-            li.active>a, li.active>a:focus, li.active>a:hover {
-                color: #555;
-                cursor: default;
-                background-color: #fff;
-                border: 1px solid #ddd;
-                border-bottom-color: transparent;
-                border-radius: 4px 4px 0 0;
-            }
-            .row {
-                margin: 15px 20px;
-            }
-            x-select.isoform-selector {
-                display: inline-flex;
-            }
-            a.isoform-selector {
-                position: relative;
-            }
             #nxIsoformChoice {
-                margin-bottom: -5px;
+                margin-bottom: 5px;
+                font-size: 16px;
+                font-weight: 500;
             }
-            #isoformMap {
-                color:#007800;
-                font-size:16px;
-                padding-top: 8px;
+            #visuContainer {
+                background:#fff;
+                padding:0px;
+                border: 1px solid #cfd9db;
+                border-radius:4px;
             }
         </style>
         <div id="nxIsoformChoice" class="col-md-12">
-            <div>
-                <div class="navbar-brand">Isoforms</div>
-                <ul id="navTabs" class="nav nav-tabs">
-                    <template is="dom-if" if="[[showAllTab]]">
-                        <li class="isoform-selector active">
-                            <a id="allIsoforms" class="isoformNames" data-args="all" data-toggle="tab" on-tap="reload">All</a>
-                        </li>
-                    </template>
-                    <template id="tablist" is="dom-repeat" items="[[isoforms.visible]]" as="isoform">
-                        <li class-list="[[_navTabClass(index)]]">
-                            <a id="[[isoform.uniqueName]]" class="isoformNames" data-args$="[[isoform.uniqueName]]" data-toggle="tab" title="[[isoform.mainEntityName.value]]" on-tap="reload">[[isoform.uniqueName]]</a>
-                        </li>
-                    </template>
-                    <template id="menu" is="dom-if" if="[[isoforms.more.length]]">
-                        <x-select>
-                            <li id="moreIsoformsTab">
-                                <a class="isoformNames" data-toggle="tab" on-tap="_showMoreIsoforms">
-                                    <span style="margin-right:5px;" class="caret"></span><span id="extendIsoformChoice">More</span>
-                                </a>
-                            </li>
-                            <iron-dropdown id="moreIsoforms">
-                                <div class="dropdown-content">
-                                    <template id="menu" is="dom-repeat" items="[[isoforms.more]]" as="isoform">
-                                        <li role="presentation">
-                                            <a class="isoformNames" data-args$="[[isoform.uniqueName]]" title="[[isoform.mainEntityName.value]]" on-tap="reload">[[isoform.uniqueName]]</a>
-                                        </li>
-                                    </template>
-                                </div>
-                            </iron-dropdown>
-                        </x-select>
-                    </template>
-                    <li><a id="isoformMap" on-tap="_toggleIsoformMap">Show isoforms</a></li>
-                </ul>
-            </div>
+            <span class="grey-x">Displayed isoform: </span>[[isoformLabel]]<span id="isoformMap" class="colored-label definition-button" on-tap="_toggleIsoformMap">Change isoform</span>
         </div>
         <div class="row">
             <div id="visuContainer" class="col-md-12">
@@ -179,44 +97,20 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 });
 
             },
-            _showMoreIsoforms: function(){
-                this.$$("#moreIsoforms").toggle();
-            },
             _initialize: function () {
-                this.nxIsoformChoice(this.sequences[0]);
+                this.isoforms = this.sequences.sort(function (a, b) {
+                    return parseInt(a.uniqueName.split("-")[1]) - parseInt(b.uniqueName.split("-")[1])
+                });
+                if(!this.isoName) {
+                    this.isoName = this.isoforms[0].uniqueName;
+                    this.isoformLabel = this.isoforms[0].mainEntityName.name;
+                }
                 this._displayIsoform(this.isoName);
             },
             reload: function (isoIdentifier) {
                 if(isoIdentifier.target) isoIdentifier = isoIdentifier.target.getAttribute("data-args");
                 this.isoName = isoIdentifier;
                 this._changeIsoform();
-            },
-            nxIsoformChoice: function() {
-                var self=this;
-                if (this.$$("#nxIsoformChoice").children.length > 0) {
-                    var datas = {
-                        "isoforms": (function () {
-                            var listIsoforms = {
-                                "visible": [],
-                                "more": []
-                            };
-                            self.sequences.sort(function (a, b) {
-                                return parseInt(a.uniqueName.split("-")[1]) - parseInt(b.uniqueName.split("-")[1])
-                            }).forEach(function (o, index) {
-                                if (index <= 3) listIsoforms.visible.push(o);
-                                else listIsoforms.more.push(o);
-                            });
-                            return listIsoforms;
-                        }())
-                    };
-                    if(!this.isoName) this.isoName = this.showAllTab ? this.isoName="all" : datas.isoforms.visible[0].uniqueName;
-                    this.isoforms = datas.isoforms;
-                    /////////// EventListener to change isoform
-                    this.isoform;
-                    $(document).ready(function(){
-                        $('.isoformNames').tooltip({trigger: "hover"});
-                    });
-                }
             },
             _checkIfIsoformExists: function(){
                 for(var i in this.isoforms) {
@@ -288,21 +182,6 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 else  history.pushState(null, null, window.location.pathname+"?isoform="+ this.isoName);
             },
             _displayIsoform: function(isoIdentifier) {
-                var visibleTabs = this._objectValues(this.isoforms.visible);
-                var isoformVisible = false;
-                for (var i in visibleTabs){
-                    if (this.isoName===visibleTabs[i].isoformAccession) isoformVisible = true;
-                }
-                if (!isoformVisible && this.isoName!=="all") {
-                    var self=this;
-                    this.async(function(){
-                        self.$$("#extendIsoformChoice").innerHTML = this.isoName;
-                        $('#nxIsoformChoice #moreIsoformsTab').tab('show');
-                    });
-                } else if (this.$$("#extendIsoformChoice")) {
-                    this.$$("#extendIsoformChoice").innerHTML = "More";
-                    this.toggleClass("active", false, this.$$("#moreIsoformsTab"));
-                }
                 var isoContainer = this.$$("#isoformDisplayed #isoContainer")
                 if(isoContainer) isoContainer.innerHTML="";
                 if (!$('#isoContainer').length > 0) {
@@ -333,10 +212,10 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 var min = getMin();
                 var position = 20;
 
-                this.containerWidth = document.body.offsetWidth-330;
+                this.containerWidth = document.getElementById("visuContainer").offsetWidth;
 
-                var margin = {top: 10, right: 50, bottom: 0, left: 50},
-                        width = this.containerWidth - margin.left - margin.right - 17,
+                var margin = {top: 5, right: 25, bottom: 0, left: 25},
+                        width = this.containerWidth - margin.left - margin.right,
                         height = 200 - margin.top - margin.bottom;
                 var coverageLength = 33000;
                 var scaling = d3.scale.linear()
@@ -403,8 +282,8 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                             .on("click", function () {
                                 svgIsoform.selectAll("rect").style("fill", "#C2DEC8");
                                 d3.selectAll("." + data.isoformAc + "Rect").style("fill", "#74EB78");
+                                self.isoformLabel = data.isoformMainName;
                                 self.reload(data.isoformAc);
-                                var isoSelection = $('#'+data.isoformAc).tab('show');
                             });
 
                     rectsProGroup
@@ -436,7 +315,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 });
 
                 function updateIsoSVG() {
-                    width = $("#visuContainer").width() - margin.left - margin.right - 17;
+                    width = $("#visuContainer").width() - margin.left - margin.right;
                     d3.select("#isoformDisplayed svg")
                             .attr("width", width + margin.left + margin.right);
                     d3.select("#isoformDisplayed clippath>rect").attr("width", width);
@@ -462,10 +341,6 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             },
             _toggleIsoformMap: function() {
                 this.$$("#isoformMapContainer").toggle();
-            },
-            _navTabClass: function(index){
-                var classList = "isoform-selector";
-                return classList+(this.sequences[index].isoformAccession===this.isoName && !this.showAllTab?" active":"");
             },
             _objectValues: function(obj) {
                 var vals = [];
