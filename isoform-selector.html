@@ -101,14 +101,15 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 this.isoforms = this.sequences.sort(function (a, b) {
                     return parseInt(a.uniqueName.split("-")[1]) - parseInt(b.uniqueName.split("-")[1])
                 });
+                this.isoformLabels = [];
+                for(var i in this.isoforms) this.isoformLabels[this.isoforms[i].uniqueName] = this.isoforms[i].mainEntityName.name;
                 if(!this.isoName) {
                     this.isoName = this.isoforms[0].uniqueName;
                     this.isoformLabel = this.isoforms[0].mainEntityName.name;
-                }
+                } else this.isoformLabel = this.isoformLabels[this.isoName];
                 this._displayIsoform(this.isoName);
             },
             reload: function (isoIdentifier) {
-                if(isoIdentifier.target) isoIdentifier = isoIdentifier.target.getAttribute("data-args");
                 this.isoName = isoIdentifier;
                 this._changeIsoform();
             },
@@ -212,7 +213,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 var min = getMin();
                 var position = 20;
 
-                this.containerWidth = document.getElementById("visuContainer").offsetWidth;
+                this.containerWidth = document.getElementById("visuContainer").offsetWidth || document.body.offsetWidth-315;
 
                 var margin = {top: 5, right: 25, bottom: 0, left: 25},
                         width = this.containerWidth - margin.left - margin.right,
@@ -305,7 +306,6 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                             });
                     position += 20;
                 }
-
                 for (var name in self.isoformMapping) {
                     fillSVGIsoform(self.isoformMapping[name], name);
                 }
