@@ -10,8 +10,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 @demo demo/triple-viewer-demo.html
 -->
 <dom-module id="triple-viewer">
-    <link rel="stylesheet" type="text/css" href="../feature-viewer/dist/feature-viewer.min.css">
+<!--    <link rel="stylesheet" type="text/css" href="../feature-viewer/dist/feature-viewer.min.css">-->
     <template>
+        <link rel="stylesheet" type="text/css" href="../feature-viewer/dist/feature-viewer.min.css">
         <style is="custom-style" include="nextprot-elements-shared-styles">
             :host {
                 display: block;
@@ -572,11 +573,13 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 if(this.$$("#featureTableTemplate")) this.$$("#featureTableTemplate").render();
             },
             _highlightCategories: function(mouseEvent){
-                var srcElementId =  mouseEvent.srcElement.id || mouseEvent.srcElement.childNodes[1].id;
+                srcElement = mouseEvent.target || mouseEvent.srcElement || mouseEvent.srcElement.childNodes[1];
+                srcElementId = srcElement.tagName === "LABEL" ? srcElement.firstChild.id : srcElement.id;
                 this.ft.showFilteredFeature(srcElementId, "#795B42", document.location.href);
             },
             _dimCategories: function(mouseEvent){
-                var srcElementId =  mouseEvent.srcElement.id || mouseEvent.srcElement.childNodes[1].id;
+                srcElement = mouseEvent.target || mouseEvent.srcElement || mouseEvent.srcElement.childNodes[1];
+                srcElementId = srcElement.tagName === "LABEL" ? srcElement.firstChild.id : srcElement.id;
                 this.ft.hideFilteredFeature(srcElementId, "#795B42", document.location.href);
             },
             _filterAll: function() {
