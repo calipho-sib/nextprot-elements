@@ -10,9 +10,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 @demo demo/triple-viewer-demo.html
 -->
 <dom-module id="triple-viewer">
-<!--    <link rel="stylesheet" type="text/css" href="../feature-viewer/dist/feature-viewer.min.css">-->
+    <link rel="stylesheet" type="text/css" href="../feature-viewer/dist/feature-viewer.min.css">
     <template>
-        <link rel="stylesheet" type="text/css" href="../feature-viewer/dist/feature-viewer.min.css">
         <style is="custom-style" include="nextprot-elements-shared-styles">
             :host {
                 display: block;
@@ -623,23 +622,22 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     }
                 }
             },
-            tvSelection: function() {
-                var self = this;
-                $(".featPosition").click(function() {
-                    $(".tableHighlight").removeClass("tableHighlight");
-                    $(this).parent().parent().addClass("tableHighlight");
-                    var currentId = $(this).parent().parent().attr("id");
+            tvSelection: function(event) {
+                var highlightedRows = document.getElementsByClassName("tableHighlight");
+                if (highlightedRows[0]) highlightedRows[0].classList.remove("tableHighlight");
+                var srcElement = event.target || event.srcElement;
+                srcElement.parentElement.parentElement.parentElement.classList.add("tableHighlight");
+                var currentId = srcElement.parentElement.parentElement.parentElement.id;
+                if (currentId) {
                     var position = currentId.split("_").slice(1).map(Number);
                     if (position.length === 1) position.push(position[0]);
                     var svgId = "#" + "f" + currentId;
-
-                    position[0]-=1;
-                    self.seqView.selection(position[0],position[1],"#C50063");
-                    self.selection = {'start': position[0], 'end': position[1]};
-                    self.ft.addRectSelection(svgId);
-
-                    self._scrollAuto(".stringSelected", ".scroller",200);
-                });
+                    position[0] -= 1;
+                    this.seqView.selection(position[0], position[1], "#C50063");
+                    this.selection = {'start': position[0], 'end': position[1]};
+                    this.ft.addRectSelection(svgId);
+                    this._scrollAuto(".stringSelected", ".scroller", 200);
+                }
             },
             eventTV: function() {
                 var self=this;
