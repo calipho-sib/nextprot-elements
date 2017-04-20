@@ -82,8 +82,8 @@ Block element representing an evidence record.
                     <template is="dom-if" if="[[data.context.disease]]">
                         <div class="evidence-accession">
                             <p>Found in: [[data.context.disease.name]]
-                                <template is="dom-if" if="[[_containsTissueAndCellLineContext]]">(originates from: [[data.context.tissue.name]], cell line: [[data.context.cellLine.name]])</template>
-                                <template is="dom-if" if="[[!_containsTissueAndCellLineContext]]">
+                                <template is="dom-if" if="[[_containsTissueAndCellLineContext()]]">(originates from: [[data.context.tissue.name]], cell line: [[data.context.cellLine.name]])</template>
+                                <template is="dom-if" if="[[!_containsTissueAndCellLineContext()]]">
                                     <template is="dom-if" if="[[data.context.cellLine]]">(originates from: [[data.context.cellLine.name]])</template>
                                     <template is="dom-if" if="[[data.context.tissue]]">(originates from: [[data.context.tissue.name]])</template>
                                 </template>
