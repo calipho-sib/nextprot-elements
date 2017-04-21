@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-input/iron-input.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../iron-icons/image-icons.html">
 <link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
@@ -10,7 +11,7 @@
 <link rel="import" href="blast-styles.html">
 <link rel="import" href="d3-styles.html">
 <link rel="import" href="external-scripts.html">
-<script src="../colorbar/index.js"></script>
+<script src="colorbar/index.js"></script>
 <!--
 `blast-view`
 View presenting blast search results annotations.
@@ -36,12 +37,15 @@ View presenting blast search results annotations.
             .btn-sm {
                 padding: 1px 3px 0 0;
                 margin: 0 5px 3px 5px;
-                background: var(--paper-indigo-500);
+                background: #337ab7;
                 color: white;
             }
             iron-icon {
                 padding-bottom: 2px;
-                color: var(--paper-indigo-500);
+                color: #337ab7;
+            }
+            #reloadButton {
+                color: white;
             }
             button > iron-icon {
                 color: white;
@@ -52,6 +56,9 @@ View presenting blast search results annotations.
                 border-radius: 5px;
                 -webkit-border-radius: 5px;
                 -moz-border-radius: 5px;
+            }
+            #evalue-input {
+                width: 50px;
             }
             .mode-toggle {
                 display: inline-flex;
@@ -66,6 +73,11 @@ View presenting blast search results annotations.
             #acceptButton {
                 zoom: 125%;
             }
+            #resubmitSpinner {
+                width: 24px;
+                height: 24px;
+                vertical-align: top;
+            }
             #blastParametersContainer {
                 background-color: white;
                 border-bottom: solid grey 1px;
@@ -73,12 +85,12 @@ View presenting blast search results annotations.
             }
             #matrixDropdown {
                 margin-left: 5px;
-                color: var(--paper-indigo-500);
-                border-bottom: 1px solid var(--paper-indigo-500);
+                color: #337ab7;
+                border-bottom: 1px solid #337ab7;
             }
-            #shortenedSequence {
-                color: var(--paper-indigo-500);
-            }
+            /*#shortenedSequence {
+                color: #337ab7;
+            }*/
             paper-toggle-button > div#toggleBar {
                 height: 104%;
                 width: 74%;
@@ -98,10 +110,11 @@ View presenting blast search results annotations.
                     <p>
                         <span class="quiet bold">Sequence</span>
                         <span id="sequenceContainer">
-                            <span id="shortenedSequence" class="pre" on-tap="_editSequence">[[_shortenedSequence()]]</span>
-                            <iron-icon id="editButton" icon="image:edit" on-tap="_editSequence"></iron-icon>
+                            <!--commented code produces an input field with sequence, it should be uncommented when api accepts post query for blast by sequence-->
+                            <span id="shortenedSequence" class="pre"><!-- on-tap="_editSequence">-->[[_shortenedSequence()]]</span>
+                            <!--<iron-icon id="editButton" icon="image:edit" on-tap="_editSequence"></iron-icon>
                             <iron-autogrow-textarea id="sequenceEditor" value="[[sequence]]" hidden></iron-autogrow-textarea>
-                            <iron-icon id="acceptButton" icon="done" on-tap="_updateSequence" hidden></iron-icon>
+                            <iron-icon id="acceptButton" icon="done" on-tap="_updateSequence" hidden></iron-icon>-->
                         </span>
                         <span class="quiet bold">([[sequence.length]] AA)</span>
                     </p>
@@ -115,14 +128,15 @@ View presenting blast search results annotations.
                             </template>
                         </shibui-dropdown-menu>
                         <p class="blast-params">
-                            Expect: <input class="number-input" value="[[evalue]]" on-change="_setEvalue"> ; filter: [[_getFilterState()]]; gap-open: <input class="number-input" value="{{gapopen}}"> ; gap-extend: <input class="number-input" value="[[gapextend]]">
-                            <button class="btn btn-sm"on-tap="getBySequence"><iron-icon icon="icons:autorenew"></iron-icon>&nbsp;Refresh</button>
+                            Expect: <input is="iron-input" id="evalue-input" class="number-input" bind-value="{{evalue}}"> ; filter: [[_getFilterState()]]; gap-open: <input is="iron-input" class="number-input" bind-value="{{gapopen}}"> ; gap-extend: <input is="iron-input" class="number-input" bind-value="{{gapextend}}">
+                            <button id="reloadButton" class="btn btn-sm" on-tap="getByIsoform"><iron-icon icon="icons:autorenew"></iron-icon>&nbsp;Reload</button>
+                            <paper-spinner-lite id="resubmitSpinner"></paper-spinner-lite>
                         </p>
                         <p>Program version: [[params.version]]</p>
                     </div>
                 </template>
                 <div id="scale"></div>
-                <span class="quiet bold">[[params.message]]</span>
+                <span class="bold" style="color: red;">[[error]]</span>
             </div>
             <template is="dom-if" if="[[results.length]]">
                 <div class="column control-header">
@@ -225,6 +239,7 @@ View presenting blast search results annotations.
             },
             getByIsoform: function(){
                 var self = this;
+                if (this.$$("#resubmitSpinner")) this.$$("#resubmitSpinner").active = true;
                 this.nx.getBlastByIsoform(this.isoform, this.matrix, this.evalue, this.gapopen, this.gapextend, this.begin, this.end)
                         .then(function(response){
                             Polymer.RenderStatus.afterNextRender(self, function() {self._processResponse(response)});
@@ -233,6 +248,7 @@ View presenting blast search results annotations.
             },
             getBySequence: function(){
                 var self=this;
+                this.$$("#resubmitSpinner").active = true;
                 this.nx.getBlastBySequence(this.sequence, this.title, this.matrix, this.evalue, this.gapopen, this.gapextend)
                         .then(function(response){
                             Polymer.RenderStatus.afterNextRender(self, function() {self._processResponse(response)});
@@ -241,12 +257,14 @@ View presenting blast search results annotations.
                 this.isoform = undefined;
             },
             _processResponse: function(response){
+                this.results = [];
                 this.$.spinner.active = false;
-                this.$.spinner.style = "display:none;";
+                this.$.spinner.hidden = true;
+                if (this.$$("#resubmitSpinner")) this.$$("#resubmitSpinner").active = false;
                 if (response.error) {
-                    this.$.blastParametersContainer.innerHTML = '<span class="quiet bold">'+Object.values(response.error.causes)+'</span>';
+                    this.error = Object.values(response.error.causes);
                     return false;
-                }
+                } else this.error = "";
                 if(!this.$$("#scale").children.length) this._colorScale();
                 for (var i in response.data.results.search.hits) {
                     response.data.results.search.hits[i].queryLength =  response.data.params.sequence.length;
@@ -269,7 +287,7 @@ View presenting blast search results annotations.
 
             },
             _setMatrix: function(event){
-              this.matrix = event.srcElement.value;
+                this.matrix = event.srcElement.value;
             },
             _checkMatrix: function(newValue, oldValue){
                 this.async(function(){
@@ -278,9 +296,6 @@ View presenting blast search results annotations.
                         this.matrix = oldValue;
                     }
                 });
-            },
-            _setEvalue: function(){
-                this.evalue = event.srcElement.value;
             },
             _colorScale: function(){
                 var svg = d3.select(this).select("#scale").append("svg")
