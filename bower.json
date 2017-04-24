@@ -16,7 +16,8 @@
     "shibui-dropdown-menu": "https://github.com/ShibuiElements/shibui-dropdown-menu.git#^1.0.0",
     "feature-viewer": "x.x.x",
     "sequence-viewer": "^0.2.28",
-    "iron-input": "^1.0.11"
+    "iron-input": "^1.0.11",
+    "iron-localstorage": "^1.0.6"
   },
   "keywords": [
     "web-component",
