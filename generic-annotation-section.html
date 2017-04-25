@@ -544,6 +544,14 @@ Annotation section used in function, medical, and expression views.
                 }
                 this.data = data;
                 this.count = count;
+                if(this.goldOnly && !Object.keys(this.containsGoldEv).length) {
+                    this.$$("#evidenceButton").style.display = "none";
+                    this.$$("#notice").innerHTML = "<i>The entry does not contain a gold annotations.</i>";
+                }
+                else if(this.$$("#evidenceButton")) {
+                    this.$$("#evidenceButton").style.display = "block";
+                    this.$$("#notice").innerHTML = "<i>Annotations in this section apply to all the isoforms if not specified otherwise.</i>";
+                }
             },
             _sortAlphabetically: function(a,b) {
                 if(a.isoformSpecific && !b.isoformSpecific) return 1;
