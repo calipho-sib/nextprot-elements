@@ -374,9 +374,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     self._getMetadataByView();
                     self._getFeaturesByIsoform();
                     var count = 0;
-                    for(var i in self.featuresForViewer){
-                        count+= Object.keys(self.featuresForViewer[i]).length
-                    }
+                        for (var i in self.rawData){
+                            if (self.rawData[i].annot) count += self.rawData[i].annot.length;
+                        }
                     self.count = count;
                     if(self.count){
                         self.reloadSVG();
