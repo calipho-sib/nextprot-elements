@@ -406,8 +406,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 });
             },
             reload: function(){
-                this._getFeaturesByIsoform();
-                this.reloadSVG();
+                if (this.data) {
+                    this._getFeaturesByIsoform();
+                    this.reloadSVG();
+                }
             },
             _getFeaturesByIsoform: function(){
                 this.featuresForViewer = [];
