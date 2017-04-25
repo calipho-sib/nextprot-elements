@@ -544,7 +544,7 @@ Annotation section used in function, medical, and expression views.
                 }
                 this.data = data;
                 this.count = count;
-                if(this.goldOnly && !Object.keys(this.containsGoldEv).length) {
+                if(this.$$("#evidenceButton") && this.goldOnly && !Object.keys(this.containsGoldEv).length) {
                     this.$$("#evidenceButton").style.display = "none";
                     this.$$("#notice").innerHTML = "<i>The entry does not contain a gold annotations.</i>";
                 }
