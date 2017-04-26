@@ -1,12 +1,14 @@
 # \<nextprot-elements\>
 
 
-
 ## Install the Polymer-CLI
 
-First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your application locally.
+First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. 
+Then run `bower install` to install all dependencies defined in `bower.json`.
 
 ## Viewing Your Application
+
+Serving your application locally.
 
 ```
 $ polymer serve
