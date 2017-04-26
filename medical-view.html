@@ -60,8 +60,8 @@ View listing medical annotations.
         <div class="row">
             <div id="nxAnnotations" class="col-md-12">
                 <generic-annotation-section id="annotationElement" section="medical" gold-only="[[nxConfig.goldOnly]]"
-                                            categories='["DISEASE", "VARIANT-INFO", "PHARMACEUTICAL", "ALLERGEN", "MISCELLANEOUS"]'
-                                            category-titles='{"VARIANT_INFO": "POLYMORPHISM", "MISCELLANEOUS": "NOTE"}'
+                                            categories='["DISEASE", "VARIANT-INFO", "PHARMACEUTICAL", "SMALL-MOLECULE-INTERACTION", "ALLERGEN", "MISCELLANEOUS"]'
+                                            category-titles='{"VARIANT_INFO": "POLYMORPHISM", "SMALL_MOLECULE_INTERACTION": "PROTEIN-DRUG INTERACTION", "MISCELLANEOUS": "NOTE"}'
                                             count="{{annotationsCount}}" nx-config="[[nxConfig]]">
                 </generic-annotation-section>
             </div>
@@ -76,7 +76,7 @@ View listing medical annotations.
         </div>
         <div class="row">
             <div id="nxXrefs" class="col-md-12">
-                <xrefs-section categories='["GeneReviews", "CTD", "MIM", "DrugBank", "PharmGKB", "Orphanet", "Allergome", "DMDM", "BioMuta", "MalaCards", "DisGeNET", "OpenTargets"]'
+                <xrefs-section categories='["GeneReviews", "CTD", "PharmGKB", "Allergome", "DMDM", "BioMuta", "MalaCards", "DisGeNET", "OpenTargets"]'
                                nx-config="[[nxConfig]]" count="{{xrefsCount}}">
                 </xrefs-section>
             </div>
