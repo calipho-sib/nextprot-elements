@@ -115,7 +115,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 border: none;
             }
             table#featTable>tbody>tr .table-row-evidence {
-                padding: 0 8px;
+                padding: 0 16px 0 8px;
             }
             #seqViewer ::content > .seqHeader {
                 width: 100%;
@@ -244,7 +244,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             </div>
         </div>
         <div class="row">
-            <div id="featuresTable" class="col-md-6">
+            <div id="featuresTable">
                 <div id="featTableScroller" class="section-scroller">
                     <table id="featTable" class="table table-striped table-fixed">
                         <thead>
@@ -306,9 +306,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     </table>
                 </div>
             </div>
-            <div class="col-md-6 right-block">
-                <div id="seqViewer"></div>
-            </div>
+            <template is="dom-if" if="[[!hideSequenceViewer]]">
+                <div class="col-md-6 right-block">
+                    <div id="seqViewer"></div>
+                </div>
+            </template>
         </div>
     </template>
     <script>
@@ -357,6 +359,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     type: Boolean,
                     observer: "reload"
                 },
+                hideSequenceViewer: {
+                    type: Boolean,
+                    value: false
+                },
                 count: {
                     type: Number,
                     notify: true
@@ -384,6 +390,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         self.$.featViewerSpinner.active = false;
                         self.$.featTableSpinner.active = false;
                     }
+                    if (!self.hideSequenceViewer) self.$$("#featuresTable").classList.add("col-md-6");
                 });
             },
             reloadSVG: function(){
@@ -499,7 +506,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             positionWithoutLetter:true,
                             tooltipColor:"black"
                         });
-                        self._renderSequenceViewer(o);
+                        if (!self.hideSequenceViewer) self._renderSequenceViewer(o);
                     }
                 });
             },
@@ -656,10 +663,13 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     if (position.length === 1) position.push(position[0]);
                     var svgId = "#" + "f" + currentId;
                     position[0] -= 1;
-                    this.seqView.selection(position[0], position[1], "#C50063");
+                    if (!this.hideSequenceViewer) {
+                        this.seqView.selection(position[0], position[1], "#C50063");
+                        this._scrollAuto(".stringSelected", ".scroller", 200);
+                    }
                     this.selection = {'start': position[0], 'end': position[1]};
                     this.ft.addRectSelection(svgId);
-                    this._scrollAuto(".stringSelected", ".scroller", 200);
+
                 }
             },
             eventTV: function() {
@@ -671,13 +681,14 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 });
             },
             fvSelection: function(d) {
-                this.seqView.selection(d.start - 1,d.end,"#C50063");
+                if (!this.hideSequenceViewer) {
+                    this.seqView.selection(d.start - 1,d.end,"#C50063");
+                    this._scrollAuto(".stringSelected", ".scroller",200);
+                }
                 var featSelectedID = "#" + d.id;
                 $(".tableHighlight").removeClass("tableHighlight");
                 $(featSelectedID).addClass("tableHighlight");
-
                 this._scrollAuto(featSelectedID, "#featTableScroller",70);
-                this._scrollAuto(".stringSelected", ".scroller",200);
             },
             _scrollAuto: function(elem, container, shiftTop) {
                 var ElementTop = $(elem).position().top-shiftTop;
