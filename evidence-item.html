@@ -81,10 +81,10 @@ Block element representing an evidence record.
                     </template>
                     <template is="dom-if" if="[[data.context.disease]]">
                         <div class="evidence-accession">
-                            <p>Found in: [[data.context.disease.name]]
-                                <template is="dom-if" if="[[data.context.cellLine]]">(originates from: [[data.context.cellLine.name]])</template>
+                            <p>Found in: <a href="/term/[[data.context.diseaseAC]]">[[data.context.disease.name]]</a>
+                                <template is="dom-if" if="[[data.context.cellLine]]">(originates from: <a href="/term/[[data.context.cellLineAC]]">[[data.context.cellLine.name]]</a>)</template>
                                 <template is="dom-if" if="[[!data.context.cellLine]]">
-                                    <template is="dom-if" if="[[data.context.tissue]]">(originates from: [[data.context.tissue.name]])</template>
+                                    <template is="dom-if" if="[[data.context.tissue]]">(originates from: <a href="/term/[[data.context.tissueAC]]">[[data.context.tissue.name]]</a>)</template>
                                 </template>
                             </p>
                         </div>
