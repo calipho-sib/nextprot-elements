@@ -1,0 +1,46 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="chromosome-entry-view.html">
+<script src="../jquery/dist/jquery.js"></script>
+
+<!--
+`chromosome-list-view`
+View list of chromosome names.
+
+##### Example
+    <chromosome-list-view />
+@demo demo/chromosome-list-view-demo.html
+-->
+
+<dom-module id="chromosome-list-view">
+
+    <template>
+        <div id="chromosomeListViewContainer">
+            <ul class=" submenu collapse in">
+            <template is="dom-repeat" items="[[chromosomeNames]]" >
+                <li class="list-group-item">
+                    <a href="">Chromosome [[item]]</a>
+                    <!--<chromosome-entry-view chromosome="[[item]]"></chromosome-entry-view>-->
+                </li>
+            </template>
+            </ul>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'chromosome-list-view',
+            ready: function () {
+
+                this._fetchChromosomeNames()
+            },
+            _fetchChromosomeNames: function() {
+                // TODO: make a real call to nextprot API (/chromosomes/.json)
+                var self = this;
+
+                $.getJSON("../test/chromosome-names.json", function (data) {
+                    self.chromosomeNames = data;
+                })
+            }
+        });
+    </script>
+</dom-module>
