@@ -123,7 +123,7 @@ Annotation section used in function, medical, and expression views.
                         </h4>
                     </div>
                     <div id="[[_stringToId(category.name)]]-section">
-                        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" filter="_filter" initial-count="1" target-framerate="1000">
+                        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" initial-count="1" target-framerate="1000">
                             <template is="dom-if" if="[[_isNewIsoformSection(category.value, index)]]">
                                 <div class="grey-x">Interactions for [[annotation.value.isoformSpecific]]</div>
                             </template>
@@ -534,12 +534,12 @@ Annotation section used in function, medical, and expression views.
                 }
                 for (var i in Object.keys(data)) {
                     var category = Object.keys(data)[i];
-                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "OVERVIEW"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].sort(this._sortByRank);
-                    else if (category==="INTERACTIONS") data[category] = data[Object.keys(data)[i]].sort(this._sortOverview);
-                    else if (category==="SUBCELLULAR LOCATION") data[category] = data[Object.keys(data)[i]].sort(this._sortSubcellular);
-                    else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].sort(this._sortBiophysicochemical);
-                    else if (category==="PROTEIN-PROTEIN INTERACTION") data[category] = data[Object.keys(data)[i]].sort(this._sortBinaryInteractions);
-                    else data[category] = data[Object.keys(data)[i]].sort(this._sortAlphabetically);
+                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "OVERVIEW"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByRank);
+                    else if (category==="INTERACTIONS") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortOverview);
+                    else if (category==="SUBCELLULAR LOCATION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortSubcellular);
+                    else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBiophysicochemical);
+                    else if (category==="PROTEIN-PROTEIN INTERACTION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBinaryInteractions);
+                    else data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortAlphabetically);
                     count+=data[Object.keys(data)[i]].length;
                 }
                 this.data = data;
@@ -628,11 +628,11 @@ Annotation section used in function, medical, and expression views.
                 return (this._filterGold(item) && this._filterIsoform(item));
             },
             _filterGold: function(item){
-                if (this.goldOnly) return item.value.qualityQualifier==="GOLD";
+                if (this.goldOnly) return item.qualityQualifier==="GOLD";
                 return true;
             },
             _filterIsoform: function(item){
-                if (this.isoform && this.isoform!=="all") return (item.value.isoformAccession===this.isoform || !item.value.isoformSpecific);
+                if (this.isoform && this.isoform!=="all") return (item.isoformAccession===this.isoform || !item.isoformSpecific);
                 return true;
             },
             _toggleAllEvidences: function(){
@@ -780,7 +780,7 @@ Annotation section used in function, medical, and expression views.
                 return index===0 || annotations[index].subcategory!==annotations[index-1].subcategory;
             },
             _isNewIsoformSection: function(annotations, index){
-                if (index===0 || annotations[index].category!=="BINARY_INTERACTION") return false;
+                if (index===0 || !annotations[index] || annotations[index].category!=="BINARY_INTERACTION") return false;
                 else return annotations[index].isoformSpecific!==annotations[index-1].isoformSpecific;
             },
             _stringToId: function(str){
