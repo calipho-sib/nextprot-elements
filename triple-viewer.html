@@ -392,7 +392,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         self.$.featViewerSpinner.active = false;
                         self.$.featTableSpinner.active = false;
                     }
-                    if (!self.hideSequenceViewer) self.$$("#featuresTable").classList.add("col-md-6");
+                    if (self.hideSequenceViewer) self.$$("#featuresTable").classList.add("col-md-12");
+                    else self.$$("#featuresTable").classList.add("col-md-6")
                 });
             },
             reloadSVG: function(){
