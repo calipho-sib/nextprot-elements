@@ -273,7 +273,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     <td class="text-align-right">[[feature.length]]</td>
                                     <td><span inner-h-t-m-l="[[feature.link]]"></span>
                                         <template is="dom-if" if="[[feature.crossRef]]">
-                                            <span inner-h-t-m-l="[[feature.crossRef]]"></span>
+                                            ; [[feature.crossRef.dbName]]: <a class="ext-links" href="[[feature.crossRef.url]]" target="_blank">[[feature.crossRef.name]]</a>
                                         </template>
                                         <template is="dom-if" if="[[!feature.proteotypicity]]">
                                             <span class="nonProteotypic">found in other entries</span>
@@ -374,9 +374,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     self._getMetadataByView();
                     self._getFeaturesByIsoform();
                     var count = 0;
-                        for (var i in self.rawData){
-                            if (self.rawData[i].annot) count += self.rawData[i].annot.length;
-                        }
+                    for (var i in self.rawData){
+                        if (self.rawData[i].annot) count += self.rawData[i].annot.length;
+                    }
                     self.count = count;
                     if(self.count){
                         self.reloadSVG();
@@ -562,8 +562,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                 for (var j in feature.source){
                                     if(feature.source[j].externalDb) {
                                         if(feature.source[j].crossRef){
-                                            var crossRef = feature.source[j].crossRef;
-                                            feature.crossRef = '; '+crossRef.dbName+' : <a class="ext-link" href="'+crossRef.url+'">'+crossRef.name+'</a>';
+                                            feature.crossRef = feature.source[j].crossRef;
+                                            if (feature.crossRef.dbName="Cosmic") feature.crossRef.dbName = "COSMIC";
                                         }
                                     }
                                 }
