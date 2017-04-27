@@ -224,22 +224,24 @@ Complex element joining nextprot feature viewer, feature table and sequence view
         </style>
         <div class="row">
             <div id="featureViewer">
-                <div class="filter-block row">
-                    <div class="filter-heading">
-                        <span class="fa fa-filter"></span>
-                        <h5>FILTER</h5>
-                    </div>
-                    <div class="filter-body">
-                        <div id="filtering" class="all-filters">
-                            <button class="btn btn-default btn-sm" id="allFilters" on-tap="_filterAll">All/None</button>
-                            <template is="dom-repeat" items="[[_toArray(activeFiltering)]]" as="filter">
-                                <label class="filter-box" on-mouseover="_highlightCategories" on-mouseout="_dimCategories">
-                                    <input type="checkbox" id=[[filter.name]] value="option1" on-change="_toggleFiltering" checked>[[filter.value]]
-                                </label>
-                            </template>
+                <template is="dom-if" if="[[activeFiltering.length]]">
+                    <div class="filter-block row">
+                        <div class="filter-heading">
+                            <span class="fa fa-filter"></span>
+                            <h5>FILTER</h5>
+                        </div>
+                        <div class="filter-body">
+                            <div id="filtering" class="all-filters">
+                                <button class="btn btn-default btn-sm" id="allFilters" on-tap="_filterAll">All/None</button>
+                                <template is="dom-repeat" items="[[_toArray(activeFiltering)]]" as="filter">
+                                    <label class="filter-box" on-mouseover="_highlightCategories" on-mouseout="_dimCategories">
+                                        <input type="checkbox" id=[[filter.name]] value="option1" on-change="_toggleFiltering" checked>[[filter.value]]
+                                    </label>
+                                </template>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </template>
                 <paper-spinner-lite id="featViewerSpinner" class="size" active></paper-spinner-lite>
             </div>
         </div>
@@ -474,7 +476,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         }
                     }
                 }
-                this.activeFiltering = activeFiltering;
+                if (activeFiltering.length>1) this.activeFiltering = activeFiltering;
             },
             _filterGoldForViewer: function(features){
                 var categories = Object.keys(features);
