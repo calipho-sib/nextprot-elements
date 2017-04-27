@@ -224,7 +224,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
         </style>
         <div class="row">
             <div id="featureViewer">
-                <template is="dom-if" if="[[activeFiltering.length]]">
+                <template is="dom-if" if="[[_toArray(activeFiltering).length]]">
                     <div class="filter-block row">
                         <div class="filter-heading">
                             <span class="fa fa-filter"></span>
@@ -476,7 +476,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         }
                     }
                 }
-                if (activeFiltering.length>1) this.activeFiltering = activeFiltering;
+                if (this._toArray(activeFiltering).length>1) this.activeFiltering = activeFiltering;
             },
             _filterGoldForViewer: function(features){
                 var categories = Object.keys(features);
