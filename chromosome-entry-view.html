@@ -1,0 +1,88 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<script src="../jquery/dist/jquery.js"></script>
+
+<!--
+`chromosome-entry-view`
+View presenting neXtProt entries plus gene location found on chromosome.
+
+##### Example
+    <chromosome-entry-view />
+@demo demo/chromosome-entry-view-demo.html
+-->
+
+<dom-module id="chromosome-entry-view">
+    <style>
+        th {
+            text-align: left;
+        }
+    </style>
+
+    <template>
+        <!-- local DOM for this element -->
+        <div id="chromosomeExportTable">
+            <template is="dom-if" if="[[results]]">
+            <table>
+                <tr>
+                    <th>Gene name</th>
+                    <th>neXtProt</th>
+                    <th>Chromosomal position</th>
+                    <th>Coding strand</th>
+                    <th>Start position</th>
+                    <th>Stop position</th>
+                    <th>Protein existence</th>
+                    <th>Proteomics</th>
+                    <th>Antibody</th>
+                    <th>3D</th>
+                    <th>Disease</th>
+                    <th>Isoforms</th>
+                    <th>Variants</th>
+                    <th>PTMs</th>
+                    <th>Description</th>
+                </tr>
+                <template is="dom-repeat" items="[[results.entryReports]]" >
+                <tr>
+                    <td>[[item.geneName]]</td>
+                    <td>[[item.entryAccession]]</td>
+                    <td>[[item.chromosomalLocation]]</td>
+                    <td>[[item.codingStrand]]</td>
+                    <td>[[item.geneStartPosition]]</td>
+                    <td>[[item.geneEndPosition]]</td>
+                    <td>[[item.proteinExistence]]</td>
+                    <td>[[item.proteomics]]</td>
+                    <td>[[item.antibody]]</td>
+                    <td>[[item.3D]]</td>
+                    <td>[[item.disease]]</td>
+                    <td>[[item.isoforms]]</td>
+                    <td>[[item.variants]]</td>
+                    <td>[[item.ptms]]</td>
+                    <td>[[item.entryDescription]]</td>
+                </tr>
+                </template>
+            </table>
+            </template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'chromosome-entry-view',
+            properties: {
+                chromosome: {
+                    type: String
+                }
+            },
+            ready: function () {
+
+                this._fetchChromosomeReport()
+            },
+            _fetchChromosomeReport: function() {
+                // TODO: make a real call to nextprot API (/chromosome-report/"+this.chromosome+".json")
+                var self = this;
+
+                $.getJSON("../test/chromosome-Y-report.json", function (data) {
+                    self.results = data;
+                })
+            }
+        });
+    </script>
+</dom-module>
