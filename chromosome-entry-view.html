@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
-<script src="../jquery/dist/jquery.js"></script>
+<link rel="import" href="external-scripts.html">
 
 <!--
 `chromosome-entry-view`
@@ -72,16 +72,19 @@ View presenting neXtProt entries plus gene location found on chromosome.
                 }
             },
             ready: function () {
-
                 this._fetchChromosomeReport()
             },
             _fetchChromosomeReport: function() {
-                // TODO: make a real call to nextprot API (/chromosome-report/"+this.chromosome+".json")
                 var self = this;
 
-                $.getJSON("../test/chromosome-Y-report.json", function (data) {
-                    self.results = data;
-                })
+                this.npClient = new Nextprot.Client("neXtProt chromosome " + this.chromosome + " entries", "Calipho Group");
+                this.npClient.setApiBaseUrl("http://localhost:8080/");
+
+                this.npClient.getChromosomeEntries(this.chromosome).then(function(response){
+                    Polymer.RenderStatus.afterNextRender(self, function() {
+                        self.results = response;
+                    });
+                });
             }
         });
     </script>
