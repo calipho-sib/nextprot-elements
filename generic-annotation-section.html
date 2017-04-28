@@ -539,6 +539,7 @@ Annotation section used in function, medical, and expression views.
                     else if (category==="SUBCELLULAR LOCATION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortSubcellular);
                     else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBiophysicochemical);
                     else if (category==="PROTEIN-PROTEIN INTERACTION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBinaryInteractions);
+                    else if (category==="DISEASE") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortDisease.bind(this));
                     else data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortAlphabetically);
                     count+=data[Object.keys(data)[i]].length;
                 }
@@ -623,6 +624,12 @@ Annotation section used in function, medical, and expression views.
                 if (b.geneName=="-") return -1;
                 if (a.geneName)
                     return a.geneName.toLowerCase() > b.geneName.toLowerCase() ? 1 : -1;
+            },
+            _sortDisease: function(a,b){
+                if (a.evidenceSources.indexOf("UniProt")===-1 && b.evidenceSources.indexOf("UniProt")!==-1) return 1;
+                if (a.evidenceSources.indexOf("UniProt")!==-1 && b.evidenceSources.indexOf("UniProt")===-1) return -1;
+                if (a.evidenceSources.indexOf("UniProt")!==-1 && b.evidenceSources.indexOf("UniProt")!==-1) return this._sortByRank(a,b);
+                else return this._sortAlphabetically(a,b);
             },
             _filter: function(item){
                 return (this._filterGold(item) && this._filterIsoform(item));
