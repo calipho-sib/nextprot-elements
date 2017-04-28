@@ -158,8 +158,10 @@ Annotation section used in function, medical, and expression views.
                                             <template is="dom-if" if="[[!_checkIfSubcellularLocation(annotation.value)]]">
                                                 <div class="annotation-title"><p inner-h-t-m-l="[[annotation.value.description]]"></p>
                                                     <div class="annotation-labels">
-                                                        <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
-                                                        <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
+                                                        <template is="dom-if" if="[[!_checkIfDisease(annotation.value)]]">
+                                                            <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
+                                                            <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
+                                                        </template>
                                                         <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                     </div>
                                                 </div>
@@ -770,6 +772,9 @@ Annotation section used in function, medical, and expression views.
             },
             _checkIfSubcellularLocation: function(annotation){
                 return (annotation.category==="SUBCELLULAR_LOCATION" && annotation.cvTermName!==annotation.description);
+            },
+            _checkIfDisease: function(annotation){
+                return annotation.category==="DISEASE";
             },
             _isBinaryInteractionOrBiophysical: function (category){
                 return (["BINARY_INTERACTION", "BIOPHYSICOCHEMICAL PROPERTIES"].indexOf(category)!==-1);
