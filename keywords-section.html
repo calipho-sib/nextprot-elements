@@ -66,6 +66,10 @@ Keywords section present on function, medical, sequence, and structures pages.
         categories: {
           type: Array
         },
+        categoryAccessions: {
+          type: Object,
+          value: {}
+        },
         exceptions: {
           type: Array,
           value: []
@@ -96,9 +100,14 @@ Keywords section present on function, medical, sequence, and structures pages.
         var data = {};
         var self = this;
         list.forEach(function (k) {
-          if (self.categories.indexOf(k.cvTermType) >= 0 && self.exceptions.indexOf(k.cvTermAccessionCode) < 0) {
-            if (data[k.cvTermType]) data[k.cvTermType].push(k);
-            else data[k.cvTermType] = [k];
+          var category = k.cvTermType;
+          var accessions = self.categoryAccessions[k.cvTermType];
+          if (self.categories.indexOf(k.cvTermType)!==-1) {
+            if (!accessions && self.exceptions.indexOf(k.cvTermAccessionCode)===-1
+                || (accessions && accessions.indexOf(k.cvTermAccessionCode))!==-1) {
+              if (data[k.cvTermType]) data[k.cvTermType].push(k);
+              else data[k.cvTermType] = [k];
+            }
           }
         });
         data = Object.keys(data).map(function (key) {
