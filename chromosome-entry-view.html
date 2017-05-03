@@ -84,7 +84,7 @@ View presenting neXtProt entries plus gene location found on chromosome.
                 this.npClient = new Nextprot.Client("neXtProt chromosome " + this.chromosome + " entries", "Calipho Group");
 
                 if (this.nxConfig.env) {
-                    this.nx.updateEnvironment(this.nxConfig.env);
+                    this.npClient.updateEnvironment(this.nxConfig.env);
                 }
                 else {
                     this.npClient.setApiBaseUrl("http://localhost:8080/");
