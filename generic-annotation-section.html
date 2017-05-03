@@ -146,7 +146,9 @@ Annotation section used in function, medical, and expression views.
                                                 <span class="annotation-title isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
                                             </template>
                                             <template is="dom-if" if="[[_checkIfSubcellularLocation(annotation.value)]]">
-                                                <div class="annotation-title"><p inner-h-t-m-l="[[annotation.value.cvTermName]]"></p>
+                                                <div class="annotation-title">
+                                                    <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
+                                                    <p inner-h-t-m-l="[[annotation.value.cvTermName]]"></p>
                                                     <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
                                                     <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
                                                     <template is="dom-if" if="[[annotation.value.nameModifier]]">
@@ -156,7 +158,9 @@ Annotation section used in function, medical, and expression views.
                                                 </div>
                                             </template>
                                             <template is="dom-if" if="[[!_checkIfSubcellularLocation(annotation.value)]]">
-                                                <div class="annotation-title"><p inner-h-t-m-l="[[annotation.value.description]]"></p>
+                                                <div class="annotation-title">
+                                                    <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
+                                                    <p inner-h-t-m-l="[[annotation.value.description]]"></p>
                                                     <div class="annotation-labels">
                                                         <template is="dom-if" if="[[!_checkIfDisease(annotation.value)]]">
                                                             <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
@@ -169,11 +173,12 @@ Annotation section used in function, medical, and expression views.
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.parentXref]]">
                                             <div class="annotation-title">
-                                                    <p>[[annotation.value.description]]</p>
-                                                    <div class="annotation-labels">
-                                                        <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
-                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
-                                                    </div>
+                                                <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
+                                                <p>[[annotation.value.description]]</p>
+                                                <div class="annotation-labels">
+                                                    <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
+                                                    <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                </div>
                                             </div>
                                         </template>
                                         <template is="dom-if" if="[[!_checkIfContainsAccessionOrXref(annotation.value)]]">
@@ -474,10 +479,15 @@ Annotation section used in function, medical, and expression views.
                     a.xeno = a.database!="neXtProt" ? true : false;
                     if(!a.categoryLabel) a.categoryLabel = a.apicategory.replace(/_/g, " ");
                     if (!data.hasOwnProperty(a.categoryLabel)) data[a.categoryLabel]=[];
+                    var evidences = self._getEvidence(a.evidences, data_xrefs, data_publi);
+                    for (var e in evidences) if(e>0 && evidences[e].negative!==evidences[e-1].negative) {
+                        a.conflict = true;
+                        continue;
+                    }
                     for(var j in a.evidences){
                         if(a.evidences[j].goQualifier==="contributes_to" && a.description && !a.description.startsWith("<i>Contributes to</i>&nbsp;")) a.description = a.description.replace("Contributes to ", "<i>Contributes to</i>&nbsp;");
                         if(a.evidences[j].goQualifier==="colocalizes_with" && a.description && !a.description.startsWith("<i>Colocalizes with</i>&nbsp;")) a.description = a.description.replace("Colocalizes with ", "<i>Colocalizes with</i>&nbsp;");
-                        if(a.evidences[j].negativeEvidence==true && a.description && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b>&nbsp;"+a.description.charAt(0).toLowerCase()+a.description.slice(1);
+                        if(a.evidences[j].negativeEvidence==true && !a.conflict && a.description && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b>&nbsp;"+a.description.charAt(0).toLowerCase()+a.description.slice(1);
                     };
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
                     if(a.isoformsDisplayedAsSpecific){
@@ -486,11 +496,6 @@ Annotation section used in function, medical, and expression views.
                             else if(!a.isoformSpecific.match(data_isoforms[a.isoformsDisplayedAsSpecific[iso]].mainEntityName.name)) a.isoformSpecific = a.isoformSpecific+", "+data_isoforms[a.isoformsDisplayedAsSpecific[iso]].mainEntityName.name;
                         }
                         else if (a.isoformsDisplayedAsSpecific.length===1) a.isoformSpecific = "Isoform "+ data_isoforms[a.isoformsDisplayedAsSpecific[0]].mainEntityName.name;
-                    }
-                    var evidences = self._getEvidence(a.evidences, data_xrefs, data_publi);
-                    for (var e in evidences) if(e>0 && evidences[e].negative!==evidences[e-1].negative) {
-                        a.conflict = true;
-                        continue;
                     }
                     if (a.apicategory=="BINARY_INTERACTION") {
                         for (var e in evidences) {
