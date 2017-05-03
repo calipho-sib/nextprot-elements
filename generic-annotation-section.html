@@ -487,7 +487,10 @@ Annotation section used in function, medical, and expression views.
                     for(var j in a.evidences){
                         if(a.evidences[j].goQualifier==="contributes_to" && a.description && !a.description.startsWith("<i>Contributes to</i>&nbsp;")) a.description = a.description.replace("Contributes to ", "<i>Contributes to</i>&nbsp;");
                         if(a.evidences[j].goQualifier==="colocalizes_with" && a.description && !a.description.startsWith("<i>Colocalizes with</i>&nbsp;")) a.description = a.description.replace("Colocalizes with ", "<i>Colocalizes with</i>&nbsp;");
-                        if(a.evidences[j].negativeEvidence==true && !a.conflict && a.description && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b>&nbsp;"+a.description.charAt(0).toLowerCase()+a.description.slice(1);
+                        if(a.evidences[j].negativeEvidence==true && !a.conflict) {
+                            if(a.description && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b>&nbsp;"+a.description.charAt(0).toLowerCase()+a.description.slice(1);
+                            if(a.cvTermName && !a.cvTermName.startsWith("<b>Not</b>")) a.cvTermName = "<b>Not</b>&nbsp;"+a.cvTermName.charAt(0).toLowerCase()+a.cvTermName.slice(1);
+                        };
                     };
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
                     if(a.isoformsDisplayedAsSpecific){
