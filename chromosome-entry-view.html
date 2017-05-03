@@ -43,7 +43,7 @@ View presenting neXtProt entries plus gene location found on chromosome.
                 <template is="dom-repeat" items="[[results.entryReports]]" >
                 <tr>
                     <td>[[item.geneName]]</td>
-                    <td>[[item.entryAccession]]</td>
+                    <td><a href=[[host]]entry/[[item.entryAccession]]>[[item.entryAccession]]</a></td>
                     <td>[[item.chromosomalLocation]]</td>
                     <td>[[item.codingStrand]]</td>
                     <td>[[item.geneStartPosition]]</td>
@@ -67,6 +67,10 @@ View presenting neXtProt entries plus gene location found on chromosome.
         Polymer({
             is: 'chromosome-entry-view',
             properties: {
+                nxConfig: {
+                    type: Object,
+                    value: { }
+                },
                 chromosome: {
                     type: String
                 }
@@ -78,7 +82,15 @@ View presenting neXtProt entries plus gene location found on chromosome.
                 var self = this;
 
                 this.npClient = new Nextprot.Client("neXtProt chromosome " + this.chromosome + " entries", "Calipho Group");
-                this.npClient.setApiBaseUrl("http://localhost:8080/");
+
+                if (this.nxConfig.env) {
+                    this.nx.updateEnvironment(this.nxConfig.env);
+                }
+                else {
+                    this.npClient.setApiBaseUrl("http://localhost:8080/");
+                }
+
+                self.host = this.npClient.getApiBaseUrl();
 
                 this.npClient.getChromosomeEntries(this.chromosome).then(function(response){
                     Polymer.RenderStatus.afterNextRender(self, function() {
