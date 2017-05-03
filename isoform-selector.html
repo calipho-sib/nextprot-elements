@@ -33,7 +33,8 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
             }
         </style>
         <div id="nxIsoformChoice" class="col-md-12">
-            <span class="grey-x">Displayed isoform: </span>[[isoformLabel]]<span id="isoformMap" class="colored-label definition-button" on-tap="_toggleIsoformMap">Change isoform</span>
+            <span class="grey-x">Displayed isoform: </span>[[isoformLabel]]
+            <span id="isoformMap" class="colored-label definition-button" on-tap="_toggleIsoformMap">Change isoform</span>
         </div>
         <div class="row">
             <div id="visuContainer" class="col-md-12">
@@ -120,10 +121,8 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 return false;
             },
             _testAlgoObject: function(isoformsMap) {
-
+                if (isoformsMap.length<2) this.$.isoformMap.hidden = true;
                 var isoformsMapping = Object.assign({}, isoformsMap);
-
-
                 var positions=[];
                 var decalage=[];
                 // GET All positions x & y into new array positions
