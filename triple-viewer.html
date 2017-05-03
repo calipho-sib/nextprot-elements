@@ -224,7 +224,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
         </style>
         <div class="row">
             <div id="featureViewer">
-                <template is="dom-if" if="[[_toArray(activeFiltering).length]]">
+                <template is="dom-if" if="[[_ifActiveFiltering(activeFiltering)]]">
                     <div class="filter-block row">
                         <div class="filter-heading">
                             <span class="fa fa-filter"></span>
@@ -718,6 +718,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     });
                 }
                 return null;
+            },
+            _ifActiveFiltering: function(){
+                return this._toArray(this.activeFiltering).length;
             },
             _isDisulfideBondFeature: function(featureCategory) {
                 return featureCategory === "Disulfide bond";
