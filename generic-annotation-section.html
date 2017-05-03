@@ -586,10 +586,10 @@ Annotation section used in function, medical, and expression views.
                     else if(a.evidenceSources.indexOf("HPA subcell")!==-1 && b.evidenceSources.indexOf("HPA subcell")===-1) return 1;
                     else if(a.evidenceSources.indexOf("HPA subcell")===-1 && b.evidenceSources.indexOf("HPA subcell")!==-1) return -1;
                     else if(a.evidenceSources.indexOf("HPA subcell")!==-1 && b.evidenceSources.indexOf("HPA subcell")!==-1) {
-                        if (a.description==="Main location.") return -1;
-                        else if (b.description==="Main location.") return 1;
-                        else if (a.description==="Additional location." && b.description!=="Additional location.") return -1;
-                        else if (a.description!=="Additional location." && b.description==="Additional location.") return 1;
+                        if (a.description.indexOf("Main location.")!==-1) return -1;
+                        else if (b.description.indexOf("Main location.")!==-1) return 1;
+                        else if (a.description.indexOf("Main location.")!==-1 && b.description.indexOf("Main location.")===-1) return -1;
+                        else if (a.description.indexOf("Main location.")===-1 && b.description.indexOf("Main location.")!==-1) return 1;
                         else a.cvTermName.toLowerCase() > b.cvTermName.toLowerCase() ? 1 : -1;
                     }
                     return a.cvTermName.toLowerCase() > b.cvTermName.toLowerCase() ? 1 : -1;
