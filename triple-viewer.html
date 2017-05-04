@@ -278,7 +278,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     <td class="text-align-right">[[feature.length]]</td>
                                     <td><span inner-h-t-m-l="[[feature.link]]"></span>
                                         <template is="dom-if" if="[[feature.crossRef]]">
-                                            ; [[feature.crossRef.dbName]]: <a class="ext-links" href="[[feature.crossRef.url]]" target="_blank">[[feature.crossRef.name]]</a>
+                                            ; [[feature.crossRef.dbName]]: <a class="ext-link" href="[[feature.crossRef.url]]" target="_blank">[[feature.crossRef.name]]</a>
                                         </template>
                                         <template is="dom-if" if="[[!feature.proteotypicity]]">
                                             <span class="nonProteotypic">found in other entries</span>
