@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
 
@@ -12,15 +13,25 @@ View presenting neXtProt entries plus gene location found on chromosome.
 -->
 
 <dom-module id="chromosome-entry-view">
-    <style>
-        th {
-            text-align: left;
-        }
-    </style>
 
     <template>
+        <!-- local styles -->
+        <style>
+            :host {
+                display: block;
+                background:#f8f8f8;
+                overflow-y: auto;
+            }
+            :host th {
+                text-align: left;
+            }
+        </style>
+
         <!-- local DOM for this element -->
         <div id="chromosomeExportTable">
+
+            <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+
             <template is="dom-if" if="[[results]]">
             <table>
                 <tr>
@@ -73,6 +84,10 @@ View presenting neXtProt entries plus gene location found on chromosome.
                 },
                 chromosome: {
                     type: String
+                },
+                dataLoaded: {
+                    type: Boolean,
+                    observer: '_updateSpinnerStatus'
                 }
             },
             ready: function () {
@@ -95,8 +110,25 @@ View presenting neXtProt entries plus gene location found on chromosome.
                 this.npClient.getChromosomeEntries(this.chromosome).then(function(response){
                     Polymer.RenderStatus.afterNextRender(self, function() {
                         self.results = response;
+                        self._updateDataLoadingStatus();
                     });
                 });
+            },
+            _updateDataLoadingStatus: function() {
+
+                this.dataLoaded = this._dataLoaded();
+            },
+            _dataLoaded: function() {
+
+                return this.results;
+            },
+            _updateSpinnerStatus: function() {
+
+                if (this._dataLoaded()) {
+
+                    this.$.spinner.active = false;
+                    this.$.spinner.hidden = true;
+                }
             }
         });
     </script>

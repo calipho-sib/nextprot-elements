@@ -16,18 +16,22 @@ View list of chromosome names.
 <dom-module id="chromosome-list-view">
 
     <template>
+        <style>
+            :host {
+                display: block;
+                background:#f8f8f8;
+                overflow-y: auto;
+            }
+            :host td {
+                text-align: right;
+            }
+        </style>
+
         <div id="chromosomeListViewContainer">
 
-            <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+            <paper-spinner-lite id="spinner"></paper-spinner-lite>
 
             <template is="dom-if" if="{{dataLoaded}}">
-
-                <!-- local styles -->
-                <style>
-                    :host td {
-                        text-align: right;
-                    }
-                </style>
 
                 <!-- local DOM for this element -->
                 <table>
@@ -104,13 +108,10 @@ View list of chromosome names.
             },
             _updateDataLoadingStatus: function() {
 
-                //console.log("update loading status...");
                 this.dataLoaded = this._dataLoaded();
-                //console.log("data loaded ?", this.dataLoaded);
             },
             _dataLoaded: function() {
 
-                //console.log("names", this.chromosomeNames, "chromosomes", self.chromosomes);
                 return this.chromosomes && this.chromosomeNames && Object.keys(this.chromosomes).length === this.chromosomeNames.length;
             },
             _updateSpinnerStatus: function() {
@@ -125,6 +126,10 @@ View list of chromosome names.
             _getChromosomeSummary: function(chromosomeName, summaryProperty) {
 
                 return this.chromosomes[chromosomeName][summaryProperty];
+            },
+            _getChromosomeEntryView: function(chromosomeName) {
+
+                return "<chromosome-entry-view chromosome=" + chromosomeName + "></chromosome-entry-view>";
             }
         });
     </script>
