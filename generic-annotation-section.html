@@ -143,7 +143,10 @@ Annotation section used in function, medical, and expression views.
                                         </template>
                                         <template is="dom-if" if="[[annotation.value.cvTermAccessionCode]]">
                                             <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
-                                                <span class="annotation-title isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
+                                                <div class="annotation-title"><span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span></div>
+                                            </template>
+                                            <template is="dom-if" if="[[annotation.value.matureProtein]]">
+                                                <div class="annotation-title"><span class="isoform-label front-label">[[annotation.value.matureProtein]]</span></div>
                                             </template>
                                             <template is="dom-if" if="[[_checkIfSubcellularLocation(annotation.value)]]">
                                                 <div class="annotation-title">
@@ -194,6 +197,9 @@ Annotation section used in function, medical, and expression views.
                                                     <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
                                                         <span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
                                                     </template>
+                                                    <template is="dom-if" if="[[annotation.value.matureProtein]]">
+                                                        <span class="isoform-label front-label">[[annotation.value.matureProtein]]</span>
+                                                    </template>
                                                     <span inner-h-t-m-l="[[annotation.value.description]]"></span>
                                                     <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                 </template>
@@ -215,7 +221,7 @@ Annotation section used in function, medical, and expression views.
                                                             [[annotation.value.geneName]] → [[annotation.value.database]]: <a href="[[annotation.value.url]]" class="ext-link" target="_blank">[[annotation.value.accession]]</a>
                                                         </template>
                                                         <template is="dom-if" if="[[annotation.value.interactantIsoform]]">
-                                                            <span class="isoform-label end-label">Isoform [[annotation.value.interactantIsoform]]</span>
+                                                            <span class="annotation-title isoform-label end-label">Isoform [[annotation.value.interactantIsoform]]</span>
                                                         </template>
                                                         <template is="dom-if" if="[[annotation.value.xeno]]">
                                                             <span class="xeno-label end-label">Xeno</span>
@@ -476,6 +482,7 @@ Annotation section used in function, medical, and expression views.
                         if(a.bioObject.bioType=="PROTEIN_ISOFORM") {a.interactantIsoform=a.bioObject.properties.isoformName;};
                     }
                     a.selfInteraction = a.propertiesMap.selfInteraction ? a.propertiesMap.selfInteraction[0].value : false;
+                    a.matureProtein = a.propertiesMap["mature protein"] ? a.propertiesMap["mature protein"][0].value : false;
                     a.xeno = a.database!="neXtProt" ? true : false;
                     if(!a.categoryLabel) a.categoryLabel = a.apicategory.replace(/_/g, " ");
                     if (!data.hasOwnProperty(a.categoryLabel)) data[a.categoryLabel]=[];
@@ -523,6 +530,7 @@ Annotation section used in function, medical, and expression views.
                         additionalInfo: a.additionalInfo,
                         cvTermDescription: a.cvTermDescription,
                         selfInteraction: a.selfInteraction=="true",
+                        matureProtein: a.matureProtein,
                         rank: a.rank,
                         xeno: a.xeno,
                         geneName: a.geneName,
