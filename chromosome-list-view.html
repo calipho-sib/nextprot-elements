@@ -2,6 +2,7 @@
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="chromosome-entry-view.html">
 <link rel="import" href="external-scripts.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 
 <!--
 `chromosome-list-view`
@@ -16,34 +17,114 @@ View list of chromosome names.
 
     <template>
         <div id="chromosomeListViewContainer">
-            <ul class=" submenu collapse in">
-            <template is="dom-repeat" items="[[chromosomes]]" >
-                <li class="list-group-item">
-                    <a href="#">Chromosome [[item]]</a>
-                    <!--<chromosome-entry-view chromosome="[[item]]"></chromosome-entry-view>-->
-                </li>
+
+            <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+
+            <template is="dom-if" if="{{dataLoaded}}">
+
+                <!-- local styles -->
+                <style>
+                    :host td {
+                        text-align: right;
+                    }
+                </style>
+
+                <!-- local DOM for this element -->
+                <table>
+                    <tr>
+                        <th>Chromosome</th>
+                        <th>Entry count</th>
+                        <th>Gene count</th>
+                    </tr>
+                    <template is="dom-repeat" items="[[chromosomeNames]]">
+                        <tr>
+                            <td>[[item]]</td>
+                            <td>[[_getChromosomeSummary(item, "entryCount")]]</td>
+                            <td>[[_getChromosomeSummary(item, "geneCount")]]</td>
+                        </tr>
+                    </template>
+                </table>
             </template>
-            </ul>
         </div>
     </template>
     <script>
         Polymer({
             is: 'chromosome-list-view',
-            ready: function () {
-
-                this._fetchChromosomeNames()
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: { }
+                },
+                dataLoaded: {
+                    type: Boolean,
+                    observer: '_updateSpinnerStatus'
+                }
             },
-            _fetchChromosomeNames: function() {
+            attached: function () {
+
+                var npClient = new Nextprot.Client("neXtProt chromosomes", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    npClient.updateEnvironment(this.nxConfig.env);
+                }
+                else {
+                    npClient.setApiBaseUrl("http://localhost:8080/");
+                }
+
+                this.host = npClient.getApiBaseUrl();
+
+                this._loadData(npClient);
+            },
+            _loadData: function(npClient) {
+
                 var self = this;
 
-                this.npClient = new Nextprot.Client("neXtProt chromosomes", "Calipho Group");
-                this.npClient.setApiBaseUrl("http://localhost:8080/");
+                npClient.getChromosomes().then(function(response){
+                    self.chromosomes = {};
 
-                this.npClient.getChromosomes().then(function(response){
-                    Polymer.RenderStatus.afterNextRender(self, function() {
-                        self.chromosomes = response;
+                    //console.log("fetch chromosome names...", response);
+
+                    // TODO: uncomment the next line
+                    //self.chromosomeNames = response;
+                    self.chromosomeNames = ["Y"];
+
+                    self.chromosomeNames.forEach(function(chromosome) {
+
+                        Polymer.RenderStatus.afterNextRender(self, function() {
+                            npClient.getChromosomeEntries(chromosome).then(function(response) {
+
+                                Polymer.RenderStatus.afterNextRender(self, function () {
+                                    self.chromosomes[chromosome] = response.summary;
+                                    self._updateDataLoadingStatus();
+                                });
+                            });
+                        });
                     });
                 });
+            },
+            _updateDataLoadingStatus: function() {
+
+                //console.log("update loading status...");
+                this.dataLoaded = this._dataLoaded();
+                //console.log("data loaded ?", this.dataLoaded);
+            },
+            _dataLoaded: function() {
+
+                //console.log("names", this.chromosomeNames, "chromosomes", self.chromosomes);
+                return this.chromosomes && this.chromosomeNames && Object.keys(this.chromosomes).length === this.chromosomeNames.length;
+            },
+            _updateSpinnerStatus: function() {
+
+                if (this._dataLoaded()) {
+                    //console.log("disabling spinner");
+
+                    this.$.spinner.active = false;
+                    this.$.spinner.hidden = true;
+                }
+            },
+            _getChromosomeSummary: function(chromosomeName, summaryProperty) {
+
+                return this.chromosomes[chromosomeName][summaryProperty];
             }
         });
     </script>
