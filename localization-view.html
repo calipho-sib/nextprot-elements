@@ -6,16 +6,16 @@
 <link rel="import" href="keywords-section.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <!--
-`localisation-view`
+`localization-view`
 View listing protein function annotations.
 
 #### Example
 
-          <localisation-view nx-config='{"entry": "P52701"}'></localisation-view>
+          <localization-view nx-config='{"entry": "P52701"}'></localization-view>
 
-@demo demo/localisation-view-demo.html
+@demo demo/localization-view-demo.html
 -->
-<dom-module id="localisation-view">
+<dom-module id="localization-view">
     <template>
         <style include="nextprot-elements-shared-styles">
             :host {
@@ -29,7 +29,7 @@ View listing protein function annotations.
                 <protein-overview nx-config="[[nxConfig]]"></protein-overview>
             </div>
         </div>
-        <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no localisation information available in neXtProt for [[nxConfig.entry]].
+        <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no localization information available in neXtProt for [[nxConfig.entry]].
             Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
         </div>
         <div id="nxPositionalAnnotations" class="row nxSection">
@@ -93,7 +93,7 @@ View listing protein function annotations.
     </template>
     <script>
         Polymer({
-            is: 'localisation-view',
+            is: 'localization-view',
             properties: {
                 nxConfig: {
                     type: Object,

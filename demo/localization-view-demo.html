@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>localisation-view demo</title>
+    <title>localization-view demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
@@ -9,7 +9,7 @@
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
 
-    <link rel="import" href="../localisation-view.html">
+    <link rel="import" href="../localization-view.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
         .vertical-section-container {
@@ -19,11 +19,11 @@
 </head>
 <body>
 <div class="vertical-section-container centered">
-    <h3>Basic localisation-view demo</h3>
+    <h3>Basic localization-view demo</h3>
     <h4><span><label>Gold only</label><input type="checkbox" onchange="toggleGoldOnly()" style="margin-left: 20px;"></span></h4>
     <demo-snippet>
         <template>
-            <localisation-view nx-config='{"env": "dev", "entry": "NX_P04083"}'></localisation-view>
+            <localization-view nx-config='{"entry": "NX_P04083"}'></localization-view>
         </template>
     </demo-snippet>
 </div>
