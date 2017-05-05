@@ -707,6 +707,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 evidenceList.forEach(function(evidence){
                     if (evidence.assignedBy.toLowerCase()=="uniprotkb") evidence.assignedBy="UniProtKB";
                     if (evidence.assignedBy.toLowerCase()=="nextprot") evidence.assignedBy="neXtProt";
+                    if (evidence.assignedBy.toLowerCase()=="cosmic") evidence.assignedBy="COSMIC";
+                    if (evidence.assignedBy.toLowerCase()=="kegg_ptw") evidence.assignedBy="KEGG";
                     if(evidenceSourceList.indexOf(evidence.assignedBy) < 0) evidenceSourceList.push(evidence.assignedBy);
                 });
                 return evidenceSourceList.sort(NXUtils.sortByAlphabet);

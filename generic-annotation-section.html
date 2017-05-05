@@ -685,9 +685,11 @@ Annotation section used in function, medical, and expression views.
                 var self = this;
                 return ev.map(function(e){
                     if (e.goAssignedBy) e.assignedBy = e.goAssignedBy;
-                    e.assignedBy=e.assignedBy.replace('NextProt', 'neXtProt');
-                    e.assignedBy=e.assignedBy.replace('Uniprot', 'UniProt');
-                    e.assignedBy=e.assignedBy.replace('KEGG_PTW', 'KEGG');
+                    if (e.assignedBy==="NextProt") e.assignedBy="neXtProt";
+                    if (e.assignedBy==="Uniprot") e.assignedBy="UniProt";
+                    if (e.assignedBy==="Human protein atlas subcellular localization") e.assignedBy="HPA subcell";
+                    if (e.assignedBy==="Alzheimers_University_of_Toronto") e.assignedBy="Alzheimers UoT";
+                    if (e.assignedBy.endsWith("_PTW")) e.assignedBy = e.assignedBy.replace("_PTW","");
                     e.numberOfExperiments = e.properties ? e.properties.numberOfExperiments : undefined;
                     return {
                         "evidenceCodeName": e.evidenceCodeName,
@@ -722,9 +724,6 @@ Annotation section used in function, medical, and expression views.
             _getUniqueListOfEvidenceSources: function(evidenceList){
                 var evidenceSourceList = [];
                 for (var i in evidenceList){
-                    if (evidenceList[i].assignedBy.endsWith("_PTW")) evidenceList[i].assignedBy = evidenceList[i].assignedBy.replace("_PTW","");
-                    if (evidenceList[i].assignedBy==="Human protein atlas subcellular localization") evidenceList[i].assignedBy="HPA subcell";
-                    if (evidenceList[i].assignedBy==="Alzheimers_University_of_Toronto") evidenceList[i].assignedBy="Alzheimers UoT";
                     if(evidenceSourceList.indexOf(evidenceList[i].assignedBy) < 0) {
                         evidenceSourceList.push(evidenceList[i].assignedBy);
                     }
