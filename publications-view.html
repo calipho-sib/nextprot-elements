@@ -79,9 +79,14 @@ Publications listing used in curated and additional publications pages.
                     type: Array,
                     notify: true
                 },
-                curated: {
-                    type: Boolean,
-                    value: false
+                type: {
+                    type: String,
+                    value: "submissions",
+                    observer: "_checkType"
+                },
+                types: {
+                    type: Array,
+                    value: ["curated", "additional", "submissions", "patents", "online-resources"]
                 },
                 count: {
                     type: Number,
@@ -103,11 +108,16 @@ Publications listing used in curated and additional publications pages.
                     .then(function (data) {
                         var publications = [];
                         data.publications.forEach(function(publication){
-                            if (self.curated && publication.isCurated) {
-                                if (publication.dbXrefs[0] && ["PubMed", "DOI"].indexOf(publication.dbXrefs[0].databaseName)!==-1) publications.push(publication);
-                            } else if (!self.curated && !publication.isCurated) {
+                            if(self.type==="curated" && publication.publicationType==="ARTICLE" && publication.isCurated)
                                 publications.push(publication);
-                            }
+                            else if(self.type==="additional" && publication.isComputed)
+                                publications.push(publication);
+                            else if(self.type==="patents" && publication.publicationType==="PATENT")
+                                publications.push(publication);
+                            else if(self.type==="submissions" && publication.publicationType==="SUBMISSION")
+                                publications.push(publication);
+                            else if(self.type==="online-resources" && publication.publicationType==="ONLINE_PUBLICATION")
+                                publications.push(publication);
                         });
                         self.items = publications;
                         self.count = publications.length;
@@ -119,6 +129,14 @@ Publications listing used in curated and additional publications pages.
                         self.$.spinner.active = false;
                         self.count = 0;
                     });
+            },
+            _checkType: function(newValue, oldValue){
+                this.async(function(){
+                    if (this.types.indexOf(newValue) === -1) {
+                        console.warn(this.type+" is not recognized as a valid publication type. "+oldValue+" publications will be displayed instead.");
+                        this.type = oldValue;
+                    }
+                });
             },
             _changePageSize: function(evt){
                 this.pageSize = new Number(evt.srcElement[evt.srcElement.selectedIndex].value);
