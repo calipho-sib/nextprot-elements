@@ -12,21 +12,22 @@ Element to allow pagination on a page when given an array of JSON object.
 
 -->
 <dom-module id="paginator-element">
-    <style>
-        publication-item {
-            padding: 10px 0;
-            border-bottom: 1px solid #E7EAEC;
-        }
-        #navigation {
-            width: 250px;
-            margin: 20px auto;
-        }
-        .container {
-            background-color: white;
-            margin: 0px 100px;
-        }
-    </style>
     <template>
+        <style is="custom-style">
+            :root {
+                --publication-item-border-bottom: 1px solid #E7EAEC;
+                --publication-item-padding-bottom: 10px;
+                --publication-item-margin-bottom: 10px;
+            }
+            #navigation {
+                width: 250px;
+                margin: 20px auto;
+            }
+            .container {
+                background-color: white;
+                margin: 0px 100px;
+            }
+        </style>
         <div id="container"></div>
             <div id="navigation">
                 <button on-click="previousPage">Previous</button>

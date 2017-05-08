@@ -27,6 +27,9 @@ Publication item demo
     <style include="nextprot-elements-shared-styles">
       :host {
         display: block;
+        border-bottom: var(--publication-item-border-bottom);
+        margin-bottom: var(--publication-item-padding-bottom);
+        padding-bottom: var(--publication-item-margin-bottom);
       }
       iron-collapse {
         margin-top: 5px;
@@ -61,43 +64,43 @@ Publication item demo
         text-align: justify;
       }
     </style>
-      <template is="dom-if" if="{{data}}">
-        <template is="dom-if" if="{{data.title}}">
-          <p><a href="/publication/{{data.publicationId}}"  target='_parent'>{{data.title}}</a></p>
+      <template is="dom-if" if="[[data]]">
+        <template is="dom-if" if="[[data.title]]">
+          <p><a href="/publication/[[data.publicationId]]"  target='_parent'>[[data.title]]</a></p>
         </template>
-        <template is="dom-if" if="{{!summary}}">
+        <template is="dom-if" if="[[!summary]]">
           <p><span class="hyperlink-blue">
-            <template is="dom-repeat" items="{{data.authors}}" as="author">
-              <a href="/publications/search?query=author:{{author.lastName}} {{author.foreName}}">
-                {{author.lastName}} {{_formatInitals(author.initials)}}</a><template is="dom-if" if="{{!_checkIfLast(data.authors,index)}}">,</template>
+            <template is="dom-repeat" items="[[data.authors]]" as="author">
+              <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">
+                [[author.lastName]] [[_formatInitals(author.initials)]]</a><template is="dom-if" if="[[!_checkIfLast(data.authors,index)]]">,</template>
             </template>
           </span></p>
-          <p>{{data.journal}}
-            {{data.journalResourceLocator.abbrev}}<template is="dom-if" if="{{data.volume}}">, <strong>{{data.volume}}</strong></template><template is="dom-if" if="{{data.firstPage}}">, {{data.firstPage}}</template>
-            <template is="dom-if" if="{{data.lastPage}}">- {{data.lastPage}}</template> ({{data.publicationYear}})
-            <template is="dom-repeat" items="{{data.dbXrefs}}" as="xref">[{{_formatXrefLabel(xref.databaseName)}}:
-              <a href="{{xref.resolvedUrl}}" class="ext-link" target='_blank'>{{xref.accession}}</a>]
+          <p>[[data.journal]]
+            [[data.journalResourceLocator.abbrev]]<template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
+            <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template>
+            <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
+              <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
             </template>
           </p>
         </template>
-        <template is="dom-if" if="{{summary}}">
-          {{data.authors.0.lastName}} {{data.authors.0.initials}}. <template is="dom-if" if="{{data.authors.1}}">
-          <i>et al.</i></template><template is="dom-if" if="{{data.journal}}">, {{data.journal}} {{data.journalResourceLocator.medAbbrev}}</template><template is="dom-if" if="{{data.volume}}">, <strong>{{data.volume}}</strong></template><template is="dom-if" if="{{data.firstPage}}">, {{data.firstPage}}</template>
-          <template is="dom-if" if="{{data.lastPage}}">- {{data.lastPage}}</template> ({{data.publicationYear}})
+        <template is="dom-if" if="[[summary]]">
+          <template is="dom-if" if="[[data.authors.0]]">[[data.authors.0.lastName]] [[data.authors.0.initials]]. </template><template is="dom-if" if="[[data.authors.1]]">
+          <i>et al.</i></template><template is="dom-if" if="[[data.journal]]">, [[data.journal]] [[data.journalResourceLocator.medAbbrev]]</template><template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
+          <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template>
         </template>
       </template>
-      <template is="dom-if" if="{{data.abstractText}}">
+      <template is="dom-if" if="[[data.abstractText]]">
         <span id="collapseButton" class="colored-label abstract-button" on-tap="_toggleAbstract">
           <span class="pubDisplayStatus"> </span>abstract
         </span>
       </template>
-      <iron-collapse id="collapseAbstract" opened="{{showAbstract}}">
-        <template is="dom-if" if="{{data.abstractText}}">
+      <iron-collapse id="collapseAbstract" opened="[[showAbstract]]">
+        <template is="dom-if" if="[[data.abstractText]]">
           <div id="abstractHeader" hidden>Abstract</div>
         </template>
-        {{data.abstractText}}
+        [[data.abstractText]]
       </iron-collapse>
-      <template is="dom-if" if="{{!data.abstractText}}">
+      <template is="dom-if" if="[[!data.abstractText]]">
         No Abstract available
       </template>
     </template>
@@ -162,7 +165,7 @@ Publication item demo
         return name.replace("DOI", "Full text");
       },
       _formatInitals: function(name){
-        return (name.split('').join('.') + '.').replace("-.", "");
+        return (name.replace(".", "").split('').join('.') + '.').replace("-.", "");
       },
       _checkIfLast: function(array,index){
         if(array.length-1===index) return true;

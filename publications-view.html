@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="protein-overview.html">
 <link rel="import" href="publication-item.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
@@ -12,18 +13,29 @@ Publications listing used in curated and additional publications pages.
 -->
 <dom-module id="publications-view">
     <template>
-        <style include="nextprot-elements-shared-styles">
+        <style is="custom-style" include="nextprot-elements-shared-styles">
             :host {
                 display: block;
+                --paper-toggle-button-checked-button-color: #428bca;
+                --paper-toggle-button-checked-bar-color: #428bca;
             }
-            #container {
-                padding: 10px 0;
-                border: 1px solid red;
+            .control-header {
+                margin: 10px 0;
+                padding-bottom: 25px;
+                display: flex;
+                border-bottom: 1px solid #E7EAEC;
+            }
+            .mode-toggle {
+                display: inline-flex;
+                margin-top: -3px;
+            }
+            .toggle-label {
+                padding: 5px 10px 5px 3px;
             }
         </style>
         <div class="row">
             <div id="nxOverview" class="col-md-12">
-                <protein-overview nx-config="{{nxConfig}}"></protein-overview>
+                <protein-overview nx-config="[[nxConfig]]"></protein-overview>
             </div>
         </div>
         <div class="row">
@@ -32,10 +44,26 @@ Publications listing used in curated and additional publications pages.
                     <h4 id="publications-title" class="category-title">
                         <template is="dom-if" if="[[curated]]">Curated</template>
                         <template is="dom-if" if="[[!curated]]">Additional</template>
-                        publications</h4>
+                        publications
+                    </h4>
                     <paper-spinner-lite id="spinner" active></paper-spinner-lite>
                 </div>
-                <pagination-table items="{{items}}" layout="publication-item" page-size="20" custom-style="border: 1px solid red;"></pagination-table>
+                <div class="control-header">
+                    <div class="no-padding col-lg-5"><template is="dom-if" if="[[items]]">Publications [[from]] to [[to]] of [[items.length]]</template></div>
+                    <div class="col-lg-2">
+                        show&nbsp;
+                        <select on-change="_changePageSize">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="mode-toggle"><span class="toggle-label">summary</span><paper-toggle-button checked="{{!summary}}"></paper-toggle-button><span class="toggle-label">details</span></div>
+                    </div>
+                </div>
+                <paginator-element items="[[items]]" layout="publication-item" page-size="[[pageSize]]" bind-attribute="summary" bind-value="[[summary]]" from="{{from}}" to="{{to}}"></paginator-element>
             </div>
         </div>
     </template>
@@ -58,6 +86,14 @@ Publications listing used in curated and additional publications pages.
                 count: {
                     type: Number,
                     notify: true
+                },
+                pageSize: {
+                    type: Number,
+                    value: 10
+                },
+                summary: {
+                    type: Boolean,
+                    value: true
                 }
             },
             attached: function (){
@@ -83,6 +119,9 @@ Publications listing used in curated and additional publications pages.
                         self.$.spinner.active = false;
                         self.count = 0;
                     });
+            },
+            _changePageSize: function(evt){
+                this.pageSize = new Number(evt.srcElement[evt.srcElement.selectedIndex].value);
             }
         });
     </script>
