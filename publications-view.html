@@ -81,7 +81,7 @@ Publications listing used in curated and additional publications pages.
                 },
                 curated: {
                     type: Boolean,
-                    value: true
+                    value: false
                 },
                 count: {
                     type: Number,
@@ -104,7 +104,7 @@ Publications listing used in curated and additional publications pages.
                         var publications = [];
                         data.publications.forEach(function(publication){
                             if (self.curated && publication.isCurated) {
-                                publications.push(publication);
+                                if (publication.dbXrefs[0] && ["PubMed", "DOI"].indexOf(publication.dbXrefs[0].databaseName)!==-1) publications.push(publication);
                             } else if (!self.curated && !publication.isCurated) {
                                 publications.push(publication);
                             }
