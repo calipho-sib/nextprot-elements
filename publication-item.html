@@ -65,8 +65,19 @@ Publication item demo
       }
     </style>
       <template is="dom-if" if="[[data]]">
+        <template is="dom-if" if="[[_isOnlineResource()]]">
+          <b>[[data.publicationLocatorName]]</b>
+        </template>
         <template is="dom-if" if="[[data.title]]">
-          <p><a href="/publication/[[data.publicationId]]"  target='_parent'>[[data.title]]</a></p>
+          <p><a href="/publication/[[data.publicationId]]"  target='_parent'>[[data.title]]</a>
+          <template is="dom-if" if="[[!summary]]">
+            <template is="dom-if" if="[[_isOnlineResource()]]">
+              <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
+                <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+              </template>
+            </template>
+          </template>
+          </p>
         </template>
         <template is="dom-if" if="[[!summary]]">
           <p><span class="hyperlink-blue">
@@ -78,8 +89,10 @@ Publication item demo
           <p>[[data.journal]]
             [[data.journalResourceLocator.abbrev]]<template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
             <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template>
-            <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
-              <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+            <template is="dom-if" if="[[!_isOnlineResource()]]">
+              <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
+                <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+              </template>
             </template>
           </p>
         </template>
@@ -94,15 +107,15 @@ Publication item demo
           <span class="pubDisplayStatus"> </span>abstract
         </span>
       </template>
-      <iron-collapse id="collapseAbstract" opened="[[showAbstract]]">
-        <template is="dom-if" if="[[data.abstractText]]">
-          <div id="abstractHeader" hidden>Abstract</div>
+        <iron-collapse id="collapseAbstract" opened="[[showAbstract]]">
+          <template is="dom-if" if="[[data.abstractText]]">
+            <div id="abstractHeader" hidden>Abstract</div>
+          </template>
+          [[data.abstractText]]
+        </iron-collapse>
+        <template is="dom-if" if="[[!data.abstractText]]">
+          <template is="dom-if" if="[[!_isOnlineResource()]]">No Abstract available</template>
         </template>
-        [[data.abstractText]]
-      </iron-collapse>
-      <template is="dom-if" if="[[!data.abstractText]]">
-        No Abstract available
-      </template>
     </template>
   </template>
   <script>
@@ -161,8 +174,16 @@ Publication item demo
           this.$$("#collapseButton").setAttribute("pushed", null) :
           this.$$("#collapseButton").removeAttribute("pushed");
       },
+      _isArticle: function(){
+        if(this.data) return this.data.publicationType==="ARTICLE";
+        return false;
+      },
+      _isOnlineResource: function(){
+        if(this.data) return this.data.publicationType==="ONLINE_PUBLICATION";
+        return false;
+      },
       _formatXrefLabel: function(name){
-        return name.replace("DOI", "Full text");
+        return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
       },
       _formatInitals: function(name){
         return (name.replace(".", "").split('').join('.') + '.').replace("-.", "");
