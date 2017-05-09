@@ -105,7 +105,7 @@ View presenting neXtProt entries plus gene location found on chromosome.
                     this.npClient.setApiBaseUrl("http://localhost:8080/");
                 }
 
-                self.host = this.npClient.getApiBaseUrl();
+                self.host = this.npClient.getNeXtProtUrl();
 
                 this.npClient.getChromosomeEntries(this.chromosome).then(function(response){
                     Polymer.RenderStatus.afterNextRender(self, function() {
