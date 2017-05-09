@@ -277,8 +277,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     </a></td>
                                     <td class="text-align-right">[[feature.length]]</td>
                                     <td><span inner-h-t-m-l="[[feature.link]]"></span>
-                                        <template is="dom-if" if="[[feature.crossRef]]">
-                                            ; [[feature.crossRef.dbName]]: <a class="ext-link" href="[[feature.crossRef.url]]" target="_blank">[[feature.crossRef.name]]</a>
+                                        <template is="dom-repeat" items="[[feature.crossRef]]" as="crossRef">
+                                            ; [[crossRef.value.dbName]]: <a class="ext-link" href="[[crossRef.value.url]]" target="_blank">[[crossRef.value.name]]</a>
                                         </template>
                                         <template is="dom-if" if="[[!feature.proteotypicity]]">
                                             <span class="nonProteotypic">found in other entries</span>
@@ -572,14 +572,16 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         for (var i in featureList){
                             var feature = featureList[i];
                             if(feature.variant){
+                                var crossRef = {};
                                 for (var j in feature.source){
                                     if(feature.source[j].externalDb) {
                                         if(feature.source[j].crossRef){
-                                            feature.crossRef = feature.source[j].crossRef;
-                                            if (feature.crossRef.dbName="Cosmic") feature.crossRef.dbName = "COSMIC";
+                                            if (feature.source[j].crossRef.dbName==="Cosmic") feature.source[j].crossRef.dbName = "COSMIC";
+                                            crossRef[feature.source[j].crossRef.name] = feature.source[j].crossRef;
                                         }
                                     }
                                 }
+                                feature.crossRef = this._toArray(crossRef).sort(this._sortCrossRef);
                             }
                             if(this._isDisulfideBondFeature(feature.category)){
                                 featureList[i].range = feature.start+"&#x256d;&#x256e;"+feature.end;
@@ -723,6 +725,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     });
                 }
                 return null;
+            },
+            _sortCrossRef: function(a,b){
+                return b.value.dbName==="dbSNP"?1:-1;
             },
             _ifActiveFiltering: function(){
                 return this._toArray(this.activeFiltering).length;
