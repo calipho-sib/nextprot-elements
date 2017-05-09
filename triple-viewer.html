@@ -4,8 +4,10 @@
 <link rel="import" href="quality-label.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
+<!--
 <script src="../jquery/dist/jquery.js"></script>
 <script src="../bootstrap/dist/js/bootstrap.js"></script>
+-->
 <!--
 `triple-viewer`
 Complex element joining nextprot feature viewer, feature table and sequence viewer
@@ -502,8 +504,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             },
             _renderFeatureViewer: function(){
                 var self=this;
-                console.log(this.sequences);
-                var seqs = $.map(this.sequences.isoforms, function(s){return s})
+//                console.log(this.sequences);
+//                var seqs = $.map(this.sequences.isoforms, function(s){return s})
                 seqs.forEach(function (o) {
                     if (o.uniqueName === self.isoName) {
                         self.currentSeq = o.sequence;
@@ -520,6 +522,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             tooltipColor:"black"
                         });
                         $(".zoom-label").text("WHAAAAAAAT");
+                        $(".header-help").css("text-decoration","none");
+                        $(".header-help:hover").css("text-decoration","none");
                             
                         if (!self.hideSequenceViewer) self._renderSequenceViewer(o);
                     }
