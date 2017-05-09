@@ -86,10 +86,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             .filter-box input{
                 margin-right:5px;
             }
-            .header-help{
-                text-decoration: none;
-                cursor:pointer;
-            }
             span.label-info {
                 background: #5bc0de;
             }
@@ -210,9 +206,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             .center {
                 position: absolute;
                 margin: 45px 40%;
-            }
-            a.header-help {
-                text-decoration: none;
             }
             paper-spinner-lite {
                 --paper-spinner-stroke-width: 3px;
@@ -516,6 +509,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             positionWithoutLetter:true,
                             tooltipColor:"black"
                         });
+                        document.getElementsByClassName("header-help").style.textDecoration = "none";
+                        document.getElementsByClassName("header-help").style.cursor = "pointer";
+                            
                         if (!self.hideSequenceViewer) self._renderSequenceViewer(o);
                     }
                 });
