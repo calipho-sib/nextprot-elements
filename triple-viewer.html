@@ -5,6 +5,10 @@
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
 <!--
+<script src="../jquery/dist/jquery.js"></script>
+<script src="../bootstrap/dist/js/bootstrap.js"></script>
+-->
+<!--
 `triple-viewer`
 Complex element joining nextprot feature viewer, feature table and sequence viewer
 @demo demo/triple-viewer-demo.html
@@ -85,6 +89,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             }
             .filter-box input{
                 margin-right:5px;
+            }
+            .header-help:hover{
+                text-decoration: none;
+                cursor:pointer;
             }
             span.label-info {
                 background: #5bc0de;
@@ -206,9 +214,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             .center {
                 position: absolute;
                 margin: 45px 40%;
-            }
-            a.header-help {
-                text-decoration: none;
             }
             paper-spinner-lite {
                 --paper-spinner-stroke-width: 3px;
@@ -497,6 +502,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             },
             _renderFeatureViewer: function(){
                 var self=this;
+//                console.log(this.sequences);
+//                var seqs = $.map(this.sequences.isoforms, function(s){return s})
+//                seqs.forEach(function (o) {
                 this.sequences.forEach(function (o) {
                     if (o.uniqueName === self.isoName) {
                         self.currentSeq = o.sequence;
@@ -512,6 +520,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             positionWithoutLetter:true,
                             tooltipColor:"black"
                         });
+                        $(".header-help").hover(function(){
+                            $(this).css("text-decoration","none");
+                            $(this).css("cursor","pointer");
+                        })
+                            
                         if (!self.hideSequenceViewer) self._renderSequenceViewer(o);
                     }
                 });
