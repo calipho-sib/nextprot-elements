@@ -81,7 +81,7 @@ View listing medical annotations.
                 </xrefs-section>
             </div>
         </div>
-        <div class='alert alert-warning noData'>
+        <div id="disclaimer" class='alert alert-warning noData'>
             Any medical or genetic information present in this entry is provided for research, educational and informational purposes only. It is not in any way intended to be used as a substitute for professional medical advice, diagnosis, treatment or care.
         </div>
     </template>
@@ -117,8 +117,8 @@ View listing medical annotations.
                 else this.$.nxAnnotations.hidden=false;
                 if(!this.positionalAnnotationsCount) this.$.nxPositionalAnnotations.hidden=true;
                 else this.$.nxPositionalAnnotations.hidden=false;
-                if(this.annotationsCount===0 && this.positionalAnnotationsCount===0) this.$.noDataWarning.hidden=false;
-                else this.$.noDataWarning.hidden=true;
+                if(this.annotationsCount===0 && this.positionalAnnotationsCount===0) { this.$.noDataWarning.hidden=false; this.$.disclaimer.hidden=true; }
+                else { this.$.noDataWarning.hidden=true; this.$.disclaimer.hidden=false; }
             },
             _checkKeywords: function(){
                 this.keywordsCount===0 ? this.$.nxKeywords.hidden=true : this.$.nxKeywords.hidden=false;
