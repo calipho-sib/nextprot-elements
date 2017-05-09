@@ -506,7 +506,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 var self=this;
 //                console.log(this.sequences);
 //                var seqs = $.map(this.sequences.isoforms, function(s){return s})
-                seqs.forEach(function (o) {
+//                seqs.forEach(function (o) {
+                this.sequences.forEach(function (o) {
                     if (o.uniqueName === self.isoName) {
                         self.currentSeq = o.sequence;
                         self.ft = new FeatureViewer(self.currentSeq, "#featureViewer", {
