@@ -151,6 +151,19 @@ Exteranl links section present in function, medical, expression, interactions, s
               })
             }
           }
+          else if (typeList[elem].databaseName === "Allergome"){
+            if(typeList[elem].properties.length>0){
+              newTypeList.push({
+                name: typeList[elem].databaseName,
+                xrefs : [{
+                  accession: typeList[elem].accession,
+                  url : typeList[elem].resolvedUrl,
+                  prefix: "",
+                  suffix : "["+typeList[elem].properties[0].value+"]"
+                }]
+              })
+            }
+          }
           else if (typeList[elem].databaseName === "Ensembl"){
             if (typeList[elem].accession.startsWith("ENST")){
               if (typeList[elem].properties) {
