@@ -735,9 +735,9 @@ Annotation section used in function, medical, and expression views.
                 uniprotDiseaseRegExMatch = /.*[MIM:[0-9]*]/g.exec(annotation.description);
                 if(uniprotDiseaseRegExMatch) {
                     uniprotDiseaseString = uniprotDiseaseRegExMatch[0];
-                    cvTermShortRegExMatch = /\([A-Za-z0-9]*\)/g.exec(uniprotDiseaseString);
+                    cvTermShortRegExMatch = /\([A-Za-z0-9 -+/()]*\)/g.exec(uniprotDiseaseString);
                     if (cvTermShortRegExMatch) {
-                        cvTermShort = cvTermShortRegExMatch[0].slice(1,uniprotDiseaseRegExMatch[0].length-1);
+                        cvTermShort = cvTermShortRegExMatch[0].slice(1,cvTermShortRegExMatch[0].length-1);
                         cvTermLink = "<a href=\"/term/"+annotation.cvTermAccessionCode+"\">"+cvTermShort+"</a>";
                     }
                     mimAccessionRegExMatch = / [MIM:[0-9]*]/g.exec(uniprotDiseaseString);
@@ -745,7 +745,7 @@ Annotation section used in function, medical, and expression views.
                         mimAccession = mimAccessionRegExMatch[0].slice(6,mimAccessionRegExMatch[0].length-1);
                         mimLink = "<a href=\"http://www.omim.org/entry/"+mimAccession+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">MIM:"+mimAccession+"</a>";
                     }
-                    if(cvTermLink && mimLink) annotation.description = annotation.description.replace(cvTermShort, cvTermLink).replace("MIM:"+mimAccession, mimLink);
+                    if(cvTermLink && mimLink) annotation.description = annotation.description.replace(new RegExp(cvTermShort, 'g'), cvTermLink).replace("MIM:"+mimAccession, mimLink);
                 }
                 return annotation.description;
             },
