@@ -436,6 +436,7 @@ Annotation section used in function, medical, and expression views.
                                     accession: a.properties[j].accession});
                             }
                         }
+                        a.additionalInfo = a.additionalInfo.sort(this._sortAdditionalInfo);
                     }
                     if(a.apicategory==="SUBCELLULAR_LOCATION_NOTE") {
                         a.categoryLabel="";
@@ -649,6 +650,10 @@ Annotation section used in function, medical, and expression views.
                 if (a.evidenceSources.indexOf("UniProt")!==-1 && b.evidenceSources.indexOf("UniProt")===-1) return -1;
                 if (a.evidenceSources.indexOf("UniProt")!==-1 && b.evidenceSources.indexOf("UniProt")!==-1) return this._sortByRank(a,b);
                 else return this._sortAlphabetically(a,b);
+            },
+            _sortAdditionalInfo: function(a,b){
+                console.log(a);
+                return (a.name!=="TOPOLOGY" && b.name==="TOPOLOGY")? 1 : -1;
             },
             _filter: function(item){
                 return (this._filterGold(item) && this._filterIsoform(item));
