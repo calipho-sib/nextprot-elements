@@ -593,10 +593,7 @@ Annotation section used in function, medical, and expression views.
                 else if(a.category==="SUBCELLULAR_LOCATION" && b.category==="SUBCELLULAR_LOCATION") {
                     if(a.isoformSpecific && !b.isoformSpecific) return 1;
                     else if(!a.isoformSpecific && b.isoformSpecific) return -1;
-                    else if(a.isoformSpecific && b.isoformSpecific) {
-                        if (a.isoformSpecific!==b.isoformSpecific) return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
-                        else return a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1;
-                    }
+                    else if(a.isoformSpecific && b.isoformSpecific) return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
                     else if(a.evidenceSources.indexOf("HPA subcell")!==-1 && b.evidenceSources.indexOf("HPA subcell")===-1) return -1;
                     else if(a.evidenceSources.indexOf("HPA subcell")===-1 && b.evidenceSources.indexOf("HPA subcell")!==-1) return 1;
                     else if(a.evidenceSources.indexOf("HPA subcell")!==-1 && b.evidenceSources.indexOf("HPA subcell")!==-1) {
