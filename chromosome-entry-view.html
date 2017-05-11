@@ -90,7 +90,10 @@ View presenting neXtProt entries plus gene location found on chromosome.
                     observer: '_updateSpinnerStatus'
                 }
             },
-            ready: function () {
+            attached: function () {
+                this._fetchChromosomeReport()
+            },
+            attributeChanged: function(name, type) {
                 this._fetchChromosomeReport()
             },
             _fetchChromosomeReport: function() {
