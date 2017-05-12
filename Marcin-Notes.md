@@ -103,9 +103,11 @@ angular.element(document.getElementById("main")).scope().$apply(angular.element(
 - section (involves some logic and include API calls)
 - item (particular component of a view that repeats)
 
-### Overall experience?
+### Overall experience
+Not very much mature yet, but nice way to organise the code. (let's see about its future)
+Works on Chrome, Firefox (Polyfills), Safari (Polyfills), Edge (Polyfills)
 
-
-### Troubleshoot Forums ??
-
-https://github.com/calipho-sib/nextprot-elements/blob/master/publications-view.html#L17 
+### Resources / Troubleshooting Forums
+- Community is quite active
+- https://polymer.slack.com 
+- https://www.webcomponents.org/
