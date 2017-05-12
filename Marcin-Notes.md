@@ -93,9 +93,10 @@ REFINE ---------------
 As a convention we decided that when we need to change the state and URL (example Isoform / Gold Only tag) we change first the URL and then the element will be rendered with the correct new nxConfig. (calling the API again) 
 The way URL is correctly changed is a bit ugly (but allows for not full refresh):
 TODO: This method should be generalized
-```
-angular.element(document.getElementById("main")).scope().$apply(angular.element(document.getElem```
 
+```
+angular.element(document.getElementById("main")).scope().$apply(angular.element(document.getElementById("main")).injector().get('$location').search('isoform', this.isoName));
+```
 ### Naming convention of elements
 
 *-view (all page ex: medical-view, function-view). There is only ONE SINGLE view per page.
