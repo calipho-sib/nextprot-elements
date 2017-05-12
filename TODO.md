@@ -55,6 +55,47 @@ User variables are useful if you want just to apply style 2 or 3 elements.
 border-bottom: var(--publication-item-border-bottom);
 ```
 
+## Web Animation Standards
+
+```html
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+...
+ behaviors: [Polymer.NeonAnimationRunnerBehavior]
+... 
+ "hideAbstract": 
+ {
+    name: "fade-out-animation",
+    node: this.$.collapseAbstract,
+    timing: {
+          duration: 200
+    }
+```
+
+### 2 way binding vs 1 way 
+Use 1 way binding as a preference (squared brackets).
+Use 2 ways binding only in case you need to notify other elements about some changes (curly brackets) 
+```
+  <xrefs-section categories='["GuidetoPHARMACOLOGY", "SwissLipids", "BioCyc", "BRENDA", "SABIO-RK", "CAZy", "ESTHER", "MEROPS", "MoonProt", "PeroxiBase", "REBASE", "SFLD", "GeneWiki", "GenomeRNAi", "PRO"]'
+                       nx-config="[[nxConfig]]" count="{{xrefsCount}}">
+        </xrefs-section>
+```
+
+When we see in the code observer, it could mean that this element is listening to this variablt and this variable is 2 way binded.
+```
+xrefsCount: {
+      type: Number,
+      observer: "_checkXrefs"
+}
+REFINE ---------------
+```
+
+### State and URL change
+As a convention we decided that when we need to change the state and URL (example Isoform / Gold Only tag) we change first the URL and then the element will be rendered with the correct new nxConfig. (calling the API again) 
+The way URL is correctly changed is a bit ugly (but allows for not full refresh):
+TODO: This method should be generalized
+```
+angular.element(document.getElementById("main")).scope().$apply(angular.element(document.getElem```
+
 ### Overall experience?
 
 ### Troubleshoot Forums ??
