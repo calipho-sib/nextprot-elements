@@ -110,7 +110,7 @@ Blast item demo
                     .attr("width", "95%")
                     .attr("height", "12")
                     .style("margin-top", "4px");;
-                this.data.hsps.sort(this._sort);
+                this.data.hsps.sort(this._sortQuery);
                 var lastPosition = "0%";
                 for (var i in this.data.hsps) {
                     var queryFrom = Math.round((((this.data.hsps[i].query_from-1)/this.data.queryLength)*100)).toString()+"%";
@@ -151,7 +151,7 @@ Blast item demo
                         .attr("width", "95%")
                         .attr("height", "6")
                         .style("margin-top", "20px");
-                this.data.hsps.sort(this._sort);
+                this.data.hsps.sort(this._sortHit);
                 var lastPosition = "0%";
                 for (var i in this.data.hsps) {
                     var hitFrom = Math.round(((this.data.hsps[i].hit_from/this.data.len)*100)).toString()+"%";
@@ -185,8 +185,11 @@ Blast item demo
                         .attr("height", "12")
                         .attr('fill', "#f0f0f0");
             },
-            _sort: function(a,b){
+            _sortQuery: function(a,b){
                 return a.query_from> b.query_from? 1:-1;
+            },
+            _sortHit: function(a,b){
+                return a.hit_from> b.hit_from? 1:-1;
             },
             _formatAlignment: function(hit){
                 var index=0;
