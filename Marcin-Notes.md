@@ -96,7 +96,14 @@ TODO: This method should be generalized
 ```
 angular.element(document.getElementById("main")).scope().$apply(angular.element(document.getElem```
 
+### Naming convention of elements
+
+*-view (all page ex: medical-view, function-view). There is only ONE SINGLE view per page.
+*-section (involves some logic and include API calls)
+*-item (particular component of a view that repeats)
+
 ### Overall experience?
+
 
 ### Troubleshoot Forums ??
 
