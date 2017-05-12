@@ -94,14 +94,14 @@ As a convention we decided that when we need to change the state and URL (exampl
 The way URL is correctly changed is a bit ugly (but allows for not full refresh):
 TODO: This method should be generalized
 
-```
+```html
 angular.element(document.getElementById("main")).scope().$apply(angular.element(document.getElementById("main")).injector().get('$location').search('isoform', this.isoName));
 ```
-### Naming convention of elements
 
-*-view (all page ex: medical-view, function-view). There is only ONE SINGLE view per page.
-*-section (involves some logic and include API calls)
-*-item (particular component of a view that repeats)
+### Naming convention of elements
+- view (all page ex: medical-view, function-view). There is only ONE SINGLE view per page.
+- section (involves some logic and include API calls)
+- item (particular component of a view that repeats)
 
 ### Overall experience?
 
