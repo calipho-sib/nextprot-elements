@@ -28,49 +28,49 @@ View presenting neXtProt entries plus gene location found on chromosome.
         </style>
 
         <!-- local DOM for this element -->
-        <div id="chromosomeExportTable">
+        <div id="chromosomeEntryViewContainer">
 
             <paper-spinner-lite id="spinner" active></paper-spinner-lite>
 
-            <template is="dom-if" if="[[results]]">
-            <table>
-                <tr>
-                    <th>Gene name</th>
-                    <th>neXtProt</th>
-                    <th>Chromosomal position</th>
-                    <th>Coding strand</th>
-                    <th>Start position</th>
-                    <th>Stop position</th>
-                    <th>Protein existence</th>
-                    <th>Proteomics</th>
-                    <th>Antibody</th>
-                    <th>3D</th>
-                    <th>Disease</th>
-                    <th>Isoforms</th>
-                    <th>Variants</th>
-                    <th>PTMs</th>
-                    <th>Description</th>
-                </tr>
-                <template is="dom-repeat" items="[[results.entryReports]]" >
-                <tr>
-                    <td>[[item.geneName]]</td>
-                    <td><a href=[[host]]/entry/[[item.entryAccession]]>[[item.entryAccession]]</a></td>
-                    <td>[[item.chromosomalLocation]]</td>
-                    <td>[[item.codingStrand]]</td>
-                    <td>[[item.geneStartPosition]]</td>
-                    <td>[[item.geneEndPosition]]</td>
-                    <td>[[item.proteinExistence]]</td>
-                    <td>[[item.proteomics]]</td>
-                    <td>[[item.antibody]]</td>
-                    <td>[[item.3D]]</td>
-                    <td>[[item.disease]]</td>
-                    <td>[[item.isoforms]]</td>
-                    <td>[[item.variants]]</td>
-                    <td>[[item.ptms]]</td>
-                    <td>[[item.entryDescription]]</td>
-                </tr>
-                </template>
-            </table>
+            <template is="dom-if" if="[[dataLoaded]]">
+                <table>
+                    <tr>
+                        <th>Gene name</th>
+                        <th>neXtProt</th>
+                        <th>Chromosomal position</th>
+                        <th>Coding strand</th>
+                        <th>Start position</th>
+                        <th>Stop position</th>
+                        <th>Protein existence</th>
+                        <th>Proteomics</th>
+                        <th>Antibody</th>
+                        <th>3D</th>
+                        <th>Disease</th>
+                        <th>Isoforms</th>
+                        <th>Variants</th>
+                        <th>PTMs</th>
+                        <th>Description</th>
+                    </tr>
+                    <template is="dom-repeat" items="[[results.entryReports]]" as="entryReport" >
+                    <tr>
+                        <td>[[entryReport.geneName]]</td>
+                        <td><a href=[[host]]/entry/[[item.entryAccession]]>[[entryReport.entryAccession]]</a></td>
+                        <td>[[entryReport.chromosomalLocation]]</td>
+                        <td>[[entryReport.codingStrand]]</td>
+                        <td>[[entryReport.geneStartPosition]]</td>
+                        <td>[[entryReport.geneEndPosition]]</td>
+                        <td>[[entryReport.proteinExistence]]</td>
+                        <td>[[entryReport.proteomics]]</td>
+                        <td>[[entryReport.antibody]]</td>
+                        <td>[[entryReport.3D]]</td>
+                        <td>[[entryReport.disease]]</td>
+                        <td>[[entryReport.isoforms]]</td>
+                        <td>[[entryReport.variants]]</td>
+                        <td>[[entryReport.ptms]]</td>
+                        <td>[[entryReport.entryDescription]]</td>
+                    </tr>
+                    </template>
+                </table>
             </template>
         </div>
     </template>
@@ -90,36 +90,37 @@ View presenting neXtProt entries plus gene location found on chromosome.
                     observer: '_updateSpinnerStatus'
                 }
             },
-            attached: function () {
+            observers: [
+                '_fetchChromosomeReport()'
+            ],
+            ready: function() {
+                this._initApiClient();
+            },
+            attached: function() {
                 this._fetchChromosomeReport()
             },
-            attributeChanged: function(name, type) {
-                this._fetchChromosomeReport()
+            _initApiClient: function() {
+                this._npClient = new Nextprot.Client("neXtProt chromosome " + this.chromosome + " entries", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+
+                this.host = this._npClient.getNeXtProtUrl();
             },
             _fetchChromosomeReport: function() {
                 var self = this;
 
-                this.npClient = new Nextprot.Client("neXtProt chromosome " + this.chromosome + " entries", "Calipho Group");
-
-                if (this.nxConfig.env) {
-                    this.npClient.updateEnvironment(this.nxConfig.env);
-                }
-                else {
-                    this.npClient.setApiBaseUrl("http://localhost:8080/");
-                }
-
-                self.host = this.npClient.getNeXtProtUrl();
-
-                this.npClient.getChromosomeEntries(this.chromosome).then(function(response){
-                    Polymer.RenderStatus.afterNextRender(self, function() {
-                        self.results = response;
-                        self._updateDataLoadingStatus();
+                this._npClient.getChromosomeEntries(this.chromosome)
+                    .then(function(response){
+                        Polymer.RenderStatus.afterNextRender(self, function() {
+                            self.results = response;
+                            self.dataLoaded = true;
+                        });
+                    })
+                    .catch(function(error) {
+                       console.error("neXtProt API error", error.responseText);
                     });
-                });
-            },
-            _updateDataLoadingStatus: function() {
-
-                this.dataLoaded = this._dataLoaded();
             },
             _dataLoaded: function() {
 
