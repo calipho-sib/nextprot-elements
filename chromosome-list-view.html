@@ -29,9 +29,9 @@ View list of chromosome names.
 
         <div id="chromosomeListViewContainer">
 
-            <paper-spinner-lite id="spinner"></paper-spinner-lite>
+            <paper-spinner-lite id="spinner" active></paper-spinner-lite>
 
-            <template is="dom-if" if="{{dataLoaded}}">
+            <template is="dom-if" if="[[dataLoaded]]">
 
                 <!-- local DOM for this element -->
                 <table>
@@ -95,16 +95,12 @@ View list of chromosome names.
 
                                 Polymer.RenderStatus.afterNextRender(self, function () {
                                     self.chromosomes[chromosome] = response.summary;
-                                    self._updateDataLoadingStatus();
+                                    self.dataLoaded = self._dataLoaded();
                                 });
                             });
                         });
                     });
                 });
-            },
-            _updateDataLoadingStatus: function() {
-
-                this.dataLoaded = this._dataLoaded();
             },
             _dataLoaded: function() {
 
@@ -113,7 +109,6 @@ View list of chromosome names.
             _updateSpinnerStatus: function() {
 
                 if (this._dataLoaded()) {
-                    //console.log("disabling spinner");
 
                     this.$.spinner.active = false;
                     this.$.spinner.hidden = true;
