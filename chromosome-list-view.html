@@ -19,7 +19,7 @@ View list of chromosome names.
         <style>
             :host {
                 display: block;
-                background:#f8f8f8;
+                background: white;
                 overflow-y: auto;
             }
             :host td {
@@ -34,12 +34,15 @@ View list of chromosome names.
             <template is="dom-if" if="[[dataLoaded]]">
 
                 <!-- local DOM for this element -->
-                <table>
+                <table class="table table-condensed">
+                    <thead>
                     <tr>
                         <th>Chromosome</th>
                         <th>Entry count</th>
                         <th>Gene count</th>
                     </tr>
+                    </thead>
+                    <tbody>
                     <template is="dom-repeat" items="[[chromosomeNames]]">
                         <tr>
                             <td>[[item]]</td>
@@ -47,6 +50,7 @@ View list of chromosome names.
                             <td>[[_getChromosomeSummary(item, "geneCount")]]</td>
                         </tr>
                     </template>
+                    </tbody>
                 </table>
             </template>
         </div>
