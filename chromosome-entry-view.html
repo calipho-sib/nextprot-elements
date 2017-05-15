@@ -111,17 +111,18 @@ View presenting neXtProt entries plus gene location found on chromosome.
             _fetchChromosomeReport: function() {
                 var self = this;
 
-                this._npClient.getChromosomeEntries(this.chromosome)
-                    .then(function (response) {
-                        Polymer.RenderStatus.afterNextRender(self, function () {
-                            self.results = response;
-                            self.dataLoaded = true;
+                if (this._npClient !== undefined && this.chromosome !== undefined) {
+                    this._npClient.getChromosomeEntries(this.chromosome)
+                        .then(function (response) {
+                            Polymer.RenderStatus.afterNextRender(self, function () {
+                                self.results = response;
+                                self.dataLoaded = true;
+                            });
+                        })
+                        .catch(function (error) {
+                            console.error("neXtProt API error", error.responseText);
                         });
-                    })
-                    .catch(function (error) {
-                        console.error("neXtProt API error", error.responseText);
-                    })
-                ;
+                }
             },
             _dataLoaded: function() {
 
