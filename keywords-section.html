@@ -103,8 +103,8 @@ Keywords section present on function, medical, sequence, and structures pages.
           var category = k.cvTermType;
           var accessions = self.categoryAccessions[k.cvTermType];
           if (self.categories.indexOf(k.cvTermType)!==-1) {
-            if (!accessions && self.exceptions.indexOf(k.cvTermAccessionCode)===-1
-                || (accessions && accessions.indexOf(k.cvTermAccessionCode))!==-1) {
+            if ((accessions===undefined && self.exceptions.indexOf(k.cvTermAccessionCode)===-1)
+                || (accessions!==undefined && accessions.indexOf(k.cvTermAccessionCode)!==-1)) {
               if (data[k.cvTermType]) data[k.cvTermType].push(k);
               else data[k.cvTermType] = [k];
             }
