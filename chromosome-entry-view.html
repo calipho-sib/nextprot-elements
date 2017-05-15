@@ -111,7 +111,7 @@ View presenting neXtProt entries plus gene location found on chromosome.
             _fetchChromosomeReport: function() {
                 var self = this;
 
-                if (this._npClient !== undefined && this.chromosome !== undefined) {
+                if (this._npClient !== undefined && this.chromosome !== undefined && !this.chromosome.startsWith('{{')) {
                     this._npClient.getChromosomeEntries(this.chromosome)
                         .then(function (response) {
                             Polymer.RenderStatus.afterNextRender(self, function () {
