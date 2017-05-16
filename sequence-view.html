@@ -28,15 +28,15 @@ View listing sequence annotations.
         </style>
         <div class="row">
             <div id="nxOverview" class="col-md-12">
-                <protein-overview nx-config="{{nxConfig}}"></protein-overview>
+                <protein-overview nx-config="[[nxConfig]]"></protein-overview>
             </div>
         </div>
         <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no sequence information available in neXtProt for {{nxConfig.entry}}.
             Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
         </div>
         <div class="row nxSection">
-            <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}}></isoform-selector>
-            <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] feature-list='[
+            <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}}></isoform-selector>
+            <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]] gold-only="[[nxConfig.goldOnly]]" feature-list='[
       {
         "APIRef": "sequence",
         "metadata": {"name": "Sequence"}
@@ -379,10 +379,10 @@ View listing sequence annotations.
         </div>
         <div class="row">
             <div id="nxAnnotations" class="col-md-12">
-                <generic-annotation-section id="annotationElement" section="sequence" goldOnly="{{goldOnly}}"
+                <generic-annotation-section id="annotationElement" section="sequence" goldOnly="[[goldOnly]]"
                                             categories='["CAUTION", "DOMAIN-INFO", "PTM-INFO", "SEQUENCE-CAUTION"]'
-                                            category-titles='{"domain information": "domain"}'
-                                            count="{{annotationsCount}}" nx-config="{{nxConfig}}">
+                                            category-titles='{"DOMAIN_INFO": "DOMAIN", "PTM_INFO": "PTM"}'
+                                            count="{{annotationsCount}}" nx-config="[[nxConfig]]">
                 </generic-annotation-section>
             </div>
         </div>
@@ -390,20 +390,17 @@ View listing sequence annotations.
             <div id="nxKeywords" class="col-md-12">
                 <keywords-section categories='["Coding sequence diversity", "Domain", "PTM", "Technical term"]'
                                   exceptions='["KW-0002", "KW-0021", "KW-0181", "KW-0895", "KW-0374", "KW-0511", "KW-0582", "KW-0814"]'
-                                  nx-config="{{nxConfig}}" count="{{keywordsCount}}">
+                                  nx-config="[[nxConfig]]" count="{{keywordsCount}}">
                 </keywords-section>
             </div>
         </div>
         <div class="row">
             <div id="nxXrefs" class="col-md-12">
-                <xrefs-section categories='["CCDS", "eggNOG", "EMBL","Ensembl", "Gene3D", "GlycoSuiteDB", "HOGENOM", "HOVERGEN",
-	                  "InParanoid", "InterPro", "KEGG", "MGI",
-	                  "OMA", "OrthoDB", "PANTHER", "Pfam", "PhosphoSite", "PhylomeDB",
-	                  "PIR", "PIRSF", "PMAP-CutDB", "PRINTS", "ProDom", "ProtClustDB", "PROSITE",
-	                  "RefSeq", "SMART", "SUPFAM", "TIGRFAMS","UCSC", "UniProt",
-                      "DNASU", "EvolutionaryTrace", "KO", "UniCarbKB", "ChiTaRS", "HAMAP", "TIGRFAMs",
-					  "TreeFam","DEPOD","GeneTree","BioMuta"]'
-                               nx-config="{{nxConfig}}" count="{{xrefsCount}}">
+                <xrefs-section categories='["CCDS", "eggNOG", "EMBL","Ensembl", "Gene3D", "GlycoSuiteDB", "HOGENOM", "HOVERGEN", "InParanoid", "InterPro", "KEGG", "MGI",
+	                  "OMA", "OrthoDB", "PANTHER", "Pfam", "PhosphoSite", "PhylomeDB", "PIR", "PIRSF", "PMAP-CutDB", "PRINTS", "ProDom", "ProtClustDB", "PROSITE",
+	                  "RefSeq", "SMART", "SUPFAM", "TIGRFAMS","UCSC", "UniProt", "DNASU", "EvolutionaryTrace", "KO", "UniCarbKB", "ChiTaRS", "HAMAP", "TIGRFAMs",
+					  "TreeFam","DEPOD","GeneTree", "BioMuta", "PIRNR", "SIGNOR", "iPTMnet", "SwissPalm", "CDD", "PhosphoSitePlus", "SFLD", "IMGT_GENE-DB"]'
+                      nx-config="[[nxConfig]]" count="{{xrefsCount}}">
                 </xrefs-section>
             </div>
         </div>
