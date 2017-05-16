@@ -311,6 +311,17 @@ Exteranl links section present in function, medical, expression, interactions, s
               }]
             })
           }
+          else if (typeList[elem].databaseName === "PIR") {
+            newTypeList.push({
+              name: typeList[elem].databaseName,
+              xrefs : [{
+                accession: typeList[elem].accession,
+                url : typeList[elem].resolvedUrl,
+                prefix : "",
+                suffix : ""
+              }]
+            })
+          }
           else {
             var suffix = "";
             if (typeList[elem].properties.length>0){
