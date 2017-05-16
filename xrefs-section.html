@@ -315,7 +315,7 @@ Exteranl links section present in function, medical, expression, interactions, s
             var suffix = "";
             if (typeList[elem].properties.length>0){
               var addInfos = $.grep(typeList[elem].properties, function(e){ return e.name === "entry name" || e.name === "isoform ID" || e.name === "gene designation" || e.name === "taxonomic scope"; })[0];
-              suffix = addInfos ? addInfos.value : "";
+              suffix = addInfos ? "["+addInfos.value+"]" : "";
             }
             newTypeList.push({
               name: typeList[elem].databaseName,
