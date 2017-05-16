@@ -400,6 +400,16 @@ Annotation section used in function, medical, and expression views.
                     } else if (this.section==="interactions"){
                         if (a.apicategory==="MISCELLANEOUS" && !(a.description.toLowerCase().match(/.*bind.*/) || a.description.toLowerCase().match(/^bind.*/))) continue;
                     }
+                    if(a.apicategory==="SEQUENCE_CAUTION") {
+                        for(var j in a.properties) {
+                            if(a.properties[j].name==="differing sequence") {
+                                a.description = a.description.replace(
+                                        a.properties[j].accession,
+                                        "<a href=\""+data_xrefs[a.properties[j].value].resolvedUrl+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">"+a.properties[j].accession+"</a>"
+                                );
+                            }
+                        }
+                    }
                     if (a.cvTermAccessionCode && a.apicategory==="CATALYTIC_ACTIVITY") a.cvTermAccessionCodeLabel="EC "+a.cvTermAccessionCode;
                     else if (a.cvTermAccessionCode) a.cvTermAccessionCodeLabel=a.cvTermAccessionCode;
                     if (a.properties) {
