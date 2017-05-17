@@ -85,24 +85,24 @@ View presenting neXtProt entries plus gene location found on chromosome.
             properties: {
                 nxConfig: {
                     type: Object,
-                    value: { "env": "pro" }
+                    value: { "env": "pro" },
+                    observer: '_initAndfetchChromosomeReport'
                 },
                 chromosome: {
-                    type: String
+                    type: String,
+                    observer: '_fetchChromosomeReport'
                 },
                 dataLoaded: {
                     type: Boolean,
                     observer: '_updateSpinnerStatus'
                 }
             },
-            observers: [
-                '_fetchChromosomeReport(chromosome)'
-            ],
-            ready: function() {
-                this._initApiClient();
-            },
             attached: function() {
-                this._fetchChromosomeReport()
+                this._initAndfetchChromosomeReport()
+            },
+            _initAndfetchChromosomeReport: function() {
+                this._initApiClient();
+                this._fetchChromosomeReport();
             },
             _initApiClient: function() {
                 this._npClient = new Nextprot.Client("neXtProt chromosome " + this.chromosome + " entries", "Calipho Group");

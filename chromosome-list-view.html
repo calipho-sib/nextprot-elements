@@ -63,7 +63,8 @@ View list of chromosome names.
             properties: {
                 nxConfig: {
                     type: Object,
-                    value: { "env": "pro" }
+                    value: { "env": "pro" },
+                    observer: '_initAndLoadData'
                 },
                 dataLoaded: {
                     type: Boolean,
@@ -71,37 +72,42 @@ View list of chromosome names.
                 }
             },
             attached: function () {
-
-                var npClient = new Nextprot.Client("neXtProt chromosomes", "Calipho Group");
+                this._initAndLoadData();
+            },
+            _initAndLoadData: function() {
+                this._initApiClient();
+                this._loadData();
+            },
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtProt chromosomes", "Calipho Group");
 
                 if (this.nxConfig.env) {
-                    npClient.updateEnvironment(this.nxConfig.env);
+                    this._npClient.updateEnvironment(this.nxConfig.env);
                 }
-
-                this._loadData(npClient);
             },
-            _loadData: function(npClient) {
-
+            _loadData: function() {
                 var self = this;
 
-                npClient.getChromosomes().then(function(response){
-                    self.chromosomes = {};
+                if (this._npClient !== undefined) {
+                    this._npClient.getChromosomes().then(function (response) {
+                        self.chromosomes = {};
 
-                    self.chromosomeNames = response;
+                        self.chromosomeNames = response;
 
-                    self.chromosomeNames.forEach(function(chromosome) {
+                        self.chromosomeNames.forEach(function (chromosome) {
 
-                        Polymer.RenderStatus.afterNextRender(self, function() {
-                            npClient.getChromosomeEntries(chromosome).then(function(response) {
+                            Polymer.RenderStatus.afterNextRender(self, function () {
+                                this._npClient.getChromosomeEntries(chromosome).then(function (response) {
 
-                                Polymer.RenderStatus.afterNextRender(self, function () {
-                                    self.chromosomes[chromosome] = response.summary;
-                                    self.dataLoaded = self._dataLoaded();
+                                    Polymer.RenderStatus.afterNextRender(self, function () {
+                                        self.chromosomes[chromosome] = response.summary;
+                                        self.dataLoaded = self._dataLoaded();
+                                    });
                                 });
                             });
                         });
                     });
-                });
+                }
             },
             _dataLoaded: function() {
 
