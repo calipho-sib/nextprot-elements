@@ -84,12 +84,12 @@ Publication item demo
             </template>
           </span></p>
           <p>
-            <template is="dom-if" if="[[_isPatent()]]">Patent number: [[data.dbXrefs.0.accession]] ([[data.publicationDate]])
+            <template is="dom-if" if="[[_isPatent()]]">Patent number: [[data.dbXrefs.0.accession]] ([[data.textDate]])
               <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">
                 [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
               </template>
             </template>
-            <template is="dom-if" if="[[!_isPatent()]]">
+            <template is="dom-if" if="[[_isArticle()]]">
               [[data.journal]]
               [[data.journalResourceLocator.abbrev]]<template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
               <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template>
@@ -99,11 +99,12 @@ Publication item demo
                 </template>
               </template>
             </template>
+            <template is="dom-if" if="[[_isSubmission()]]">[[data.submission]] ([[data.textDate]])</template>
           </p>
         </template>
         <template is="dom-if" if="[[summary]]">
           <template is="dom-if" if="[[data.authors.0]]">[[data.authors.0.lastName]] [[_formatInitials(data.authors.0.initials)]] </template><template is="dom-if" if="[[data.authors.1]]">
-          <i>et al.</i></template><template is="dom-if" if="[[_isPatent()]]">, <span class="grey-x">Patent number [[data.dbXrefs.0.accession]] ([[data.publicationDate]])</span></template><template is="dom-if" if="[[!_isPatent()]]"><template is="dom-if" if="[[data.journal]]">, [[data.journal]] [[data.journalResourceLocator.medAbbrev]]</template><template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
+          <i>et al.</i></template><template is="dom-if" if="[[_isSubmission()]]">, <span class="grey-x">[[data.submission]] ([[data.textDate]])</span></template><template is="dom-if" if="[[_isPatent()]]">, <span class="grey-x">Patent number [[data.dbXrefs.0.accession]] ([[data.textDate]])</span></template><template is="dom-if" if="[[_isArticle()]]"><template is="dom-if" if="[[data.journal]]">, [[data.journal]] [[data.journalResourceLocator.medAbbrev]]</template><template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
           <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template></template>
         </template>
       </template>
@@ -119,7 +120,7 @@ Publication item demo
           [[data.abstractText]]
         </iron-collapse>
         <template is="dom-if" if="[[!data.abstractText]]">
-          <template is="dom-if" if="[[!_isOnlineResourceOrPatent()]]">No Abstract available</template>
+          <template is="dom-if" if="[[isArticle]]">No Abstract available</template>
         </template>
     </template>
   </template>
@@ -187,12 +188,12 @@ Publication item demo
         if(this.data) return this.data.publicationType==="PATENT";
         return false;
       },
-      _isOnlineResource: function(){
-        if(this.data) return this.data.publicationType==="ONLINE_PUBLICATION";
+      _isSubmission: function(){
+        if(this.data) return this.data.publicationType==="SUBMISSION";
         return false;
       },
-      _isOnlineResourceOrPatent: function(){
-        if(this.data) return ["ONLINE_PUBLICATION", "PATENT"].indexOf(this.data.publicationType)!==-1;
+      _isOnlineResource: function(){
+        if(this.data) return this.data.publicationType==="ONLINE_PUBLICATION";
         return false;
       },
       _formatXrefLabel: function(name){
