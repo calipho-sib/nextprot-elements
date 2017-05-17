@@ -67,17 +67,14 @@ Publication item demo
       <template is="dom-if" if="[[data]]">
         <template is="dom-if" if="[[_isOnlineResource()]]">
           <b>[[data.publicationLocatorName]]</b>
+          <template is="dom-if" if="[[!summary]]">
+            <p><template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
+              <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+            </template></p>
+          </template>
         </template>
         <template is="dom-if" if="[[data.title]]">
-          <p><a href="/publication/[[data.publicationId]]"  target='_parent'>[[data.title]]</a>
-          <template is="dom-if" if="[[!summary]]">
-            <template is="dom-if" if="[[_isOnlineResource()]]">
-              <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
-                <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
-              </template>
-            </template>
-          </template>
-          </p>
+          <p><a href="/publication/[[data.publicationId]]"  target='_parent'>[[data.title]]</a></p>
         </template>
         <template is="dom-if" if="[[!summary]]">
           <p><span class="hyperlink-blue">
