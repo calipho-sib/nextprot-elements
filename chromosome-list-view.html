@@ -22,7 +22,7 @@ View list of chromosome names.
                 background: white;
                 overflow-y: auto;
             }
-            :host td {
+            :host th {
                 text-align: left;
             }
         </style>
@@ -43,11 +43,11 @@ View list of chromosome names.
                     </tr>
                     </thead>
                     <tbody>
-                    <template is="dom-repeat" items="[[chromosomeNames]]">
+                    <template is="dom-repeat" items="[[chromosomeNames]]" as="chromosomeName">
                         <tr>
-                            <td>[[item]]</td>
-                            <td>[[_getChromosomeSummary(item, "entryCount")]]</td>
-                            <td>[[_getChromosomeSummary(item, "geneCount")]]</td>
+                            <td>[[chromosomeName]]</td>
+                            <td align="right">[[_getChromosomeSummary(chromosomeName, "entryCount")]]</td>
+                            <td align="right">[[_getChromosomeSummary(chromosomeName, "geneCount")]]</td>
                         </tr>
                     </template>
                     </tbody>

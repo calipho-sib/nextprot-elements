@@ -34,6 +34,7 @@ View presenting neXtProt entries plus gene location found on chromosome.
 
             <template is="dom-if" if="[[dataLoaded]]">
                 <table class="table table-condensed">
+                    <col align="left">
                     <thead>
                     <tr>
                         <th>Gene name</th>
@@ -60,16 +61,16 @@ View presenting neXtProt entries plus gene location found on chromosome.
                         <td><a href=[[host]]/entry/[[entryReport.entryAccession]]>[[entryReport.entryAccession]]</a></td>
                         <td>[[entryReport.chromosomalLocation]]</td>
                         <td>[[entryReport.codingStrand]]</td>
-                        <td>[[entryReport.geneStartPosition]]</td>
-                        <td>[[entryReport.geneEndPosition]]</td>
+                        <td align="right">[[entryReport.geneStartPosition]]</td>
+                        <td align="right">[[entryReport.geneEndPosition]]</td>
                         <td>[[entryReport.proteinExistence]]</td>
                         <td>[[entryReport.proteomics]]</td>
                         <td>[[entryReport.antibody]]</td>
                         <td>[[entryReport.3D]]</td>
                         <td>[[entryReport.disease]]</td>
-                        <td>[[entryReport.isoforms]]</td>
-                        <td>[[entryReport.variants]]</td>
-                        <td>[[entryReport.ptms]]</td>
+                        <td align="right">[[entryReport.isoforms]]</td>
+                        <td align="right">[[entryReport.variants]]</td>
+                        <td align="right">[[entryReport.ptms]]</td>
                         <td>[[entryReport.entryDescription]]</td>
                     </tr>
                     </template>
