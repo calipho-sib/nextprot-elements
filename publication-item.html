@@ -202,7 +202,7 @@ Publication item demo
         return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
       },
       _formatInitials: function(name){
-        return (name.replace(".", "").split('').join('.') + '.').replace("-.", "");
+        return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
       },
       _checkIfLast: function(array,index){
         if(array.length-1===index) return true;
