@@ -25,12 +25,12 @@ View listing sequence annotations.
         </style>
         <div class="row">
             <div id="nxOverview" class="col-md-12">
-                <protein-overview nx-config="{{nxConfig}}"></protein-overview>
+                <protein-overview nx-config="[[nxConfig]]"></protein-overview>
             </div>
         </div>
         <div class="row nxSection">
-            <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}}></isoform-selector>
-            <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] feature-list='[{
+            <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}}></isoform-selector>
+            <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]] feature-list='[{
         "APIRef": "sequence",
         "metadata": {"name": "Sequence"}
       },
@@ -216,7 +216,7 @@ View listing sequence annotations.
                 <xrefs-section categories='["Gene3D","InterPro","Pfam","PRINTS","PROSITE","SMART","SUPFAM",
       "Ensembl", "KEGG", "UCSC", "MGI", "EvolutionaryTrace", "PMAP-CutDB", "PhosphoSite",
       "eggNOG", "GeneTree", "HOGENOM", "HOVERGEN", "InParanoid", "KO", "OMA", "PhylomeDB", "TreeFam", "BioMuta",
-      "CCDS", "EMBL", "PIR", "RefSeq", "UniProtKB", "DNASU"]' nx-config="{{nxConfig}}" count="{{xrefsCount}}">
+      "CCDS", "EMBL", "PIR", "RefSeq", "UniProtKB", "DNASU"]' nx-config="[[nxConfig]]" count="{{xrefsCount}}">
                 </xrefs-section>
             </div>
         </div>
