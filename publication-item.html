@@ -83,23 +83,31 @@ Publication item demo
           <p><span class="hyperlink-blue">
             <template is="dom-repeat" items="[[data.authors]]" as="author">
               <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">
-                [[author.lastName]] [[_formatInitals(author.initials)]]</a><template is="dom-if" if="[[!_checkIfLast(data.authors,index)]]">,</template>
+                [[author.lastName]] [[_formatInitials(author.initials)]]</a><template is="dom-if" if="[[!_checkIfLast(data.authors,index)]]">,</template>
             </template>
           </span></p>
-          <p>[[data.journal]]
-            [[data.journalResourceLocator.abbrev]]<template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
-            <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template>
-            <template is="dom-if" if="[[!_isOnlineResource()]]">
-              <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
-                <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+          <p>
+            <template is="dom-if" if="[[_isPatent()]]">Patent number: [[data.dbXrefs.0.accession]] ([[data.publicationDate]])
+              <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">
+                [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+              </template>
+            </template>
+            <template is="dom-if" if="[[!_isPatent()]]">
+              [[data.journal]]
+              [[data.journalResourceLocator.abbrev]]<template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
+              <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template>
+              <template is="dom-if" if="[[!_isOnlineResource()]]">
+                <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
+                  <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                </template>
               </template>
             </template>
           </p>
         </template>
         <template is="dom-if" if="[[summary]]">
-          <template is="dom-if" if="[[data.authors.0]]">[[data.authors.0.lastName]] [[data.authors.0.initials]]. </template><template is="dom-if" if="[[data.authors.1]]">
-          <i>et al.</i></template><template is="dom-if" if="[[data.journal]]">, [[data.journal]] [[data.journalResourceLocator.medAbbrev]]</template><template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
-          <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template>
+          <template is="dom-if" if="[[data.authors.0]]">[[data.authors.0.lastName]] [[_formatInitials(data.authors.0.initials)]] </template><template is="dom-if" if="[[data.authors.1]]">
+          <i>et al.</i></template><template is="dom-if" if="[[_isPatent()]]"><span class="grey-x">, Patent number [[data.dbXrefs.0.accession]] ([[data.publicationDate]])</span></template><template is="dom-if" if="[[!_isPatent()]]"><template is="dom-if" if="[[data.journal]]">, [[data.journal]] [[data.journalResourceLocator.medAbbrev]]</template><template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
+          <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template></template>
         </template>
       </template>
       <template is="dom-if" if="[[data.abstractText]]">
@@ -114,7 +122,7 @@ Publication item demo
           [[data.abstractText]]
         </iron-collapse>
         <template is="dom-if" if="[[!data.abstractText]]">
-          <template is="dom-if" if="[[!_isOnlineResource()]]">No Abstract available</template>
+          <template is="dom-if" if="[[!_isOnlineResourceOrPatent()]]">No Abstract available</template>
         </template>
     </template>
   </template>
@@ -178,14 +186,22 @@ Publication item demo
         if(this.data) return this.data.publicationType==="ARTICLE";
         return false;
       },
+      _isPatent: function(){
+        if(this.data) return this.data.publicationType==="PATENT";
+        return false;
+      },
       _isOnlineResource: function(){
         if(this.data) return this.data.publicationType==="ONLINE_PUBLICATION";
+        return false;
+      },
+      _isOnlineResourceOrPatent: function(){
+        if(this.data) return ["ONLINE_PUBLICATION", "PATENT"].indexOf(this.data.publicationType)!==-1;
         return false;
       },
       _formatXrefLabel: function(name){
         return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
       },
-      _formatInitals: function(name){
+      _formatInitials: function(name){
         return (name.replace(".", "").split('').join('.') + '.').replace("-.", "");
       },
       _checkIfLast: function(array,index){
