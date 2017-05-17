@@ -58,7 +58,7 @@ View presenting neXtProt entries plus gene location found on chromosome.
                     <template is="dom-repeat" items="[[results.entryReports]]" as="entryReport" >
                     <tr>
                         <td>[[entryReport.geneName]]</td>
-                        <td><a href=[[apiHost]]/entry/[[entryReport.entryAccession]]>[[entryReport.entryAccession]]</a></td>
+                        <td><a href=[[host]]/entry/[[entryReport.entryAccession]]>[[entryReport.entryAccession]]</a></td>
                         <td>[[entryReport.chromosomalLocation]]</td>
                         <td>[[entryReport.codingStrand]]</td>
                         <td align="right">[[entryReport.geneStartPosition]]</td>
@@ -83,9 +83,9 @@ View presenting neXtProt entries plus gene location found on chromosome.
         Polymer({
             is: 'chromosome-entry-view',
             properties: {
-                apiHost: {
-                    type: String,
-                    value: "https://www.nextprot.org/"
+                nxConfig: {
+                    type: Object,
+                    value: { "env": "pro" }
                 },
                 chromosome: {
                     type: String
@@ -107,9 +107,11 @@ View presenting neXtProt entries plus gene location found on chromosome.
             _initApiClient: function() {
                 this._npClient = new Nextprot.Client("neXtProt chromosome " + this.chromosome + " entries", "Calipho Group");
 
-                if (this.apiHost) {
-                    this._npClient.setApiBaseUrl(this.apiHost);
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
                 }
+
+                this.host = this._npClient.getApiBaseUrl();
             },
             _fetchChromosomeReport: function() {
                 var self = this;

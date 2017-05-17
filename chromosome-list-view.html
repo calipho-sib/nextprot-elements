@@ -59,9 +59,9 @@ View list of chromosome names.
         Polymer({
             is: 'chromosome-list-view',
             properties: {
-                apiHost: {
-                    type: String,
-                    value: "https://www.nextprot.org/"
+                nxConfig: {
+                    type: Object,
+                    value: { "env": "pro" }
                 },
                 dataLoaded: {
                     type: Boolean,
@@ -72,8 +72,8 @@ View list of chromosome names.
 
                 var npClient = new Nextprot.Client("neXtProt chromosomes", "Calipho Group");
 
-                if (this.apiHost) {
-                    npClient.setApiBaseUrl(this.apiHost);
+                if (this.nxConfig.env) {
+                    npClient.updateEnvironment(this.nxConfig.env);
                 }
 
                 this._loadData(npClient);
