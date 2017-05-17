@@ -106,7 +106,7 @@ Publication item demo
         </template>
         <template is="dom-if" if="[[summary]]">
           <template is="dom-if" if="[[data.authors.0]]">[[data.authors.0.lastName]] [[_formatInitials(data.authors.0.initials)]] </template><template is="dom-if" if="[[data.authors.1]]">
-          <i>et al.</i></template><template is="dom-if" if="[[_isPatent()]]"><span class="grey-x">, Patent number [[data.dbXrefs.0.accession]] ([[data.publicationDate]])</span></template><template is="dom-if" if="[[!_isPatent()]]"><template is="dom-if" if="[[data.journal]]">, [[data.journal]] [[data.journalResourceLocator.medAbbrev]]</template><template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
+          <i>et al.</i></template><template is="dom-if" if="[[_isPatent()]]">, <span class="grey-x">Patent number [[data.dbXrefs.0.accession]] ([[data.publicationDate]])</span></template><template is="dom-if" if="[[!_isPatent()]]"><template is="dom-if" if="[[data.journal]]">, [[data.journal]] [[data.journalResourceLocator.medAbbrev]]</template><template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
           <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template></template>
         </template>
       </template>
