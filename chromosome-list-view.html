@@ -90,22 +90,10 @@ View list of chromosome names.
 
                 if (this._npClient !== undefined) {
                     this._npClient.getChromosomes().then(function (response) {
-                        self.chromosomes = {};
 
-                        self.chromosomeNames = response;
-
-                        self.chromosomeNames.forEach(function (chromosome) {
-
-                            Polymer.RenderStatus.afterNextRender(self, function () {
-                                this._npClient.getChromosomeEntries(chromosome).then(function (response) {
-
-                                    Polymer.RenderStatus.afterNextRender(self, function () {
-                                        self.chromosomes[chromosome] = response.summary;
-                                        self.dataLoaded = self._dataLoaded();
-                                    });
-                                });
-                            });
-                        });
+                        self.chromosomeNames = Object.keys(response);
+                        self.chromosomes = response;
+                        self.dataLoaded = true;
                     });
                 }
             },
