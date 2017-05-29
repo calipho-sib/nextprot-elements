@@ -1,0 +1,118 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="chromosome-entry-view.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+
+<!--
+`chromosome-list-view`
+View list of chromosome names.
+
+##### Example
+    <chromosome-list-view />
+@demo demo/chromosome-list-view-demo.html
+-->
+
+<dom-module id="chromosome-list-view">
+
+    <template>
+        <style>
+            :host {
+                display: block;
+                background: white;
+                overflow-y: auto;
+            }
+        </style>
+
+        <div id="chromosomeListViewContainer">
+
+            <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+
+            <template is="dom-if" if="[[dataLoaded]]">
+
+                <div class="row">
+                    <div class="col-md-offset-0 col-md-6 col-sm-12">
+
+                    <!-- local DOM for this element -->
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th style="text-align:center">Chromosome</th>
+                        <th style="text-align:right">Entry count</th>
+                        <th style="text-align:right">Gene count</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template is="dom-repeat" items="[[chromosomeNames]]" as="chromosomeName">
+                        <tr>
+                            <td style="text-align:center">[[chromosomeName]]</td>
+                            <td style="text-align:right">[[_getChromosomeSummary(chromosomeName, "entryCount")]]</td>
+                            <td style="text-align:right">[[_getChromosomeSummary(chromosomeName, "geneCount")]]</td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
+                </div>
+                </div>
+            </template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'chromosome-list-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: { "env": "pro" },
+                    observer: '_initAndLoadData'
+                },
+                dataLoaded: {
+                    type: Boolean,
+                    observer: '_updateSpinnerStatus'
+                }
+            },
+            attached: function () {
+                this._initAndLoadData();
+            },
+            _initAndLoadData: function() {
+                this._initApiClient();
+                this._loadData();
+            },
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtProt chromosomes", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+            },
+            _loadData: function() {
+                var self = this;
+
+                if (this._npClient !== undefined) {
+                    this._npClient.getChromosomes().then(function (response) {
+
+                        self.chromosomeNames = Object.keys(response);
+                        self.chromosomes = response;
+                        self.dataLoaded = true;
+                    });
+                }
+            },
+            _dataLoaded: function() {
+
+                return this.chromosomes && this.chromosomeNames && Object.keys(this.chromosomes).length === this.chromosomeNames.length;
+            },
+            _updateSpinnerStatus: function() {
+
+                if (this._dataLoaded()) {
+
+                    this.$.spinner.active = false;
+                    this.$.spinner.hidden = true;
+                }
+            },
+            _getChromosomeSummary: function(chromosomeName, summaryProperty) {
+
+                return this.chromosomes[chromosomeName][summaryProperty];
+            }
+        });
+    </script>
+</dom-module>
