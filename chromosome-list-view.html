@@ -75,8 +75,11 @@ View list of chromosome names.
                 this._initAndLoadData();
             },
             _initAndLoadData: function() {
-                this._initApiClient();
-                this._loadData();
+
+                if (!this.nxConfig.env.startsWith('{{')) {
+                    this._initApiClient();
+                    this._loadData();
+                }
             },
             _initApiClient: function () {
                 this._npClient = new Nextprot.Client("neXtProt chromosomes", "Calipho Group");
