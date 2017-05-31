@@ -101,22 +101,21 @@ View presenting neXtProt entries plus gene location found on chromosome.
                 this._initAndfetchChromosomeReport()
             },
             _initAndfetchChromosomeReport: function() {
-                this._initApiClient();
-                this._fetchChromosomeReport();
+                if (this.nxConfig.env && !this.nxConfig.env.startsWith('{{')) {
+                    this._initApiClient();
+                    this._fetchChromosomeReport();
+                }
             },
             _initApiClient: function() {
                 this._npClient = new Nextprot.Client("neXtProt chromosome " + this.chromosome + " entries", "Calipho Group");
-
-                if (this.nxConfig.env) {
-                    this._npClient.updateEnvironment(this.nxConfig.env);
-                }
+                this._npClient.updateEnvironment(this.nxConfig.env);
 
                 this.host = this._npClient.getApiBaseUrl();
             },
             _fetchChromosomeReport: function() {
                 var self = this;
 
-                if (this._npClient !== undefined && this.chromosome !== undefined && !this.chromosome.startsWith('{{')) {
+                if (this._npClient !== undefined && this.chromosome !== undefined) {
                     this._npClient.getChromosomeEntries(this.chromosome)
                         .then(function (response) {
                             Polymer.RenderStatus.afterNextRender(self, function () {
