@@ -37,41 +37,41 @@ View presenting neXtProt entries plus gene location found on chromosome.
                     <col align="left">
                     <thead>
                     <tr>
-                        <th style="text-align:center">Gene name</th>
-                        <th style="text-align:center">neXtProt</th>
-                        <th style="text-align:center">Chromosomal position</th>
-                        <th style="text-align:center">Coding strand</th>
+                        <th style="text-align:left">Gene name</th>
+                        <th style="text-align:left">neXtProt AC</th>
+                        <th style="text-align:left">Chromosomal position</th>
+                        <th style="text-align:left">Coding strand</th>
                         <th style="text-align:right">Start position</th>
                         <th style="text-align:right">Stop position</th>
-                        <th style="text-align:center">Protein existence</th>
-                        <th style="text-align:center">Proteomics</th>
-                        <th style="text-align:center">Antibody</th>
-                        <th style="text-align:center">3D</th>
-                        <th style="text-align:center">Disease</th>
+                        <th style="text-align:left">Protein existence</th>
+                        <th style="text-align:left">Proteomics</th>
+                        <th style="text-align:left">Antibody</th>
+                        <th style="text-align:left">3D</th>
+                        <th style="text-align:left">Disease</th>
                         <th style="text-align:right">Isoforms</th>
                         <th style="text-align:right">Variants</th>
                         <th style="text-align:right">PTMs</th>
-                        <th style="text-align:center">Description</th>
+                        <th style="text-align:left">Description</th>
                     </tr>
                     </thead>
                     <tbody>
                     <template is="dom-repeat" items="[[results.entryReports]]" as="entryReport" >
                     <tr>
-                        <td style="text-align:center">[[entryReport.geneName]]</td>
-                        <td style="text-align:center"><a href=[[host]]/entry/[[entryReport.entryAccession]]>[[entryReport.entryAccession]]</a></td>
-                        <td style="text-align:center">[[entryReport.chromosomalLocation]]</td>
-                        <td style="text-align:center">[[entryReport.codingStrand]]</td>
+                        <td style="text-align:left">[[entryReport.geneName]]</td>
+                        <td style="text-align:left"><a href=[[host]]/entry/[[entryReport.entryAccession]]>[[entryReport.entryAccession]]</a></td>
+                        <td style="text-align:left">[[entryReport.chromosomalLocation]]</td>
+                        <td style="text-align:left">[[entryReport.codingStrand]]</td>
                         <td style="text-align:right">[[entryReport.geneStartPosition]]</td>
                         <td style="text-align:right">[[entryReport.geneEndPosition]]</td>
-                        <td style="text-align:center">[[entryReport.proteinExistence]]</td>
-                        <td style="text-align:center">[[entryReport.proteomics]]</td>
-                        <td style="text-align:center">[[entryReport.antibody]]</td>
-                        <td style="text-align:center">[[entryReport.3D]]</td>
-                        <td style="text-align:center">[[entryReport.disease]]</td>
+                        <td style="text-align:left">[[entryReport.proteinExistence]]</td>
+                        <td style="text-align:left">[[entryReport.proteomics]]</td>
+                        <td style="text-align:left">[[entryReport.antibody]]</td>
+                        <td style="text-align:left">[[entryReport.3D]]</td>
+                        <td style="text-align:left">[[entryReport.disease]]</td>
                         <td style="text-align:right">[[entryReport.isoforms]]</td>
                         <td style="text-align:right">[[entryReport.variants]]</td>
                         <td style="text-align:right">[[entryReport.ptms]]</td>
-                        <td style="text-align:center">[[entryReport.entryDescription]]</td>
+                        <td style="text-align:left">[[entryReport.entryDescription]]</td>
                     </tr>
                     </template>
                     </tbody>
