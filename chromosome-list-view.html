@@ -1,6 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
-<link rel="import" href="chromosome-entry-view.html">
 <link rel="import" href="external-scripts.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 
@@ -94,7 +93,7 @@ View list of chromosome names.
                 if (this._npClient !== undefined) {
                     this._npClient.getChromosomes().then(function (response) {
 
-                        self.chromosomeNames = Object.keys(response);
+                        self.chromosomeNames = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "X", "Y", "MT", "unknown" ];
                         self.chromosomes = response;
                         self.dataLoaded = true;
                     });
