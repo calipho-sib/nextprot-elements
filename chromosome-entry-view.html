@@ -114,13 +114,13 @@ View presenting neXtProt entries plus gene location found on chromosome.
                     this._npClient.updateEnvironment(this.nxConfig.env);
                 }
 
-                this.host = this._npClient.getApiBaseUrl();
+                this.host = this._npClient.getNeXtProtUrl();
             },
             _fetchChromosomeReport: function() {
                 var self = this;
 
                 if (this._npClient !== undefined && this.chromosome !== undefined && !this.chromosome.startsWith('{{')) {
-                    this._npClient.getChromosomeEntries(this.chromosome)
+                    this._npClient.getChromosomeReportEntries(this.chromosome)
                         .then(function (response) {
                             Polymer.RenderStatus.afterNextRender(self, function () {
                                 self.results = response;

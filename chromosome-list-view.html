@@ -88,7 +88,7 @@ View list of chromosome names.
                 var self = this;
 
                 if (this._npClient !== undefined) {
-                    this._npClient.getChromosomes().then(function (response) {
+                    this._npClient.getChromosomeReportsSummary().then(function (response) {
 
                         self.chromosomeNames = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "X", "Y", "MT", "unknown" ];
                         self.chromosomes = response;
