@@ -58,7 +58,7 @@ View presenting neXtProt entries plus gene location found on chromosome.
                     <template is="dom-repeat" items="[[results.entryReports]]" as="entryReport" >
                     <tr>
                         <td style="text-align:left">[[entryReport.geneName]]</td>
-                        <td style="text-align:left"><a href=[[host]]/entry/[[entryReport.entryAccession]]>[[entryReport.entryAccession]]</a></td>
+                        <td style="text-align:left"><a href=[[host]]/entry/[[entryReport.entryAccession]] target="_blank">[[entryReport.entryAccession]]</a></td>
                         <td style="text-align:left">[[entryReport.chromosomalLocation]]</td>
                         <td style="text-align:left">[[entryReport.codingStrand]]</td>
                         <td style="text-align:right">[[entryReport.geneStartPosition]]</td>
