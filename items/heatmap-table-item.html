@@ -1,10 +1,9 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
-<link rel="import" href="evidence-item.html">
-<link rel="import" href="quality-label.html">
-<link rel="import" href="nextprot-elements-shared-styles.html">
-<link rel="import" href="external-scripts.html">
-
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../evidence-item.html">
+<link rel="import" href="../quality-label.html">
+<link rel="import" href="../nextprot-elements-shared-styles.html">
+<link rel="import" href="../external-scripts.html">
 
 <!--
 <script src="../jquery/dist/jquery.js"></script>
@@ -13,10 +12,10 @@
 <!--
 `heatmap-table-item`
 A heatmap table 
-@demo demo/heatmap-table-item-demo.html
+@demo items/demo/heatmap-table-item-demo.html
 -->
 <dom-module id="heatmap-table-item">
-    <link rel="stylesheet" type="text/css" href="../hierarchic-heatmap-table-component/dist/heatmap-table.css">
+    <link rel="stylesheet" type="text/css" href="../../hierarchic-heatmap-table-component/dist/heatmap-table.css">
     <template>
         <style is="custom-style" include="nextprot-elements-shared-styles">
              :host {
@@ -52,7 +51,6 @@ A heatmap table
             }
         </style>
         <div class="row">
-            <h1>WTF</h1>
             <div id="heatmap-table"></div>
         </div>
     </template>
@@ -77,7 +75,6 @@ A heatmap table
                 //Nothing to do here???
             },
             attached: function () {
-
                 var heatMapTable = new HeatMapTable({
                     tableID: "heatmap-table",
                     options: this.options
@@ -85,7 +82,6 @@ A heatmap table
 
                 heatMapTable.loadJSONData(this.data);
                 heatMapTable.show();
-               
             }
         });
     </script>
