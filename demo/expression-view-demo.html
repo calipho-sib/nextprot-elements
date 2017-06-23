@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <title>expression-view demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../expression-view.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .vertical-section-container {
+        max-width: 80%;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="vertical-section-container centered">
+      <h3>Basic expression-view Demo</h3>
+      <h4><span><label>Gold only</label><input type="checkbox" onchange="toggleGoldOnly()" style="margin-left: 20px;"></span></h4>
+      <demo-snippet>
+        <template>
+          <expression-view nx-config='{"env": "dev", "entry": "NX_P04637"}'></expression-view>
+        </template>
+      </demo-snippet>
+    </div>
+    <script>
+      function toggleGoldOnly(){
+        var gasElement = document.querySelector("generic-annotation-section");
+        var tvElement = document.querySelector("triple-viewer");
+        if(gasElement && gasElement.hasAttribute("gold-only")) gasElement.removeAttribute("gold-only");
+        else if (gasElement) gasElement.setAttribute("gold-only","true");
+        if(tvElement && tvElement.hasAttribute("gold-only")) tvElement.removeAttribute("gold-only");
+        else if (tvElement) tvElement.setAttribute("gold-only","true");
+      }
+    </script>
+  </body>
+</html>
