@@ -68,7 +68,8 @@ A heatmap table
                 },
                 data: {
                     type: Array,
-                    value: []
+                    value: [],
+                    observer : "_reload"
                 }
             },
             ready: function () {
@@ -80,13 +81,38 @@ A heatmap table
                 //Nothing to do here???
             },
             attached: function () {
-                var heatMapTable = new HeatMapTable({
-                    tableID: "heatmap-table",
-                    options: this.options
-                });
+                this._reload();
+            },
+            _reload: function () {
 
-                heatMapTable.loadJSONData(this.data);
-                heatMapTable.show();
+                if(this.data && this.data.length){
+
+                    var options =  {
+                                                        valuesSetting: [
+                                                            { value: 'Positive', html: '<div>\
+                                                            <img style="width:15px" src="./static/img/chili.gif">\
+                                                            <img style="width:15px" src="./static/img/chili.gif">\
+                                                            </div>'
+                                                            },
+                                                            { value: 'High', cssClass: 'red'},
+                                                            { value: 'NotDetected', color: 'lightgray'}
+                                                            ],
+                                                            columnWidth: "120px",
+                                                            headerTemplateID: "headerTemplate",
+                                                            headerTemplateData: {header:['MANotDetected',
+                                                                                'MAPositive',
+                                                                                'ESTPositive']},
+                                                            detailTemplateID: "detailTemplate"
+                                                        };
+                    var heatMapTable = new HeatMapTable({
+                        tableID: "heatmap-table",
+                        options: options
+                    });
+
+                    heatMapTable.loadJSONData(this.data);
+                    heatMapTable.show();
+
+                }
             }
         });
     </script>
