@@ -1,0 +1,49 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="graph-item.html">
+<link rel="import" href="../nextprot-elements-shared-styles.html">
+<!--
+`ancestor-graph-view`
+View for ancestor graph view: 
+
+Specs:
+https://calipho.isb-sib.ch/wiki/display/cal/Ancestor+Graph+Specification
+
+Related issues:
+https://issues.isb-sib.ch/browse/NEXTPROT-1493
+
+@demo term/demo/ancestor-graph-view-demo.html
+-->
+<dom-module id="ancestor-graph-view">
+  <template>
+    <style include="nextprot-elements-shared-styles">
+      :host {
+        display: block;
+        background:#f8f8f8;
+        overflow-y: auto;
+      }
+    </style>
+    <div class="row">
+      <div id="term-overview-section" class="col-md-12">
+        <term-overview-section nx-config="[[nxConfig]]"></term-overview-section>
+      </div>
+    </div>
+    <div class="row">
+      <div id="graph-item" class="col-md-12">
+        <graph-item data="{}"></graph-item>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ancestor-graph-view',
+      properties: {
+        nxConfig: {
+          type: Object,
+          value: {}
+        }
+      }
+    });
+  </script>
+</dom-module>

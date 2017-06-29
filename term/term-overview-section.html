@@ -1,0 +1,73 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../iron-collapse/iron-collapse.html">
+<link rel="import" href="../../neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../neon-animation/animations/scale-down-animation.html">
+<link rel="import" href="../../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../../neon-animation/animations/slide-left-animation.html">
+<link rel="import" href="../../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../external-scripts.html">
+<link rel="import" href="../nextprot-elements-shared-styles.html">
+
+<!--
+`term-overview-section`
+Term overview section
+
+##### Example
+    <term-overview-section nx-config='{"term": "TS-0079"}'></term-overview-section>
+@demo term/demo/term-overview-section-demo.html
+-->
+
+<dom-module id="term-overview-section">
+
+  <template>
+    <style include="nextprot-elements-shared-styles">
+      :host {
+        display: block;
+      }
+      iron-collapse {
+        --iron-collapse-transition-duration: 500ms;
+      }
+      h3 {
+        text-align: left;
+      }
+      dd{
+        margin-left:15px;
+      }
+      .term-link {
+        display: inline;
+      }
+      .paragraph {
+        margin: 10px;
+      }
+      .ec-link {
+        display: inline;
+      }
+      #extender {
+        float:right;
+        padding: 1px 3px;
+        margin-top:-5px;
+      }
+    </style>
+    <div id="proteinTitle">
+      <h3>
+        <!-- check protein-overview.html template for more templating examples --> 
+        TS-0079 → Blood
+      </h3>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'term-overview-section',
+      properties: {
+        nxConfig: {
+          type: Object,
+          value: {}
+        }
+    }});
+  </script>
+</dom-module>

@@ -1,0 +1,42 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../iron-collapse/iron-collapse.html">
+<link rel="import" href="../../neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../neon-animation/animations/scale-down-animation.html">
+<link rel="import" href="../../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../../neon-animation/animations/slide-left-animation.html">
+<link rel="import" href="../../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../external-scripts.html">
+<link rel="import" href="../nextprot-elements-shared-styles.html">
+
+<!--
+`graph-item`
+Term overview section
+
+##### Example
+    <graph-item data='{}'></graph-item>
+@demo term/demo/graph-item-demo.html
+-->
+
+<dom-module id="graph-item">
+
+  <template>
+    <style include="nextprot-elements-shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+    <img src="http://i.stack.imgur.com/2fjoA.png" />
+  </template>
+  <script>
+    Polymer({
+      is: 'graph-item',
+      properties: {
+            // The data should be provided via the data attribute injected by the ancestor-graph-view   (ancestor graph view will ask neXtProt API)
+    }});
+  </script>
+</dom-module>
