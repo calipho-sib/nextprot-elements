@@ -34,43 +34,43 @@
     "edges": [
       {
         "tail": 72643,
-        "relation": "?",
-        "head": 63332
+        "head": 63332,
+        "label": "?"
       },
       {
         "tail": 63254,
-        "relation": "?",
-        "head": 63345
+        "head": 63345,
+        "label": "?"
       },
       {
         "tail": 63345,
-        "relation": "?",
-        "head": 38700
+        "head": 38700,
+        "label": "?"
       },
       {
         "tail": 72643,
-        "relation": "?",
-        "head": 63254
+        "head": 63254,
+        "label": "?"
       },
       {
         "tail": 63332,
-        "relation": "?",
-        "head": 38286
+        "head": 38286,
+        "label": "?"
       },
       {
         "tail": 63254,
-        "relation": "?",
-        "head": 63267
+        "head": 63267,
+        "label": "?"
       },
       {
         "tail": 38700,
-        "relation": "?",
-        "head": 38286
+        "head": 38286,
+        "label": "?"
       },
       {
         "tail": 63267,
-        "relation": "?",
-        "head": 38286
+        "head": 38286,
+        "label": "?"
       }
     ]
   }
