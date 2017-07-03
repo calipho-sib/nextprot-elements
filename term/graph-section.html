@@ -15,14 +15,14 @@
 
 <!--
 `graph-item`
-Term overview section
+Graph view section
 
 ##### Example
-    <graph-item data='{}'></graph-item>
-@demo term/demo/graph-item-demo.html
+    <graph-section data='{}'></graph-section>
+@demo term/demo/graph-section-demo.html
 -->
 
-<dom-module id="graph-item">
+<dom-module id="graph-section">
 
   <template>
     <style include="nextprot-elements-shared-styles">
@@ -34,7 +34,7 @@ Term overview section
   </template>
   <script>
     Polymer({
-      is: 'graph-item',
+      is: 'graph-section',
       properties: {
             // The data should be provided via the data attribute injected by the ancestor-graph-view   (ancestor graph view will ask neXtProt API)
     }});
