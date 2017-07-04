@@ -1,0 +1,76 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../nextprot-elements-shared-styles.html">
+
+<dom-module id="heatmap-table-row">
+    <style>
+        :host {
+            display: block;
+        }
+        .openHmChildren {
+            display: block;
+        }
+        .heatmap-row *{
+            cursor: pointer !important;
+        }
+
+    </style>
+    <template>
+        <ul>
+            <template is="dom-repeat" items="[[data]]" as="d">
+                <li>
+                    <div class="heatmap-row" on-tap="toggleChildren">
+                        <span class="glyphicon glyphicon-record"></span>
+                        <p class="heatmap-no-cursor heatmap-rowLabel tree-toggler">
+                            <span class="rowLabel">[[d.rowLabel]]</span>
+                            <span><a href="[[d.linkURL]]" target="_blank">[[d.linkLabel]]</a></span>
+                        </p>
+                        <div class="pull-right">
+                            <template is="dom-repeat" items="[[d.values]]" as="v">
+                                <div class="heatmap-column " style="width:120px; font-size: 14px;"><i class="heatmap-circle red" style="background-color:red" data-toggle="tooltip" title="" data-original-title="[[v.value]]"></i></div>
+                            </template>
+                        </div>
+                    </div>
+                    <template is="dom-if" if="[[hasChildren(d)]]">
+                        <ul class="tree heatmap-opened heatmap-tree">
+                            <heatmap-table-row data="[[d.children]]"></heatmap-table-row>
+                        </ul>
+                    </template>
+                </li>
+            </template>
+        </ul>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'heatmap-table-row',
+            properties: {
+                data: {
+                    type: Array,
+                    value: [],
+                    observer: "_reload"
+                }
+            },
+            ready: function () {
+                //console.log(this.data);
+            },
+            hasChildren: function (d) {
+                var boolean = d.children && d.children.length;
+                /*if (boolean == false)
+                    console.log(d.rowLabel)*/
+                //console.log(boolean);
+                return boolean;
+            },
+            toggleChildren: function (e) {
+                var liParent = e.srcElement.closest("li")
+                var children = liParent.getElementsByTagName("ul")[0]
+                children.classList.toggle("openHmChildren");
+                children.classList.toggle("transient");
+            },
+            _reload: function () {
+
+                //console.log(this.data)
+
+            }
+        });
+    </script>
+</dom-module>

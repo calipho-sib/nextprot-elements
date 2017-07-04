@@ -4,6 +4,7 @@
 <link rel="import" href="../quality-label.html">
 <link rel="import" href="../nextprot-elements-shared-styles.html">
 <link rel="import" href="../external-scripts.html">
+<link rel="import" href="heatmap-table-row.html">
 
 <!--
 <script src="../jquery/dist/jquery.js"></script>
@@ -22,6 +23,7 @@ A heatmap table
                 display: block;
             }
 
+
             evidence-item {
                 padding: 8px 0 0 0;
                 margin: 5px 40px;
@@ -37,23 +39,12 @@ A heatmap table
                 display: inline-block;
             }
 
-            #featTableSpinner {
-                height: 45px;
-                width: 45px;
-            }
-
-            #featViewerSpinner {
-                position: absolute;
-                margin-left: 320px;
-                margin-top: 16px;
-                height: 32px;
-                width: 32px;
-            }
         </style>
-        <div class="row">
-            <div id="heatmap-table"></div>
+        <div class="heatmap-body" style="margin-top:20px">
+            <heatmap-table-row data="[[data]]"></heatmap-table-row>
         </div>
     </template>
+
     <script>
         Polymer({
             is: 'heatmap-table-item',
@@ -68,51 +59,59 @@ A heatmap table
                 },
                 data: {
                     type: Array,
-                    value: [],
-                    observer : "_reload"
+                    value: []//,
+                    //observer: "_reload"
                 }
             },
             ready: function () {
 
-                console.log("PIFPAF")
-
-                console.log(JSON.stringify(this.options))
-                console.log(JSON.stringify(this.data))
-                //Nothing to do here???
             },
             attached: function () {
                 this._reload();
             },
+            boum: function (d) {
+                console.log(d)
+            },
             _reload: function () {
 
-                if(this.data && this.data.length){
+                //Nothing to do here???
 
-                    var options =  {
-                                                        valuesSetting: [
-                                                            { value: 'Positive', html: '<div>\
-                                                            <img style="width:15px" src="./static/img/chili.gif">\
-                                                            <img style="width:15px" src="./static/img/chili.gif">\
-                                                            </div>'
-                                                            },
-                                                            { value: 'High', cssClass: 'red'},
-                                                            { value: 'NotDetected', color: 'lightgray'}
-                                                            ],
-                                                            columnWidth: "120px",
-                                                            headerTemplateID: "headerTemplate",
-                                                            headerTemplateData: {header:['MANotDetected',
-                                                                                'MAPositive',
-                                                                                'ESTPositive']},
-                                                            detailTemplateID: "detailTemplate"
-                                                        };
-                    var heatMapTable = new HeatMapTable({
-                        tableID: "heatmap-table",
-                        options: options
-                    });
+                if (this.data && this.data.length) {
 
-                    heatMapTable.loadJSONData(this.data);
-                    heatMapTable.show();
+                    var headerTemplateData = {
+                        header: ['Positive',
+                            'NotDetected',
+                            'Positive',
+                            'High',
+                            'Medium',
+                            'Low',
+                            'NotDetected']
+                    };
+
+                    var heatmapTableOptions = {
+
+                        valuesSetting: [
+                            // { value: 'Positive', color: '#FFA10A'},
+                            { value: 'Positive', color: '#FFA10A' },
+                            { value: 'NotDetected', color: "lightgray" },
+                            { value: 'Low', color: '#FFE6BD' },
+                            { value: 'Medium', color: '#FFC870' },
+                            { value: 'High', color: '#FFA10A' }
+                        ],
+                        columnWidth: "30px"
+                    }
 
                 }
+
+                /*var heatMapTable = new HeatMapTable({
+                    tableID: "heatmap-table",
+                    options: heatmapTableOptions
+                });
+
+
+                heatMapTable.loadJSONData(this.data);
+                heatMapTable.show();*/
+
             }
         });
     </script>
