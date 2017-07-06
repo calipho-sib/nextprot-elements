@@ -1,76 +1,83 @@
 {
-  "graph": {
-    "label": "NextprotAnatomyCv",
+  "ancestor-graph": {
+    "label": "TS-0079 ancestor graph",
     "nodes": [
       {
-        "id": 63345,
-        "label": "TS-2018"
-      },
-      {
         "id": 63267,
-        "label": "TS-1297"
+        "accession": "TS-1297",
+        "name": "Cardiovascular system"
       },
       {
         "id": 38700,
-        "label": "TS-0449"
-      },
-      {
-        "id": 72643,
-        "label": "TS-2178"
+        "accession": "TS-0449",
+        "name": "Hematopoietic and immune systems"
       },
       {
         "id": 63332,
-        "label": "TS-2101"
+        "accession": "TS-2101",
+        "name": "Fluid and secretion"
       },
       {
-        "id": 38286,
-        "label": "TS-0079"
+        "id": 72643,
+        "accession": "TS-2178",
+        "name": "Human anatomical entity"
       },
       {
         "id": 63254,
-        "label": "TS-2088"
+        "accession": "TS-2088",
+        "name": "Anatomical system"
+      },
+      {
+        "id": 63345,
+        "accession": "TS-2018",
+        "name": "Hemolymphoid and immune system"
+      },
+      {
+        "id": 38286,
+        "accession": "TS-0079",
+        "name": "Blood"
       }
     ],
     "edges": [
       {
-        "tail": 72643,
-        "head": 63332,
-        "label": "?"
-      },
-      {
+        "id": 0,
         "tail": 63254,
-        "head": 63345,
-        "label": "?"
+        "head": 63345
       },
       {
-        "tail": 63345,
-        "head": 38700,
-        "label": "?"
-      },
-      {
-        "tail": 72643,
-        "head": 63254,
-        "label": "?"
-      },
-      {
-        "tail": 63332,
-        "head": 38286,
-        "label": "?"
-      },
-      {
-        "tail": 63254,
-        "head": 63267,
-        "label": "?"
-      },
-      {
+        "id": 1,
         "tail": 38700,
-        "head": 38286,
-        "label": "?"
+        "head": 38286
       },
       {
+        "id": 2,
+        "tail": 63345,
+        "head": 38700
+      },
+      {
+        "id": 3,
+        "tail": 72643,
+        "head": 63332
+      },
+      {
+        "id": 4,
+        "tail": 72643,
+        "head": 63254
+      },
+      {
+        "id": 5,
+        "tail": 63332,
+        "head": 38286
+      },
+      {
+        "id": 6,
         "tail": 63267,
-        "head": 38286,
-        "label": "?"
+        "head": 38286
+      },
+      {
+        "id": 7,
+        "tail": 63254,
+        "head": 63267
       }
     ]
   }

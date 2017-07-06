@@ -11,8 +11,8 @@
 <link rel="import" href="../../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../external-scripts.html">
-<!-- <link rel="import" href="../nextprot-elements-shared-styles.html"> -->
-<!--Dagre -->
+<link rel="import" href="../nextprot-elements-shared-styles.html">
+<!--Dagre-D3: more info https://github.com/cpettitt/dagre-d3/wiki -->
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="../../lodash/lodash.js"></script>
 <script src="../../graphlib/dist/graphlib.core.js"></script>
@@ -32,170 +32,141 @@ Graph view section
 -->
 
 <dom-module id="graph-section">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
-      text {
-          font-weight: 300;
-          font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
-          font-size: 14px;
-      }
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            text {
+                font-weight: 300;
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
+                font-size: 14px;
+            }
 
-      .node rect {
-          stroke: #333;
-          fill: #fff;
-      }
+            .node rect {
+                stroke: #333;
+                fill: #fff;
+            }
 
-      .edgePath path {
-          stroke: #333;
-          fill: #333;
-          stroke-width: 1.5px;
-      }
+            .edgePath path {
+                stroke: #333;
+                fill: #333;
+                stroke-width: 1.5px;
+            }
 
-      .node text {
-          pointer-events: none;
-      }
-      img.center {
-          display: block;
-          margin-left: auto;
-          margin-right: auto;
-      }
-      /* This styles the title of the tooltip */
-      .tipsy .name {
-          font-size: 1.5em;
-          font-weight: bold;
-          color: #60b1fc;
-          margin: 0;
-      }
+            .node text {
+                pointer-events: none;
+            }
+            img.center {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            /* This styles the title of the tooltip */
+            .tipsy .name {
+                font-size: 1.5em;
+                font-weight: bold;
+                color: #60b1fc;
+                margin: 0;
+            }
 
-      /* This styles the body of the tooltip */
-      .tipsy .description {
-          font-size: 1.2em;
-      }
-    </style>
-    <!--Ajax call: it will be replaced with the API call-->
-    <iron-ajax
-            id ="APIcall"
-            url="data.json"
-            params='{"type":"all"}'
-            handle-as="json"
-            on-response="ancestorBuild" ></iron-ajax>
-      <svg id="chart" width=100% height=100%></svg>
-  </template>
+            /* This styles the body of the tooltip */
+            .tipsy .description {
+                font-size: 1.2em;
+            }
+        </style>
+        <!--Ajax call: it will be replaced with the API call-->
+        <iron-ajax
+                id ="APIcall"
+                url="bigdata.json"
+                params='{"type":"all"}'
+                handle-as="json"
+                on-response="ancestorBuild" ></iron-ajax>
+
+        <svg id="chart" width=100% height=100%></svg>
+    </template>
 
     <script src="tipsy.js"></script>
     <link rel="stylesheet" href="tipsy.css">
     <script>
-    Polymer({
-      is: 'graph-section',
-      properties: {
-          customData:{
-              dataAncestor: {
-                  type: Array
-              }
-          }
-            // The data should be provided via the data attribute injected by the ancestor-graph-view   (ancestor graph view will ask neXtProt API)
-    },
-
-//        //does the API call when the page is ready:
-//        ready: function () {
-//            this.$.APIcall.generateRequest();
-//        },
-//        //Retrieves the data
-//        ancestorBuild: function(data) {
-//            this.dataAncestor = data.detail.response;
-//            console.log(this.dataAncestor);
-//            }
-//Useful http://frontendinsights.com/polymer-rest-api-using-iron-ajax/
-
-        attached: function () {
-            var g = new dagreD3.graphlib.Graph().setGraph({});
-            var states = {
-                "Blood": {
-                    description: "Blood",
-                    style: "fill: #FFF9C4"
-                },
-
-                "Hematopoietic and immune systems": {
-                    description: "Hematopoietic and immune systems"
-                },
-                "Cardiovascular system": {
-                    description: "Cardiovascular system"
-                },
-                "Hemolymphoid and immune system": {
-                    description: "Hemolymphoid and immune system"
-                },
-                "Anatomical system": {
-                    description: "Anatomical system"
-                },
-                "Fluid and secretion": {
-                    description: "Fluid and secretion"
-                },
-                "Human anatomical entity": {
-                    description: "Human anatomical entity"
+        Polymer({
+            is: 'graph-section',
+            properties: {
+                dataAncestor: {
+                    type: Array
                 }
-            }; //Api Data (titles) should be added here
+                // TODO: The data should be provided via the data attribute injected by the ancestor-graph-view   (ancestor graph view will ask neXtProt API)
+            },
 
-            Object.keys(states).forEach(function(state) {
-                var value = states[state];
-                value.label = state;
-                value.rx = value.ry = 5;
-                g.setNode(state, value);
-                console.log(g)
-            });
+            //API call when the DOM is initialized:
+            ready: function () {
+                this.$.APIcall.generateRequest();
+            },
 
-            //Api Data (connections) should be appended to g:
-            g.setEdge("Blood",     "Cardiovascular system",     { label: "We could write some text" });
-            g.setEdge("Blood",     "Hematopoietic and immune systems",     { label: "" });
-            g.setEdge("Hematopoietic and immune systems", "Hemolymphoid and immune system",   { label: "" });
-            g.setEdge("Hemolymphoid and immune system", "Anatomical system",   { label: "" });
-            g.setEdge("Cardiovascular system", "Anatomical system",   { label: "" });
-            g.setEdge("Anatomical system", "Human anatomical entity",  { label: "" });
-            g.setEdge("Blood",     "Fluid and secretion",     { label: "" });
-            g.setEdge("Fluid and secretion", "Human anatomical entity",  { label: "" });
+//        Retrieves the data from the Ajax call and places them in APIdata:
+            ancestorBuild: function (APIdata) {
+                this.dataAncestor = APIdata.detail.response; //Put the data into dataAncestor array (in Properties) TODO: this might need to be changed
 
-            // Create the renderer
-            var render = new dagreD3.render();
+                var g = new dagreD3.graphlib.Graph().setGraph({});
 
-            // Set up an SVG group so that we can translate the final graph.
-            var svg = d3.select(this.$.chart),
-                inner = svg.append("g")
-                    .attr("transform", "translate(20,20)scale(1)");
+                //keeping the accession of the call in a variable TODO: remove split and use parameter given
+                var accessionCall = this.dataAncestor["ancestor-graph"]["label"].split(" ")[0];
 
-            // Set up zoom support, currently disabled.
-//            var zoom = d3.behavior.zoom().on("zoom", function() {
-//                inner.attr("transform", "translate(" + d3.event.translate + ")" +
-//                                            "scale(" + d3.event.scale + ")");
-//                console.log(d3.event.scale);
-//              });
-//            svg.call(zoom);
+                //Defining nodes as the array of objects containing the nodes
+                nodes = this.dataAncestor["ancestor-graph"]["nodes"];
 
-            // Simple function to style the tooltip for the given node.
-            var styleTooltip = function(name, description) {
-                return "<div style='text-align: center;'><img src='https://www.nextprot.org/img/np2.png' height='60%' width='60%'/></div> " + "<p class='description'>" + description + "</p>";
-            };
+//          For loop to add the nodes and highlighting the current one.
+                for (var i = 0; i < nodes.length; i++) {
+                    var keyNode = nodes[i]["id"];
+                    var gNode = { label: nodes[i].name,  rx: 5, ry: 5};
 
-            // Run the renderer. This is what draws the final graph.
-            render(inner, g);
+                    //Highlighting the box of the root item
+                    if (nodes[i]["accession"] === accessionCall) {
+                        gNode["style"] = "fill: #FFF9C4";
+                    }
 
-            inner.selectAll("g.node")
-                .attr("title", function(v) { return styleTooltip(v, g.node(v).description) })
-                .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 0.75, html: true }); });
+                    //Adds the node objects into the graph:
+                    g.setNode(keyNode, gNode);
+                }
 
-            var initialScale = 1;
-//            zoom //if we want to enable it
-//              .translate([(svg.attr("width") - g.graph().width * initialScale) / 2, 20])
-//              .scale(initialScale)
-//              .event(svg);
-            svg.attr('height', g.graph().height * initialScale + 40);
+                //Defining edges as the array of objects containing the edge
+                var edges = this.dataAncestor["ancestor-graph"]["edges"];
 
-            //CSS issue: This is fixed in Polymer 2.0
-            this.scopeSubtree(this.$.chart, true);
+//              For loop to add each edge into g.
+                for (var i = 0; i < edges.length; i++) {
+                    //variables which call object dictionary:
+                    var head = edges[i]["head"];
+                    var tail = edges[i]["tail"];
 
-        }
+                    g.setEdge(head, tail, { label: "" }); //empty label could be used to add text besides arrows
+                }
 
-    }); //Polymer end
-  </script>
+                // Create the renderer
+                var render = new dagreD3.render();
+
+                // Set up an SVG group so that we can translate the final graph.
+                var svg = d3.select(this.$.chart);
+                var inner = svg.append("g").attr("transform", "translate(20,20)scale(0.20)");
+
+                // Simple function to style the tooltip for the given node.
+                var styleTooltip = function(name, description) {
+                    return "<div style='text-align: center;'><img src='http://www.nextprot.org/img/np2.png' height='60%' width='60%'/></div> " + "<p class='description'>" + description + "</p>";
+                };
+
+                // Run the renderer. This is what draws the final graph.
+                render(inner, g);
+
+                inner.selectAll("g.node")
+                    .attr("title", function(dataName) { return styleTooltip(dataName, g.node(dataName).description) })
+                    .each(function(dataName) { $(this).tipsy({ gravity: "w", opacity: 0.75, html: true }); });
+
+                svg.attr('height', g.graph().height + 40);
+
+                //CSS issue: This is fixed in Polymer 2.0
+                this.scopeSubtree(this.$.chart, true);
+                
+            }
+
+        }); //Polymer end
+    </script>
 </dom-module>
