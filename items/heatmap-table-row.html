@@ -23,10 +23,13 @@
             background-color: #FFA10A;
         }
 
-        .heatmap-high-circle {
-            background-color: red;
+        .heatmap-medium-circle {
+            background-color: #ffc870;
         }
 
+        .heatmap-medium-circle {
+            background-color: #ffe6bd;
+        }
         .heatmap-hidden-circle {
             display: none;
         }
@@ -88,12 +91,13 @@
                 //console.log(this.data);
             },
             computeClass: function (d, v) {
-                if (v.value === 'NotDetected') {
+
+                if (v.value === 'not detected' || v.value === 'negative') {
                     return "heatmap-square heatmap-not-detected-circle";
-                } else if (v.value === 'Positive') {
+                } else if (v.value === 'positive' || v.value === 'high') {
                     return "heatmap-square heatmap-positive-circle";
-                } else if (v.value === 'High') {
-                    return "heatmap-square heatmap-high-circle";
+                } else if (v.value === 'medium') {
+                    return "heatmap-square heatmap-medium-circle";
                 }
 
                 if (v.value.length == 0) {
