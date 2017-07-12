@@ -22,7 +22,20 @@ Annotation section used in function, medical, and expression views.
 <dom-module id="expression-section">
     <template>
         <style include="nextprot-elements-shared-styles"></style>
+        
+        <ul>
+            <template is="dom-repeat" items="[[expressionProfileData.annot]]" as="ep" sort="_sortTermsAlphabetically">
+                    <li>[[ep.cvTermName]]</li>
+                    <ul>
+                    <template is="dom-repeat" items="[[ep.evidences]]" as="ev">
+                        <li>[[ev.expressionLevel]] assigned by [[ev.assignedBy]] using [[ev.evidenceCodeName]]</li>
+                    </template>
+                    <ul>
+            </template>
+        </ul>
+
         <heatmap-table-item data=[[heatmapData]] options=[[heatmapOtions]]></heatmap-table-item>
+
     </template>
 
 
@@ -70,6 +83,10 @@ Annotation section used in function, medical, and expression views.
                     type: Object,
                     value: {}
                 },
+                expressionProfileData: {
+                    type: Object,
+                    value: {}
+                },
                 heatmapData: {
                     type: Object,
                     value: {}
@@ -106,22 +123,9 @@ Annotation section used in function, medical, and expression views.
                     var self = this;
                     Promise.all(apiCall).then(function (result) {
                         var nxAnatomy = result[0];
-                        var expressionProfileData = result[1];
-
-                        /*self.heatmapData = [
-                            {
-                                "rowLabel": "Human anatomical entity",
-                                "values": ["NotDetected", "High", "Positive"],
-                                "children": [
-                                    {
-                                        "rowLabel": "Fluid and secretion",
-                                        "values": ["NotDetected", "High", "Positive"],
-                                        "children": []
-                                    }
-                                ],
-                            }
-                        ];*/
-                        self.heatmapData = self._convertNextProtDataIntoHeatMapTableFormat(nxAnatomy, expressionProfileData)
+                        self.expressionProfileData = result[1];
+                        console.log(self.expressionProfileData)
+                        self.heatmapData = self._convertNextProtDataIntoHeatMapTableFormat(nxAnatomy, self.expressionProfileData)
 
                     }).catch(function (err) {
                         // catch any error that happened so far
@@ -132,6 +136,11 @@ Annotation section used in function, medical, and expression views.
                     });
 
                 });
+            },
+            _sortTermsAlphabetically: function(a, b) {
+                if(a.cvTermName < b.cvTermName) return -1;
+                if(a.cvTermName > b.cvTermName) return 1;
+                return 0;
             },
             _convertNextProtDataIntoHeatMapTableFormat: function (terminology, data) {
 

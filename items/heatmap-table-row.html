@@ -35,6 +35,12 @@
             background-color: black;
         }
 
+        .heatmap-square {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+        }
+
         .heatmap-circle-size {
             width: 12px;
             font-size: 14px;
@@ -53,7 +59,7 @@
                         <div class="pull-right">
                             <template is="dom-repeat" items="[[d.values]]" as="v">
                                 <div class="heatmap-column heatmap-circle-size">
-                                    <i class$="{{computeClass(v)}}" data-toggle="tooltip" title="" data-original-title="[[v.value]]"></i>
+                                    <span class$="{{computeClass(d, v)}}" data-toggle="tooltip" title="" data-original-title="[[v.value]]"></span>
                                 </div>
                             </template>
                         </div>
@@ -81,24 +87,20 @@
             ready: function () {
                 //console.log(this.data);
             },
-            _getColor: function (v) {
-                console.log(v)
-                return "yellow"
-            },
-            computeClass: function (v) {
+            computeClass: function (d, v) {
                 if (v.value === 'NotDetected') {
-                    return "heatmap-circle heatmap-not-detected-circle";
+                    return "heatmap-square heatmap-not-detected-circle";
                 } else if (v.value === 'Positive') {
-                    return "heatmap-circle heatmap-positive-circle";
+                    return "heatmap-square heatmap-positive-circle";
                 } else if (v.value === 'High') {
-                    return "heatmap-circle heatmap-high-circle";
+                    return "heatmap-square heatmap-high-circle";
                 }
 
                 if (v.value.length == 0) {
-                    return "heatmap-circle heatmap-hidden-circle";
+                    return "heatmap-square heatmap-hidden-circle";
                 } else {
                     console.log("Not expecting this value here. ", v);
-                    return "heatmap-circle heatmap-unkown-circle";
+                    return "heatmap-square heatmap-unkown-circle";
                 }
 
             },
