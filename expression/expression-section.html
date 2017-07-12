@@ -21,10 +21,7 @@ Annotation section used in function, medical, and expression views.
 -->
 <dom-module id="expression-section">
     <template>
-        <style include="nextprot-elements-shared-styles">
-
-        </style>
-        <h1>BOUM</h1>
+        <style include="nextprot-elements-shared-styles"></style>
         <heatmap-table-item data=[[heatmapData]] options=[[heatmapOtions]]></heatmap-table-item>
     </template>
 
@@ -125,6 +122,7 @@ Annotation section used in function, medical, and expression views.
                             }
                         ];*/
                         self.heatmapData = self._convertNextProtDataIntoHeatMapTableFormat(nxAnatomy, expressionProfileData)
+
                     }).catch(function (err) {
                         // catch any error that happened so far
                         console.log("Argh, broken: " + err.message);

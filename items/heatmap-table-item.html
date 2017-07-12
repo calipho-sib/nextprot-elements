@@ -39,9 +39,25 @@ A heatmap table
                 display: inline-block;
             }
 
+            paper-spinner-lite {
+                --paper-spinner-stroke-width: 3px;
+            }
+
+            .center {
+                text-align: center;
+            }
+
+            #featHeatMapSpinner {
+                height: 32px;
+                width: 32px;
+            }
+
         </style>
         <div class="heatmap-body" style="margin-top:20px">
             <heatmap-table-row data="[[data]]"></heatmap-table-row>
+        </div>
+        <div class="center">
+            <paper-spinner-lite id="featHeatMapSpinner" alt="Loading data ..." active></paper-spinner-lite>
         </div>
     </template>
 
@@ -59,8 +75,8 @@ A heatmap table
                 },
                 data: {
                     type: Array,
-                    value: []//,
-                    //observer: "_reload"
+                    value: [],
+                    observer: "_reload"
                 }
             },
             ready: function () {
@@ -69,49 +85,12 @@ A heatmap table
             attached: function () {
                 this._reload();
             },
-            boum: function (d) {
-                console.log(d)
-            },
             _reload: function () {
 
                 //Nothing to do here???
-
                 if (this.data && this.data.length) {
-
-                    var headerTemplateData = {
-                        header: ['Positive',
-                            'NotDetected',
-                            'Positive',
-                            'High',
-                            'Medium',
-                            'Low',
-                            'NotDetected']
-                    };
-
-                    var heatmapTableOptions = {
-
-                        valuesSetting: [
-                            // { value: 'Positive', color: '#FFA10A'},
-                            { value: 'Positive', color: '#FFA10A' },
-                            { value: 'NotDetected', color: "lightgray" },
-                            { value: 'Low', color: '#FFE6BD' },
-                            { value: 'Medium', color: '#FFC870' },
-                            { value: 'High', color: '#FFA10A' }
-                        ],
-                        columnWidth: "30px"
-                    }
-
+                    this.$.featHeatMapSpinner.active = false;
                 }
-
-                /*var heatMapTable = new HeatMapTable({
-                    tableID: "heatmap-table",
-                    options: heatmapTableOptions
-                });
-
-
-                heatMapTable.loadJSONData(this.data);
-                heatMapTable.show();*/
-
             }
         });
     </script>

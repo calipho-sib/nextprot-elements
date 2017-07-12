@@ -3,16 +3,42 @@
 
 <dom-module id="heatmap-table-row">
     <style>
-        :host {
+         :host {
             display: block;
         }
+
         .openHmChildren {
             display: block;
         }
-        .heatmap-row *{
+
+        .heatmap-row * {
             cursor: pointer !important;
         }
 
+        .heatmap-not-detected-circle {
+            background-color: lightgray;
+        }
+
+        .heatmap-positive-circle {
+            background-color: #FFA10A;
+        }
+
+        .heatmap-high-circle {
+            background-color: red;
+        }
+
+        .heatmap-hidden-circle {
+            display: none;
+        }
+
+        .heatmap-unkown-circle {
+            background-color: black;
+        }
+
+        .heatmap-circle-size {
+            width: 12px;
+            font-size: 14px;
+        }
     </style>
     <template>
         <ul>
@@ -26,7 +52,9 @@
                         </p>
                         <div class="pull-right">
                             <template is="dom-repeat" items="[[d.values]]" as="v">
-                                <div class="heatmap-column " style="width:120px; font-size: 14px;"><i class="heatmap-circle red" style="background-color:red" data-toggle="tooltip" title="" data-original-title="[[v.value]]"></i></div>
+                                <div class="heatmap-column heatmap-circle-size">
+                                    <i class$="{{computeClass(v)}}" data-toggle="tooltip" title="" data-original-title="[[v.value]]"></i>
+                                </div>
                             </template>
                         </div>
                     </div>
@@ -53,11 +81,29 @@
             ready: function () {
                 //console.log(this.data);
             },
+            _getColor: function (v) {
+                console.log(v)
+                return "yellow"
+            },
+            computeClass: function (v) {
+                if (v.value === 'NotDetected') {
+                    return "heatmap-circle heatmap-not-detected-circle";
+                } else if (v.value === 'Positive') {
+                    return "heatmap-circle heatmap-positive-circle";
+                } else if (v.value === 'High') {
+                    return "heatmap-circle heatmap-high-circle";
+                }
+
+                if (v.value.length == 0) {
+                    return "heatmap-circle heatmap-hidden-circle";
+                } else {
+                    console.log("Not expecting this value here. ", v);
+                    return "heatmap-circle heatmap-unkown-circle";
+                }
+
+            },
             hasChildren: function (d) {
                 var boolean = d.children && d.children.length;
-                /*if (boolean == false)
-                    console.log(d.rowLabel)*/
-                //console.log(boolean);
                 return boolean;
             },
             toggleChildren: function (e) {
