@@ -1,5 +1,8 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../paper-listbox/paper-listbox.html">
+
 <link rel="import" href="../evidence-item.html">
 <link rel="import" href="../quality-label.html">
 <link rel="import" href="../nextprot-elements-shared-styles.html">
@@ -17,13 +20,25 @@ A heatmap table
 -->
 <dom-module id="heatmap-table-item">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <template>
         <style is="custom-style" include="nextprot-elements-shared-styles">
              :host {
                 display: block;
+            }
+
+            ul {
+                padding-left: 10px;
+                list-style-type: none;
             }
 
             evidence-item {
@@ -54,8 +69,47 @@ A heatmap table
                 width: 32px;
             }
         </style>
+        <paper-dropdown-menu label="Dinosaurs">
+        <paper-listbox slot="dropdown-content" selected="1">
+            <paper-item>allosaurus</paper-item>
+            <paper-item>brontosaurus</paper-item>
+            <paper-item>carcharodontosaurus</paper-item>
+            <paper-item>diplodocus</paper-item>
+        </paper-listbox>
+        </paper-dropdown-menu>
+
         <div class="heatmap-body" style="margin-top:20px">
-            <heatmap-table-row data="[[data]]"></heatmap-table-row>
+            <ul>
+                <div class="heatmap-row style-scope heatmap-table-row">
+                        <div class="pull-right style-scope heatmap-table-row" style="margin-right: 25px">
+                            <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                MicroArray
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="#">Yes</a></li>
+                                <li><a href="#">No</a></li>
+                            </ul>
+                            </div>
+                        </div>
+                        <div class="pull-right style-scope heatmap-table-row" style="margin-right: 25px">
+                            <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                EST
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="#">High</a></li>
+                                <li><a href="#">Low</a></li>
+                                <li><a href="#">Medium</a></li>
+                                <li><a href="#">Low</a></li>
+                            </ul>
+                            </div>
+                        </div>
+                    </div>
+                <heatmap-table-row data="[[data]]"></heatmap-table-row>
+            </ul>
         </div>
         <div class="center">
             <paper-spinner-lite id="featHeatMapSpinner" alt="Loading data ..." active></paper-spinner-lite>

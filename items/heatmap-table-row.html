@@ -7,6 +7,14 @@
             display: block;
         }
 
+        #grad {
+            background: red; /* For browsers that do not support gradients */
+            background: -webkit-linear-gradient(left top, red, yellow); /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(bottom right, red, yellow); /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(bottom right, red, yellow); /* For Firefox 3.6 to 15 */
+            background: linear-gradient(to bottom right, red, yellow); /* Standard syntax */
+        }
+
         #heatmap-body {
             margin-left: auto;
             margin-right: auto;
@@ -19,7 +27,11 @@
         .heatmap-row {
             border-bottom: solid 1px #d4d4d4;
             overflow: hidden;
-            height: 20px;
+            height: 25px;
+        }
+
+        .heatmap-row:hover {
+            background-color: aliceblue;
         }
 
         .heatmap-rowLabel {
@@ -44,9 +56,11 @@
         }
 
         .heatmap-column {
-            float: right;
+            float: left;
             height: 20px;
+            width: 20px;
             text-align: center;
+            margin-left: 10px;
         }
 
         .heatmap-group {
@@ -68,12 +82,14 @@
         }
 
         ul {
+            padding-left: 10px;
             list-style-type: none;
         }
 
         .heatmap-inline {
             display: inline-block;
         }
+
         .heatmap-zoom:hover {
             cursor: pointer;
         }
@@ -102,15 +118,11 @@
         }
 
         .heatmap-positive-circle {
-            background-color: #FFA10A;
+            background-color: aquamarine;
         }
 
         .heatmap-medium-circle {
-            background-color: #ffc870;
-        }
-
-        .heatmap-medium-circle {
-            background-color: #ffe6bd;
+            background-color: lightblue;
         }
 
         .heatmap-hidden-circle {
@@ -123,9 +135,11 @@
 
         .heatmap-square {
             display: inline-block;
-            width: 10px;
+            width: 18px;
             height: 18px;
-        }
+            border: solid;
+            border-width: 1px;
+         }
 
         .heatmap-circle-size {
             width: 12px;
@@ -133,19 +147,20 @@
         }
     </style>
     <template>
-        <ul>
             <template is="dom-repeat" items="[[data]]" as="d">
                 <li>
                     <div class="heatmap-row" on-tap="toggleChildren">
-                        <span class="glyphicon glyphicon-record"></span>
+                        <template is="dom-if" if="[[hasChildren(d)]]">
+                            <i class="fa fa-caret-right"></i>
+                        </template>
                         <p class="heatmap-no-cursor heatmap-rowLabel tree-toggler">
                             <span class="rowLabel">[[d.rowLabel]]</span>
                             <span><a href="[[d.linkURL]]" target="_blank">[[d.linkLabel]]</a></span>
                         </p>
-                        <div class="pull-right">
+                        <div class="pull-right" style="margin-right: 25px">
                             <template is="dom-repeat" items="[[d.values]]" as="v">
                                 <div class="heatmap-column heatmap-circle-size">
-                                    <span class$="{{computeClass(d, v)}}" data-toggle="tooltip" title="" data-original-title="[[v.value]]"></span>
+                                    <span class$="{{computeClass(d, v)}}" data-toggle="tooltip" title="" data-original-title="[[v.value]]"><a href="#" raised onclick="openBy(this)">[[_showEvidencesNumber(v.evidences)]]</a></span>
                                 </div>
                             </template>
                         </div>
@@ -157,7 +172,6 @@
                     </template>
                 </li>
             </template>
-        </ul>
     </template>
 
     <script>
@@ -172,6 +186,11 @@
             },
             ready: function () {
                 //console.log(this.data);
+            },
+            _showEvidencesNumber: function (evidences) {
+                if (evidences.length > 0)
+                    return evidences.length;
+                else return "";
             },
             computeClass: function (d, v) {
                 if (v.value === 'not detected' || v.value === 'negative') {
@@ -196,9 +215,22 @@
             },
             toggleChildren: function (e) {
                 var liParent = e.srcElement.closest("li")
+
+                var icon = liParent.getElementsByTagName("i")[0]
+
                 var children = liParent.getElementsByTagName("ul")[0]
                 children.classList.toggle("openHmChildren");
                 children.classList.toggle("transient");
+
+                if (icon.classList.contains("fa-caret-down")) {
+                    icon.classList.remove("fa-caret-down")
+                    icon.classList.add("fa-caret-right")
+                } else {
+                    icon.classList.remove("fa-caret-right")
+                    icon.classList.add("fa-caret-down")
+                }
+
+
             },
             _reload: function () {
 
