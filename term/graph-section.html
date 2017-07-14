@@ -37,8 +37,8 @@ Graph view section
                 font-size: 14px;
             }
         </style>
+        <div id="ancestorDiv"></div>
         <!--Ajax call: it will be replaced with the API call-->
-        <div id="mydiv" width="100px" height="100px" style="border:1;"></div>
         <iron-ajax
                 id ="APIcallBig"
                 url="bigdata.json"
@@ -100,12 +100,7 @@ Graph view section
             },
 
             getNodeColor: function (nodeAccession) {
-                if (nodeAccession === this.accessionInput) {
-                    return "#BDE5B9"
-                }
-                else {
-                    return "#FFFFFF"
-                }
+                return (nodeAccession === this.accessionInput) ? "#BDE5B9" : "#FFFFFF";
             },
 
             nodesDotBuild: function (APInodes) {
@@ -117,9 +112,9 @@ Graph view section
                     // Translates nodes into Dot Nodes
                     dotNodesBuilt += APInodes[i]["id"] + ' [' + 'label=' + '"' + APInodes[i]["name"].split(' ').join('\n') + '"' + 'style=filled; fillcolor="'+ this.getNodeColor(APInodes[i]["accession"]) + '"' + 'tooltip=' + '"' + APInodes[i]["name"].split(' ').join('\n') + '"' + 'href="https://www.nextprot.org/term/' + APInodes[i]["accession"] + '"' + ';] '
                 }
-                return(dotNodesBuilt)
+                return dotNodesBuilt
             },
-            
+
             edgesDotBuild: function (APIedges) {
 //                Where the edges data will be stored
                 var dotEdgesBuilt = "";
@@ -132,7 +127,7 @@ Graph view section
 
                     dotEdgesBuilt += '"' + head + '"' + " -> " + '"' + tail + '"' + " [arrowsize="+ this.arrowInput+ ", weight=2];";
                 }
-                return(dotEdgesBuilt)
+                return dotEdgesBuilt
             },
 
 //        Retrieves the data from the Ajax call and places them in APIdata:
@@ -144,23 +139,20 @@ Graph view section
 
                 //Defining nodes as the array of objects containing the nodes
                 var nodes = this.dataAncestor["ancestor-graph"]["nodes"];
-
                 var dotFormatNodes = this.nodesDotBuild(nodes);
 
 //              Defining edges as the array of objects containing the edge
                 var edges = this.dataAncestor["ancestor-graph"]["edges"];
-
                 var dotFormatEdges = this.edgesDotBuild(edges);
 
 //              Showcase: variables kept only for showcase to allow multiple selection:
+                var graph = 'digraph "" {	node [shape=' +
+                    'square' +
+                    ', fontsize='+ this.fontInput +'];' + 'graph [splines=' + this.splineInput + '];' + 'labelfontname=' +
+                    '"Helvetica";' + dotFormatNodes + dotFormatEdges +
+                    '}';
 
-                var upperGraph = 'digraph "" {	node [shape=';
-                var nodeShape = 'square';
-                var middleGraph = ', fontsize='+ this.fontInput +'];' + 'graph [splines=' + this.splineInput + '];' + 'labelfontname=';
-                var graphFont = '"Helvetica";';
-                var lowerGraph = '}';
-
-                this.$.mydiv.innerHTML = Viz(upperGraph+nodeShape+middleGraph+graphFont+dotFormatNodes+dotFormatEdges+lowerGraph);
+                this.$.ancestorDiv.innerHTML = Viz(graph);
 
             }
 
