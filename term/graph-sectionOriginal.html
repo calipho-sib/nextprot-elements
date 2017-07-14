@@ -44,16 +44,9 @@ Graph view section
             }
         </style>
         <!--Ajax call: it will be replaced with the API call-->
-        <div id="mydiv" width="100px" height="100px" style="border:1;"></div>
         <iron-ajax
-                id ="APIcallBig"
+                id ="APIcall"
                 url="bigdata.json"
-                params='{"type":"all"}'
-                handle-as="json"
-                on-response="ancestorBuild" ></iron-ajax>
-        <iron-ajax
-                id ="APIcallSmall"
-                url="data.json"
                 params='{"type":"all"}'
                 handle-as="json"
                 on-response="ancestorBuild" ></iron-ajax>
@@ -63,20 +56,8 @@ Graph view section
         Polymer({
             is: 'graph-section',
             properties: {
-                dataInput: {
+                prova: {
                     type: String,
-                    observer: "ready"
-                },
-                arrowInput: {
-                    type: Number,
-                    observer: "ready"
-                },
-                fontInput: {
-                    type: Number,
-                    observer: "ready"
-                },
-                splineInput: {
-                    type: Number,
                     observer: "ready"
                 },
                 dataAncestor: {
@@ -87,17 +68,12 @@ Graph view section
 
             //API call when the DOM is initialized:
             ready: function () {
-//                Could refactor using boolean
-                if (this.dataInput === "big") {
-                    this.$.APIcallBig.generateRequest();
-                }
-                else {
-                    this.$.APIcallSmall.generateRequest();
-                }
+                this.$.APIcall.generateRequest();
             },
 
 //        Retrieves the data from the Ajax call and places them in APIdata:
             ancestorBuild: function (APIdata) {
+                console.log(this.prova);
 
                 this.dataAncestor = APIdata.detail.response; //Put the data into dataAncestor array (in Properties) TODO: this might need to be changed
 
@@ -130,21 +106,13 @@ Graph view section
 //              Where the edges data will be stored
                 var graphData = "";
 
-//              Checking if value for arrowSize was defined: (Showcase)
-                if (this.arrowInput) {
-                    var arrowSize = " [arrowsize="+ this.arrowInput+ ", weight=2];";
-                }
-                else {
-                    var arrowSize = " [arrowsize=0.5, weight=2];";
-                }
-
 //              For loop to add each edge into the graph
                 for (var i = 0; i < edges.length; i++) {
                     //variables which call object dictionary:
                     var head = edges[i]["head"];
                     var tail = edges[i]["tail"];
 
-                    graphData += '"' + head + '"' + " -> " + '"' + tail + '"' + arrowSize;
+                    graphData += '"' + head + '"' + " -> " + '"' + tail + '"' + " [arrowsize=.5, weight=2]; ";
                 }
 
 
@@ -156,30 +124,15 @@ Graph view section
 //                svg.attr('height', g.graph().height + 40);
 //                svg.attr('width', g.graph().width + 40);
 
-//              Showcase: variables kept only for showcase to allow multiple selection:
-//              Checking if value for splineStyle was defined: (Showcase)
-                if (this.splineInput) {
-                    var splineStyle = 'graph [splines=' + this.splineInput + '];'
-                }
-                else {
-                    var splineStyle = 'graph [splines=spline];'
-                }
-
-                if (this.fontInput) {
-                    var fontSize = this.fontInput;
-                }
-                else {
-                    var fontSize = 14;
-                }
-//size="1,1";
-                var upperGraph = 'digraph {	node [shape=';
+//              Showcase: variables kept only for showcase to allow multiple selection
+                var upperGraph = 'digraph G { 	node [shape=';
                 var nodeShape = 'square';
-                var middleGraph = ', fontsize='+ fontSize +'];' + splineStyle + 'labelfontname=';
+                var middleGraph = '];  labelfontname=';
                 var graphFont = '"Helvetica";';
 //                var graphData = '20113 -> 1216 [arrowsize=.5, weight=2.]; 85870 -> 5511; 14820 -> 14822; 96036 -> 96045; 6621 -> 96045; 8082 -> 14822; 25518 -> 30621; 17035 -> 30621; 24391 -> 30620; 5928 -> 30620; 25518 -> 14820; 20928 -> 14820; 21849 -> 69585; 24326 -> 8082; 12239 -> 8082; 6621 -> 8082; 12538 -> 25960; 20951 -> 20958; 5808 -> 12237; 96036 -> 96037; 13651 -> 96037; 6620 -> 96036; 13651 -> 13655; 14895 -> 14897; 21850 -> 15636; 20113 -> 16359; 20928 -> 20951; 19901 -> 20951; 21917 -> 19103; 69585 -> 20108; 26049 -> 20249; 12538 -> 20958; 21849 -> 21850; 25959 -> 25960; 24330 -> 14822; 20929 -> 12538; 19901 -> 12538; 12239 -> 30576; 12239 -> 14820; 1198 -> 26111; 26419 -> 17035; 5928 -> 17035; 8762 -> 25960; 27520 -> 25959; 30576 -> 25959; 12538 -> 25959; 20928 -> 14822; 6621 -> 20929; 8167 -> 20928; 6621 -> 20928; 12538 -> 85870; 19901 -> 20115; 2105 -> 20113; 114431 -> 20113; 20111 -> 20113; 1198 -> 20113; 24391 -> 8150; 2103 -> 20111; 114429 -> 20111; 1198 -> 20111; 19101 -> 19103; 20111 -> 20108; 10467 -> 19103; 19901 -> 27520; 12239 -> 27520; 25514 -> 25518; 8167 -> 25518; 28307 -> 25515; 28305 -> 25514; 6620 -> 25514; 20929 -> 30576; 5511 -> 14895; 15756 -> 14895; 15758 -> 14897; 30620 -> 30621; 6172 -> 6173; 114431 -> 28609; 28607 -> 28609; 14622 -> 28609; 114429 -> 28607; 30621 -> 28607; 14622 -> 28607; 22270 -> 22272; 16359 -> 22272; 6172 -> 22272; 28307 -> 20784; 16357 -> 22270; 6172 -> 22270; 25514 -> 13650; 13651 -> 13650; 14820 -> 25892; 5805 -> 25892; 6105 -> 8150; 19103 -> 2105; 14897 -> 2105; 5514 -> 2105; 2103 -> 2105; 5514 -> 2103; 19101 -> 2103; 14895 -> 2103; 62994 -> 14622; 17035 -> 14622; 25615 -> 5928; 15636 -> 1216; 20108 -> 1216; 24330 -> 8805; 6094 -> 8805; 8804 -> 8805; 25518 -> 8804; 6094 -> 8804; 6621 -> 59795; 16357 -> 16359; 28609 -> 16359; 26111 -> 16359; 12237 -> 21917; 8721 -> 21917; 5808 -> 21917; 5511 -> 5514; 10467 -> 5514; 20111 -> 16357; 20115 -> 85870; 20958 -> 5511; 19101 -> 20249; 96036 -> 102788; 8167 -> 102788; 19901 -> 8762; 27520 -> 8762; 8082 -> 8762; 59795 -> 19901; 5808 -> 10467; 62994 -> 114431; 6105 -> 62994; 5805 -> 5808; 20928 -> 5805; 28607 -> 16357; 26111 -> 16357; 25892 -> 8721; 14822 -> 8721; 5805 -> 8721; 25515 -> 19820; 20784 -> 19820; 24326 -> 24392; 24391 -> 24392; 25615 -> 24392; 25615 -> 24391; 25514 -> 24391; 17149 -> 21850; 2105 -> 21850; 20249 -> 21849; 2103 -> 21849; 14622 -> 26111; 28305 -> 28307; 6620 -> 28305; 20206 -> 6173; 22272 -> 6173; 1216 -> 6173; 114429 -> 114431; 26111 -> 6172; 8151 -> 114431; 62994 -> 114429; 8150 -> 114429; 15756 -> 15758; 25960 -> 15758; 20958 -> 15758; 14822 -> 15758; 13650 -> 13655; 96037 -> 13655; 24326 -> 13655; 6620 -> 13651; 20958 -> 15756; 25959 -> 15756; 14820 -> 15756; 6620 -> 6621; 102788 -> 13613; 96045 -> 13613; 5514 -> 13613; 6105 -> 13613; 62994 -> 1198; 13613 -> 1198; 26049 -> 26058; 19820 -> 26058; 6620 -> 8167; 25515 -> 26049; 24392 -> 8151; 13655 -> 8151; 8805 -> 8151; 6105 -> 8151; 8150 -> 8151; 5511 -> 14897; 8804 -> 8150; 13650 -> 8150; 24326 -> 24330; 25518 -> 24330; 8167 -> 24330; 25514 -> 24326; 6620 -> 24326; 19103 -> 17149; 26058 -> 17149; 20249 -> 17149; 8167 -> 6105; 6094 -> 6105; 25518 -> 6105; 96037 -> 6105; 26419 -> 6105; 25514 -> 12239; 6621 -> 12239; 25892 -> 12237; 10467 -> 19101; 12237 -> 19101; 8167 -> 6094; 22270 -> 20206; 20108 -> 20206; 6620 -> 25615; 8167 -> 26419; 25615 -> 26419; 6620 [style=filled; fillcolor="#BDE5B9";';
                 var lowerGraph = '}';
 
-                this.$.mydiv.innerHTML = Viz(upperGraph+nodeShape+middleGraph+graphFont+graphNames+graphData+lowerGraph);
+                this.innerHTML += Viz(upperGraph+nodeShape+middleGraph+graphFont+graphNames+graphData+lowerGraph);
 
 
 //                //CSS issue: This is fixed in Polymer 2.0
