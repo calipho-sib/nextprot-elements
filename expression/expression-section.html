@@ -22,19 +22,40 @@ Annotation section used in function, medical, and expression views.
 <dom-module id="expression-section">
     <template>
         <style include="nextprot-elements-shared-styles"></style>
-        
-        <ul>
-            <template is="dom-repeat" items="[[expressionProfileData.annot]]" as="ep" sort="_sortTermsAlphabetically">
-                    <li> <template is="dom-if" if="[[_isSilver(ep.qualityQualifier)]]"><quality-label quality="[[ep.qualityQualifier]]"></quality-label></template>  [[ep.cvTermName]] ([[ep.evidences.length]] evidences)</li>
-                    <ul>
-                    <template is="dom-repeat" items="[[ep.evidences]]" as="ev">
-                        <li><template is="dom-if" if="[[_isSilver(ev.qualityQualifier)]]"><quality-label quality="[[ev.qualityQualifier]]"></quality-label></template> [[ev.expressionLevel]] <span class="label label-success">[[ev.evidenceCodeName]]</span><span class="label label-default">[[ev.assignedBy]]</span></li>
-                    </template>
-                    <ul>
-            </template>
+
+        <ul class="nav nav-tabs">
+            <li id="ontology-tab" class="active" on-tap="_showHide" data-args="ontology"><a href="#" data-args="ontology">Ontology</a></li>
+            <li id="flat-tab" on-tap="_showHide"  data-args="flat"><a href="#" data-args="flat">Flat</a></li>
         </ul>
 
-        <heatmap-table-item data=[[heatmapData]] options=[[heatmapOtions]]></heatmap-table-item>
+        <ul>
+            <template is="dom-if" if="[[isTree]]">
+                <div id="tree-table">
+                    <heatmap-table-item data=[[heatmapData]] options=[[heatmapOtions]]></heatmap-table-item>
+                </div>
+            </template>
+
+            <template is="dom-if" if="[[!isTree]]">
+                <div id="flat-table">
+                    <template is="dom-repeat" items="[[expressionProfileData.annot]]" as="ep" sort="_sortTermsAlphabetically">
+                        <li>
+                            <template is="dom-if" if="[[_isSilver(ep.qualityQualifier)]]">
+                                <quality-label quality="[[ep.qualityQualifier]]"></quality-label>
+                            </template> [[ep.cvTermName]] ([[ep.evidences.length]] evidences)</li>
+                        <ul>
+                            <template is="dom-repeat" items="[[ep.evidences]]" as="ev">
+                                <li>
+                                    <template is="dom-if" if="[[_isSilver(ev.qualityQualifier)]]">
+                                        <quality-label quality="[[ev.qualityQualifier]]"></quality-label>
+                                    </template> [[ev.expressionLevel]] <span class="label label-success">[[ev.evidenceCodeName]]</span>
+                                    <span class="label label-default">[[ev.assignedBy]]</span>
+                                </li>
+                            </template>
+                    </template>
+                </div>
+            </template>
+
+        </ul>
 
     </template>
 
@@ -83,6 +104,10 @@ Annotation section used in function, medical, and expression views.
                     type: Object,
                     value: {}
                 },
+                isTree: {
+                    type: Boolean,
+                    value: true
+                },
                 expressionProfileData: {
                     type: Object,
                     value: {}
@@ -112,6 +137,7 @@ Annotation section used in function, medical, and expression views.
                 }
             },
             ready: function () {
+                this.isTree = true;
                 //if(this.evidencesShown===undefined) this._toggleAllEvidences();
                 Polymer.RenderStatus.afterNextRender(this, function () {
                     var nx = new Nextprot.Client("neXtprot expression section", "Calipho Group");
@@ -137,12 +163,24 @@ Annotation section used in function, medical, and expression views.
 
                 });
             },
-            _isSilver: function(quality) {
+            _isSilver: function (quality) {
                 return quality === "SILVER"
             },
-            _sortTermsAlphabetically: function(a, b) {
-                if(a.cvTermName < b.cvTermName) return -1;
-                if(a.cvTermName > b.cvTermName) return 1;
+            _showHide: function (e) {
+                var args = e.target.getAttribute('data-args')
+                if(args == 'ontology'){
+                    this.isTree = true;
+                    this.$$('#ontology-tab').classList.add("active")
+                    this.$$('#flat-tab').classList.remove("active")
+                }else {
+                    this.isTree = false;
+                    this.$$('#flat-tab').classList.add("active")
+                    this.$$('#ontology-tab').classList.remove("active")
+                }
+            },
+            _sortTermsAlphabetically: function (a, b) {
+                if (a.cvTermName < b.cvTermName) return -1;
+                if (a.cvTermName > b.cvTermName) return 1;
                 return 0;
             },
             _convertNextProtDataIntoHeatMapTableFormat: function (terminology, data) {

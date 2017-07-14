@@ -16,13 +16,15 @@ A heatmap table
 @demo items/demo/heatmap-table-item-demo.html
 -->
 <dom-module id="heatmap-table-item">
-    <link rel="stylesheet" type="text/css" href="../../hierarchic-heatmap-table-component/dist/heatmap-table.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
     <template>
         <style is="custom-style" include="nextprot-elements-shared-styles">
              :host {
                 display: block;
             }
-
 
             evidence-item {
                 padding: 8px 0 0 0;
@@ -51,7 +53,6 @@ A heatmap table
                 height: 32px;
                 width: 32px;
             }
-
         </style>
         <div class="heatmap-body" style="margin-top:20px">
             <heatmap-table-row data="[[data]]"></heatmap-table-row>

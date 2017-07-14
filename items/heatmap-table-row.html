@@ -7,6 +7,88 @@
             display: block;
         }
 
+        #heatmap-body {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .heatmap-tree {
+            display: none;
+        }
+
+        .heatmap-row {
+            border-bottom: solid 1px #d4d4d4;
+            overflow: hidden;
+            height: 20px;
+        }
+
+        .heatmap-rowLabel {
+            display: inline-block;
+            margin-bottom: 0px;
+            word-break: break-all;
+            cursor: pointer;
+        }
+
+        .heatmap-no-cursor {
+            cursor: auto !important;
+        }
+
+        .heatmap-rowLabel a {
+            margin-left: 5px;
+            font-size: 12px;
+        }
+
+        .heatmap-rowLabel .glyphicon {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+        .heatmap-column {
+            float: right;
+            height: 20px;
+            text-align: center;
+        }
+
+        .heatmap-group {
+            display: inline-block;
+            text-align: center;
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+
+        .heatmap-circle {
+            text-align: center;
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-top: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        .heatmap-inline {
+            display: inline-block;
+        }
+        .heatmap-zoom:hover {
+            cursor: pointer;
+        }
+        /* sandbox */
+
+        .heatmap-info {
+            display: none;
+            text-align: center;
+        }
+
+        .glyphicon-refresh-animate {
+            -animation: spin .7s infinite linear;
+            -webkit-animation: spin2 .7s infinite linear;
+        }
+
         .openHmChildren {
             display: block;
         }
@@ -30,6 +112,7 @@
         .heatmap-medium-circle {
             background-color: #ffe6bd;
         }
+
         .heatmap-hidden-circle {
             display: none;
         }
@@ -91,7 +174,6 @@
                 //console.log(this.data);
             },
             computeClass: function (d, v) {
-
                 if (v.value === 'not detected' || v.value === 'negative') {
                     return "heatmap-square heatmap-not-detected-circle";
                 } else if (v.value === 'positive' || v.value === 'high') {
