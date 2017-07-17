@@ -53,11 +53,19 @@
         <option value="17">17</option>
         <option value="18">18</option>
     </select>
+        </select>
+        <br/>
+        Choose the zoom level (Big Data Only): <select id="fontsize" onchange="changeStyle(this.value, 'zoomInput')">
+        <option value="11">11</option>
+        <option value="15">15</option>
+        <option value="19">19</option>
+        <option value="23">23</option>
+
+    </select>
     </div>
-    <!--For the zoom look at https://github.com/ariutta/svg-pan-zoom.-->
     <demo-snippet>
         <template>
-            <graph-section dataInput="small" arrowInput="0.5" fontInput="14" splineStyle="spline" data="{}"></graph-section>
+            <graph-section dataInput="small" arrowInput=0.5 fontInput=14 splineInput="spline" zoomInput=11 data="{}"></graph-section>
         </template>
     </demo-snippet>
 </div>

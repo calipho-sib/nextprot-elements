@@ -79,6 +79,11 @@ Graph view section
                 },
                 splineInput: {
                     value: "spline",
+                    type: String,
+                    observer: "ready"
+                },
+                zoomInput: {
+                    value: 11,
                     type: Number,
                     observer: "ready"
                 },
@@ -148,7 +153,7 @@ Graph view section
 //              Showcase: variables kept only for showcase to allow multiple selection:
                 var graph = 'digraph "" {	node [shape=' +
                     'square' +
-                    ', fontsize='+ this.fontInput +'];' + 'graph [splines=' + this.splineInput + '];' + 'labelfontname=' +
+                    ', fontsize='+ this.fontInput +'];' + 'graph [autosize=false, size="90.2,' + this.zoomInput + '", splines=' + this.splineInput + '];' + 'labelfontname=' +
                     '"Helvetica";' + dotFormatNodes + dotFormatEdges +
                     '}';
 
