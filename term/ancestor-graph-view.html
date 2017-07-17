@@ -16,35 +16,124 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 @demo term/demo/ancestor-graph-view-demo.html
 -->
 <dom-module id="ancestor-graph-view">
-  <template>
-    <style include="nextprot-elements-shared-styles">
-      :host {
-        display: block;
-        background:#f8f8f8;
-        overflow-y: auto;
-      }
-    </style>
-    <div class="row">
-      <div id="term-overview-section" class="col-md-12">
-        <term-overview-section nx-config="[[nxConfig]]""></term-overview-section>
-      </div>
-    </div>
-    <div class="row">
-      <div id="graph-item" class="col-md-12">
-        <graph-section data="{}"></graph-section>
-      </div>
-    </div>
-  </template>
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background:#f8f8f8;
+                overflow-y: auto;
+            }
+        </style>
+        <iron-ajax
+                id ="APIcall"
+                url="https://api.nextprot.org/term/[[accessionInput]]/ancestor-graph.json"
+                params='{"type":"all"}'
+                handle-as="json"
+                on-response="ancestorBuild" ></iron-ajax>
+        <div class="row">
+            <div id="term-overview-section" class="col-md-12">
+                <term-overview-section nx-config="[[nxConfig]]"></term-overview-section>
+            </div>
+        </div>
+        <div class="row">
+            <div id="graph-item" class="col-md-12">
+                <graph-section data="{}"></graph-section>
+            </div>
+        </div>
+    </template>
 
-  <script>
-    Polymer({
-      is: 'ancestor-graph-view',
-      properties: {
-        nxConfig: {
-          type: Object,
-          value: {}
-        }
-      }
-    });
-  </script>
+    <script>
+        Polymer({
+            is: 'ancestor-graph-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                accessionInput: {
+                    type: String,
+                    value: "TS-0073"
+                },
+                arrowInput: {
+                    value: 0.5,
+                    type: Number
+                },
+                fontInput: {
+                    value: 14,
+                    type: Number
+                },
+                splineInput: {
+                    value: "spline",
+                    type: String
+                },
+                zoomInput: {
+                    value: 11,
+                    type: Number
+                },
+                dataAncestor: {
+                    type: Array
+                }
+            },
+            //API call when the DOM is initialized:
+            ready: function () {
+                this.$.APIcall.generateRequest();
+            },
+            
+            getNodeColor: function (nodeAccession) {
+                return (nodeAccession === this.accessionInput) ? "#BDE5B9" : "#FFFFFF";
+            },
+
+            nodesDotBuild: function (APInodes) {
+                //Contains the names of the nodes and style in dot format
+                var dotNodesBuilt = "";
+
+//              Node loop: to add the nodes to the graph
+                for (var i = 0; i < APInodes.length; i++) {
+                    // Translates nodes into Dot Nodes
+                    dotNodesBuilt += APInodes[i]["id"] + ' [' + 'label=' + '"' + APInodes[i]["name"].split(' ').join('\n') + '"' + 'style=filled; fillcolor="'+ this.getNodeColor(APInodes[i]["accession"]) + '"' + 'tooltip=' + '"' + APInodes[i]["name"].split(' ').join('\n') + '"' + 'href="https://www.nextprot.org/term/' + APInodes[i]["accession"] + '"' + ';] '
+                }
+                return dotNodesBuilt
+            },
+
+            edgesDotBuild: function (APIedges) {
+//                Where the edges data will be stored
+                var dotEdgesBuilt = "";
+
+//              Edge loop: to add each edge into the graph
+                for (var i = 0; i < APIedges.length; i++) {
+                    //variables which call object dictionary:
+                    var head = APIedges[i]["head"];
+                    var tail = APIedges[i]["tail"];
+
+                    dotEdgesBuilt += '"' + head + '"' + " -> " + '"' + tail + '"' + " [arrowsize="+ this.arrowInput+ ", weight=2];";
+                }
+                return dotEdgesBuilt
+            },
+
+//        Retrieves the data from the Ajax call and places them in APIdata:
+            ancestorBuild: function (APIdata) {
+                this.dataAncestor = APIdata.detail.response; //Put the data into dataAncestor array (in Properties) TODO: this might need to be changed
+
+                //Defining nodes as the array of objects containing the nodes
+                var nodes = this.dataAncestor["ancestor-graph"]["nodes"];
+                var dotFormatNodes = this.nodesDotBuild(nodes);
+
+//              Defining edges as the array of objects containing the edge
+                var edges = this.dataAncestor["ancestor-graph"]["edges"];
+                var dotFormatEdges = this.edgesDotBuild(edges);
+
+//              Showcase: variables kept only for showcase to allow multiple selection:
+                var graph = 'digraph "" {	node [shape=' +
+                    'square' +
+                    ', fontsize='+ this.fontInput +'];' + 'graph [autosize=false, size="90.2,' + this.zoomInput + '", splines=' + this.splineInput + '];' + 'labelfontname=' +
+                    '"Helvetica";' + dotFormatNodes + dotFormatEdges +
+                    '}';
+
+                this.$.ancestorDiv.innerHTML = Viz(graph);
+
+            }
+
+
+        }); //Polymer end
+    </script>
 </dom-module>
