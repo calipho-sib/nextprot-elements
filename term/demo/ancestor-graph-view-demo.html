@@ -20,29 +20,32 @@
 <body>
 
 <div class="vertical-section-container centered">
-    <h3>Basic ancestor graph view Demo</h3>
+    <h3>Ancestor Graph Interactive Demo</h3>
     <div>
-        Choose the data size: <select id="datasize" onchange="changeStyle(this.value, 'accessionInput')">
+        <b>Choose your options:</b>
+        <br/>
+        - Data size: <select id="datasize" onchange="changeStyle(this.value, 'accessionInput')">
         <option value="TS-0079">Small</option>
         <option value="GO:0007256">Big</option>
     </select>
+         or input your Accession Number <input id="customaccession" type="text"><button onclick="changeStyle('getelement', 'accessionInput')">Add</button>
         <br/>
 
-        Choose the arrow size: <select id="arrowsize" onchange="changeStyle(this.value, 'arrowInput')">
+        - Arrow size: <select id="arrowsize" onchange="changeStyle(this.value, 'arrowInput')">
         <option value="0.5" >0.5</option>
         <option value="1">1</option>
         <option value="1.5">1.5</option>
         <option value="2">2</option>
     </select>
         <br/>
-        Choose the edges (links) layout: <select id="splinestyle" onchange="changeStyle(this.value, 'splineInput')">
+        - Edges (links) layout: <select id="splinestyle" onchange="changeStyle(this.value, 'splineInput')">
         <option value="spline" >Default</option>
         <option value="curved">Curved</option>
         <option value="polyline">Polyline</option>
         <option value="ortho">Ortho</option>
     </select>
         <br/>
-        Choose the font size: <select id="fontsize" onchange="changeStyle(this.value, 'fontInput')">
+        - Font size: <select id="fontsize" onchange="changeStyle(this.value, 'fontInput')">
         <option value="14" >14 (Default)</option>
         <option value="10">10</option>
         <option value="11">11</option>
@@ -55,7 +58,7 @@
     </select>
         </select>
         <br/>
-        Choose the zoom level (big data only): <select id="zoom" onchange="changeStyle(this.value, 'zoomInput')">
+        - Zoom level (big data only): <select id="zoom" onchange="changeStyle(this.value, 'zoomInput')">
         <option value="11">11</option>
         <option value="15">15</option>
         <option value="19">19</option>
@@ -72,7 +75,11 @@
 </div>
 <script>
     function changeStyle(newStyle, feature) {
-        console.log(newStyle, feature);
+        if (newStyle === "getelement") {
+            newStyle = document.getElementById("customaccession").value;
+            console.log(newStyle)
+        }
+
 //        var componentStyle = document.querySelectorAll("graph-section");
         var graphSectionElement = document.querySelectorAll("ancestor-graph-view");
 

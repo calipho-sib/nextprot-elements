@@ -22,7 +22,7 @@ Term overview section
 @demo term/demo/term-overview-section-demo.html
 -->
 
-<dom-module id="term-overview-section">
+<dom-module id="term-overview-section" is="dom-if" if="[[accessionInput]]">
 
   <template>
     <style include="nextprot-elements-shared-styles">
@@ -53,10 +53,10 @@ Term overview section
         margin-top:-5px;
       }
     </style>
-    <div id="proteinTitle">
+    <div id="proteinTitle" >
       <h3>
-        <!-- check protein-overview.html template for more templating examples --> 
-        TS-0079 → Blood
+        <!-- check protein-overview.html template for more templating examples -->
+          [[accessionInput]]
       </h3>
     </div>
   </template>
@@ -67,7 +67,10 @@ Term overview section
         nxConfig: {
           type: Object,
           value: {}
-        }
+        },
+          accessionInput: {
+            type: String
+          }
     }});
   </script>
 </dom-module>
