@@ -37,7 +37,6 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
         </div>
         <div class="row">
             <div id="graph-item" class="col-md-12">
-                <!--<graph-section dotData='digraph "" { node [shape=square, fontsize=14];graph [autosize=false, size="90.2,11", splines=spline];labelfontname="Helvetica";38278 [label="Basophil"style=filled; fillcolor="#BDE5B9"tooltip="Basophil"href="https://www.nextprot.org/term/TS-0073";] 38922 [label="Myeloid cell"style=filled; fillcolor="#FFFFFF"tooltip="Myeloid cell"href="https://www.nextprot.org/term/TS-0647";] 38700 [label="Hematopoietic and immune systems"style=filled; fillcolor="#FFFFFF"tooltip="Hematopoietic and immune systems"href="https://www.nextprot.org/term/TS-0449";] 38813 [label="Leukocyte"style=filled; fillcolor="#FFFFFF"tooltip="Leukocyte"href="https://www.nextprot.org/term/TS-0549";] 94539 [label="Myeloid leukocyte"style=filled; fillcolor="#FFFFFF"tooltip="Myeloid leukocyte"href="https://www.nextprot.org/term/TS-2367";] 38670 [label="Granulocyte"style=filled; fillcolor="#FFFFFF"tooltip="Granulocyte"href="https://www.nextprot.org/term/TS-0422";] 63279 [label="Cell type"style=filled; fillcolor="#FFFFFF"tooltip="Cell type"href="https://www.nextprot.org/term/TS-2035";] 72643 [label="Human anatomical entity"style=filled; fillcolor="#FFFFFF"tooltip="Human anatomical entity"href="https://www.nextprot.org/term/TS-2178";] 63345 [label="Hemolymphoid and immune system"style=filled; fillcolor="#FFFFFF"tooltip="Hemolymphoid and immune system"href="https://www.nextprot.org/term/TS-2018";] 63344 [label="Hematopoietic cell"style=filled; fillcolor="#FFFFFF"tooltip="Hematopoietic cell"href="https://www.nextprot.org/term/TS-2017";] 63254 [label="Anatomical system"style=filled; fillcolor="#FFFFFF"tooltip="Anatomical system"href="https://www.nextprot.org/term/TS-2088";] "94539" -> "38922" [arrowsize=0.5, weight=2];"94539" -> "38813" [arrowsize=0.5, weight=2];"38278" -> "38670" [arrowsize=0.5, weight=2];"38813" -> "63344" [arrowsize=0.5, weight=2];"63254" -> "72643" [arrowsize=0.5, weight=2];"38700" -> "63345" [arrowsize=0.5, weight=2];"63345" -> "63254" [arrowsize=0.5, weight=2];"63344" -> "38700" [arrowsize=0.5, weight=2];"63344" -> "63279" [arrowsize=0.5, weight=2];"63279" -> "72643" [arrowsize=0.5, weight=2];"38670" -> "94539" [arrowsize=0.5, weight=2];"38922" -> "63344" [arrowsize=0.5, weight=2];}'></graph-section>-->
                 <graph-section dotdata="[[dotgraph]]"></graph-section>
             </div>
         </div>
@@ -53,23 +52,27 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 },
                 accessionInput: {
                     type: String,
-                    value: "TS-0073"
+                    observer: "APIcaller"
                 },
                 arrowInput: {
                     value: 0.5,
-                    type: Number
+                    type: Number,
+                    observer: "APIcaller"
                 },
                 fontInput: {
                     value: 14,
-                    type: Number
+                    type: Number,
+                    observer: "APIcaller"
                 },
                 splineInput: {
                     value: "spline",
-                    type: String
+                    type: String,
+                    observer: "APIcaller"
                 },
                 zoomInput: {
                     value: 11,
-                    type: Number
+                    type: Number,
+                    observer: "APIcaller"
                 },
                 dataAncestor: {
                     type: Array
@@ -79,7 +82,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 }
             },
             //API call when the DOM is initialized:
-            ready: function () {
+            APIcaller: function () {
                 this.$.APIcall.generateRequest();
             },
             
@@ -132,12 +135,6 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     ', fontsize='+ this.fontInput +'];' + 'graph [autosize=false, size="90.2,' + this.zoomInput + '", splines=' + this.splineInput + '];' + 'labelfontname=' +
                     '"Helvetica";' + dotFormatNodes + dotFormatEdges +
                     '}';
-//                console.log("H");
-
-//                this.$.graph.innerHTML += '<graph-section dotData='+ this.dotTranslatedGraph + '></graph-section>' ;
-//                this.$$(".ancestor-graph-view")("row").innerHTML += '<graph-section dotData="[[dotTranslatedGraph]]"></graph-section>' ;
-
-//                console.log(this.dotgraph)
             }
 
 

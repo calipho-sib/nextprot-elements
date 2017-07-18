@@ -47,15 +47,13 @@ Graph view section
             properties: {
                 dotdata: {
                     type: String,
-                    observer: "building"
+                    observer: "graphBuilder"
                 }
             },
 
             //API call when the DOM is initialized:
-            building: function () {
-                console.log("E");
-                console.log(this.dotdata);
-                this.$.ancestorDiv.innerHTML += Viz(this.dotdata)
+            graphBuilder: function () {
+                this.$.ancestorDiv.innerHTML = Viz(this.dotdata)
             }
 
         }); //Polymer end

@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <title>graph-item demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
@@ -12,20 +12,73 @@
     <link rel="import" href="../ancestor-graph-view.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
-      .vertical-section-container {
-        max-width: 80%;
-      }
+        .vertical-section-container {
+            max-width: 80%;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
 
-    <div class="vertical-section-container centered">
-      <h3>Basic ancestor graph view Demo</h3>
-      <demo-snippet>
-        <template>
-          <ancestor-graph-view nxConfig="{}"></ancestor-graph-view>
-        </template>
-      </demo-snippet>
+<div class="vertical-section-container centered">
+    <h3>Basic ancestor graph view Demo</h3>
+    <div>
+        Choose the data size: <select id="datasize" onchange="changeStyle(this.value, 'accessionInput')">
+        <option value="TS-0079">Small</option>
+        <option value="GO:0007256">Big</option>
+    </select>
+        <br/>
+
+        Choose the arrow size: <select id="arrowsize" onchange="changeStyle(this.value, 'arrowInput')">
+        <option value="0.5" >0.5</option>
+        <option value="1">1</option>
+        <option value="1.5">1.5</option>
+        <option value="2">2</option>
+    </select>
+        <br/>
+        Choose the edges (links) layout: <select id="splinestyle" onchange="changeStyle(this.value, 'splineInput')">
+        <option value="spline" >Default</option>
+        <option value="curved">Curved</option>
+        <option value="polyline">Polyline</option>
+        <option value="ortho">Ortho</option>
+    </select>
+        <br/>
+        Choose the font size: <select id="fontsize" onchange="changeStyle(this.value, 'fontInput')">
+        <option value="14" >14 (Default)</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+    </select>
+        </select>
+        <br/>
+        Choose the zoom level (big data only): <select id="zoom" onchange="changeStyle(this.value, 'zoomInput')">
+        <option value="11">11</option>
+        <option value="15">15</option>
+        <option value="19">19</option>
+        <option value="23">23</option>
+
+    </select>
     </div>
-  </body>
+
+    <demo-snippet>
+        <template>
+            <ancestor-graph-view accession-input="TS-0079" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-view>
+        </template>
+    </demo-snippet>
+</div>
+<script>
+    function changeStyle(newStyle, feature) {
+        console.log(newStyle, feature);
+//        var componentStyle = document.querySelectorAll("graph-section");
+        var graphSectionElement = document.querySelectorAll("ancestor-graph-view");
+
+        graphSectionElement[0][feature] = newStyle;
+        console.log(graphSectionElement)
+    }
+</script>
+</body>
 </html>
