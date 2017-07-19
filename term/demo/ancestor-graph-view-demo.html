@@ -28,7 +28,7 @@
         <option value="TS-0079">Small</option>
         <option value="GO:0007256">Big</option>
     </select>
-         or input your Accession Number <input id="customaccession" type="text"><button onclick="changeStyle('getelement', 'accessionInput')">Add</button>
+         or input your Accession Number <input id="customaccession"><button onclick="changeStyle('getelement', 'accessionInput')">Add</button>
         <br/>
 
         - Arrow size: <select id="arrowsize" onchange="changeStyle(this.value, 'arrowInput')">
@@ -75,16 +75,14 @@
 </div>
 <script>
     function changeStyle(newStyle, feature) {
+
         if (newStyle === "getelement") {
             newStyle = document.getElementById("customaccession").value;
-            console.log(newStyle)
         }
 
-//        var componentStyle = document.querySelectorAll("graph-section");
         var graphSectionElement = document.querySelectorAll("ancestor-graph-view");
 
         graphSectionElement[0][feature] = newStyle;
-        console.log(graphSectionElement)
     }
 </script>
 </body>

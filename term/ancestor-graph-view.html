@@ -15,13 +15,13 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 
 @demo term/demo/ancestor-graph-view-demo.html
 -->
-<dom-module id="ancestor-graph-view" is="dom-if" if="[[dotgraph]]">
+<dom-module id="ancestor-graph-view" is="dom-if" if="[[dotGraph]]">
     <template>
         <style include="nextprot-elements-shared-styles">
             :host {
                 display: block;
                 background:#f8f8f8;
-                overflow-y: auto;
+                /*overflow-y: auto;*/
             }
         </style>
         <iron-ajax
@@ -36,8 +36,11 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
             </div>
         </div>
         <div class="row">
+            <img style="height: 100%;width: 100%;" src="http://i.imgur.com/6BjOauP.png" />
+        </div>
+        <div class="row">
             <div id="graph-item" class="col-md-12">
-                <graph-section dotdata="[[dotgraph]]"></graph-section>
+                <graph-section style="overflow-y: auto;"dotdata="[[dotGraph]]"></graph-section>
             </div>
         </div>
     </template>
@@ -74,10 +77,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     type: Number,
                     observer: "APIcaller"
                 },
-                dataAncestor: {
-                    type: Array
-                },
-                dotgraph: {
+                dotGraph: {
                     type: String
                 }
             },
@@ -119,18 +119,18 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 
 //        Retrieves the data from the Ajax call and places them in APIdata:
             ancestorBuild: function (APIdata) {
-                this.dataAncestor = APIdata.detail.response; //Put the data into dataAncestor array (in Properties) TODO: this might need to be changed
+//                this.dataAncestor = APIdata.detail.response; //Put the data into dataAncestor array (in Properties) TODO: this might need to be changed
 
                 //Defining nodes as the array of objects containing the nodes
-                var nodes = this.dataAncestor["ancestor-graph"]["nodes"];
+                var nodes = APIdata.detail.response["ancestor-graph"]["nodes"];
                 var dotFormatNodes = this.nodesDotBuild(nodes);
 
 //              Defining edges as the array of objects containing the edge
-                var edges = this.dataAncestor["ancestor-graph"]["edges"];
+                var edges = APIdata.detail.response["ancestor-graph"]["edges"];
                 var dotFormatEdges = this.edgesDotBuild(edges);
 
 //              Showcase: variables kept only for showcase to allow multiple selection:
-                this.dotgraph = 'digraph "" {	node [shape=' +
+                this.dotGraph = 'digraph "" {	node [shape=' +
                     'square' +
                     ', fontsize='+ this.fontInput +'];' + 'graph [autosize=false, size="90.2,' + this.zoomInput + '", splines=' + this.splineInput + '];' + 'labelfontname=' +
                     '"Helvetica";' + dotFormatNodes + dotFormatEdges +
