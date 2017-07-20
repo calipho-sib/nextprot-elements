@@ -1,11 +1,9 @@
-<link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../nextprot-elements-shared-styles.html">
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
 
 <dom-module id="heatmap-table-row">
 
-    <link rel="import" type="css" href="../../font-awesome/css/font-awesome.min.css">
-
-    <style>
+    <style include="nextprot-elements-shared-styles">
          :host {
             display: block;
         }
@@ -136,6 +134,12 @@
             background-color: black;
         }
 
+        /*
+        //TODO
+        :host ul:nth-child(2) {
+            display: block;
+        }*/
+
         .heatmap-square {
             display: inline-block;
             width: 18px;
@@ -204,7 +208,7 @@
                     return "heatmap-square heatmap-medium-circle";
                 }
 
-                if (v.value && v.value.length == 0) {
+                if (/*v.value &&*/ v.value.length == 0) {
                     return "heatmap-square heatmap-hidden-circle";
                 } else {
                     console.log("Not expecting this value here. ", v);
