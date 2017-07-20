@@ -2,6 +2,9 @@
 <link rel="import" href="../nextprot-elements-shared-styles.html">
 
 <dom-module id="heatmap-table-row">
+
+    <link rel="import" type="css" href="../../font-awesome/css/font-awesome.min.css">
+
     <style>
          :host {
             display: block;
@@ -188,7 +191,7 @@
                 //console.log(this.data);
             },
             _showEvidencesNumber: function (evidences) {
-                if (evidences.length > 0)
+                if (evidences && evidences.length > 0)
                     return evidences.length;
                 else return "";
             },
@@ -201,7 +204,7 @@
                     return "heatmap-square heatmap-medium-circle";
                 }
 
-                if (v.value.length == 0) {
+                if (v.value && v.value.length == 0) {
                     return "heatmap-square heatmap-hidden-circle";
                 } else {
                     console.log("Not expecting this value here. ", v);

@@ -15,28 +15,66 @@ Annotation section used in function, medical, and expression views.
 
 #### Example
     <generic-annotation-section section="function" categories='[ "GENERAL-ANNOTATION" ]'></generic-annotation-section>
-
-
 @demo expression/demo/expression-section-demo.html
 -->
 <dom-module id="expression-section">
     <template>
-        <style include="nextprot-elements-shared-styles"></style>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                min-width: 700px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
 
-        <ul class="nav nav-tabs">
-            <li id="ontology-tab" class="active" on-tap="_showHide" data-args="ontology"><a href="#" data-args="ontology">Ontology</a></li>
-            <li id="flat-tab" on-tap="_showHide" data-args="flat"><a href="#" data-args="flat">Flat</a></li>
-        </ul>
+        </style>
 
-        <ul>
-            <template is="dom-if" if="[[isTree]]">
-                <div id="tree-table">
+            <div class="pull-right style-scope heatmap-table-row" style="margin-right: 25px">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="true">
+                    MicroArray
+                    <span class="caret"></span>
+                </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a href="#">Yes</a></li>
+                        <li><a href="#">No</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pull-right style-scope heatmap-table-row" style="margin-right: 25px">
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="true">
+                EST
+                <span class="caret"></span>
+            </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li><a href="#">High</a></li>
+                        <li><a href="#">Low</a></li>
+                        <li><a href="#">Medium</a></li>
+                        <li><a href="#">Low</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs" role="tablist">
+                <li id="ontology-tab" class="active">
+                    <a href="#ontology-content" id="ontology-tab" role="tab" data-toggle="tab">Ontology</a>
+                </li>
+                <li id="flat-tab">
+                    <a href="#flat-content" id="flat-tab" role="tab" data-toggle="tab">Flat</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+
+                <div id="ontology-content" role="tabpanel" aria-labelledby="ontology-tab" class="tab-pane active in">
                     <heatmap-table-item data=[[heatmapData]] options=[[heatmapOtions]]></heatmap-table-item>
                 </div>
-            </template>
 
-            <template is="dom-if" if="[[!isTree]]">
-                <div id="flat-table">
+                <div id="flat-content" role="tabpanel" aria-labelledby="flat-tab" class="tab-pane fade">
                     <template is="dom-repeat" items="[[expressionProfileData.annot]]" as="ep" sort="_sortTermsAlphabetically">
                         <li>
                             <template is="dom-if" if="[[_isSilver(ep.qualityQualifier)]]">
@@ -54,9 +92,7 @@ Annotation section used in function, medical, and expression views.
                         </ul>
                     </template>
                 </div>
-            </template>
-
-        </ul>
+            </div>
 
     </template>
 
@@ -179,7 +215,7 @@ Annotation section used in function, medical, and expression views.
                         node.rowLabel = cvTermList[i].name;
                         node.id = cvTermList[i].accession;
                         node.linkLabel = "[" + cvTermList[i].accession + "]"
-                        node.linkURL = "http://www.nextprot.org/db/term/" + cvTermList[i].name;
+                        node.linkURL = "http://www.nextprot.org/db/term/" + cvTermList[i].accession;
                         heatMapTableRoot = node;
                         queue.push(heatMapTableRoot);
 
@@ -200,7 +236,7 @@ Annotation section used in function, medical, and expression views.
                             childNode.id = childTerm.accession;
                             childNode.rowLabel = childTerm.name;
                             childNode.linkLabel = "[" + childTerm.accession + "]"
-                            childNode.linkURL = "http://www.nextprot.org/db/term/" + childTerm.name;
+                            childNode.linkURL = "http://www.nextprot.org/db/term/" + childTerm.accession;
                             queue.push(childNode);
 
                             currNode.children.push(childNode);
