@@ -22,56 +22,111 @@ Term overview section
 @demo term/demo/term-overview-section-demo.html
 -->
 
-<dom-module id="term-overview-section" is="dom-if" if="[[accessionInput]]">
+<dom-module id="term-overview-section" is="dom-if" if="[[accessionName]]">
 
-  <template>
-    <style include="nextprot-elements-shared-styles">
-      :host {
-        display: block;
-      }
-      iron-collapse {
-        --iron-collapse-transition-duration: 500ms;
-      }
-      h3 {
-        text-align: left;
-      }
-      dd{
-        margin-left:15px;
-      }
-      .term-link {
-        display: inline;
-      }
-      .paragraph {
-        margin: 10px;
-      }
-      .ec-link {
-        display: inline;
-      }
-      #extender {
-        float:right;
-        padding: 1px 3px;
-        margin-top:-5px;
-      }
-    </style>
-    <div id="proteinTitle" >
-      <h3>
-        <!-- check protein-overview.html template for more templating examples -->
-          [[accessionInput]]
-      </h3>
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+            div {
+                line-height: 1.9;
+            }
+            iron-collapse {
+                --iron-collapse-transition-duration: 500ms;
+            }
+            h3 {
+                text-align: left;
+                font-size: 24px;
+                margin-bottom: 10px;
+                margin-top: 20px;
+            }
+            dd{
+                margin-left:15px;
+            }
+            .term-link {
+                display: inline;
+            }
+            .paragraph {
+                margin: 10px;
+            }
+            .ec-link {
+                display: inline;
+            }
+            #extender {
+                float:right;
+                padding: 1px 3px;
+                margin-top:-5px;
+            }
+        </style>
+        <iron-ajax
+                id ="termAPIcall"
+                url="https://dev-api.nextprot.org/term/[[accessionInput]].json"
+                params='{"type":"all"}'
+                handle-as="json"
+                on-response="termResponse" ></iron-ajax>
+        <!--<iron-ajax-->
+                <!--id ="termAPIcall"-->
+                <!--url="term.json"-->
+                <!--params='{"type":"all"}'-->
+                <!--handle-as="json"-->
+                <!--on-response="termResponse" ></iron-ajax>-->
+        <div id="proteinTitle" >
+            <h3>
+                <!-- check protein-overview.html template for more templating examples -->
+                [[accessionInput]] → [[accessionName]]
+            </h3>
+            <div class="col-md-3 col-xs-3 grey-x text-align-right style-scope protein-overview">Ontology :</div>
+            <div class="col-md-9 col-xs-9 style-scope protein-overview">[[accessionOntology]]</div>
+            <div class="col-md-3 col-xs-3 grey-x text-align-right style-scope protein-overview">Definition :</div>
+            <div class="col-md-9 col-xs-9 style-scope protein-overview">[[accessionDefinition]]</div>
+            <div class="col-md-3 col-xs-3 grey-x text-align-right style-scope protein-overview">Synonyms :</div>
+            <div class="col-md-9 col-xs-9 style-scope protein-overview">[[accessionSynonym]]</div>
 
-    </div>
-  </template>
-  <script>
-    Polymer({
-      is: 'term-overview-section',
-      properties: {
-        nxConfig: {
-          type: Object,
-          value: {}
-        },
-          accessionInput: {
-            type: String
-          }
-    }});
-  </script>
+        </div>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'term-overview-section',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                accessionInput: {
+                    type: String,
+                    observer: "termAPIcaller"
+                },
+                accessionName: {
+                    type: String
+                },
+                accessionOntology: {
+                    type: String
+                },
+                accessionDefinition: {
+                    type: String
+                },
+                accessionSynonym: {
+                    type: String
+                },
+            },
+
+            termAPIcaller: function () {
+                this.$.termAPIcall.generateRequest();
+            },
+
+            termResponse: function (APIdata) {
+                console.log(APIdata.detail.response);
+                this.accessionName = APIdata.detail.response["cvTerm"]["name"];
+                this.accessionOntology = APIdata.detail.response["cvTerm"]["ontology"];
+                this.accessionDefinition = APIdata.detail.response["cvTerm"]["description"];
+                this.accessionSynonym = APIdata.detail.response["cvTerm"]["synonyms"]
+
+
+            }
+
+
+        });
+    </script>
 </dom-module>

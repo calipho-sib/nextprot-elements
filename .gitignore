@@ -2,3 +2,5 @@ bower_components
 node_modules
 .idea
 build/
+.DS_Store
+.gitignore
