@@ -40,6 +40,7 @@ Graph view section
         <div id="ancestorDiv"></div>
     </template>
     <script src="viz.js"></script>
+    <script src="http://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></script>
 
     <script>
         Polymer({
@@ -53,7 +54,17 @@ Graph view section
 
             //API call when the DOM is initialized:
             graphBuilder: function () {
-                this.$.ancestorDiv.innerHTML = Viz(this.dotdata)
+                this.$.ancestorDiv.innerHTML = Viz(this.dotdata);
+                console.log("C");
+                var panZoomTiger = svgPanZoom('svg', {
+                    zoomEnabled: true,
+                    controlIconsEnabled: true,
+                    fit: true,
+                    center: true,
+                    mouseWheelZoomEnabled: false,
+                });
+
+                console.log("Prova" + panZoomTiger)
             }
 
         }); //Polymer end
