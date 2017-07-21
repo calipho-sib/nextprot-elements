@@ -322,7 +322,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 <feature-table feat-by-iso="[[featuresForTable]]">
                 </feature-table>
 -->
-                <feature-table id="featTable" all-features="{{featuresForTable}}">
+                <feature-table id="featTable" all-features="[[featuresForTable]]">
                 </feature-table>
             </div>
             <template is="dom-if" if="[[!hideSequenceViewer]]">
@@ -679,7 +679,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     
 //                    this.featuresLength = number;
                 }
+//                Polymer.RenderStatus.afterNextRender(self.$.featTable, function(){
                 this.featuresForTable = this._toFlat(this.featuresByGroup);
+                document.querySelector('iron-list').fire('iron-resize');
+//                });
 //                else {
 //                    document.querySelector('iron-list').fire('iron-resize');
 //                }
