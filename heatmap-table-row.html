@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
 
 <dom-module id="heatmap-table-row">
 
@@ -9,11 +10,16 @@
         }
 
         #grad {
-            background: red; /* For browsers that do not support gradients */
-            background: -webkit-linear-gradient(left top, red, yellow); /* For Safari 5.1 to 6.0 */
-            background: -o-linear-gradient(bottom right, red, yellow); /* For Opera 11.1 to 12.0 */
-            background: -moz-linear-gradient(bottom right, red, yellow); /* For Firefox 3.6 to 15 */
-            background: linear-gradient(to bottom right, red, yellow); /* Standard syntax */
+            background: red;
+            /* For browsers that do not support gradients */
+            background: -webkit-linear-gradient(left top, red, yellow);
+            /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(bottom right, red, yellow);
+            /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(bottom right, red, yellow);
+            /* For Firefox 3.6 to 15 */
+            background: linear-gradient(to bottom right, red, yellow);
+            /* Standard syntax */
         }
 
         #heatmap-body {
@@ -120,6 +126,7 @@
 
         .heatmap-positive-circle {
             background-color: aquamarine;
+            margin-right:50px;
         }
 
         .heatmap-medium-circle {
@@ -133,7 +140,6 @@
         .heatmap-unkown-circle {
             background-color: black;
         }
-
         /*
         //TODO
         :host ul:nth-child(2) {
@@ -146,7 +152,7 @@
             height: 18px;
             border: solid;
             border-width: 1px;
-         }
+        }
 
         .heatmap-circle-size {
             width: 12px;
@@ -154,31 +160,42 @@
         }
     </style>
     <template>
-            <template is="dom-repeat" items="[[data]]" as="d">
-                <li>
-                    <div class="heatmap-row" on-tap="toggleChildren">
-                        <template is="dom-if" if="[[hasChildren(d)]]">
-                            <i class="fa fa-caret-right"></i>
+        <template is="dom-repeat" items="[[data]]" as="d">
+            <li>
+                <div class="heatmap-row" on-tap="toggleChildren">
+                    <template is="dom-if" if="[[hasChildren(d)]]">
+                        <i class="fa fa-caret-right"></i>
+                    </template>
+                    <p class="heatmap-no-cursor heatmap-rowLabel tree-toggler">
+                        <span class="rowLabel">[[d.rowLabel]]</span>
+                        <span><a href="[[d.linkURL]]" target="_blank">[[d.linkLabel]]</a></span>
+                    </p>
+                    <div class="pull-right" style="margin-right: 25px">
+                        <template is="dom-repeat" items="[[d.values]]" as="v">
+                            <div class="heatmap-column heatmap-circle-size">
+                                <span class$="{{computeClass(d, v)}}" title="" data-original-title="[[v.value]]">
+                                    <a href="#">[[_showEvidencesNumber(v.evidences)]]</a>
+                                </span>
+                            </div>
                         </template>
-                        <p class="heatmap-no-cursor heatmap-rowLabel tree-toggler">
-                            <span class="rowLabel">[[d.rowLabel]]</span>
-                            <span><a href="[[d.linkURL]]" target="_blank">[[d.linkLabel]]</a></span>
-                        </p>
-                        <div class="pull-right" style="margin-right: 25px">
+                    </div>
+                </div>
+                <template is="dom-if" if="[[hasChildren(d)]]">
+                    <ul class="tree heatmap-opened heatmap-tree">
+                        <div class="heatmap-detail">
                             <template is="dom-repeat" items="[[d.values]]" as="v">
-                                <div class="heatmap-column heatmap-circle-size">
-                                    <span class$="{{computeClass(d, v)}}" data-toggle="tooltip" title="" data-original-title="[[v.value]]"><a href="#" raised onclick="openBy(this)">[[_showEvidencesNumber(v.evidences)]]</a></span>
-                                </div>
+                                <template is="dom-repeat" items="[[v.evidences]]" as="e">
+                                    <div>
+                                        <evidence-item data=[[e]]></evidence-item>
+                                    </div>
+                                </template>
                             </template>
                         </div>
-                    </div>
-                    <template is="dom-if" if="[[hasChildren(d)]]">
-                        <ul class="tree heatmap-opened heatmap-tree">
-                            <heatmap-table-row data="[[d.children]]"></heatmap-table-row>
-                        </ul>
-                    </template>
-                </li>
-            </template>
+                        <heatmap-table-row data="[[d.children]]"></heatmap-table-row>
+                    </ul>
+                </template>
+            </li>
+        </template>
     </template>
 
     <script>
@@ -199,7 +216,11 @@
                     return evidences.length;
                 else return "";
             },
-            computeClass: function (d, v) {
+            _showSomething: function (value, evidence) {
+                console.log(value);
+                return evidence.evidenceCodeName;
+
+            }, computeClass: function (d, v) {
                 if (v.value === 'not detected' || v.value === 'negative') {
                     return "heatmap-square heatmap-not-detected-circle";
                 } else if (v.value === 'positive' || v.value === 'high') {
@@ -208,7 +229,7 @@
                     return "heatmap-square heatmap-medium-circle";
                 }
 
-                if (/*v.value &&*/ v.value.length == 0) {
+                if (v.value && v.value.length == 0) {
                     return "heatmap-square heatmap-hidden-circle";
                 } else {
                     console.log("Not expecting this value here. ", v);
@@ -226,9 +247,10 @@
                 var icon = liParent.getElementsByTagName("i")[0]
 
                 var children = liParent.getElementsByTagName("ul")[0]
-                children.classList.toggle("openHmChildren");
-                children.classList.toggle("transient");
-
+                if(children && children.classList){
+                    children.classList.toggle("openHmChildren");
+                }
+    
                 if (icon.classList.contains("fa-caret-down")) {
                     icon.classList.remove("fa-caret-down")
                     icon.classList.add("fa-caret-right")

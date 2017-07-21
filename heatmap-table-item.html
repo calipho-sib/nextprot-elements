@@ -23,8 +23,6 @@ A heatmap table
 
     <template>
         <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="../../bootstrap/dist/css/bootstrap.min.css">
-        
         <style is="custom-style" include="nextprot-elements-shared-styles">
              :host {
                 display: block;
@@ -62,6 +60,16 @@ A heatmap table
                 height: 32px;
                 width: 32px;
             }
+
+            .heatmap-body > ul > heatmap-table-row > li > ul {
+                display: block;
+            }
+
+            .heatmap-body > ul > .heatmap-table-item > li > ul {
+                display: block;
+            }
+
+
             </style>
         <div class="heatmap-body" style="margin-top:20px">
             <ul>

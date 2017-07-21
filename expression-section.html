@@ -20,79 +20,58 @@ Annotation section used in function, medical, and expression views.
 <dom-module id="expression-section">
     <template>
         <style include="nextprot-elements-shared-styles">
-            :host {
+             :host {
                 display: block;
                 min-width: 700px;
                 max-width: 1200px;
                 margin: 0 auto;
             }
-
         </style>
 
-            <div class="pull-right style-scope heatmap-table-row" style="margin-right: 25px">
-                <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="true">
-                    MicroArray
-                    <span class="caret"></span>
-                </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="#">Yes</a></li>
-                        <li><a href="#">No</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="pull-right style-scope heatmap-table-row" style="margin-right: 25px">
+        <div class="pull-right">
+        <template is="dom-repeat" items="[[expressionMethods]]" as="method">
+            <div class="style-scope heatmap-table-row" style="margin-right: 25px; display:inline-block">
                 <div class="dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="true">
-                EST
-                <span class="caret"></span>
-            </button>
+                    [[method.methodName]]
+                    <span class="caret"></span>
+                </button>
+
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                        <li><a href="#">High</a></li>
-                        <li><a href="#">Low</a></li>
-                        <li><a href="#">Medium</a></li>
-                        <li><a href="#">Low</a></li>
+                        <li><a href="#" style="padding-top: 0px; padding-bottom: 0px"><span class="glyphicon glyphicon-remove pull-right"></span></a></li>
+                        <template is="dom-repeat" items="[[method.possibleValues]]" as="value">
+                            <li><a href="#"><span class="glyphicon glyphicon-ok"></span>&nbsp;[[value]]</a></li>
+                        </template>
                     </ul>
                 </div>
             </div>
+        </template>
+        </div>
 
-            <ul class="nav nav-tabs" role="tablist">
-                <li id="ontology-tab" class="active">
-                    <a href="#ontology-content" id="ontology-tab" role="tab" data-toggle="tab">Ontology</a>
-                </li>
-                <li id="flat-tab">
-                    <a href="#flat-content" id="flat-tab" role="tab" data-toggle="tab">Flat</a>
-                </li>
-            </ul>
 
-            <div class="tab-content">
 
-                <div id="ontology-content" role="tabpanel" aria-labelledby="ontology-tab" class="tab-pane active in">
-                    <heatmap-table-item data=[[heatmapData]] options=[[heatmapOtions]]></heatmap-table-item>
-                </div>
+        <ul class="nav nav-tabs" role="tablist">
+            <li id="ontology-tab" class="active">
+                <a href="#ontology-content" id="ontology-tab" role="tab" data-toggle="tab">Ontology</a>
+            </li>
+            <li id="flat-tab">
+                <a href="#flat-content" id="flat-tab" role="tab" data-toggle="tab">Flat</a>
+            </li>
+        </ul>
 
-                <div id="flat-content" role="tabpanel" aria-labelledby="flat-tab" class="tab-pane fade">
-                    <template is="dom-repeat" items="[[expressionProfileData.annot]]" as="ep" sort="_sortTermsAlphabetically">
-                        <li>
-                            <template is="dom-if" if="[[_isSilver(ep.qualityQualifier)]]">
-                                <quality-label quality="[[ep.qualityQualifier]]"></quality-label>
-                            </template> [[ep.cvTermName]] ([[ep.evidences.length]] evidences)</li>
-                        <ul>
-                            <template is="dom-repeat" items="[[ep.evidences]]" as="ev">
-                                <li>
-                                    <template is="dom-if" if="[[_isSilver(ev.qualityQualifier)]]">
-                                        <quality-label quality="[[ev.qualityQualifier]]"></quality-label>
-                                    </template> [[ev.expressionLevel]] <span class="label label-success">[[ev.evidenceCodeName]]</span>
-                                    <span class="label label-default">[[ev.assignedBy]]</span>
-                                </li>
-                            </template>
-                        </ul>
-                    </template>
-                </div>
+        <div class="tab-content">
+
+            <div id="ontology-content" role="tabpanel" aria-labelledby="ontology-tab" class="tab-pane active in">
+                <heatmap-table-item data=[[heatmapData]] options=[[heatmapOtions]]></heatmap-table-item>
             </div>
+
+            <div id="flat-content" role="tabpanel" aria-labelledby="flat-tab" class="tab-pane fade">
+                <generic-annotation-section id="expressionAnnotationElement" section="function" gold-only="[[nxConfig.goldOnly]]" categories='["EXPRESSION-INFO", "EXPRESSION-PROFILE"]'
+                    nx-config="[[nxConfig]]" count="{{annotationsCount}}">
+                </generic-annotation-section>
+            </div>
+        </div>
 
     </template>
 
@@ -104,6 +83,12 @@ Annotation section used in function, medical, and expression views.
                 nxConfig: {
                     type: Object,
                     value: {}
+                },
+                expressionMethods : {
+                    type: Array,
+                    value: [{"methodName" : "MicroArray", "possibleValues" : ["Positive", "Not detected"]}, 
+                            {"methodName" : "EST", "possibleValues" : ["Positive"]},
+                            {"methodName" : "IHC", "possibleValues" : ["High", "Moderate", "Weak", "Low"]}]
                 },
                 isTree: {
                     type: Boolean,
