@@ -76,6 +76,16 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 },
                 dotGraph: {
                     type: String
+                },
+                graphOrientation: {
+                    value: "TB",
+                    type: String,
+                    observer: "APIcaller"
+                },
+                nodeShape: {
+                    value: "square",
+                    type: String,
+                    observer: "APIcaller"
                 }
             },
             //API call when the DOM is initialized:
@@ -128,8 +138,8 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 
 //              Showcase: variables kept only for showcase to allow multiple selection:
                 this.dotGraph = 'digraph "" {	node [shape=' +
-                    'square' +
-                    ', fontsize='+ this.fontInput +'];' + 'graph [autosize=false, size="90.2,' + this.zoomInput + '", splines=' + this.splineInput + '];' + 'labelfontname=' +
+                    this.nodeShape + //Full list of possible shapes http://www.graphviz.org/content/node-shapes#polygon
+                    ', fontsize='+ this.fontInput +'];' + 'graph [rankdir=' + this.graphOrientation +', autosize=false, size="90.2,' + this.zoomInput + '", splines=' + this.splineInput + '];' + 'labelfontname=' +
                     '"Helvetica";' + dotFormatNodes + dotFormatEdges +
                     '}';
             }

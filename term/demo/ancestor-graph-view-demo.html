@@ -25,10 +25,10 @@
         <b>Choose your options:</b>
         <br/>
         - Data size: <select id="datasize" onchange="changeStyle(this.value, 'accessionInput')">
-        <option value="TS-0079">Small</option>
-        <option value="GO:0007256">Big</option>
+        <option value="TS-0079">TS-0079 (Small case)</option>
+        <option value="GO:0007256">GO:0007256 (Big case)</option>
     </select>
-         or input your Accession Number <input id="customaccession"><button onclick="changeStyle('getelement', 'accessionInput')">Add</button>
+        or input your Accession Number <input id="customaccession"><button onclick="changeStyle('getelement', 'accessionInput')">Add</button>
         <br/>
 
         - Arrow size: <select id="arrowsize" onchange="changeStyle(this.value, 'arrowInput')">
@@ -65,11 +65,27 @@
         <option value="23">23</option>
 
     </select>
+        <br/>
+        - Orientation: <select id="orientation" onchange="changeStyle(this.value, 'graphOrientation')">
+        <option value="TB">Vertical (Top -> Bottom)</option>
+        <option value="BT">Vertical (Bottom -> Top)</option>
+        <option value="LR">Horizontal (Left -> Right)</option>
+        <option value="RL">Horizontal (Right -> Left)</option>
+
+    </select>
+        <br/>
+        - Nodes (vertices) shape: <select id="shape" onchange="changeStyle(this.value, 'nodeShape')">
+        <option value="square">Square</option>
+        <option value="rectangle">Rectangle</option>
+        <option value="ellipse">Ellipse</option>
+        <option value="circle">Circle</option>
+
+    </select>
     </div>
 
     <demo-snippet>
         <template>
-            <ancestor-graph-view accession-input="TS-0079" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-view>
+            <ancestor-graph-view accession-input="TS-0079" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-view>
         </template>
     </demo-snippet>
 </div>
