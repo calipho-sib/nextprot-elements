@@ -132,18 +132,19 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 var nodesDistance = {};
 
                 //Adding the root ID as distance 0
-                nodesDistance[0] = APIresponse["nodes"][0]["id"];
                 var nodesAdded = [];
+                nodesDistance[0] = APIresponse["nodes"][0]["id"];
+                nodesAdded.push(APIresponse["nodes"][0]["id"]);
+
                 var whileCount = 0;
 
                 //var currentHead = nodesDistance[0]; //Before looping through the edges, the current head is the root
 
                 //Edge loop to determine distance
-                while (nodesAdded < APIresponse["nodes"].length) { //While nodes added < nodes available
+                while (nodesAdded.length < APIresponse["nodes"].length) { //While nodes added < nodes available
                     for (var i = 0; i < APIresponse["edges"].length; i++) { //Loop through the edges
 
-//                        console.log(nodesDistance[whileCount]);
-                        if (APIresponse["edges"][i]["head"] === nodesDistance[whileCount]) { //if the head in the edges, is the same as the head of the current distance
+                        if (nodesDistance[whileCount].toString().indexOf(APIresponse["edges"][i]["head"]) > -1) { //if the head in the edges, is the same as the head of the current distance
                             //if you get the problem with undefined due to +=, try if (nodesDistance[whileCount+1])
 
                             //Create the array in the dictionary if the key is undefined:
@@ -153,14 +154,15 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 
                             nodesDistance[whileCount+1].push(APIresponse["edges"][i]["tail"]); //add the tail to the dictionary
 
-                            if (nodesAdded.indexOf(APIresponse["edges"][i]["tail"]) > -1) {//if it exist in the list
+                            if (nodesAdded.toString().indexOf(APIresponse["edges"][i]["tail"]) > -1) {//if it exist in the list
                                 console.log("check if we have the lowest");
                             }
                             else {
                                 nodesAdded.push(APIresponse["edges"][i]["tail"]);
                             }
                             //Here if we want to add it to the node itself, we could call a function to loop through the nodes and add it as an attribute
-
+                            console.log(nodesAdded);
+                            console.log(nodesDistance)
                         }
 
                         //From there, loop over the edges and build a dictionary containing {Level : ID } eg. {2: 1234}
@@ -175,7 +177,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 //                console.log(whileCount);
                 console.log("Node distance incoming");
                 console.log(nodesDistance);
-//                console.log(nodesAdded);
+                console.log(nodesAdded);
                 return "Testing"
             },
 //        Retrieves the data from the Ajax call and places them in APIdata:
