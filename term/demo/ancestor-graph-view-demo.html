@@ -81,11 +81,19 @@
         <option value="circle">Circle</option>
 
     </select>
+        <br/>
+        - Text newline for every space: <select id="shape" onchange="changeStyle(this.value, 'regex')">
+        <option value=1>Always</option>
+        <option value=15>After 15 characters</option>
+        <option value=20>After 20 characters</option>
+        <option value=100>Never</option>
+    </select>
+
     </div>
 
     <demo-snippet>
         <template>
-            <ancestor-graph-view accession-input="TS-0079" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-view>
+            <ancestor-graph-view accession-input="TS-0079" regex="1" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-view>
         </template>
     </demo-snippet>
 </div>

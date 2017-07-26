@@ -87,8 +87,10 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     type: String,
                     observer: "APIcaller"
                 },
-                nodeDistanceDict: {
-                    type: Object
+                regex: {
+                    value: 1,
+                    type: Number,
+                    observer: "APIcaller"
                 }
             },
             //API call when the DOM is initialized:
@@ -106,10 +108,22 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 
 //              Node loop: to add the nodes to the graph
                 for (var i = 0; i < APInodes.length; i++) {
+                    var regexNodeName = "";
 
+                    //Did not know how to do put a variable in the regex expression
+                    if (parseInt(this.regex) === 1) {
+                        regexNodeName = APInodes[i]["name"].replace(/.{1}\S*\s+/g, "$&\n")
+                    } else if (parseInt(this.regex) === 15) {
+                        regexNodeName = APInodes[i]["name"].replace(/.{15}\S*\s+/g, "$&\n")
+                    } else if (parseInt(this.regex) === 20) {
+                        regexNodeName = APInodes[i]["name"].replace(/.{20}\S*\s+/g, "$&\n")
+                    } else if (parseInt(this.regex) === 100) {
+                        regexNodeName = APInodes[i]["name"].replace(/.{100}\S*\s+/g, "$&\n")
+                    }
+                    
                     // Translates nodes into Dot Nodes                                                          15 characters before newline, must be changed manually
                     dotNodesBuilt += APInodes[i]["id"];                         //TODO: function to choose diff regex
-                    dotNodesBuilt += ' [' + 'label=' + '"' + APInodes[i]["name"].replace(/.{1}\S*\s+/g, "$&\n") + '"' + 'style=filled; fillcolor="'+ this.getNodeColor(APInodes[i]["accession"]) + '"' + 'tooltip=' + '"' + APInodes[i]["name"].split(' ').join('\n') + '"' + 'href="https://www.nextprot.org/term/' + APInodes[i]["accession"] + '"' + ';] '
+                    dotNodesBuilt += ' [' + 'label=' + '"' + regexNodeName + '"' + 'style=filled; fillcolor="'+ this.getNodeColor(APInodes[i]["accession"]) + '"' + 'tooltip=' + '"' + APInodes[i]["name"].split(' ').join('\n') + '"' + 'href="https://www.nextprot.org/term/' + APInodes[i]["accession"] + '"' + ';] '
                 }
                 return dotNodesBuilt
             },
@@ -139,7 +153,6 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 }
                 return dotSubgraphsBuilt
             },
-
 
             nodeDistancer: function (APIresponse) {
                 //Creates a dictionary with levels
@@ -208,7 +221,6 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     ', fontsize='+ this.fontInput +'];' + 'graph [rankdir=' + this.graphOrientation +', autosize=false, size="90.2,' + this.zoomInput + '", splines=' + this.splineInput + '];' + subgraphs +'labelfontname=' +
                     '"Helvetica";' + dotFormatNodes + dotFormatEdges +
                     '}';
-
             }
 
 
