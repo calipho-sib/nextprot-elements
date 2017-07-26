@@ -22,7 +22,10 @@
 <div class="vertical-section-container centered">
     <h3>Ancestor Graph Interactive Demo</h3>
     <div>
-        <b>Choose your options:</b>
+        Choose your options:
+        <br/>
+        <br/>
+        <b>Data:</b>
         <br/>
         - Data size: <select id="datasize" onchange="changeStyle(this.value, 'accessionInput')">
         <option value="TS-0079">TS-0079 (Small case)</option>
@@ -30,20 +33,16 @@
     </select>
         or input your Accession Number <input id="customaccession"><button onclick="changeStyle('getelement', 'accessionInput')">Add</button>
         <br/>
-
+        <br/>
+        <b>Graph Style:</b>
+        <br/>
         - Arrow size: <select id="arrowsize" onchange="changeStyle(this.value, 'arrowInput')">
         <option value="0.5" >0.5</option>
         <option value="1">1</option>
         <option value="1.5">1.5</option>
         <option value="2">2</option>
     </select>
-        <br/>
-        - Edges (links) layout: <select id="splinestyle" onchange="changeStyle(this.value, 'splineInput')">
-        <option value="spline" >Default</option>
-        <option value="curved">Curved</option>
-        <option value="polyline">Polyline</option>
-        <option value="ortho">Ortho</option>
-    </select>
+
         <br/>
         - Font size: <select id="fontsize" onchange="changeStyle(this.value, 'fontInput')">
         <option value="14" >14 (Default)</option>
@@ -56,15 +55,33 @@
         <option value="17">17</option>
         <option value="18">18</option>
     </select>
-        </select>
+
         <br/>
-        - Zoom level (big data only): <select id="zoom" onchange="changeStyle(this.value, 'zoomInput')">
+        - Maximum Width (big data only): <select id="zoom" onchange="changeStyle(this.value, 'maxWidth')">
         <option value="11">11</option>
         <option value="15">15</option>
         <option value="19">19</option>
         <option value="23">23</option>
-
     </select>
+
+        <br/>
+        - Nodes (vertices) shape: <select id="shape" onchange="changeStyle(this.value, 'nodeShape')">
+        <option value="square">Square</option>
+        <option value="rectangle">Rectangle</option>
+        <option value="ellipse">Ellipse</option>
+        <option value="circle">Circle</option>
+    </select>
+        <br/>
+        <br/>
+        <b>Graph Layout:</b>
+        <br/>
+        - Edges (links) layout: <select id="splinestyle" onchange="changeStyle(this.value, 'splineInput')">
+        <option value="spline" >Default</option>
+        <option value="curved">Curved</option>
+        <option value="polyline">Polyline</option>
+        <option value="ortho">Ortho</option>
+    </select>
+
         <br/>
         - Orientation: <select id="orientation" onchange="changeStyle(this.value, 'graphOrientation')">
         <option value="TB">Vertical (Top -> Bottom)</option>
@@ -73,21 +90,16 @@
         <option value="RL">Horizontal (Right -> Left)</option>
 
     </select>
-        <br/>
-        - Nodes (vertices) shape: <select id="shape" onchange="changeStyle(this.value, 'nodeShape')">
-        <option value="square">Square</option>
-        <option value="rectangle">Rectangle</option>
-        <option value="ellipse">Ellipse</option>
-        <option value="circle">Circle</option>
 
-    </select>
         <br/>
-        - Text newline for every space: <select id="shape" onchange="changeStyle(this.value, 'regex')">
+        - Text newline for every space: <select id="newline" onchange="changeStyle(this.value, 'regex')">
         <option value=1>Always</option>
         <option value=15>After 15 characters</option>
         <option value=20>After 20 characters</option>
         <option value=100>Never</option>
     </select>
+        <br/>
+        <br/>
 
     </div>
 
