@@ -86,6 +86,9 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     value: "square",
                     type: String,
                     observer: "APIcaller"
+                },
+                nodeDistanceDict: {
+                    type: Object
                 }
             },
             //API call when the DOM is initialized:
@@ -127,8 +130,11 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
             },
 
             nodeDistancer: function (APIresponse) {
-                //Adds a "distance" attribute to nodes
-//              Proof of concept: APIdata.detail.response["ancestor-graph"]["nodes"][0]["distance"] = 12;
+                //Creates a dictionary with levels
+                //Did not implement the attribute because it would do a lot of for loops in order to add it.
+                // It would be more efficient to get it from the API
+                // However, proof of concept: APIdata.detail.response["ancestor-graph"]["nodes"][0]["distance"] = 12;
+
                 var nodesDistance = {};
 
                 //Adding the root ID as distance 0
@@ -136,16 +142,14 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 nodesDistance[0] = APIresponse["nodes"][0]["id"];
                 nodesAdded.push(APIresponse["nodes"][0]["id"]);
 
+                //Counting the number of times the while loop is called. It is useful for the distance in the dict
                 var whileCount = 0;
-
-                //var currentHead = nodesDistance[0]; //Before looping through the edges, the current head is the root
 
                 //Edge loop to determine distance
                 while (nodesAdded.length < APIresponse["nodes"].length) { //While nodes added < nodes available
                     for (var i = 0; i < APIresponse["edges"].length; i++) { //Loop through the edges
 
                         if (nodesDistance[whileCount].toString().indexOf(APIresponse["edges"][i]["head"]) > -1) { //if the head in the edges, is the same as the head of the current distance
-                            //if you get the problem with undefined due to +=, try if (nodesDistance[whileCount+1])
 
                             //Create the array in the dictionary if the key is undefined:
                             if (nodesDistance[whileCount+1] === undefined) {
@@ -155,30 +159,21 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                             nodesDistance[whileCount+1].push(APIresponse["edges"][i]["tail"]); //add the tail to the dictionary
 
                             if (nodesAdded.toString().indexOf(APIresponse["edges"][i]["tail"]) > -1) {//if it exist in the list
-                                console.log("check if we have the lowest");
+                                console.log("check if we have the lowest ");
+                                //To improve here we should check for the lowest level, maybe a for loop.
                             }
                             else {
                                 nodesAdded.push(APIresponse["edges"][i]["tail"]);
                             }
-                            //Here if we want to add it to the node itself, we could call a function to loop through the nodes and add it as an attribute
-                            console.log(nodesAdded);
-                            console.log(nodesDistance)
+                            //Here if we want to add it as attribute to the node itself, we could call a function
+                            // to loop through the nodes and add it as an attribute (however it makes the page very slow)
                         }
 
-                        //From there, loop over the edges and build a dictionary containing {Level : ID } eg. {2: 1234}
-                        //The rules for building the dictionary are:
-                        //1. If they are connected to level 0.
-                        //2. If they are connected to nodes, connected to level 0
-                        //Then the code must call a loop to find the relative node and adding it the distance. (Maybe another function)
-                        //Important: the distance must be replaced with the SHORTEST distance in case of double edges.
                     }
                     whileCount += 1; //Adding 1 to count to go to a higher level (maybe another name could be whileDistance or currentDistance
                 }
-//                console.log(whileCount);
-                console.log("Node distance incoming");
-                console.log(nodesDistance);
-                console.log(nodesAdded);
-                return "Testing"
+                //Adding the dictionary as a property
+                this.nodeDistanceDict = nodesDistance
             },
 //        Retrieves the data from the Ajax call and places them in APIdata:
             ancestorBuild: function (APIdata) {
@@ -186,10 +181,6 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 this.nodeDistancer(APIdata.detail.response["ancestor-graph"]);
                 //Defining nodes as the array of objects containing the nodes
                 var nodes = APIdata.detail.response["ancestor-graph"]["nodes"];
-
-
-                console.log(APIdata.detail.response["ancestor-graph"]);
-                console.log("Nodes" + nodes);
 
                 var dotFormatNodes = this.nodesDotBuild(nodes);
 
@@ -200,9 +191,12 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 //              Showcase: variables kept only for showcase to allow multiple selection:
                 this.dotGraph = 'digraph "" {	node [shape=' +
                     this.nodeShape + //Full list of possible shapes http://www.graphviz.org/content/node-shapes#polygon
-                    ', fontsize='+ this.fontInput +'];' + 'graph [rankdir=' + this.graphOrientation +', autosize=false, size="90.2,' + 11 + '", splines=' + this.splineInput + '];' + 'labelfontname=' +
+                    ', fontsize='+ this.fontInput +'];' + 'graph [rankdir=' + this.graphOrientation +', autosize=false, size="90.2,' + this.zoomInput + '", splines=' + this.splineInput + '];' + 'labelfontname=' +
                     '"Helvetica";' + dotFormatNodes + dotFormatEdges +
                     '}';
+
+                console.log(this.NodeDistanceDict);
+
             }
 
 
