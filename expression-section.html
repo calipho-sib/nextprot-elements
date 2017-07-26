@@ -23,11 +23,8 @@ Annotation section used in function, medical, and expression views.
             :host {
                 display: block;
                 min-width: 700px;
-                max-width: 1200px;
-                margin: 0 auto;
+                margin: 20px;
             }
-
-
         </style>
 
         <div class="pull-right">
@@ -66,7 +63,7 @@ Annotation section used in function, medical, and expression views.
             </div>
 
             <div id="flat-content" role="tabpanel" aria-labelledby="flat-tab" class="tab-pane fade">
-                <generic-annotation-section id="expressionAnnotationElement" section="function" gold-only="[[nxConfig.goldOnly]]" categories='["EXPRESSION-INFO", "EXPRESSION-PROFILE"]'
+                <generic-annotation-section id="expressionAnnotationElement" section="function" gold-only="[[nxConfig.goldOnly]]" categories='["EXPRESSION-PROFILE"]'
                                             nx-config="[[nxConfig]]" count="{{annotationsCount}}">
                 </generic-annotation-section>
             </div>
