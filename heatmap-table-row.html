@@ -120,26 +120,10 @@
             cursor: pointer !important;
         }
 
-        .heatmap-not-detected-circle {
-            background-color: lightgray;
-        }
-
-        .heatmap-positive-circle {
-            background-color: aquamarine;
-            margin-right:50px;
-        }
-
-        .heatmap-medium-circle {
-            background-color: lightblue;
-        }
-
         .heatmap-hidden-circle {
             display: none;
         }
 
-        .heatmap-unkown-circle {
-            background-color: black;
-        }
         /*
         //TODO
         :host ul:nth-child(2) {
@@ -170,12 +154,16 @@
                         <span class="rowLabel">[[d.rowLabel]]</span>
                         <span><a href="[[d.linkURL]]" target="_blank">[[d.linkLabel]]</a></span>
                     </p>
-                    <div class="pull-right" style="margin-right: 25px">
-                        <template is="dom-repeat" items="[[d.values]]" as="v">
-                            <div class="heatmap-column heatmap-circle-size">
-                                <span class$="{{computeClass(d, v)}}" title="" data-original-title="[[v.value]]">
-                                    <a href="#">[[_showEvidencesNumber(v.evidences)]]</a>
-                                </span>
+                    <div class="pull-right" style="margin-left: 25px">
+                        <template is="dom-repeat" items="[[options.values]]" as="method">
+                            <div style="display: inline-block; margin-right: 30px">
+                                <template is="dom-repeat" items="[[method.possibleValues]]" as="possibleValue">
+                                    <div class="heatmap-column heatmap-circle-size">
+                                        <span class="heatmap-square" style$="{{_computeStyle(d, possibleValue, index)}}">
+                                            <a href="#">[[_showEvidencesNumber(d, index)]]</a>
+                                        </span>
+                                    </div>
+                                </template>
                             </div>
                         </template>
                     </div>
@@ -191,7 +179,7 @@
                                 </template>
                             </template>
                         </div>
-                        <heatmap-table-row data="[[d.children]]"></heatmap-table-row>
+                        <heatmap-table-row data="[[d.children]]" options="[[options]]"></heatmap-table-row>
                     </ul>
                 </template>
             </li>
@@ -206,35 +194,44 @@
                     type: Array,
                     value: [],
                     observer: "_reload"
+                },
+                options: {
+                    type: Object,
+                    value: {}
                 }
             },
             ready: function () {
-                //console.log(this.data);
+                //console.log(this.options);
             },
-            _showEvidencesNumber: function (evidences) {
+            /*_showEvidencesNumber: function (evidences) {
                 if (evidences && evidences.length > 0)
                     return evidences.length;
                 else return "";
-            },
+            },*/
             _showSomething: function (value, evidence) {
                 console.log(value);
                 return evidence.evidenceCodeName;
 
-            }, computeClass: function (d, v) {
-                if (v.value === 'not detected' || v.value === 'negative') {
-                    return "heatmap-square heatmap-not-detected-circle";
-                } else if (v.value === 'positive' || v.value === 'high') {
-                    return "heatmap-square heatmap-positive-circle";
-                } else if (v.value === 'medium') {
-                    return "heatmap-square heatmap-medium-circle";
+            },
+            _showEvidencesNumber : function (data, idx) {
+                if(data.values.length > 0) {
+                    var evidences = data.values[idx].evidences;
+                    if (evidences && evidences.length > 0)
+                        return evidences.length;
+                    else return "";
+
+                } return ""
+            },
+            _computeStyle: function (data, possibleValue, idx) {
+
+                if(data.values.length > 0) {
+                    var value = data.values[idx].value;
+                    if(value.length > 0){
+                        return "background-color: " + possibleValue.color;
+                    }
                 }
 
-                if (v.value && v.value.length == 0) {
-                    return "heatmap-square heatmap-hidden-circle";
-                } else {
-                    console.log("Not expecting this value here. ", v);
-                    return "heatmap-square heatmap-unkown-circle";
-                }
+               return "display: none";
 
             },
             hasChildren: function (d) {

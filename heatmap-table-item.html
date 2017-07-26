@@ -73,7 +73,7 @@ A heatmap table
             </style>
         <div class="heatmap-body" style="margin-top:20px">
             <ul>
-                <heatmap-table-row data="[[data]]"></heatmap-table-row>
+                <heatmap-table-row data="[[data]]" options="[[options]]"></heatmap-table-row>
             </ul>
         </div>
         <div class="center">
@@ -100,7 +100,6 @@ A heatmap table
                 }
             },
             ready: function () {
-
             },
             attached: function () {
                 this._reload();
