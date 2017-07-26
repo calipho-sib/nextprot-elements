@@ -129,9 +129,21 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 return dotEdgesBuilt
             },
 
+            getSubgraphs: function (distanceDictionary) {
+                //Stores the subgraphs in dot format
+                var dotSubgraphsBuilt = "";
+
+                //              Subgraph loop: to add each level in a subgraph
+                for (var i = 0; i < Object.keys(distanceDictionary).length; i++) {
+                    dotSubgraphsBuilt += "subgraph cluster_" + i + '{color=blue;' + distanceDictionary[i].toString() + '}'
+                }
+                return dotSubgraphsBuilt
+            },
+
+
             nodeDistancer: function (APIresponse) {
                 //Creates a dictionary with levels
-                //Did not implement the attribute because it would do a lot of for loops in order to add it.
+                //I did not implement the attribute because it would do a lot of for loops in order to add it.
                 // It would be more efficient to get it from the API
                 // However, proof of concept: APIdata.detail.response["ancestor-graph"]["nodes"][0]["distance"] = 12;
 
@@ -172,30 +184,30 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     }
                     whileCount += 1; //Adding 1 to count to go to a higher level (maybe another name could be whileDistance or currentDistance
                 }
-                //Adding the dictionary as a property
-                this.nodeDistanceDict = nodesDistance
+                //Creating subgraphs
+                return this.getSubgraphs(nodesDistance)
             },
 //        Retrieves the data from the Ajax call and places them in APIdata:
             ancestorBuild: function (APIdata) {
 
-                this.nodeDistancer(APIdata.detail.response["ancestor-graph"]);
-                //Defining nodes as the array of objects containing the nodes
+                //Defining nodes as the array of objects containing the nodes:
                 var nodes = APIdata.detail.response["ancestor-graph"]["nodes"];
-
                 var dotFormatNodes = this.nodesDotBuild(nodes);
 
 //              Defining edges as the array of objects containing the edge
                 var edges = APIdata.detail.response["ancestor-graph"]["edges"];
                 var dotFormatEdges = this.edgesDotBuild(edges);
 
-//              Showcase: variables kept only for showcase to allow multiple selection:
-                this.dotGraph = 'digraph "" {	node [shape=' +
+                //Creating the subgraphs from distance dictionary:
+                var subgraphs = this.nodeDistancer(APIdata.detail.response["ancestor-graph"]);
+
+//              Showcase: variables kept for showcase however may be useful to change layout in the future
+                this.dotGraph = 'digraph "" {node [shape=' +
                     this.nodeShape + //Full list of possible shapes http://www.graphviz.org/content/node-shapes#polygon
-                    ', fontsize='+ this.fontInput +'];' + 'graph [rankdir=' + this.graphOrientation +', autosize=false, size="90.2,' + this.zoomInput + '", splines=' + this.splineInput + '];' + 'labelfontname=' +
+                    //TODO: refactor with each parameter on a new line
+                    ', fontsize='+ this.fontInput +'];' + 'graph [rankdir=' + this.graphOrientation +', autosize=false, size="90.2,' + this.zoomInput + '", splines=' + this.splineInput + '];' + subgraphs +'labelfontname=' +
                     '"Helvetica";' + dotFormatNodes + dotFormatEdges +
                     '}';
-
-                console.log(this.NodeDistanceDict);
 
             }
 
