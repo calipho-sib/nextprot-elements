@@ -32,12 +32,6 @@
         <option value="GO:0007256">GO:0007256 (Big case)</option>
     </select>
         or input your Accession Number <input id="customaccession"><button onclick="changeStyle('getelement', 'accessionInput')">Add</button>
-        <br/>
-
-        - Subgraph levels: <select id="subgraphs" onchange="changeStyle(this.value, 'subgraphDistance')">
-        <option value=0 >Disabled</option>
-        <option value=1>Enabled</option>
-    </select>
 
         <br/>
         <br/>
@@ -104,6 +98,12 @@
         <option value=15>After 15 characters</option>
         <option value=20>After 20 characters</option>
         <option value=100>Never</option>
+    </select>
+        <br/>
+
+        - Subgraph levels: <select id="subgraphs" onchange="changeStyle(this.value, 'subgraphDistance')">
+        <option value=0 >Disabled</option>
+        <option value=1>Enabled</option>
     </select>
         <br/>
         <br/>
