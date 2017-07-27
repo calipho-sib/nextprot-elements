@@ -91,6 +91,11 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     value: 1,
                     type: Number,
                     observer: "APIcaller"
+                },
+                subgraphDistance: {
+                    value: 0,
+                    type: Number,
+                    observer: "APIcaller"
                 }
             },
             //API call when the DOM is initialized:
@@ -99,7 +104,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
             },
             
             getNodeColor: function (nodeAccession) {
-                return (nodeAccession === this.accessionInput) ? "#BDE5B9" : "#FFFFFF";
+                return (nodeAccession === this.accessionInput) ? "#BDE5B9" : "#FFFFFF"; //Node color either green or white
             },
 
             nodesDotBuild: function (APInodes) {
@@ -110,7 +115,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 for (var i = 0; i < APInodes.length; i++) {
                     var regexNodeName = "";
 
-                    //Did not know how to do put a variable in the regex expression
+                    //Different regex expressions:
                     if (parseInt(this.regex) === 1) {
                         regexNodeName = APInodes[i]["name"].replace(/.{1}\S*\s+/g, "$&\n")
                     } else if (parseInt(this.regex) === 15) {
@@ -175,10 +180,11 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 // It would be more efficient to get it from the API
                 // However, proof of concept: APIdata.detail.response["ancestor-graph"]["nodes"][0]["distance"] = 12;
 
-                var nodesDistance = {};
+                var nodesDistance = [];
 
                 //Adding the root ID as distance 0
                 var nodesAdded = [];
+
                 nodesDistance[0] = APIresponse["nodes"][0]["id"];
                 nodesAdded.push(APIresponse["nodes"][0]["id"]);
 
@@ -191,7 +197,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 
                         if (nodesDistance[whileCount].toString().indexOf(APIresponse["edges"][i]["head"]) > -1) { //if the head in the edges, is the same as the head of the current distance
 
-                            //Create the array in the dictionary if the key is undefined:
+                            //Create an array in NodeDistance if the level is undefined:
                             if (nodesDistance[whileCount+1] === undefined) {
                                 nodesDistance[whileCount+1] = new Array();
                             }
@@ -226,15 +232,19 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 var edges = APIdata.detail.response["ancestor-graph"]["edges"];
                 var dotFormatEdges = this.edgesDotBuild(edges);
 
-                //Creating the subgraphs from distance dictionary:
-                var subgraphs = this.nodeDistancer(APIdata.detail.response["ancestor-graph"]);
+                //Creating the subgraphs from distance dictionary: (only if asked for it)
+                if (this.subgraphDistance === "1"){
+                    var subgraphs = this.nodeDistancer(APIdata.detail.response["ancestor-graph"]);
+                } else {
+                    var subgraphs = ""
+                }
 
-//              Showcase: variables kept for showcase however may be useful to change layout in the future
+//              Variables kept for showcase, however may be useful for future changes in layout
                 this.dotGraph = 'digraph "" {node [shape=' +
                     this.nodeShape //Full list of possible shapes http://www.graphviz.org/content/node-shapes#polygon
                     + ', fontsize='+ this.fontInput +'];' 
-                    + 'graph [rankdir=' + this.graphOrientation 
-                    +', autosize=false, size="90.2,' + this.maxWidth //
+                    + 'graph [rankdir=' + this.graphOrientation
+                    +', autosize=false, size="90.2,' + this.maxWidth //Maximum size of the graph
                     + '", splines=' + this.splineInput + '];' 
                     + subgraphs 
                     +'labelfontname="Helvetica";' 

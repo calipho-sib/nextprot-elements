@@ -33,6 +33,13 @@
     </select>
         or input your Accession Number <input id="customaccession"><button onclick="changeStyle('getelement', 'accessionInput')">Add</button>
         <br/>
+
+        - Subgraph levels: <select id="subgraphs" onchange="changeStyle(this.value, 'subgraphDistance')">
+        <option value=0 >Disabled</option>
+        <option value=1>Enabled</option>
+    </select>
+
+        <br/>
         <br/>
         <b>Graph Style:</b>
         <br/>
@@ -105,7 +112,7 @@
 
     <demo-snippet>
         <template>
-            <ancestor-graph-view accession-input="TS-0079" regex="1" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-view>
+            <ancestor-graph-view accession-input="TS-0079" subgraph-distance="0" regex="1" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-view>
         </template>
     </demo-snippet>
 </div>
