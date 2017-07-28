@@ -176,6 +176,7 @@
                         <span><a href="[[d.linkURL]]" target="_blank">[[d.linkLabel]]</a></span>
                     </p>
                     <div class="pull-right grouped-values" style="margin-left: 25px">
+                        <!-- Groups are rendered horizontally --> 
                         <template is="dom-repeat" items="[[d.groupValues]]" as="group">
                             <div class="heatmap-group">
                                 <template is="dom-repeat" items="[[group.values]]" as="value">
@@ -183,24 +184,23 @@
                                         <span class="heatmap-square" style$="{{_computeStyle(value, index)}}"></span>
                                     </div>
                                 </template>
-                                <!-- Number displayed --> 
+                                <!-- Number of evidences are displayed for the given group --> 
                                 <div class="heatmap-column heatmap-group-count-size">
-                                    <a href="#" on-tap="_toggleEvidences(group)">[[_computeCountForGroup(group)]]</a>
+                                    <a href="#" on-tap="_toggleEvidences">[[_computeCountForGroup(group)]]</a>
                                 </div>
                             </div>
                         </template>
                     </div>
-
                 </div>
-                <div class="evidence-row">
-                    <template is="dom-repeat" items="[[d.evidences]]" as="e">
-                        <div>
-                            <evidence-item data=[[e]]></evidence-item>
-                        </div>
-                    </template>
-                </div>
-
-
+                <template is="dom-if" if="{{d.showEvidences}}">
+                    <div class="evidence-row">
+                        <template is="dom-repeat" items="[[d.evidences]]" as="evidence">
+                            <div>
+                                <evidence-item data=[[evidence]]></evidence-item>
+                            </div>
+                        </template>
+                    </div>
+                </template>
                 <template is="dom-if" if="[[hasChildren(d)]]">
                     <ul class="tree heatmap-opened heatmap-tree">
                         <heatmap-table-row data="[[d.children]]" options="[[options]]"></heatmap-table-row>
@@ -230,7 +230,6 @@
                 else return "";
             },*/
             _showSomething: function (value, evidence) {
-                console.log(value);
                 return evidence.evidenceCodeName;
 
             },
@@ -261,11 +260,12 @@
             hasChildren: function (d) {
                 var boolean = d.children && d.children.length;
                 return boolean;
-            }, _toggleEvidences: function(group) {
-
-
+            }, _toggleEvidences: function(e) {
+                console.log(this.data[0])
+                this.data[0].showEvidences = true;
+                //d.showEvidences != d.showEvidences;
             },toggleChildren: function (e) {
-
+                /*
                 var liParent = e.srcElement.closest("li")
                 var icon = liParent.getElementsByTagName("i")[0]
 
@@ -280,7 +280,7 @@
                 } else {
                     icon.classList.remove("fa-caret-right")
                     icon.classList.add("fa-caret-down")
-                }
+                }*/
 
 
             },
