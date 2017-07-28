@@ -108,3 +108,9 @@ The **`ancestor-graph-view`** properties contain observers. These were used for 
 |nodeDistancer|Takes the API response and produces the array in with distances. It then calls `getSubgraphs`.|
 |getSubgraphs|Loops throught the distance arrays and produces subgraphs in dot format. |
 |getNodeColor|If/else to fill the nodes either with white or green. (Level 0 is highlighted in green)  |
+
+## Extra:
+
+The color code could be easily implemented in dot language (eg `  a->b[fontcolor=red]` will connect node a to b with a red node). 
+
+However, information on the relationship between nodes must come from the API. A simple if/else could be added to `edgesDotBuild` to specify the color according to the attribute of the edge.
