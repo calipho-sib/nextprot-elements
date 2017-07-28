@@ -404,7 +404,7 @@ View list of chromosome names.
               background-color:#FF695D !important;
               box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
               border-bottom:0px !important;
-              font-weight: 700;
+/*              font-weight: 700;*/
           }
         .search_selection .general-info{
 /*            background-color:rgba(142, 221, 156, 0.7);*/
@@ -614,6 +614,11 @@ View list of chromosome names.
 //                }
             },
 //            _reloadTable: function(){
+//                if (this.allFeatures.length){
+//                    console.log("reloading the table");
+//                    document.querySelector('iron-list').fire('iron-resize');
+//                    console.log(this.allFeatures);
+//                }
 //                console.log("reload Table called!!");
                 
 //                if (this.featByIso.length){
@@ -828,6 +833,7 @@ View list of chromosome names.
             highlightFeature: function(index){
                 console.log("highlighted called!")
                 this.rowSelection = index;
+                
                 this.$.itemList.scrollToIndex(index);
             },
             _fillTable: function () {
@@ -843,6 +849,14 @@ View list of chromosome names.
                         var group = this.featByIso[feat][self.isoName][0].group;
                         var featureList = this.featByIso[feat][self.isoName];
                         for (var i in featureList) {
+                            if (!featureList[i].start){
+                                featureList[i].start = "?";
+                                featureList[i].description.replace("NA","?");
+                            }
+                            if (!featureList[i].end){
+                                featureList[i].end = "?";
+                                featureList[i].description.replace("NA","?");
+                            }
                             var feature = featureList[i];
                             if (feature.variant) {
                                 var crossRef = {};
