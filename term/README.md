@@ -26,7 +26,7 @@ There are three main elements to import:
  
  An **Accession Number** is given as a a property `accessionInput` to **`ancestor-graph-view`**. This is connected to an **observer** which calls the function `APIcaller`. 
  
-For more information about properties and functions check section **X-Properties and Functions**. 
+For more information about properties and functions check section **7-Properties and Functions**. 
  
  The API Call is performed and once a response is received, the `ancestorBuild` function calls the subfunctions:
  
