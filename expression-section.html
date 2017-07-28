@@ -28,7 +28,7 @@ Annotation section used in function, medical, and expression views.
         </style>
 
         <div class="pull-right">
-            <template is="dom-repeat" items="[[heatmapOptions.values]]" as="method">
+            <template is="dom-repeat" items="[[heatmapOptions.methods]]" as="method">
                 <div class="style-scope heatmap-table-row" style="margin-right: 25px; display:inline-block">
                     <div class="dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown">
@@ -59,14 +59,13 @@ Annotation section used in function, medical, and expression views.
         <div class="tab-content">
 
             <div id="ontology-content" role="tabpanel" aria-labelledby="ontology-tab" class="tab-pane active in">
+                <heatmap-table-item data=[[heatmapFlatData]] options=[[heatmapOptions]]></heatmap-table-item>
+            </div>
+<!--
+            <div id="flat-content" role="tabpanel" aria-labelledby="flat-tab" class="tab-pane fade">
                 <heatmap-table-item data=[[heatmapData]] options=[[heatmapOptions]]></heatmap-table-item>
             </div>
-
-            <div id="flat-content" role="tabpanel" aria-labelledby="flat-tab" class="tab-pane fade">
-                <generic-annotation-section id="expressionAnnotationElement" section="function" gold-only="[[nxConfig.goldOnly]]" categories='["EXPRESSION-PROFILE"]'
-                                            nx-config="[[nxConfig]]" count="{{annotationsCount}}">
-                </generic-annotation-section>
-            </div>
+            -->
         </div>
 
     </template>
@@ -89,15 +88,20 @@ Annotation section used in function, medical, and expression views.
                     type: Object,
                     value: {}
                 },
+                heatmapFlatData: {
+                    type: Array,
+                    value: []
+                },
                 heatmapData: {
-                    type: Object,
-                    value: {}
+                    type: Array,
+                    value: []
                 },
                 heatmapOptions: {
-                    type: Array,
-                    value: { "values" : [{methodName : "MicroArray", possibleValues : [{name : "Positive", color: "#9575CD"}, {name : "Not detected", color : "#EDE7F6"}]},
-                        {methodName : "EST", possibleValues : [{name: "EST", color: "#9FA8DA"}]},
-                        {methodName : "IHC", possibleValues : [{name: "High", color: "#42A5F5"}, {name: "Moderate", color: "#90CAF9"}, {name: "Weak", color: "#BBDEFB"}, {name: "Low", color: "#E3F2FD"}]}]}
+                    type: Object,
+                    value: { "methods" : [
+                        {methodName : "MicroArray", evidenceCodeName: "microarray RNA expression level evidence", possibleValues : [{name : "Positive", color: "#9575CD"}, {name : "Not detected", color : "#EDE7F6"}]},
+                        {methodName : "EST", methodEvidenceCodeName: "transcript expression evidence", possibleValues : [{name: "Positive", color: "#9FA8DA"}]},
+                        {methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence", possibleValues : [{name: "High", color: "#42A5F5"}, {name: "Moderate", color: "#90CAF9"}, {name: "Weak", color: "#BBDEFB"}, {name: "Low", color: "#E3F2FD"}]}]}
                 },
                 section: {
                     type: String
@@ -129,8 +133,8 @@ Annotation section used in function, medical, and expression views.
                     Promise.all(apiCall).then(function (result) {
                         var nxAnatomy = result[0];
                         self.expressionProfileData = result[1];
-                        console.log(self.expressionProfileData)
-                        self.heatmapData = self._convertNextProtDataIntoHeatMapTableFormat(nxAnatomy, self.expressionProfileData)
+                        self.heatmapFlatData = self._convertNextProtDataIntoHeatMapTableFormat(null, self.expressionProfileData)
+                        //self.heatmapData = self._convertNextProtDataIntoHeatMapTableFormat(nxAnatomy, self.expressionProfileData).substring(0, 4);
 
                     }).catch(function (err) {
                         // catch any error that happened so far
@@ -172,19 +176,97 @@ Annotation section used in function, medical, and expression views.
                 }
                 return result;
             },
+            _generateGroupedValuesForHeatMap: function(annotation, evidences, flat) {
+
+                    var groups = []
+                    var methods = [ {
+                            methodName : "MicroArray", methodEvidenceCodeName: "microarray RNA expression level evidence", 
+                            possibleValues : [{expressionLevel : "positive", color: "#9575CD"}, 
+                                              {expressionLevel : "negative", color : "#EDE7F6"}]
+                        },
+                        {
+                            methodName : "EST", methodEvidenceCodeName: "transcript expression evidence", 
+                            possibleValues : [{expressionLevel: "positive", color: "#9FA8DA"}]
+                        },
+                        {   methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence", 
+                            possibleValues : [{expressionLevel: "high", color: "#42A5F5"}, 
+                                              {expressionLevel: "medium", color: "#90CAF9"}, 
+                                              {expressionLevel: "low", color: "#BBDEFB"}, 
+                                              {expressionLevel: "not detected", color: "#E3F2FD"}]
+                        }]
+
+                    var atLeastOneEvidenceValid = false;
+
+                    methods.forEach(function (method) {
+                        var methodPossibleValues = method.possibleValues;
+                        var groupObject = {name: method.methodName, values: []}
+                        groups.push(groupObject)
+                        methodPossibleValues.forEach(function (methodPossibleValue) {
+
+                            var evidenceMatchCount = 0;
+                            for(var e=0; e<evidences.length; e++){
+                                var evidence = evidences[e]
+                                if (evidence.evidenceCodeName === method.methodEvidenceCodeName) {
+                                    if (evidence.expressionLevel === methodPossibleValue.expressionLevel) {
+                                        evidenceMatchCount++;
+                                        atLeastOneEvidenceValid = true;
+                                    }
+                                }
+                            }
+                            groupObject.values.push({currentNodeEvidenceCount : evidenceMatchCount, color : methodPossibleValue.color})
+
+                        })
+
+                    });
+
+                    if(!atLeastOneEvidenceValid){
+                        console.log("Missing a valid value for annotation", annotation.cvTermAccessionCode , "with evidences: ", evidences.length /*, "current values are ", values*/);
+                        alert("Missing a valid value for annotation", annotation.cvTermAccessionCode , "with evidences: ", evidences.length /*, "current values are ", values*/)
+                    }
+                    return groups;
+
+            },
             _convertNextProtDataIntoHeatMapTableFormat: function (terminology, data) {
 
-                var cvTermList = terminology["cvTermList"]
-                var xrefDict = data['xrefs'];
 
+                var cvTermList = [];
+                var xrefDict = data['xrefs'];
                 var experimentalContext = data["contexts"]
 
+                var nodes = [];
+
+                var self = this;
+
+                if(terminology){
+                     cvTermList = terminology["cvTermList"]
+                }else {
+
+                    nodes = data.annot.map(function(a) {return {rowLabel : a.cvTermName, 
+                                                               linkLabel: a.cvTermAccessionCode,
+                                                               linkURL :  "http://www.nextprot.org/db/term/" + a.cvTermAccessionCode,
+                                                               annotation : a,
+                                                               groupValues: self._generateGroupedValuesForHeatMap(a, a.evidences, true),
+                                                               evidences: a.evidences}})
+                }
+
+
+                // Sort alphabetically
+                nodes = nodes.sort(function (a, b) { 
+                    if(a.rowLabel < b.rowLabel) return -1;
+                    if(a.rowLabel > b.rowLabel) return 1;
+                    return 0;
+                })
+
+                return nodes;
+
+/*
                 var termDict = {};
                 var queue = [];
                 var heatMapTableRoot = null;
-                var detailList = [];
+                var detailList = [];*/
 
 
+                /*
                 for (var i = 0; i < cvTermList.length; i++) {
                     termDict[cvTermList[i].accession] = cvTermList[i];
                     if (cvTermList[i].ancestorAccession === null) {
@@ -199,10 +281,10 @@ Annotation section used in function, medical, and expression views.
                         node.linkURL = "http://www.nextprot.org/db/term/" + cvTermList[i].accession;
                         heatMapTableRoot = node;
                         queue.push(heatMapTableRoot);
-
                         detailList.push(node.detailData);
                     }
                 }
+
                 while (queue.length !== 0) {
                     var currNode = queue.shift();
                     var currTerm = termDict[currNode.id];
@@ -282,6 +364,7 @@ Annotation section used in function, medical, and expression views.
                 }
 
                 function addAnnotToHeatMapTable(data, annot) {
+                    //Data may equal to null when its root
                     if (data.id === annot.cvTermAccessionCode) {
                         for (var i = 0; i < annot.evidences.length; i++) {
 
@@ -411,9 +494,8 @@ Annotation section used in function, medical, and expression views.
                 }
 
                 sortDetail(detailList);
-
-                return heatmapData;
-
+*/
+  
             }
         });
     </script>
