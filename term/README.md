@@ -1,7 +1,7 @@
 # Ancestor Graph
 The **Ancestor Graph** is a polymer element which uses [viz.js](https://github.com/mdaines/viz.js/) ([GraphViz](http://www.graphviz.org) in JavaScript). It can be used to represent Directed Acyclic Graphs (DAG), such as gene ontologies. 
 
-It was built by Leonardo Castorina specifically for [NeXtProt](https://www.nextprot.org) in July 2017. 
+It was built by [Leonardo Castorina](https://github.com/universvm) specifically for [NeXtProt](https://www.nextprot.org) in July 2017. 
 
 
 ## 1 - How to install:
@@ -81,3 +81,30 @@ This section is very simple as it does not take all the arguments from a differe
 The **`ancestor-graph-view`** properties contain observers. These were used for the demo, thus remove them before actual use.
  
 ## 7 - Properties and Functions:
+
+**Properties**:
+
+|Property|Use|
+|---|---|
+|accessionInput|Contains the accession number used in the API call.|
+|arrowInput|Controls the size of the arrow.|
+|fontInput|Controls font size.|
+|splineInput|Controls the algorithm used by viz.js|
+|maxWidth|Fixes the maximum width of the graph.|
+|dotGraph|Contains the graph translated in dot format. It is given to `**graph-section**` via `dotdata`|
+|graphOrientation|Controls the orientation of the graph (eg. Horizontal, vertical …)|
+|nodeShape|Controls the shape of the node (eg. rectangle, ellipse…)|
+|regex|Controls the way the text fits inside the boxes. (uses and if else due to the complexity of using variables in regex expressions)|
+|subgraphDistance|Toggles whether to group nodes by distance. The distance is contained in an array of arrays `nodeDistance`, with the accession numbers at a specific distance (level) of the graph. The index in the first array specifies the level.<br><br>    For example, `subgraphDistanceArray[1]` represents all the accession numbers at level 1. <br>Level 0 represents the root of the graph.|
+
+**Functions**:
+
+|Function|Use|
+|---|---|
+|APIcaller|Performs the API call using accessionInput as a parameter.|
+|ancestorBuild|Takes the API response and produces the dot graph. It also calls `edgesDotBuild`, `nodesDotBuild`, `nodeDistancer`.|
+|nodesDotBuild|Takes the API nodes as an argument. It then produces nodes in dot language. It calls `getNodeColor`.|
+|edgesDotBuild|Takes the API edges as an argument. It then produces edges in dot language. |
+|nodeDistancer|Takes the API response and produces the array in with distances. It then calls `getSubgraphs`.|
+|getSubgraphs|Loops throught the distance arrays and produces subgraphs in dot format. |
+|getNodeColor|If/else to fill the nodes either with white or green. (Level 0 is highlighted in green)  |
