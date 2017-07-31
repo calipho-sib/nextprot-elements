@@ -413,11 +413,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     for (var i in self.rawData){
                         if (self.rawData[i].annot) count += self.rawData[i].annot.length;
                     }
-                    console.log("rawData");
-                    console.log(rawData);
+                    
                     self.count = count;
-                    console.log("count");
-                    console.log(count);
+                    
                     if(self.count){
                         self.reloadSVG();
                         self._addFiltering();
@@ -438,7 +436,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 //                    self.$.featTableSpinner.active = true;
                     $("#featureViewer svg").remove();
                     if(self.featuresByIsoform.length) {
-                        console.log("ENTER RELOAD SVG TV")
                         self._fillTable();
                         self.hidden=false;
                         self._renderFeatureViewer();
@@ -459,11 +456,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 }
             },
             _getFeaturesByIsoform: function(){
-                console.log("filling feat by iso 0")
                 this.featuresForViewer = [];
 //                this.featuresByIsoform = [];
                 var featsByIso = [];
-                console.log("filling feat by iso 1")
                 this.isoforms = this.rawData[0];
                 var isoLengths = {};
                 this.isoforms.forEach(function(i){
@@ -473,13 +468,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     var feat = NXUtils.convertMappingsToIsoformMap(this.rawData[i],this.metaData[i].name,this.metaData[i].filter, "");
                     if (this.goldOnly) feat = this._filterGoldForViewer(feat);
                     featForViewer = NXViewerUtils.convertNXAnnotations(feat,this.metaData[i],isoLengths);
-                    console.log("featForViewer");
-                    console.log(featForViewer);
                     this.featuresForViewer.push(featForViewer);
                     featsByIso.push(feat);
                 }
                 this.notifyPath("featuresByIsoform", featsByIso);
-                console.log("filling feat by iso 2");
             },
             _getFeaturesByView: function() {
                 var featuresForViewer = [];
@@ -619,7 +611,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 //                })
             },
             _toFlat: function (obj) {
-                console.log("enter to Flat")
                 var self = this;
                 //                var newArr = [];
                 return Object.keys(obj).map(function (key) {
@@ -636,8 +627,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             _fillTable: function() {
 //                if ($("#featuresTable").length > 0) {
                 if (!Object.keys(this.featuresByGroup).length){
-                    console.log("fillTable CALLED")
-                    console.log(this.featuresForTable);
                     var number = 0;
                     var features = {};
                     var self=this;
@@ -686,11 +675,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         }
                     }
                     this.featuresByGroup = features;
-                    console.log("filterOptions");
-                    console.log(this.filterOptions);
 //                    this.notifyPath("groupedFeatures", features);
-                    console.log("features");
-                    console.log(features);
                     
 //                    this.featuresLength = number;
                 }
@@ -773,7 +758,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     position[0] -= 1;
                     if (!position[0]) position[0] = 0;
                     if (!position[1]) position[1] = this.currentSeq.length;
-                    console.log(position);
                     if (!this.hideSequenceViewer) {
                         this.seqView.selection(position[0], position[1], "#C50063");
                         this._scrollAuto(".stringSelected", ".scroller", 200);
@@ -787,8 +771,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             eventTV: function() {
                 var self=this;
                 self.ft.onFeatureSelected(function(d){
-                    console.log("d");
-                    console.log(d);
                     self.selection = d.detail;
                     // update isoform selector
                     self.fvSelection(d.detail);
@@ -811,9 +793,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 console.log(d.id);
                 for (var i=0; i < this.featuresForTable.length;i++){
                     if (this.featuresForTable[i].id === d.id){
-                        console.log("found elem in loop fvselection");
-                        console.log(i);
-                        console.log(this.featuresForTable[i].id);
                         this.$.featTable.highlightFeature(i);
                         break;
                     }
