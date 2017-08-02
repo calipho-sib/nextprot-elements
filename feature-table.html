@@ -801,7 +801,8 @@ View list of chromosome names.
 //                console.log(srcElement)
 //                console.log(srcElement.parentNode.parentNode);
 //                console.log(srcElement.parentNode.parentNode.parentNode);
-                var focusedElement = this.$.itemList.modelForElement(event.path[4]).feature;
+                var parentItem = srcElement.parentNode.parentNode.parentNode.parentNode;
+                var focusedElement = this.$.itemList.modelForElement(parentItem).feature;
 //                console.log("focusedElement");
 //                console.log(focusedElement);
                 console.log("focusedElement");
