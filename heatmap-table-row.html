@@ -167,7 +167,7 @@
     <template>
         <template is="dom-repeat" items="[[data]]" as="d">
             <li>
-                <div class="heatmap-row" on-tap="toggleChildren">
+                <div class="heatmap-row">
                     <template is="dom-if" if="[[hasChildren(d)]]">
                         <i class="fa fa-caret-right"></i>
                     </template>
@@ -176,7 +176,7 @@
                         <span><a href="[[d.linkURL]]" target="_blank">[[d.linkLabel]]</a></span>
                     </p>
                     <div class="pull-right grouped-values" style="margin-left: 25px">
-                        <!-- Groups are rendered horizontally --> 
+                        <!-- Groups are showed --> 
                         <template is="dom-repeat" items="[[d.groupValues]]" as="group">
                             <div class="heatmap-group">
                                 <template is="dom-repeat" items="[[group.values]]" as="value">
@@ -186,21 +186,14 @@
                                 </template>
                                 <!-- Number of evidences are displayed for the given group --> 
                                 <div class="heatmap-column heatmap-group-count-size">
-                                    <a href="#" on-tap="_toggleEvidences">[[_computeCountForGroup(group)]]</a>
+                                    <a href="#" data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group)]]</a>
                                 </div>
                             </div>
                         </template>
                     </div>
                 </div>
-                <template is="dom-if" if="{{d.showEvidences}}">
-                    <div class="evidence-row">
-                        <template is="dom-repeat" items="[[d.evidences]]" as="evidence">
-                            <div>
-                                <evidence-item data=[[evidence]]></evidence-item>
-                            </div>
-                        </template>
-                    </div>
-                </template>
+                <!-- Evidences container not displayed at first-->
+                <div id="annotation-[[d.annotation.annotationId]]-evidence-container" class="evidence-row"></div>
                 <template is="dom-if" if="[[hasChildren(d)]]">
                     <ul class="tree heatmap-opened heatmap-tree">
                         <heatmap-table-row data="[[d.children]]" options="[[options]]"></heatmap-table-row>
@@ -224,12 +217,8 @@
                     value: {}
                 }
             },
-            /*_showEvidencesNumber: function (evidences) {
-                if (evidences && evidences.length > 0)
-                    return evidences.length;
-                else return "";
-            },*/
             _showSomething: function (value, evidence) {
+                console.log(value);
                 return evidence.evidenceCodeName;
 
             },
@@ -260,12 +249,11 @@
             hasChildren: function (d) {
                 var boolean = d.children && d.children.length;
                 return boolean;
-            }, _toggleEvidences: function(e) {
-                console.log(this.data[0])
-                this.data[0].showEvidences = true;
-                //d.showEvidences != d.showEvidences;
+            }, _toggleEvidences: function(group) {
+
+
             },toggleChildren: function (e) {
-                /*
+
                 var liParent = e.srcElement.closest("li")
                 var icon = liParent.getElementsByTagName("i")[0]
 
@@ -280,10 +268,33 @@
                 } else {
                     icon.classList.remove("fa-caret-right")
                     icon.classList.add("fa-caret-down")
-                }*/
+                }
 
 
             },
+            _showEvidences: function(e){
+                var annotation = JSON.parse(e.target.dataset.args);
+                var container = this.$$("#annotation-"+annotation.annotationId+"-evidence-container");
+                if(container.childElementCount===0){
+                    for (evidenceIdx in annotation.evidences){
+                        var evidence = annotation.evidences[evidenceIdx]
+                        if(evidence.crossRef) {
+                            evidence.resourceAccession = evidence.crossRef.name;
+                            evidence.url = evidence.crossRef.url;
+                        }
+                        var evidenceItem = document.createElement("evidence-item");
+                        evidenceItem.setAttribute("index", evidence.evidenceId);
+                        evidenceItem.data=evidence;
+                        container.appendChild(evidenceItem);
+                        this.updateStyles();
+                    }
+                } else if (container.hidden) {
+                    container.hidden = false;
+                } else {
+                    container.hidden = true;
+                }
+            }
+            ,
             _reload: function () {
 
                 //console.log(this.data)
