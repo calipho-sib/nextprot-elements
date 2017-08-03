@@ -273,6 +273,7 @@
                 if(container.childElementCount===0){
                     for (evidenceIdx in annotation.evidences){
                         var evidence = annotation.evidences[evidenceIdx]
+                        console.log(evidence)
                         if(evidence.crossRef) {
                             evidence.resourceAccession = evidence.crossRef.name;
                             evidence.url = evidence.crossRef.url;

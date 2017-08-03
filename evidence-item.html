@@ -71,7 +71,11 @@ Block element representing an evidence record.
                     </template>
                     <template is="dom-if" if="[[data.resourceAccession]]">
                         <div class="evidence-accession">
-                            <p><a href="[[data.url]]" class="ext-link" target='_blank'>[[data.resourceAccession]]</a></p>
+                            <p><a href="[[data.url]]" class="ext-link" target='_blank'>
+                                <!-- urlLabel overrides resourceAccession by default. If urlLabel is not set, resourceAccession is used. -->
+                                <template is="dom-if" if="[[data.urlLabel]]">[[data.urlLabel]]</template>
+                                <template is="dom-if" if="[[!data.urlLabel]]">[[data.resourceAccession]]</template>
+                            </a></p>
                         </div>
                     </template>
                     <template is="dom-if" if="[[data.publication]]">

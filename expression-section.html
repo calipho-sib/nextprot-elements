@@ -234,6 +234,27 @@ Annotation section used in function, medical, and expression views.
                     })
                 })
             },
+            _enrichEvidenceWithResourceUrl: function(heatmapData, xrefs) {
+                heatmapData.forEach(function(data){
+                    data.annotation.evidences.forEach(function(evidence){
+
+                        var resource = xrefs[evidence.resourceId]
+                        evidence.url = resource.resolvedUrl.replace(/amp;/g, "")
+
+                        if(evidence.properties["antibodies acc"]){
+                            evidence.urlLabel = evidence.properties["antibodies acc"]
+                        }else {
+
+                            var geneId = evidence.resourceAccession.slice(evidence.resourceAccession.indexOf("gene_id=") + 8);
+                            if (geneId.indexOf("&amp") !== -1) {
+                                geneId = geneId.substring(0, geneId.indexOf("&amp"));
+                            }
+                            evidence.urlLabel = geneId;
+                        }
+                    })
+                })
+
+            },
             _enrichEvidenceObjectWithExperimentalContext: function(heatmapData, experimentalContext) {
                 heatmapData.forEach(function(data){
                     data.annotation.evidences.forEach(function(evidence){
@@ -271,8 +292,6 @@ Annotation section used in function, medical, and expression views.
 
 
                 var cvTermList = [];
-                var xrefDict = data['xrefs'];
-                var experimentalContext = data["contexts"]
                 var heatmapData = [];
                 var self = this;
 
@@ -291,8 +310,8 @@ Annotation section used in function, medical, and expression views.
                 }
 
 
-                this._enrichEvidenceObjectWithExperimentalContext(heatmapData, experimentalContext)
-
+                this._enrichEvidenceObjectWithExperimentalContext(heatmapData, data["contexts"])
+                this._enrichEvidenceWithResourceUrl(heatmapData, data['xrefs'])
 
                 // Sort alphabetically
                 heatmapData = heatmapData.sort(function (a, b) { 
