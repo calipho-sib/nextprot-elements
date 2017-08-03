@@ -89,6 +89,11 @@ Block element representing an evidence record.
                             </p>
                         </div>
                     </template>
+                    <template is="dom-if" if="[[data.levelAndStageLabel]]">
+                        <div class="evidence-accession">
+                            <p><span>[[data.levelAndStageLabel]]</span></p>
+                        </div>
+                    </template>
                 </div>
             </div>
         </template>

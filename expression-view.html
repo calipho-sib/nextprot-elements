@@ -45,13 +45,11 @@ View listing protein expression view.
       <generic-annotation-section id="expressionInfoElement" section="expressionInfo" gold-only="[[nxConfig.goldOnly]]" categories='["EXPRESSION-INFO"]' nx-config="[[nxConfig]]" count="{{expressionInfoCount}}"></generic-annotation-section>
     </div>
     <div id="nxOntologicalBrowser" class="row nxSection">
-
       <template is="dom-repeat" items="[[ontologicalBrowserTerms]]" as="term">
-        <div class="col-md-2">
+        <div class="col-md-3">
           <div class="ontological-term"><a href="#{{term}}">[[term]]</a></div>
         </div>
       </template>
-
     </div>
     <div id="nxExpressionAnnotations" class="row nxSection">
       <expression-section id="expressionSection" section="expressionSection" gold-only="[[nxConfig.goldOnly]]" nx-config="[[nxConfig]]"></expression-section>
@@ -101,8 +99,8 @@ View listing protein expression view.
         }
       },
       _checkAnnotations: function(){
-        if(!this.annotationsCount) this.$.nxAnnotations.hidden=true;
-        else this.$.nxAnnotations.hidden=false;
+        if(!this.annotationsCount) this.$.nxExpressionAnnotations.hidden=true;
+        else this.$.nxExpressionAnnotations.hidden=false;
         if(!this.positionalAnnotationsCount) this.$.nxPositionalAnnotations.hidden=true;
         else this.$.nxPositionalAnnotations.hidden=false;
         if(this.annotationsCount===0 && this.positionalAnnotationsCount===0) this.$.noDataWarning.hidden=false;

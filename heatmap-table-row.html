@@ -163,6 +163,15 @@
             margin-right: 0px; 
         }
 
+        .evidenceNumber {
+            background: #7CBA0F;
+            padding: 4px 8px;
+            border-radius: 2px;
+            color: white;
+            vertical-align: top;
+            cursor: pointer;
+        }
+
     </style>
     <template>
         <template is="dom-repeat" items="[[data]]" as="d">
@@ -186,7 +195,7 @@
                                 </template>
                                 <!-- Number of evidences are displayed for the given group --> 
                                 <div class="heatmap-column heatmap-group-count-size">
-                                    <a href="#" data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group)]]</a>
+                                    <span data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group)]]</span>
                                 </div>
                             </div>
                         </template>
@@ -216,20 +225,6 @@
                     type: Object,
                     value: {}
                 }
-            },
-            _showSomething: function (value, evidence) {
-                console.log(value);
-                return evidence.evidenceCodeName;
-
-            },
-            _showEvidencesNumber : function (data, idx) {
-                if(data.values.length > 0) {
-                    var evidences = data.values[idx].evidences;
-                    if (evidences && evidences.length > 0)
-                        return evidences.length;
-                    else return "";
-
-                } return ""
             },
             _computeCountForGroup: function (group) {
                 var vs = group.values;
@@ -283,7 +278,7 @@
                             evidence.url = evidence.crossRef.url;
                         }
                         var evidenceItem = document.createElement("evidence-item");
-                        evidenceItem.setAttribute("index", evidence.evidenceId);
+                        evidenceItem.setAttribute("index", new Number(evidenceIdx) + 1);
                         evidenceItem.data=evidence;
                         container.appendChild(evidenceItem);
                         this.updateStyles();
