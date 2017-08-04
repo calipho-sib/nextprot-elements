@@ -263,6 +263,11 @@
                 if(data.currentNodeEvidenceCount > 0) {
                         return "background-color: " + data.color;
                 }
+
+                if(data.childrenFound) {
+                    return "background-color: " + data.color;
+                }
+
                 return "display: none";
 
             },

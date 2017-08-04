@@ -56,7 +56,7 @@ Annotation section used in function, medical, and expression views.
                 <a href="#flat-content" id="flat-tab-content" role="tab" data-toggle="tab">Flat</a>
             </li>
             <li>
-                <a href="https://dev-api.nextprot.org/entry/NX_P01308/expression-profile.tsv">Export&nbsp;<span class="glyphicon glyphicon-download-alt"></span></a>
+                <a href$="{{_buildExportUri(nxConfig.env, nxConfig.entry)}}">Export&nbsp;<span class="glyphicon glyphicon-download-alt"></span></a>
             </li>
         </ul>
 
@@ -80,10 +80,6 @@ Annotation section used in function, medical, and expression views.
                 nxConfig: {
                     type: Object,
                     value: {}
-                },
-                isTree: {
-                    type: Boolean,
-                    value: true
                 },
                 expressionProfileData: {
                     type: Object,
@@ -146,11 +142,14 @@ Annotation section used in function, medical, and expression views.
                 isoform: {
                     type: String,
                     observer: "_reloadIsoform"
+                },
+                nxClient: {
+                    type: Object,
+                    observer: {}
                 }
             },
             ready: function () {
-                this.isTree = true;
-                //if(this.evidencesShown===undefined) this._toggleAllEvidences();
+
                 Polymer.RenderStatus.afterNextRender(this, function () {
                     var nx = new Nextprot.Client("neXtprot expression section", "Calipho Group");
                     if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
@@ -181,6 +180,10 @@ Annotation section used in function, medical, and expression views.
                     });
 
                 });
+            },
+            _buildExportUri: function(env, entry){
+                //TODO change this later
+                return "https://dev-api.nextprot.org" + "/entry/" + entry  + "/expression-profile.tsv";
             },
             _computeStyle: function (value) {
                 return "margin: 5px; background-color: " + value
@@ -340,21 +343,54 @@ Annotation section used in function, medical, and expression views.
                 var self = this;
                 if(data){
 
-                    if(data.name === "TS-1299"){
-                        console.log(data)
-                        console.log(data.groupValues)
-                        console.log(data.propagatedValuesFromChildren)
-
                         //If groupValues is not defined for this entry, simply take the first one from propagation
                         if(!data.groupValues){
-                            data.groupValues = data.propagatedValuesFromChildren[0]
+                            data.groupValues = [];
                         }
 
-                        /*data.groupValues.forEach(function(group) {
-                            group.values.forEach(function(value) {
+                        if(data.propagatedValuesFromChildren && data.propagatedValuesFromChildren.length > 0){
+                            var firstGroupedValues = data.propagatedValuesFromChildren[0];
+                            for(var g=0; g< firstGroupedValues.length; g++){
+                                var group = firstGroupedValues[g];
 
-                            })
-                        })*/
+                                //Create group if group is not present
+                                if(!data.groupValues[g]){
+                                    data.groupValues.push({name: group.name, values:[]})
+                                }
+
+                                for(var v=0; v< group.values.length; v++){
+
+                                    //If there is no value for this group and this value
+                                    if(!data.groupValues[g].values[v]){
+
+                                        var firstValueFound = null;
+                                        data.propagatedValuesFromChildren.forEach(function (child){
+                                            if(child[g].values[v].currentNodeEvidenceCount > 0){
+                                                firstValueFound = child[g].values[v];
+                                                return
+                                            }
+                                        })
+
+                                        if(firstValueFound){
+                                            data.groupValues[g].values[v] = {
+                                                currentNodeEvidenceCount: 0,
+                                                color: firstValueFound.color,
+                                                childrenFound: true
+                                            }
+
+                                        }else {
+
+                                            data.groupValues[g].values[v] = {
+                                                currentNodeEvidenceCount: 0,
+                                                childrenFound: false
+                                            }
+
+                                        }
+                                    }
+
+                            }
+                        }
+
 
                     }
 
