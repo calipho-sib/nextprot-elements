@@ -294,12 +294,13 @@ Annotation section used in function, medical, and expression views.
             _getTermByAccession: function (accession) {
                 return this.hierarchyMap[accession]
             },
-            _buildChildrenRecursively: function (term) {
+            _buildChildrenRecursively: function (term, level) {
 
                 var polymerElm = this;
                 var treeNode = {
                     rowLabel : term.name,
                     linkLabel: term.accession,
+                    level: level,
                     linkURL :  "http://www.nextprot.org/db/term/" + term.accession
                 };
 
@@ -309,7 +310,7 @@ Annotation section used in function, medical, and expression views.
                     var children = []
                     term.childAccession.forEach(function(childAccession){
                         var childTerm = polymerElm._getTermByAccession(childAccession)
-                        children.push(polymerElm._buildChildrenRecursively(childTerm));
+                        children.push(polymerElm._buildChildrenRecursively(childTerm, level + 1));
                     });
                     treeNode.children = children;
                     return treeNode;
@@ -321,7 +322,7 @@ Annotation section used in function, medical, and expression views.
                 //For each root build children tree
                 var result = this.hierarchyRoot.map(function(root) {
                     var rootTerm = polymerElm._getTermByAccession(root.accession);
-                    return polymerElm._buildChildrenRecursively(rootTerm)
+                    return polymerElm._buildChildrenRecursively(rootTerm, 0)
                 })
                 return result;
 

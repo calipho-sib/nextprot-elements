@@ -9,6 +9,13 @@
             display: block;
         }
 
+         .highlight-roots {
+
+             font-weight: bold;
+             margin-top: 50px;
+
+         }
+
         #grad {
             background: red;
             /* For browsers that do not support gradients */
@@ -176,7 +183,7 @@
     <template>
         <template is="dom-repeat" items="[[data]]" as="d">
             <li>
-                <div class="heatmap-row" on-tap="toggleChildren">
+                <div class$="{{_computeClassesForParent(d)}}" on-tap="toggleChildren">
                     <template is="dom-if" if="[[hasChildren(d)]]">
                         <i class="fa fa-caret-right"></i>
                     </template>
@@ -204,7 +211,7 @@
                 <!-- Evidences container not displayed at first-->
                 <div id="annotation-[[d.annotation.annotationId]]-evidence-container" class="evidence-row"></div>
                 <template is="dom-if" if="[[hasChildren(d)]]">
-                    <ul class="tree heatmap-opened heatmap-tree">
+                    <ul class$="{{_computeClassesForChildren(d)}}">
                         <heatmap-table-row data="[[d.children]]" options="[[options]]"></heatmap-table-row>
                     </ul>
                 </template>
@@ -224,6 +231,22 @@
                 options: {
                     type: Object,
                     value: {}
+                }
+            },
+            _computeClassesForParent: function(d){
+                if(d.level === 0){
+                    return "heatmap-row highlight-roots"
+                }
+                return "heatmap-row"
+
+            },
+            _computeClassesForChildren: function(d){
+
+                var baseClass = "tree heatmap-tree heatmap-opened"
+                if(d.level < 2){
+                    baseClass + " openHmChildren"
+                }else {
+                    return "tree heatmap-tree"
                 }
             },
             _computeCountForGroup: function (group) {
