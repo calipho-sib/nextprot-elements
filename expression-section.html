@@ -100,9 +100,9 @@ Annotation section used in function, medical, and expression views.
                 heatmapOptions: {
                     type: Object,
                     value: { "methods" : [
-                                {methodName : "MicroArray", methodEvidenceCodeName: "microarray evidence", possibleValues : [{name : "Positive", color: "#9575CD"}, {name : "Not detected", color : "#EDE7F6"}]},
-                                {methodName : "EST", methodEvidenceCodeName: "transcript expression evidence", possibleValues : [{name: "Positive", color: "#9FA8DA"}]},
-                                {methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence", possibleValues : [{name: "High", color: "#42A5F5"}, {name: "Medium", color: "#90CAF9"}, {name: "Low", color: "#BBDEFB"}, {name: "Not detected", color: "#E3F2FD"}]}]}
+                        {methodName : "MicroArray", methodEvidenceCodeName: "microarray evidence", possibleValues : [{name : "Positive", color: "#9575CD"}, {name : "Not detected", color : "grey"}]},
+                        {methodName : "EST", methodEvidenceCodeName: "transcript expression evidence", possibleValues : [{name: "Positive", color: "#9FA8DA"}]},
+                        {methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence", possibleValues : [{name: "High", color: "#42A5F5"}, {name: "Medium", color: "#90CAF9"}, {name: "Low", color: "#BBDEFB"}, {name: "Not detected", color: "grey"}]}]}
                 },
                 hierarchyMap: {
                     type: Object,
@@ -194,7 +194,7 @@ Annotation section used in function, medical, and expression views.
                 var methods = [ {
                     methodName : "MicroArray", methodEvidenceCodeName: "microarray evidence",
                     possibleValues : [{expressionLevel : "positive", color: "#9575CD"},
-                        {expressionLevel : "negative", color : "#EDE7F6"}]
+                        {expressionLevel : "negative", color : "grey"}]
                 },
                     {
                         methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",
@@ -204,7 +204,7 @@ Annotation section used in function, medical, and expression views.
                         possibleValues : [{expressionLevel: "high", color: "#42A5F5"},
                             {expressionLevel: "medium", color: "#90CAF9"},
                             {expressionLevel: "low", color: "#BBDEFB"},
-                            {expressionLevel: "not detected", color: "#E3F2FD"}]
+                            {expressionLevel: "not detected", color: "grey"}]
                     }]
 
                 var atLeastOneEvidenceValid = false;
@@ -343,51 +343,64 @@ Annotation section used in function, medical, and expression views.
                 var self = this;
                 if(data){
 
-                        //If groupValues is not defined for this entry, simply take the first one from propagation
-                        if(!data.groupValues){
-                            data.groupValues = [];
-                        }
+                    //If groupValues is not defined for this entry, simply take the first one from propagation
+                    if(!data.groupValues){
+                        data.groupValues = [];
+                    }
 
-                        if(data.propagatedValuesFromChildren && data.propagatedValuesFromChildren.length > 0){
-                            var firstGroupedValues = data.propagatedValuesFromChildren[0];
-                            for(var g=0; g< firstGroupedValues.length; g++){
-                                var group = firstGroupedValues[g];
+                    if(data.propagatedValuesFromChildren && data.propagatedValuesFromChildren.length > 0){
 
-                                //Create group if group is not present
-                                if(!data.groupValues[g]){
-                                    data.groupValues.push({name: group.name, values:[]})
-                                }
+                        var firstGroupedValues = data.propagatedValuesFromChildren[0];
+                        for(var g=0; g< firstGroupedValues.length; g++){
+                            var group = firstGroupedValues[g];
 
-                                for(var v=0; v< group.values.length; v++){
+                            //Create group if group is not present
+                            if(!data.groupValues[g]){
+                                data.groupValues.push({name: group.name, values:[]})
+                            }
 
-                                    //If there is no value for this group and this value
-                                    if(!data.groupValues[g].values[v]){
+                            for(var v=0; v< group.values.length; v++){
 
-                                        var firstValueFound = null;
-                                        data.propagatedValuesFromChildren.forEach(function (child){
-                                            if(child[g].values[v].currentNodeEvidenceCount > 0){
-                                                firstValueFound = child[g].values[v];
-                                                return
-                                            }
-                                        })
+                                //Searching for children values
+                                var firstChildFound = null;
 
-                                        if(firstValueFound){
-                                            data.groupValues[g].values[v] = {
-                                                currentNodeEvidenceCount: 0,
-                                                color: firstValueFound.color,
-                                                childrenFound: true
-                                            }
+                                data.propagatedValuesFromChildren.forEach(function (child){
+                                    if(child[g].values[v].currentNodeEvidenceCount > 0){
+                                        firstChildFound = child[g].values[v];
+                                        return
+                                    }
+                                })
 
-                                        }else {
+                                if(firstChildFound){
 
-                                            data.groupValues[g].values[v] = {
-                                                currentNodeEvidenceCount: 0,
-                                                childrenFound: false
-                                            }
+                                    //Case of Pancreas (TS-0736) in the Insulin (NX_P01308), there are experimental evidences for Pancreas (TS-0736)
+                                    // but also for the children (Pancreatic islet TS-0741) so just add a tag for childrenFound
+                                    if(data.groupValues[g].values[v]){
+                                        data.groupValues[g].values[v].childrenFound = true;
+                                        data.groupValues[g].values[v].name = data.name;
+                                        data.groupValues[g].values[v].group = group.name;
 
+                                    }else {
+                                        data.groupValues[g].values[v] = {
+                                            currentNodeEvidenceCount: 0,
+                                            color: firstChildFound.color,
+                                            childrenFound: true,
+                                            name: data.name,
+                                            group: group.name
                                         }
                                     }
 
+                                }else {
+
+                                    data.groupValues[g].values[v] = {
+                                        currentNodeEvidenceCount: 0,
+                                        childrenFound: false,
+                                        name: data.name,
+                                        group: group.name
+
+                                    }
+
+                                }
                             }
                         }
 

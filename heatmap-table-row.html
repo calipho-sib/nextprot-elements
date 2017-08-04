@@ -260,13 +260,22 @@
 
             },
             _computeStyle: function (data) {
-                if(data.currentNodeEvidenceCount > 0) {
-                        return "background-color: " + data.color;
+
+                //There is data and there are children
+                if(data.currentNodeEvidenceCount > 0 && data.childrenFound) {
+                    return "background-color: " + data.color + "; border-bottom:solid; border-right: solid; border-size: 5px; border-color: black"
                 }
 
-                if(data.childrenFound) {
-                    return "background-color: " + data.color;
+                //There is data and there are no children
+                if(data.currentNodeEvidenceCount > 0 && !data.childrenFound) {
+                    return "background-color: " + data.color + " ; border: 0"
                 }
+
+                //There is not data but there are children
+                if(data.currentNodeEvidenceCount == 0 && data.childrenFound) {
+                    return "background-color: white; border-bottom:solid; border-right: solid; border-size: 5px; border-color: " + data.color
+                }
+
 
                 return "display: none";
 
