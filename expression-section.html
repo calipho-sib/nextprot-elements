@@ -294,15 +294,24 @@ Annotation section used in function, medical, and expression views.
             _getTermByAccession: function (accession) {
                 return this.hierarchyMap[accession]
             },
-            _buildChildrenRecursively: function (term, level) {
+            _buildChildrenRecursively: function (term, level, parentAccession, parentNode, flatDataMap) {
 
                 var polymerElm = this;
                 var treeNode = {
+                    nodeId: parentNode + "_" + term.accession,
                     rowLabel : term.name,
                     linkLabel: term.accession,
+                    name: term.accession,
                     level: level,
+                    parentAccession: parentAccession,
                     linkURL :  "http://www.nextprot.org/db/term/" + term.accession
                 };
+
+                if(flatDataMap[term.accession]){
+                    treeNode.annotation = flatDataMap[term.accession].annotation;
+                    treeNode.evidences = flatDataMap[term.accession].evidences;
+                    treeNode.groupValues = flatDataMap[term.accession].groupValues;
+                }
 
                 if(!term.childAccession || term.childAccession === []){
                     return treeNode;
@@ -310,7 +319,7 @@ Annotation section used in function, medical, and expression views.
                     var children = []
                     term.childAccession.forEach(function(childAccession){
                         var childTerm = polymerElm._getTermByAccession(childAccession)
-                        children.push(polymerElm._buildChildrenRecursively(childTerm, level + 1));
+                        children.push(polymerElm._buildChildrenRecursively(childTerm, level + 1, term.accession, treeNode.nodeId, flatDataMap));
                     });
                     treeNode.children = children;
                     return treeNode;
@@ -318,12 +327,20 @@ Annotation section used in function, medical, and expression views.
 
             },
             _propagateFlatDataToTree: function (flatData) {
+
+                var flatDataMap = {};
+                flatData.forEach(function (data){
+                    flatDataMap[data.name]=data;
+                })
+
+
                 var polymerElm = this;
                 //For each root build children tree
                 var result = this.hierarchyRoot.map(function(root) {
                     var rootTerm = polymerElm._getTermByAccession(root.accession);
-                    return polymerElm._buildChildrenRecursively(rootTerm, 0)
+                    return polymerElm._buildChildrenRecursively(rootTerm, 0, 0, "root", flatDataMap)
                 })
+
                 return result;
 
             },
@@ -334,6 +351,7 @@ Annotation section used in function, medical, and expression views.
                 this._renameMicroArrayEvidenceCode(data);
 
                 var heatmapFlatData = data.annot.map(function(a) {return {rowLabel : a.cvTermName,
+                    name: a.cvTermAccessionCode,
                     linkLabel: a.cvTermAccessionCode,
                     linkURL :  "http://www.nextprot.org/db/term/" + a.cvTermAccessionCode,
                     annotation : a,
