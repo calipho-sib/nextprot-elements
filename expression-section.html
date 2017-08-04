@@ -85,6 +85,10 @@ Annotation section used in function, medical, and expression views.
                     type: Object,
                     value: {}
                 },
+                flatDataMap: {
+                    type: Object,
+                    value: {}
+                },
                 heatmapFlatData: {
                     type: Array,
                     value: []
@@ -96,9 +100,9 @@ Annotation section used in function, medical, and expression views.
                 heatmapOptions: {
                     type: Object,
                     value: { "methods" : [
-                        {methodName : "MicroArray", methodEvidenceCodeName: "microarray evidence", possibleValues : [{name : "Positive", color: "#9575CD"}, {name : "Not detected", color : "#EDE7F6"}]},
-                        {methodName : "EST", methodEvidenceCodeName: "transcript expression evidence", possibleValues : [{name: "Positive", color: "#9FA8DA"}]},
-                        {methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence", possibleValues : [{name: "High", color: "#42A5F5"}, {name: "Medium", color: "#90CAF9"}, {name: "Low", color: "#BBDEFB"}, {name: "Not detected", color: "#E3F2FD"}]}]}
+                                {methodName : "MicroArray", methodEvidenceCodeName: "microarray evidence", possibleValues : [{name : "Positive", color: "#9575CD"}, {name : "Not detected", color : "#EDE7F6"}]},
+                                {methodName : "EST", methodEvidenceCodeName: "transcript expression evidence", possibleValues : [{name: "Positive", color: "#9FA8DA"}]},
+                                {methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence", possibleValues : [{name: "High", color: "#42A5F5"}, {name: "Medium", color: "#90CAF9"}, {name: "Low", color: "#BBDEFB"}, {name: "Not detected", color: "#E3F2FD"}]}]}
                 },
                 hierarchyMap: {
                     type: Object,
@@ -177,7 +181,7 @@ Annotation section used in function, medical, and expression views.
             _computeStyle: function (value) {
                 return "margin: 5px; background-color: " + value
             },
-            _generateGroupedValuesForHeatMap: function(annotation, evidences, flat) {
+            _generateGroupedValuesForHeatMap: function(annotation, evidences) {
 
                 var groups = []
                 var methods = [ {
@@ -294,43 +298,87 @@ Annotation section used in function, medical, and expression views.
             _getTermByAccession: function (accession) {
                 return this.hierarchyMap[accession]
             },
-            _buildChildrenRecursively: function (term, level, parentAccession, parentNode, flatDataMap) {
+            __buildChildrenRecursively: function (currentTerm, level, parentNode) {
 
                 var polymerElm = this;
-                var treeNode = {
-                    nodeId: parentNode + "_" + term.accession,
-                    rowLabel : term.name,
-                    linkLabel: term.accession,
-                    name: term.accession,
+                var currentNode = {
+                    nodeId: (parentNode.nodeId ? parentNode.nodeId : "") + "_" + currentTerm.accession,
+                    rowLabel : currentTerm.name,
+                    linkLabel: currentTerm.accession,
+                    name: currentTerm.accession,
                     level: level,
-                    parentAccession: parentAccession,
-                    linkURL :  "http://www.nextprot.org/db/term/" + term.accession
+                    parentNode: parentNode,
+                    linkURL :  "http://www.nextprot.org/db/term/" + currentTerm.accession
                 };
 
-                if(flatDataMap[term.accession]){
-                    treeNode.annotation = flatDataMap[term.accession].annotation;
-                    treeNode.evidences = flatDataMap[term.accession].evidences;
-                    treeNode.groupValues = flatDataMap[term.accession].groupValues;
+                if(this.flatDataMap[currentTerm.accession]){
+                    currentNode.annotation = this.flatDataMap[currentTerm.accession].annotation;
+                    currentNode.evidences = this.flatDataMap[currentTerm.accession].evidences;
+                    currentNode.groupValues = this.flatDataMap[currentTerm.accession].groupValues;
+                    this.__propagateFlatDataToAncestorsRecursively(this.flatDataMap[currentTerm.accession], parentNode)
                 }
 
-                if(!term.childAccession || term.childAccession === []){
-                    return treeNode;
+                if(!currentTerm.childAccession || currentTerm.childAccession === []){
+                    return currentNode;
                 }else {
                     var children = []
-                    term.childAccession.forEach(function(childAccession){
-                        var childTerm = polymerElm._getTermByAccession(childAccession)
-                        children.push(polymerElm._buildChildrenRecursively(childTerm, level + 1, term.accession, treeNode.nodeId, flatDataMap));
+                    currentTerm.childAccession.forEach(function(cAcc){
+                        var childTerm = polymerElm._getTermByAccession(cAcc)
+                        children.push(polymerElm.__buildChildrenRecursively(childTerm, level + 1, currentNode));
                     });
-                    treeNode.children = children;
-                    return treeNode;
+                    currentNode.children = children;
+                    return currentNode;
+                }
+
+            },
+            ___traverseTreeAndTagValuesWithPropagationProperties: function (data) {
+
+                var self = this;
+                if(data){
+
+                    if(data.name === "TS-1299"){
+                        console.log(data)
+                        console.log(data.groupValues)
+                        console.log(data.propagatedValuesFromChildren)
+
+                        //If groupValues is not defined for this entry, simply take the first one from propagation
+                        if(!data.groupValues){
+                            data.groupValues = data.propagatedValuesFromChildren[0]
+                        }
+
+                        /*data.groupValues.forEach(function(group) {
+                            group.values.forEach(function(value) {
+
+                            })
+                        })*/
+
+                    }
+
+                    if(data.children && data.children.length > 0){
+                        data.children.forEach(function (d){
+                            self.___traverseTreeAndTagValuesWithPropagationProperties(d)
+                        })
+                    }
+                }
+
+            },
+            __propagateFlatDataToAncestorsRecursively: function (data, node) {
+
+                if(node){
+                    if(!node.propagatedValuesFromChildren){
+                        node.propagatedValuesFromChildren = []
+                    }
+                    node.propagatedValuesFromChildren.push(data.groupValues);
+
+                    this.__propagateFlatDataToAncestorsRecursively(data, node.parentNode)
                 }
 
             },
             _propagateFlatDataToTree: function (flatData) {
 
-                var flatDataMap = {};
+                var polymerElem = this;
                 flatData.forEach(function (data){
-                    flatDataMap[data.name]=data;
+                    polymerElem.flatDataMap[data.name]=data;
                 })
 
 
@@ -338,7 +386,9 @@ Annotation section used in function, medical, and expression views.
                 //For each root build children tree
                 var result = this.hierarchyRoot.map(function(root) {
                     var rootTerm = polymerElm._getTermByAccession(root.accession);
-                    return polymerElm._buildChildrenRecursively(rootTerm, 0, 0, "root", flatDataMap)
+                    var root = polymerElm.__buildChildrenRecursively(rootTerm, 0, 0, {})
+                    polymerElem.___traverseTreeAndTagValuesWithPropagationProperties(root)
+                    return root;
                 })
 
                 return result;
@@ -355,7 +405,7 @@ Annotation section used in function, medical, and expression views.
                     linkLabel: a.cvTermAccessionCode,
                     linkURL :  "http://www.nextprot.org/db/term/" + a.cvTermAccessionCode,
                     annotation : a,
-                    groupValues: self._generateGroupedValuesForHeatMap(a, a.evidences, true),
+                    groupValues: self._generateGroupedValuesForHeatMap(a, a.evidences),
                     evidences: a.evidences}})
 
 

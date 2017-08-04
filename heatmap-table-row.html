@@ -197,12 +197,12 @@
                             <div class="heatmap-group">
                                 <template is="dom-repeat" items="[[group.values]]" as="value">
                                     <div class="heatmap-column heatmap-circle-size">
-                                        <span class="heatmap-square" style$="{{_computeStyle(value, index)}}"></span>
+                                        <span class="heatmap-square" style$="{{_computeStyle(value)}}"></span>
                                     </div>
                                 </template>
                                 <!-- Number of evidences are displayed for the given group --> 
                                 <div class="heatmap-column heatmap-group-count-size">
-                                    <span data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group)]]</span>
+                                    <span data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group, d)]]</span>
                                 </div>
                             </div>
                         </template>
@@ -249,19 +249,21 @@
                     return "tree heatmap-tree"
                 }
             },
-            _computeCountForGroup: function (group) {
-                var vs = group.values;
-                var totalEvidenceForGroup = group.values.reduce(function(v1, v2) {return v1 + v2.currentNodeEvidenceCount}, 0);
+            _computeCountForGroup: function (group, data) {
 
+                var totalEvidenceForGroup = group.values.reduce(function(v1, v2) {return v1 + v2.currentNodeEvidenceCount}, 0);
                 if(totalEvidenceForGroup > 0){
                     return "[" + totalEvidenceForGroup + "]";
-                }else return ""
+                }
+
+                return "";
+
             },
-            _computeStyle: function (data, possibleValue, idx) {
+            _computeStyle: function (data) {
                 if(data.currentNodeEvidenceCount > 0) {
                         return "background-color: " + data.color;
                 }
-               return "display: none";
+                return "display: none";
 
             },
             hasChildren: function (d) {
@@ -279,13 +281,15 @@
                 if(children && children.classList){
                     children.classList.toggle("openHmChildren");
                 }
-    
-                if (icon.classList.contains("fa-caret-down")) {
-                    icon.classList.remove("fa-caret-down")
-                    icon.classList.add("fa-caret-right")
-                } else {
-                    icon.classList.remove("fa-caret-right")
-                    icon.classList.add("fa-caret-down")
+
+                if(icon){
+                    if (icon.classList.contains("fa-caret-down")) {
+                        icon.classList.remove("fa-caret-down")
+                        icon.classList.add("fa-caret-right")
+                    } else {
+                        icon.classList.remove("fa-caret-right")
+                        icon.classList.add("fa-caret-down")
+                    }
                 }
 
 
