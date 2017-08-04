@@ -1,0 +1,114 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+
+<link rel="import" href="evidence-item.html">
+<link rel="import" href="quality-label.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="heatmap-table-row.html">
+
+<!-- 
+    <script src="../../jquery/dist/jquery.js"></script>
+<script src="../../bootstrap/dist/js/bootstrap.js"></script>
+    -->
+
+<!--
+`heatmap-table-item`
+A heatmap table 
+@demo demo/heatmap-table-item-demo.html
+-->
+<dom-module id="heatmap-table-item">
+
+    <template>
+        <!-- Latest compiled and minified CSS -->
+        <style is="custom-style" include="nextprot-elements-shared-styles">
+             :host {
+                display: block;
+            }
+
+            ul {
+                padding-left: 10px;
+                list-style-type: none;
+            }
+
+            evidence-item {
+                padding: 8px 0 0 0;
+                margin: 5px 40px;
+            }
+
+            td[hidden] {
+                display: none;
+            }
+
+            .filter-block>div {
+                box-shadow: 0px 2px 3px -1px rgba(0, 0, 0, 0.15);
+                margin-top: 15px;
+                display: inline-block;
+            }
+
+            paper-spinner-lite {
+                --paper-spinner-stroke-width: 3px;
+            }
+
+            .center {
+                text-align: center;
+            }
+
+            #featHeatMapSpinner {
+                height: 32px;
+                width: 32px;
+            }
+
+            .heatmap-body > ul > heatmap-table-row > li > ul {
+                display: block;
+            }
+
+            .heatmap-body > ul > .heatmap-table-item > li > ul {
+                display: block;
+            }
+
+
+            </style>
+        <div class="heatmap-body" style="margin-top:20px">
+            <ul>
+                <heatmap-table-row data="[[data]]" options="[[options]]"></heatmap-table-row>
+            </ul>
+        </div>
+        <div class="center">
+            <paper-spinner-lite id="featHeatMapSpinner" alt="Loading data ..." active></paper-spinner-lite>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'heatmap-table-item',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                options: {
+                    type: Object,
+                    value: {}
+                },
+                data: {
+                    type: Array,
+                    value: [],
+                    observer: "_reload"
+                }
+            },
+            ready: function () {
+            },
+            attached: function () {
+                this._reload();
+            },
+            _reload: function () {
+
+                //Nothing to do here???
+                if (this.data && this.data.length) {
+                    this.$.featHeatMapSpinner.active = false;
+                }
+            }
+        });
+    </script>
+</dom-module>
