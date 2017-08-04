@@ -100,6 +100,30 @@ Annotation section used in function, medical, and expression views.
                         {methodName : "EST", methodEvidenceCodeName: "transcript expression evidence", possibleValues : [{name: "Positive", color: "#9FA8DA"}]},
                         {methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence", possibleValues : [{name: "High", color: "#42A5F5"}, {name: "Medium", color: "#90CAF9"}, {name: "Low", color: "#BBDEFB"}, {name: "Not detected", color: "#E3F2FD"}]}]}
                 },
+                hierarchyMap: {
+                    type: Object,
+                    value: {}
+                },
+                hierarchyRoot: {
+                    type: Object,
+                    value: [{name:"Alimentary system", code: "alimentary-system", accession: "TS-1293"},
+                        {name:"Cardiovascular system", code: "cardiovascular-system", accession : "TS-1297"},
+                        {name:"Dermal system", code: "dermal-system", accession: "TS-1299"},
+                        {name:"Endocrine system", code: "endocrine-system", accession: "TS-1301"},
+                        {name:"Exocrine system", code: "exocrine-system", accession: "TS-2057"},
+                        {name:"Hemolymphoid and immune system", code: "hemolymphoid-and-immune-system", accession: "TS-2018"},
+                        {name:"Musculoskeletal system", code: "musculoskeletal-system", accession: "TS-1311"},
+                        {name:"Nervous system", code: "nervous-system", accession: "TS-1313"},
+                        {name:"Reproductive system", code: "reproductive-system", accession: "TS-1318"},
+                        {name:"Respiratory system", code: "respiratory-system", accession: "TS-1319"},
+                        {name:"Urinary system", code: "urinary-system", accession: "TS-1323"},
+                        {name:"Sense organ", code: "sense-organ", accession: "TS-2043"},
+                        {name:"Body part", code: "body-part", accession: "TS-2084"},
+                        {name:"Tissue", code: "tissue", accession: "TS-2090"},
+                        {name:"Cell type", code: "cell-type", accession: "TS-2035"},
+                        {name:"Fluid and secretion", code: "fluid-and-secretion", accession: "TS-2101"},
+                        {name:"Gestational structure", code: "gestational-structure", accession: "TS-2092"}]
+                },
                 section: {
                     type: String
                 },
@@ -132,10 +156,13 @@ Annotation section used in function, medical, and expression views.
 
                     var self = this;
                     Promise.all(apiCall).then(function (result) {
-                        var nxAnatomy = result[0];
+                        var nxAnatomy = result[0]["cvTermList"]
                         self.expressionProfileData = result[1];
+                        nxAnatomy.forEach(function (t){
+                            self.hierarchyMap[t.accession] = t
+                        })
                         self.heatmapFlatData = self._convertNextProtDataIntoHeatMapTableFlatFormat(self.expressionProfileData)
-                        self.heatmapData = self._propagateFlatDataToTree(self.heatmapFlatData, nxAnatomy);
+                        self.heatmapData = self._propagateFlatDataToTree(self.heatmapFlatData);
 
                     }).catch(function (err) {
                         // catch any error that happened so far
@@ -264,8 +291,40 @@ Annotation section used in function, medical, and expression views.
                     })
                 })
             },
-            _propagateFlatDataToTree: function (data, terminology) {
-                return data;
+            _getTermByAccession: function (accession) {
+                return this.hierarchyMap[accession]
+            },
+            _buildChildrenRecursively: function (term) {
+
+                var polymerElm = this;
+                var treeNode = {
+                    rowLabel : term.name,
+                    linkLabel: term.accession,
+                    linkURL :  "http://www.nextprot.org/db/term/" + term.accession
+                };
+
+                if(!term.childAccession || term.childAccession === []){
+                    return treeNode;
+                }else {
+                    var children = []
+                    term.childAccession.forEach(function(childAccession){
+                        var childTerm = polymerElm._getTermByAccession(childAccession)
+                        children.push(polymerElm._buildChildrenRecursively(childTerm));
+                    });
+                    treeNode.children = children;
+                    return treeNode;
+                }
+
+            },
+            _propagateFlatDataToTree: function (flatData) {
+                var polymerElm = this;
+                //For each root build children tree
+                var result = this.hierarchyRoot.map(function(root) {
+                    var rootTerm = polymerElm._getTermByAccession(root.accession);
+                    return polymerElm._buildChildrenRecursively(rootTerm)
+                })
+                return result;
+
             },
             _convertNextProtDataIntoHeatMapTableFlatFormat: function (data) {
 
@@ -387,25 +446,7 @@ Annotation section used in function, medical, and expression views.
                  addAnnotToHeatMapTable(heatMapTableRoot, annot);
                  }
 
-                 var rowLabelsToheatMapTable = {
-                 "Alimentary system": "alimentary-system",
-                 "Cardiovascular system": "cardiovascular-system",
-                 "Dermal system": "dermal-system",
-                 "Endocrine system": "endocrine-system",
-                 "Exocrine system": "exocrine-system",
-                 "Hemolymphoid and immune system": "hemolymphoid-and-immune-system",
-                 "Musculoskeletal system": "musculoskeletal-system",
-                 "Nervous system": "nervous-system",
-                 "Reproductive system": "reproductive-system",
-                 "Respiratory system": "respiratory-system",
-                 "Urinary system": "urinary-system",
-                 "Sense organ": "sense-organ",
-                 "Body part": "body-part",
-                 "Tissue": "tissue",
-                 "Cell type": "cell-type",
-                 "Fluid and secretion": "fluid-and-secretion",
-                 "Gestational structure": "gestational-structure"
-                 }
+
 
                  var heatmapData = [];
                  function findHeatMapData(data, step) {
