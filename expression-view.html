@@ -22,19 +22,6 @@ View listing protein expression view.
         overflow-y: auto;
       }
 
-      #nxOntologicalBrowser {
-        padding: 10px;
-      }
-
-      .ontological-term {
-        padding-left: 10px;
-        margin: 1px;
-        background-color: #f8f8f8;
-        border-width: 1px;
-        border-style: solid;
-        border-color: #dddddd;
-      }
-
     </style>
     <div class="row">
       <div id="nxOverview" class="col-md-12">
@@ -78,13 +65,6 @@ View listing protein expression view.
       </div>
     </div>
 
-    <div id="nxOntologicalBrowser" class="row nxSection">
-      <template is="dom-repeat" items="[[ontologicalBrowserTerms]]" as="term">
-        <div class="col-md-3">
-          <div class="ontological-term"><a href="#{{term}}">[[term]]</a></div>
-        </div>
-      </template>
-    </div>
     <div id="nxExpressionAnnotations" class="row nxSection">
       <expression-section id="expressionSection" section="expressionSection" gold-only="[[nxConfig.goldOnly]]" nx-config="[[nxConfig]]" count="{{expressionSectionAnnotationCount}}"></expression-section>
     </div>
@@ -114,12 +94,6 @@ View listing protein expression view.
         filterPositiveNegativeAnnotations: {
           type: Array,
           value: ["All", "Positive", "Negative", "Positive only", "Negative only", "Only positive or only negative", "Both positive and negative"]
-        },
-        ontologicalBrowserTerms: {
-          type: Array,
-          value: ["Alimentary system", "Cardiovascular system", "Dermal system", "Endocryne system", "Exocrine system",
-                  "Hemolymphoid and immune system", "Musculoskeletal system", "Nervous system", "Reproductive system", "Respiratory system",
-                  "Urinary system", "Sense organ", "Body part", "Tissue", "Cell type", "Fluid and secretion", "Gestational structure"]
         },
         expressionSectionAnnotationCount: {
           type: Number,
@@ -167,8 +141,6 @@ View listing protein expression view.
         this.$.nxGenericAnnotations.hidden= (this.genericAnnotationsCount) ? false : true;
 
         this.$.nxExpressionAnnotations.hidden= (this.expressionSectionAnnotationCount) ? false : true;
-        this.$.nxOntologicalBrowser.hidden= (this.expressionSectionAnnotationCount) ? false : true;
-
 
         if(this.expressionSectionAnnotationCount===0 && this.genericAnnotationsCount===0) {
           this.$.noDataWarning.hidden=false;

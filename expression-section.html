@@ -25,28 +25,30 @@ Annotation section used in function, medical, and expression views.
                 min-width: 700px;
                 margin: 20px;
             }
+
+            #nxOntologicalBrowser {
+                margin-left:0px;
+                margin-right:0px;
+                margin-top:15px;
+                padding-bottom:10px;
+                border-bottom: 1px solid #E7EAEC;
+            }
+
+            .expression-section {
+                padding-right: 5px;
+                padding-left: 5px;
+            }
+
+            .ontological-term {
+                padding-left: 5px;
+                margin: 1px;
+                background-color: #f8f8f8;
+                border-width: 1px;
+                border-style: solid;
+                border-color: #dddddd;
+            }
+
         </style>
-
-
-        <div class="pull-right">
-            <template is="dom-repeat" items="[[heatmapOptions.methods]]" as="method">
-                <div class="style-scope heatmap-table-row" style="margin-right: 25px; display:inline-block">
-                    <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown">
-                            [[method.methodName]]
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                            <li><a href="#" style="padding-top: 0px; padding-bottom: 0px"><span class="glyphicon glyphicon-remove pull-right"></span></a></li>
-                            <template is="dom-repeat" items="[[method.possibleValues]]" as="value">
-                                <li><a href="#" style$="{{_computeStyle(value.color)}}"><span class="glyphicon glyphicon-ok"></span>&nbsp;[[value.expressionLevel]]</a></li>
-                            </template>
-                        </ul>
-                    </div>
-                </div>
-            </template>
-        </div>
-
 
         <ul class="nav nav-tabs" role="tablist">
             <li id="ontologyTab" class="active" on-tap="_changeToTreeView">
@@ -62,6 +64,13 @@ Annotation section used in function, medical, and expression views.
 
         <div class="tab-content">
             <div id="ontologyContent">
+                <div id="nxOntologicalBrowser" class="row">
+                    <template is="dom-repeat" items="[[hierarchyRoot]]" as="term">
+                        <div class="col-md-4">
+                            <div class="ontological-term"><a href="#{{term}}">[[term.name]]</a></div>
+                        </div>
+                    </template>
+                </div>
                 <heatmap-table-item data=[[heatmapData]] options=[[heatmapOptions]]></heatmap-table-item>
             </div>
             <div id="flatContent" hidden>
