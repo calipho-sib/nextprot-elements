@@ -343,7 +343,7 @@ Annotation section used in function, medical, and expression views.
                 var self = this;
                 if(data){
 
-                    //If groupValues is not defined for this entry, simply take the first one from propagation
+                    //If groupValues is not defined for this entry, simply start an empty array that will be populated
                     if(!data.groupValues){
                         data.groupValues = [];
                     }
@@ -352,6 +352,7 @@ Annotation section used in function, medical, and expression views.
 
                         var firstGroupedValues = data.propagatedValuesFromChildren[0];
                         for(var g=0; g< firstGroupedValues.length; g++){
+
                             var group = firstGroupedValues[g];
 
                             //Create group if group is not present
@@ -363,7 +364,6 @@ Annotation section used in function, medical, and expression views.
 
                                 //Searching for children values
                                 var firstChildFound = null;
-
                                 data.propagatedValuesFromChildren.forEach(function (child){
                                     if(child[g].values[v].currentNodeEvidenceCount > 0){
                                         firstChildFound = child[g].values[v];
@@ -371,33 +371,36 @@ Annotation section used in function, medical, and expression views.
                                     }
                                 })
 
+                                var valuePresentForCurrentMethodAndLevel = (data.groupValues[g].values[v]) ? true : false;
+
                                 if(firstChildFound){
 
                                     //Case of Pancreas (TS-0736) in the Insulin (NX_P01308), there are experimental evidences for Pancreas (TS-0736)
                                     // but also for the children (Pancreatic islet TS-0741) so just add a tag for childrenFound
-                                    if(data.groupValues[g].values[v]){
+                                    if(valuePresentForCurrentMethodAndLevel){
                                         data.groupValues[g].values[v].childrenFound = true;
-                                        data.groupValues[g].values[v].name = data.name;
-                                        data.groupValues[g].values[v].group = group.name;
 
-                                    }else {
+                                    }else { //No values present so create one new
+
                                         data.groupValues[g].values[v] = {
                                             currentNodeEvidenceCount: 0,
                                             color: firstChildFound.color,
                                             childrenFound: true,
-                                            name: data.name,
-                                            group: group.name
                                         }
                                     }
 
-                                }else {
+                                } else { //Case where there are children on other groups, because propagatedValuesFromChildren = true
+                                        // but not directly on this group
 
-                                    data.groupValues[g].values[v] = {
-                                        currentNodeEvidenceCount: 0,
-                                        childrenFound: false,
-                                        name: data.name,
-                                        group: group.name
+                                    //Can also be the case where data has directly (TS-0700) on NX_P06733 values but no children found
+                                    if(valuePresentForCurrentMethodAndLevel){
+                                        data.groupValues[g].values[v].childrenFound = false;
+                                    }else {
 
+                                        data.groupValues[g].values[v] = {
+                                            childrenFound: false,
+                                            currentNodeEvidenceCount: 0
+                                        }
                                     }
 
                                 }
