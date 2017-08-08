@@ -39,7 +39,7 @@ Annotation section used in function, medical, and expression views.
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
                             <li><a href="#" style="padding-top: 0px; padding-bottom: 0px"><span class="glyphicon glyphicon-remove pull-right"></span></a></li>
                             <template is="dom-repeat" items="[[method.possibleValues]]" as="value">
-                                <li><a href="#" style$="{{_computeStyle(value.color)}}"><span class="glyphicon glyphicon-ok"></span>&nbsp;[[value.methodName]]</a></li>
+                                <li><a href="#" style$="{{_computeStyle(value.color)}}"><span class="glyphicon glyphicon-ok"></span>&nbsp;[[value.expressionLevel]]</a></li>
                             </template>
                         </ul>
                     </div>
@@ -49,11 +49,11 @@ Annotation section used in function, medical, and expression views.
 
 
         <ul class="nav nav-tabs" role="tablist">
-            <li id="ontology-tab" class="active">
-                <a href="#ontology-content" id="ontology-tab-content" role="tab" data-toggle="tab">Ontology</a>
+            <li id="ontologyTab" class="active" on-tap="_changeToTreeView">
+                <a href="javascript:void(0)">Ontology</a>
             </li>
-            <li id="flat-tab">
-                <a href="#flat-content" id="flat-tab-content" role="tab" data-toggle="tab">Table</a>
+            <li id="flatTab" on-tap="_changeToFlatView">
+                <a href="javascript:void(0)">Table</a>
             </li>
             <li>
                 <a href$="{{_buildExportUri(nxConfig.env, nxConfig.entry)}}">Export&nbsp;<span class="glyphicon glyphicon-download-alt"></span></a>
@@ -61,10 +61,10 @@ Annotation section used in function, medical, and expression views.
         </ul>
 
         <div class="tab-content">
-            <div id="ontology-content" role="tabpanel" aria-labelledby="ontology-tab" class="tab-pane active in">
+            <div id="ontologyContent">
                 <heatmap-table-item data=[[heatmapData]] options=[[heatmapOptions]]></heatmap-table-item>
             </div>
-            <div id="flat-content" role="tabpanel" aria-labelledby="flat-tab" class="tab-pane fade">
+            <div id="flatContent" hidden>
                 <heatmap-table-item data=[[heatmapFlatData]] options=[[heatmapOptions]]></heatmap-table-item>
             </div>
         </div>
@@ -205,6 +205,23 @@ Annotation section used in function, medical, and expression views.
             _buildExportUri: function(env, entry){
                 //TODO change this later
                 return "https://dev-api.nextprot.org" + "/entry/" + entry  + "/expression-profile.tsv";
+            },
+            _changeToTreeView: function () {
+                this.$.ontologyContent.hidden = false;
+                this.$.flatContent.hidden = true;
+
+                this.$.ontologyTab.classList.toggle("active")
+                this.$.flatTab.classList.toggle("active")
+
+            },
+            _changeToFlatView: function () {
+
+                this.$.ontologyContent.hidden = true;
+                this.$.flatContent.hidden = false;
+
+                this.$.ontologyTab.classList.toggle("active")
+                this.$.flatTab.classList.toggle("active")
+
             },
             _computeStyle: function (value) {
                 return "margin: 5px; background-color: " + value
