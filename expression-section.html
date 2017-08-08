@@ -39,7 +39,7 @@ Annotation section used in function, medical, and expression views.
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
                             <li><a href="#" style="padding-top: 0px; padding-bottom: 0px"><span class="glyphicon glyphicon-remove pull-right"></span></a></li>
                             <template is="dom-repeat" items="[[method.possibleValues]]" as="value">
-                                <li><a href="#" style$="{{_computeStyle(value.color)}}"><span class="glyphicon glyphicon-ok"></span>&nbsp;[[value.name]]</a></li>
+                                <li><a href="#" style$="{{_computeStyle(value.color)}}"><span class="glyphicon glyphicon-ok"></span>&nbsp;[[value.methodName]]</a></li>
                             </template>
                         </ul>
                     </div>
@@ -99,10 +99,23 @@ Annotation section used in function, medical, and expression views.
                 },
                 heatmapOptions: {
                     type: Object,
-                    value: { "methods" : [
-                        {methodName : "Microarray", methodEvidenceCodeName: "microarray evidence", possibleValues : [{name : "Positive", color: "#9575CD"}, {name : "Not detected", color : "grey"}]},
-                        {methodName : "EST", methodEvidenceCodeName: "transcript expression evidence", possibleValues : [{name: "Positive", color: "#9FA8DA"}]},
-                        {methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence", possibleValues : [{name: "High", color: "#42A5F5"}, {name: "Medium", color: "#90CAF9"}, {name: "Low", color: "#BBDEFB"}, {name: "Not detected", color: "grey"}]}]}
+                    value: { "methods" : [ {
+                        methodName : "Microarray", methodEvidenceCodeName: "microarray evidence",
+                        possibleValues : [{expressionLevel : "positive", color: "#ffa10a"},
+                            {expressionLevel : "negative", color : "#969e96"}]
+                    },
+                        {
+                            methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",
+                            possibleValues : [{expressionLevel: "positive", color: "#ffa10a"}]
+                        },
+                        {   methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence",
+                            possibleValues : [{expressionLevel: "high", color: "#ffa10a"},
+                                {expressionLevel: "medium", color: "#ffc870"},
+                                {expressionLevel: "low", color: "#ffe6bd"},
+                                {expressionLevel: "not detected", color: "#969e96"}]
+                        }]
+
+                    }
                 },
                 hierarchyMap: {
                     type: Object,
@@ -191,25 +204,9 @@ Annotation section used in function, medical, and expression views.
             _generateGroupedValuesForHeatMap: function(annotation, evidences) {
 
                 var groups = []
-                var methods = [ {
-                    methodName : "Microarray", methodEvidenceCodeName: "microarray evidence",
-                    possibleValues : [{expressionLevel : "positive", color: "#9575CD"},
-                        {expressionLevel : "negative", color : "grey"}]
-                },
-                    {
-                        methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",
-                        possibleValues : [{expressionLevel: "positive", color: "#9FA8DA"}]
-                    },
-                    {   methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence",
-                        possibleValues : [{expressionLevel: "high", color: "#42A5F5"},
-                            {expressionLevel: "medium", color: "#90CAF9"},
-                            {expressionLevel: "low", color: "#BBDEFB"},
-                            {expressionLevel: "not detected", color: "grey"}]
-                    }]
-
                 var atLeastOneEvidenceValid = false;
 
-                methods.forEach(function (method) {
+                this.heatmapOptions.methods.forEach(function (method) {
                     var methodPossibleValues = method.possibleValues;
                     var groupObject = {name: method.methodName, values: []}
                     groups.push(groupObject)
