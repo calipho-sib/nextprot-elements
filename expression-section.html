@@ -25,35 +25,37 @@ Annotation section used in function, medical, and expression views.
                 min-width: 700px;
                 margin: 20px;
             }
+
+            #nxOntologicalBrowser {
+                margin-left:0px;
+                margin-right:0px;
+                margin-top:15px;
+                padding-bottom:10px;
+                border-bottom: 1px solid #E7EAEC;
+            }
+
+            .expression-section {
+                padding-right: 5px;
+                padding-left: 5px;
+            }
+
+            .ontological-term {
+                padding-left: 5px;
+                margin: 1px;
+                background-color: #f8f8f8;
+                border-width: 1px;
+                border-style: solid;
+                border-color: #dddddd;
+            }
+
         </style>
 
-
-        <div class="pull-right">
-            <template is="dom-repeat" items="[[heatmapOptions.methods]]" as="method">
-                <div class="style-scope heatmap-table-row" style="margin-right: 25px; display:inline-block">
-                    <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown">
-                            [[method.methodName]]
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                            <li><a href="#" style="padding-top: 0px; padding-bottom: 0px"><span class="glyphicon glyphicon-remove pull-right"></span></a></li>
-                            <template is="dom-repeat" items="[[method.possibleValues]]" as="value">
-                                <li><a href="#" style$="{{_computeStyle(value.color)}}"><span class="glyphicon glyphicon-ok"></span>&nbsp;[[value.name]]</a></li>
-                            </template>
-                        </ul>
-                    </div>
-                </div>
-            </template>
-        </div>
-
-
         <ul class="nav nav-tabs" role="tablist">
-            <li id="ontology-tab" class="active">
-                <a href="#ontology-content" id="ontology-tab-content" role="tab" data-toggle="tab">Ontology</a>
+            <li id="ontologyTab" class="active" on-tap="_changeToTreeView">
+                <a href="javascript:void(0)">Ontology</a>
             </li>
-            <li id="flat-tab">
-                <a href="#flat-content" id="flat-tab-content" role="tab" data-toggle="tab">Flat</a>
+            <li id="flatTab" on-tap="_changeToFlatView">
+                <a href="javascript:void(0)">Table</a>
             </li>
             <li>
                 <a href$="{{_buildExportUri(nxConfig.env, nxConfig.entry)}}">Export&nbsp;<span class="glyphicon glyphicon-download-alt"></span></a>
@@ -61,10 +63,17 @@ Annotation section used in function, medical, and expression views.
         </ul>
 
         <div class="tab-content">
-            <div id="ontology-content" role="tabpanel" aria-labelledby="ontology-tab" class="tab-pane active in">
+            <div id="ontologyContent">
+                <div id="nxOntologicalBrowser" class="row">
+                    <template is="dom-repeat" items="[[hierarchyRoot]]" as="term">
+                        <div class="col-md-4">
+                            <div class="ontological-term"><a href="#{{term}}">[[term.name]]</a></div>
+                        </div>
+                    </template>
+                </div>
                 <heatmap-table-item data=[[heatmapData]] options=[[heatmapOptions]]></heatmap-table-item>
             </div>
-            <div id="flat-content" role="tabpanel" aria-labelledby="flat-tab" class="tab-pane fade">
+            <div id="flatContent" hidden>
                 <heatmap-table-item data=[[heatmapFlatData]] options=[[heatmapOptions]]></heatmap-table-item>
             </div>
         </div>
@@ -99,10 +108,23 @@ Annotation section used in function, medical, and expression views.
                 },
                 heatmapOptions: {
                     type: Object,
-                    value: { "methods" : [
-                        {methodName : "MicroArray", methodEvidenceCodeName: "microarray evidence", possibleValues : [{name : "Positive", color: "#9575CD"}, {name : "Not detected", color : "grey"}]},
-                        {methodName : "EST", methodEvidenceCodeName: "transcript expression evidence", possibleValues : [{name: "Positive", color: "#9FA8DA"}]},
-                        {methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence", possibleValues : [{name: "High", color: "#42A5F5"}, {name: "Medium", color: "#90CAF9"}, {name: "Low", color: "#BBDEFB"}, {name: "Not detected", color: "grey"}]}]}
+                    value: { "methods" : [ {
+                        methodName : "Microarray", methodEvidenceCodeName: "microarray evidence",
+                        possibleValues : [{expressionLevel : "positive", color: "#ffa10a"},
+                            {expressionLevel : "negative", color : "#969e96"}]
+                    },
+                        {
+                            methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",
+                            possibleValues : [{expressionLevel: "positive", color: "#ffa10a"}]
+                        },
+                        {   methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence",
+                            possibleValues : [{expressionLevel: "high", color: "#ffa10a"},
+                                {expressionLevel: "medium", color: "#ffc870"},
+                                {expressionLevel: "low", color: "#ffe6bd"},
+                                {expressionLevel: "not detected", color: "#969e96"}]
+                        }]
+
+                    }
                 },
                 hierarchyMap: {
                     type: Object,
@@ -169,7 +191,15 @@ Annotation section used in function, medical, and expression views.
                             self.hierarchyMap[t.accession] = t
                         })
                         self.heatmapFlatData = self._convertNextProtDataIntoHeatMapTableFlatFormat(self.expressionProfileData)
-                        self.heatmapData = self._propagateFlatDataToTree(self.heatmapFlatData);
+                        self.count = self.heatmapFlatData.length;
+
+                        if( self.count > 0){
+                            // Deep copy
+                            var flatDataCopy = jQuery.extend(true, [], self.heatmapFlatData);
+                            self.heatmapData = self._propagateFlatDataToTree(flatDataCopy);
+
+                        }
+
 
                     }).catch(function (err) {
                         // catch any error that happened so far
@@ -185,31 +215,32 @@ Annotation section used in function, medical, and expression views.
                 //TODO change this later
                 return "https://dev-api.nextprot.org" + "/entry/" + entry  + "/expression-profile.tsv";
             },
+            _changeToTreeView: function () {
+                this.$.ontologyContent.hidden = false;
+                this.$.flatContent.hidden = true;
+
+                this.$.ontologyTab.classList.toggle("active")
+                this.$.flatTab.classList.toggle("active")
+
+            },
+            _changeToFlatView: function () {
+
+                this.$.ontologyContent.hidden = true;
+                this.$.flatContent.hidden = false;
+
+                this.$.ontologyTab.classList.toggle("active")
+                this.$.flatTab.classList.toggle("active")
+
+            },
             _computeStyle: function (value) {
                 return "margin: 5px; background-color: " + value
             },
             _generateGroupedValuesForHeatMap: function(annotation, evidences) {
 
                 var groups = []
-                var methods = [ {
-                    methodName : "MicroArray", methodEvidenceCodeName: "microarray evidence",
-                    possibleValues : [{expressionLevel : "positive", color: "#9575CD"},
-                        {expressionLevel : "negative", color : "grey"}]
-                },
-                    {
-                        methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",
-                        possibleValues : [{expressionLevel: "positive", color: "#9FA8DA"}]
-                    },
-                    {   methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence",
-                        possibleValues : [{expressionLevel: "high", color: "#42A5F5"},
-                            {expressionLevel: "medium", color: "#90CAF9"},
-                            {expressionLevel: "low", color: "#BBDEFB"},
-                            {expressionLevel: "not detected", color: "grey"}]
-                    }]
-
                 var atLeastOneEvidenceValid = false;
 
-                methods.forEach(function (method) {
+                this.heatmapOptions.methods.forEach(function (method) {
                     var methodPossibleValues = method.possibleValues;
                     var groupObject = {name: method.methodName, values: []}
                     groups.push(groupObject)
@@ -293,7 +324,7 @@ Annotation section used in function, medical, and expression views.
 
                         if(context.developmentalStage) {
                             var label = context.developmentalStage.name
-                            levelAndStageLabel = levelAndStageLabel  + " at " + (label === "unknown" ? (label + " stage") : label) + "."
+                            levelAndStageLabel = levelAndStageLabel  + " at " + ((label === "unknown" || label === "late adulthood") ? (label + " stage") : label) + "."
                         }else {
                             levelAndStageLabel += "."
                         }
@@ -343,7 +374,7 @@ Annotation section used in function, medical, and expression views.
                 var self = this;
                 if(data){
 
-                    //If groupValues is not defined for this entry, simply take the first one from propagation
+                    //If groupValues is not defined for this entry, simply start an empty array that will be populated
                     if(!data.groupValues){
                         data.groupValues = [];
                     }
@@ -352,6 +383,7 @@ Annotation section used in function, medical, and expression views.
 
                         var firstGroupedValues = data.propagatedValuesFromChildren[0];
                         for(var g=0; g< firstGroupedValues.length; g++){
+
                             var group = firstGroupedValues[g];
 
                             //Create group if group is not present
@@ -363,7 +395,6 @@ Annotation section used in function, medical, and expression views.
 
                                 //Searching for children values
                                 var firstChildFound = null;
-
                                 data.propagatedValuesFromChildren.forEach(function (child){
                                     if(child[g].values[v].currentNodeEvidenceCount > 0){
                                         firstChildFound = child[g].values[v];
@@ -371,33 +402,36 @@ Annotation section used in function, medical, and expression views.
                                     }
                                 })
 
+                                var valuePresentForCurrentMethodAndLevel = (data.groupValues[g].values[v]) ? true : false;
+
                                 if(firstChildFound){
 
                                     //Case of Pancreas (TS-0736) in the Insulin (NX_P01308), there are experimental evidences for Pancreas (TS-0736)
                                     // but also for the children (Pancreatic islet TS-0741) so just add a tag for childrenFound
-                                    if(data.groupValues[g].values[v]){
+                                    if(valuePresentForCurrentMethodAndLevel){
                                         data.groupValues[g].values[v].childrenFound = true;
-                                        data.groupValues[g].values[v].name = data.name;
-                                        data.groupValues[g].values[v].group = group.name;
 
-                                    }else {
+                                    }else { //No values present so create one new
+
                                         data.groupValues[g].values[v] = {
                                             currentNodeEvidenceCount: 0,
                                             color: firstChildFound.color,
                                             childrenFound: true,
-                                            name: data.name,
-                                            group: group.name
                                         }
                                     }
 
-                                }else {
+                                } else { //Case where there are children on other groups, because propagatedValuesFromChildren = true
+                                        // but not directly on this group
 
-                                    data.groupValues[g].values[v] = {
-                                        currentNodeEvidenceCount: 0,
-                                        childrenFound: false,
-                                        name: data.name,
-                                        group: group.name
+                                    //Can also be the case where data has directly (TS-0700) on NX_P06733 values but no children found
+                                    if(valuePresentForCurrentMethodAndLevel){
+                                        data.groupValues[g].values[v].childrenFound = false;
+                                    }else {
 
+                                        data.groupValues[g].values[v] = {
+                                            childrenFound: false,
+                                            currentNodeEvidenceCount: 0
+                                        }
                                     }
 
                                 }
@@ -474,156 +508,6 @@ Annotation section used in function, medical, and expression views.
 
                 return heatmapFlatData;
 
-                /*
-                 var termDict = {};
-                 var queue = [];
-                 var heatMapTableRoot = null;
-                 var detailList = [];*/
-
-
-                /*
-                 for (var i = 0; i < cvTermList.length; i++) {
-                 termDict[cvTermList[i].accession] = cvTermList[i];
-                 if (cvTermList[i].ancestorAccession === null) {
-                 var node = {};
-                 node.ancestorIds = null;
-                 node.children = [];
-                 node.values = this._defaultValues();
-                 node.detailData = [];
-                 node.rowLabel = cvTermList[i].name;
-                 node.id = cvTermList[i].accession;
-                 node.linkLabel = "[" + cvTermList[i].accession + "]"
-                 node.linkURL = "http://www.nextprot.org/db/term/" + cvTermList[i].accession;
-                 heatMapTableRoot = node;
-                 queue.push(heatMapTableRoot);
-                 detailList.push(node.detailData);
-                 }
-                 }
-
-                 while (queue.length !== 0) {
-                 var currNode = queue.shift();
-                 var currTerm = termDict[currNode.id];
-                 if (currTerm && currTerm.childAccession) {
-                 for (var i = 0; i < currTerm.childAccession.length; i++) {
-                 var childTerm = termDict[currTerm.childAccession[i]];
-                 var childNode = {};
-                 childNode.ancestorIds = currNode;
-                 childNode.children = [];
-                 childNode.values = this._defaultValues();
-                 childNode.detailData = [];
-                 childNode.id = childTerm.accession;
-                 childNode.rowLabel = childTerm.name;
-                 childNode.linkLabel = "[" + childTerm.accession + "]"
-                 childNode.linkURL = "http://www.nextprot.org/db/term/" + childTerm.accession;
-                 queue.push(childNode);
-
-                 currNode.children.push(childNode);
-
-                 detailList.push(childNode.detailData);
-                 }
-                 }
-                 }
-
-                 function updateAncestorValues(data, values) {
-                 for (var i = 0; i < data.values.length; i++) {
-                 if (data.values[i].value === "" || data.values[i].value === undefined) {
-                 data.values[i].value = values[i].value;
-                 }
-                 }
-                 if (data.ancestorIds) {
-                 updateAncestorValues(data.ancestorIds, values);
-                 }
-                 }
-
-                 var codeNameToShortName = {
-                 "microarray RNA expression level evidence": "Microarray",
-                 "transcript expression evidence": "EST",
-                 "immunolocalization evidence": "IHC"
-                 }
-
-                 function addAnnotToHeatMapTable(data, annot) {
-                 //Data may equal to null when its root
-                 if (data.id === annot.cvTermAccessionCode) {
-                 for (var i = 0; i < annot.evidences.length; i++) {
-
-                 var evidence = annot.evidences[i]; //There might be more than one evidence for each "statement", this should be reflected on the heatMapTable table as well
-                 var detail = {};
-
-
-                 data.detailData.push(detail);
-                 }
-
-                 if (data.ancestorIds) {
-                 updateAncestorValues(data.ancestorIds, data.values);
-                 }
-                 }
-
-                 for (var i = 0; i < data.children.length; i++) {
-                 addAnnotToHeatMapTable(data.children[i], annot);
-                 }
-                 }
-
-                 for (var i = 0; i < data.annot.length; i++) {
-                 var annot = data.annot[i];
-                 addAnnotToHeatMapTable(heatMapTableRoot, annot);
-                 }
-
-
-
-                 var heatmapData = [];
-                 function findHeatMapData(data, step) {
-                 if (step > 2) return;
-                 if (rowLabelsToheatMapTable[data.rowLabel]) {
-                 heatmapData.push(data);
-                 }
-                 for (var i = 0; i < data.children.length; i++) {
-                 findHeatMapData(data.children[i], step + 1);
-                 }
-                 }
-
-                 findHeatMapData(heatMapTableRoot, 0);
-
-                 heatmapData.sort(function (a, b) {
-                 if (a.rowLabel.indexOf("system") !== -1 && b.rowLabel.indexOf("system") === -1) return -1;
-                 if (a.rowLabel.indexOf("system") === -1 && b.rowLabel.indexOf("system") !== -1) return 1;
-                 if (a.rowLabel < b.rowLabel) return -1;
-                 if (a.rowLabel > b.rowLabel) return 1;
-                 return 0;
-                 });
-
-                 function sortDetail(detailList) {
-                 var levelPriorityDict = {
-                 "High": 5,
-                 "Medium": 4,
-                 "Low": 3,
-                 "Positive": 2,
-                 "NotDetected": 1
-                 }
-                 var codePriorityDict = {
-                 "Microarray": 3,
-                 "EST": 2,
-                 "IHC": 1
-                 }
-
-                 for (var i = 0; i < detailList.length; i++) {
-                 if (detailList[i].length > 0) {
-                 detailList[i].sort(function (a, b) {
-                 if (levelPriorityDict[a.value] === levelPriorityDict[b.value]) {
-                 if (codePriorityDict[a.evidenceCodeName] === codePriorityDict[b.evidenceCodeName]) return 0;
-                 if (codePriorityDict[a.evidenceCodeName] < codePriorityDict[b.evidenceCodeName]) return -1;
-                 if (codePriorityDict[a.evidenceCodeName] > codePriorityDict[b.evidenceCodeName]) return 1;
-                 } else if (levelPriorityDict[a.value] < levelPriorityDict[b.value]) {
-                 return 1;
-                 } else if (levelPriorityDict[a.value] > levelPriorityDict[b.value]) {
-                 return -1;
-                 }
-                 });
-                 }
-                 }
-                 }
-
-                 sortDetail(detailList);
-                 */
 
             }
         });

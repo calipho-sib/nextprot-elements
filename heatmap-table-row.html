@@ -185,7 +185,7 @@
             <li>
                 <div class$="{{_computeClassesForParent(d)}}" on-tap="toggleChildren">
                     <template is="dom-if" if="[[hasChildren(d)]]">
-                        <i class="fa fa-caret-right"></i>
+                        <i class$="{{_computeInitialCaret(d)}}"></i>
                     </template>
                     <p class="heatmap-no-cursor heatmap-rowLabel tree-toggler">
                         <span class="rowLabel">[[d.rowLabel]]</span>
@@ -208,7 +208,7 @@
                         </template>
                     </div>
                 </div>
-                <!-- Evidences container not displayed at first-->
+                <!-- Evidences container not displayed at erst-->
                 <div id="annotation-[[d.annotation.annotationId]]-evidence-container" class="evidence-row"></div>
                 <template is="dom-if" if="[[hasChildren(d)]]">
                     <ul class$="{{_computeClassesForChildren(d)}}">
@@ -233,6 +233,13 @@
                     value: {}
                 }
             },
+            _computeInitialCaret: function(d){
+                if(d.level < 2){
+                    return "fa fa-caret-down"
+                }else {
+                    return "fa fa-caret-right"
+                }
+            },
             _computeClassesForParent: function(d){
                 if(d.level === 0){
                     return "heatmap-row highlight-roots"
@@ -244,7 +251,7 @@
 
                 var baseClass = "tree heatmap-tree heatmap-opened"
                 if(d.level < 2){
-                    baseClass + " openHmChildren"
+                    return baseClass + " openHmChildren"
                 }else {
                     return "tree heatmap-tree"
                 }
