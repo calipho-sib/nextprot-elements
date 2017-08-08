@@ -100,7 +100,7 @@ Annotation section used in function, medical, and expression views.
                 heatmapOptions: {
                     type: Object,
                     value: { "methods" : [
-                        {methodName : "MicroArray", methodEvidenceCodeName: "microarray evidence", possibleValues : [{name : "Positive", color: "#9575CD"}, {name : "Not detected", color : "grey"}]},
+                        {methodName : "Microarray", methodEvidenceCodeName: "microarray evidence", possibleValues : [{name : "Positive", color: "#9575CD"}, {name : "Not detected", color : "grey"}]},
                         {methodName : "EST", methodEvidenceCodeName: "transcript expression evidence", possibleValues : [{name: "Positive", color: "#9FA8DA"}]},
                         {methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence", possibleValues : [{name: "High", color: "#42A5F5"}, {name: "Medium", color: "#90CAF9"}, {name: "Low", color: "#BBDEFB"}, {name: "Not detected", color: "grey"}]}]}
                 },
@@ -192,7 +192,7 @@ Annotation section used in function, medical, and expression views.
 
                 var groups = []
                 var methods = [ {
-                    methodName : "MicroArray", methodEvidenceCodeName: "microarray evidence",
+                    methodName : "Microarray", methodEvidenceCodeName: "microarray evidence",
                     possibleValues : [{expressionLevel : "positive", color: "#9575CD"},
                         {expressionLevel : "negative", color : "grey"}]
                 },
@@ -293,7 +293,7 @@ Annotation section used in function, medical, and expression views.
 
                         if(context.developmentalStage) {
                             var label = context.developmentalStage.name
-                            levelAndStageLabel = levelAndStageLabel  + " at " + (label === "unknown" ? (label + " stage") : label) + "."
+                            levelAndStageLabel = levelAndStageLabel  + " at " + ((label === "unknown" || label === "late adulthood") ? (label + " stage") : label) + "."
                         }else {
                             levelAndStageLabel += "."
                         }
