@@ -41,8 +41,8 @@ View listing protein expression view.
         <protein-overview nx-config="[[nxConfig]]"></protein-overview>
       </div>
     </div>
-    <div id="nxPositionalAnnotations" class="row nxSection">
-      <generic-annotation-section id="expressionInfoElement" section="expressionInfo" gold-only="[[nxConfig.goldOnly]]" categories='["EXPRESSION-INFO", "INDUCTION", "DEVELOPMENTAL-STAGE-INFO"]' nx-config="[[nxConfig]]" count="{{expressionInfoCount}}"></generic-annotation-section>
+    <div id="nxGenericAnnotations" class="row nxSection">
+      <generic-annotation-section id="expressionInfoElement" section="expressionInfo" gold-only="[[nxConfig.goldOnly]]" categories='["EXPRESSION-INFO", "INDUCTION", "DEVELOPMENTAL-STAGE-INFO"]' nx-config="[[nxConfig]]" count="{{genericAnnotationsCount}}"></generic-annotation-section>
     </div>
     <div id="nxOntologicalBrowser" class="row nxSection">
       <template is="dom-repeat" items="[[ontologicalBrowserTerms]]" as="term">
@@ -52,7 +52,7 @@ View listing protein expression view.
       </template>
     </div>
     <div id="nxExpressionAnnotations" class="row nxSection">
-      <expression-section id="expressionSection" section="expressionSection" gold-only="[[nxConfig.goldOnly]]" nx-config="[[nxConfig]]"></expression-section>
+      <expression-section id="expressionSection" section="expressionSection" gold-only="[[nxConfig.goldOnly]]" nx-config="[[nxConfig]]" count="{{expressionSectionAnnotationCount}}"></expression-section>
     </div>
     <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no expression information available in neXtProt for [[nxConfig.entry]].
       Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
@@ -79,19 +79,15 @@ View listing protein expression view.
                   "Hemolymphoid and immune system", "Musculoskeletal system", "Nervous system", "Reproductive system", "Respiratory system",
                   "Urinary system", "Sense organ", "Body part", "Tissue", "Cell type", "Fluid and secretion", "Gestational structure"]
         },
-        annotationsCount: {
+        expressionSectionAnnotationCount: {
           type: Number,
           value: -1,
           observer: "_checkAnnotations"
         },
-        positionalAnnotationsCount: {
+        genericAnnotationsCount: {
           type: Number,
           value: -1,
           observer: "_checkAnnotations"
-        },
-        keywordsCount: {
-          type: Number,
-          observer: "_checkKeywords"
         },
         xrefsCount: {
           type: Number,
@@ -99,15 +95,17 @@ View listing protein expression view.
         }
       },
       _checkAnnotations: function(){
-        if(!this.annotationsCount) this.$.nxExpressionAnnotations.hidden=true;
-        else this.$.nxExpressionAnnotations.hidden=false;
-        if(!this.positionalAnnotationsCount) this.$.nxPositionalAnnotations.hidden=true;
-        else this.$.nxPositionalAnnotations.hidden=false;
-        if(this.annotationsCount===0 && this.positionalAnnotationsCount===0) this.$.noDataWarning.hidden=false;
+
+        this.$.nxGenericAnnotations.hidden= (this.genericAnnotationsCount) ? false : true;
+
+        this.$.nxExpressionAnnotations.hidden= (this.expressionSectionAnnotationCount) ? false : true;
+        this.$.nxOntologicalBrowser.hidden= (this.expressionSectionAnnotationCount) ? false : true;
+
+
+        if(this.expressionSectionAnnotationCount===0 && this.genericAnnotationsCount===0) {
+          this.$.noDataWarning.hidden=false;
+        }
         else this.$.noDataWarning.hidden=true;
-      },
-      _checkKeywords: function(){
-        this.keywordsCount===0 ? this.$.nxKeywords.hidden=true : this.$.nxKeywords.hidden=false;
       },
       _checkXrefs: function(){
         this.xrefsCount===0 ? this.$.nxXrefs.hidden=true : this.$.nxXrefs.hidden=false;
