@@ -44,6 +44,40 @@ View listing protein expression view.
     <div id="nxGenericAnnotations" class="row nxSection">
       <generic-annotation-section id="expressionInfoElement" section="expressionInfo" gold-only="[[nxConfig.goldOnly]]" categories='["EXPRESSION-INFO", "INDUCTION", "DEVELOPMENTAL-STAGE-INFO"]' nx-config="[[nxConfig]]" count="{{genericAnnotationsCount}}"></generic-annotation-section>
     </div>
+
+
+    <div id="filterPositiveNegativeSection" class="row nxSection">
+      <button id="showFilterButton" class="btn btn-default pull-right" on-tap="_toggleFilters">
+        <template is="dom-if" if="[[filtersShown]]">
+          <iron-icon icon="arrow-drop-up"></iron-icon>
+          Hide filters &nbsp;
+        </template>
+        <template is="dom-if" if="[[!filtersShown]]">
+          <iron-icon icon="arrow-drop-down"></iron-icon>
+          Show filters &nbsp;
+        </template>
+      </button>
+      <div id="filtersContent" hidden>
+        <div class="row category-row style-scope generic-annotation-section">
+          <h4 class="annotation-category-title">Filter on positive / negative annotations</h4><br>
+          <template is="dom-repeat" items="[[filterPositiveNegativeAnnotations]]" as="filterPN">
+            <label class="radio-inline"><input type="radio" name="optradio">[[filterPN]]</label>
+          </template>
+        </div>
+        <div class="row category-row style-scope generic-annotation-section">
+          <h4 class="annotation-category-title">Filter on methodology</h4><br>
+          <template is="dom-repeat" items="[[filterOnMethodology]]" as="methodology">
+            <label class="checkbox-inline"><input type="checkbox" value="">[[methodology]]</label>
+          </template>
+        </div>
+        <button id="applyFiltersButton"  class="btn btn-default pull-right" type="button">
+          <i class="fa fa-filter" aria-hidden="true"></i>
+          <span class="filter-submit-text">Apply filters</span>
+        </button>
+
+      </div>
+    </div>
+
     <div id="nxOntologicalBrowser" class="row nxSection">
       <template is="dom-repeat" items="[[ontologicalBrowserTerms]]" as="term">
         <div class="col-md-3">
@@ -73,6 +107,14 @@ View listing protein expression view.
           type: Object,
           value: {}
         },
+        filterOnMethodology: {
+          type: Array,
+          value: ["Microarray", "EST", "IHC"]
+        },
+        filterPositiveNegativeAnnotations: {
+          type: Array,
+          value: ["All", "Positive", "Negative", "Positive only", "Negative only", "Only positive or only negative", "Both positive and negative"]
+        },
         ontologicalBrowserTerms: {
           type: Array,
           value: ["Alimentary system", "Cardiovascular system", "Dermal system", "Endocryne system", "Exocrine system",
@@ -92,7 +134,33 @@ View listing protein expression view.
         xrefsCount: {
           type: Number,
           observer: "_checkXrefs"
+        },
+        filtersShown: {
+          type: Boolean,
+          value: false
         }
+      },
+      _toggleFilters: function(){
+        var self = this;
+        this.async(function() {
+          self.$.filtersContent.hidden = !self.$.filtersContent.hidden;
+          self.filtersShown = !self.filtersShown;
+        }, 1);
+      },
+      _toggleAllEvidences: function(){
+        this.async(function() {
+          this.evidencesShown=true;
+          var evidenceContainers = Polymer.dom(this.root).querySelectorAll(".evidences-container");
+          for (var e in evidenceContainers) {
+            if (this.showEvidences == true) {
+              evidenceContainers[e].parentNode.opened = true;
+            } else {
+              evidenceContainers[e].parentNode.opened = false;
+            }
+          }
+          this.evidencesShown = this.showEvidences;
+          this.showEvidences = !this.showEvidences;
+        }, 1);
       },
       _checkAnnotations: function(){
 
