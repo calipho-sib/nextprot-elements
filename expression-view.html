@@ -141,9 +141,11 @@ View listing protein expression view.
         this.$.nxGenericAnnotations.hidden= (this.genericAnnotationsCount) ? false : true;
 
         this.$.nxExpressionAnnotations.hidden= (this.expressionSectionAnnotationCount) ? false : true;
+        this.$.filterPositiveNegativeSection.hidden= (this.expressionSectionAnnotationCount) ? false : true;
 
         if(this.expressionSectionAnnotationCount===0 && this.genericAnnotationsCount===0) {
           this.$.noDataWarning.hidden=false;
+
         }
         else this.$.noDataWarning.hidden=true;
       },
