@@ -24,6 +24,8 @@ Annotation section used in function, medical, and expression views.
                 display: block;
                 min-width: 700px;
                 margin: 20px;
+                margin-right: 0px;
+                margin-left: 0px;
             }
 
             #nxOntologicalBrowser {
@@ -33,12 +35,6 @@ Annotation section used in function, medical, and expression views.
                 padding-bottom:10px;
                 border-bottom: 1px solid #E7EAEC;
             }
-
-            .expression-section {
-                padding-right: 5px;
-                padding-left: 5px;
-            }
-
             .ontological-term {
                 padding-left: 5px;
                 margin: 1px;
@@ -49,6 +45,20 @@ Annotation section used in function, medical, and expression views.
             }
 
         </style>
+
+        <div>
+            <button id="expressionEvidenceButton" class="btn btn-default pull-right" on-tap="_toggleAllEvidences">
+                <template is="dom-if" if="[[evidencesShown]]">
+                    <iron-icon icon="arrow-drop-up"></iron-icon>
+                    Hide evidences
+                </template>
+                <template is="dom-if" if="[[!evidencesShown]]">
+                    <iron-icon icon="arrow-drop-down"></iron-icon>
+                    Show evidences
+                </template>
+            </button>
+
+        </div>
 
         <ul class="nav nav-tabs" role="tablist">
             <li id="ontologyTab" class="active" on-tap="_changeToTreeView">
@@ -89,6 +99,10 @@ Annotation section used in function, medical, and expression views.
                 nxConfig: {
                     type: Object,
                     value: {}
+                },
+                evidencesShown: {
+                    type: Boolean,
+                    value: false
                 },
                 expressionProfileData: {
                     type: Object,
