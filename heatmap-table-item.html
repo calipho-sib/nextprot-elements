@@ -24,8 +24,6 @@ A heatmap table
         <style is="custom-style" include="nextprot-elements-shared-styles">
              :host {
                 display: block;
-                max-height: 1000px;
-                overflow-y: auto;
             }
 
             ul {
@@ -61,6 +59,11 @@ A heatmap table
                 width: 32px;
             }
 
+            .heatmap-body {
+                overflow-y: auto;
+                max-height: 1000px;
+            }
+
             .heatmap-body > ul > heatmap-table-row > li > ul {
                 display: block;
             }
@@ -69,11 +72,41 @@ A heatmap table
                 display: block;
             }
 
+            #tableHeaderContainer {
+                margin-top:20px; 
+                background-color: #F9F9F9
+            }
+
+            #tableHeader {
+                width: 100%; 
+            }
+            #tableHeader th, #tableHeader td {
+                text-align: center
+           }
+            #tableHeader td {
+                color: grey;
+                padding-top: 20px;
+                /* transform: rotate(-30deg); */
+           }
 
             </style>
-        <div class="heatmap-body" style="margin-top:20px">
+            <div class="row" id="tableHeaderContainer">
+                <table id="tableHeader">
+                    <tr>
+                        <th rowspan="2" style="text-align: left">Tissue / Cell type</th>
+                        <th colspan="2">mRNA expression</th>
+                        <th style="width: 150px; padding: 0px">Protein expression</th>
+                    </tr>
+                    <tr>
+                        <td style="width: 100px; padding: 0px">MicroArray</td>
+                        <td style="width: 100px; padding: 0px">EST</td>
+                        <td style="padding: 0px">IHC</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="heatmap-body">
             <ul>
-                <heatmap-table-row data="[[data]]" options="[[options]]"></heatmap-table-row>
+                <heatmap-table-row data="[[data]]" options="[[options]]" display-evidences="[[displayEvidences]]"></heatmap-table-row>
             </ul>
         </div>
         <div class="center">
@@ -88,6 +121,10 @@ A heatmap table
                 nxConfig: {
                     type: Object,
                     value: {}
+                },
+                displayEvidences: {
+                    type: Boolean,
+                    value: false
                 },
                 options: {
                     type: Object,

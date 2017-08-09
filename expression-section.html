@@ -44,6 +44,10 @@ Annotation section used in function, medical, and expression views.
                 border-color: #dddddd;
             }
 
+            #expression-tabs {
+                margin-bottom: 20px;
+            }
+
         </style>
 
         <div>
@@ -60,7 +64,7 @@ Annotation section used in function, medical, and expression views.
 
         </div>
 
-        <ul class="nav nav-tabs" role="tablist">
+        <ul id="expression-tabs" class="nav nav-tabs" role="tablist">
             <li id="ontologyTab" class="active" on-tap="_changeToTreeView">
                 <a href="javascript:void(0)">Ontology</a>
             </li>
@@ -81,10 +85,10 @@ Annotation section used in function, medical, and expression views.
                         </div>
                     </template>
                 </div>
-                <heatmap-table-item data=[[heatmapData]] options=[[heatmapOptions]]></heatmap-table-item>
+                <heatmap-table-item data=[[heatmapData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
             </div>
             <div id="flatContent" hidden>
-                <heatmap-table-item data=[[heatmapFlatData]] options=[[heatmapOptions]]></heatmap-table-item>
+                <heatmap-table-item data=[[heatmapFlatData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
             </div>
         </div>
 
@@ -123,7 +127,7 @@ Annotation section used in function, medical, and expression views.
                 heatmapOptions: {
                     type: Object,
                     value: { "methods" : [ {
-                        methodName : "Microarray", methodEvidenceCodeName: "microarray evidence",
+                        methodName : "Microarray", methodEvidenceCodeName: "microarray RNA expression level evidence",
                         possibleValues : [{expressionLevel : "positive", color: "#ffa10a"},
                             {expressionLevel : "negative", color : "#969e96"}]
                     },
@@ -225,8 +229,23 @@ Annotation section used in function, medical, and expression views.
 
                 });
             },
+            _toggleAllEvidences: function (){
+                
+                this.evidencesShown = !this.evidencesShown;
+                var evidenceContainers = Polymer.dom(this.root).querySelectorAll(".evidences-container");
+
+                console.log("Evidences found" + evidenceContainers.length)
+                for (var e in evidenceContainers) {
+                    if (this.showEvidences == true) {
+                    evidenceContainers[e].parentNode.opened = true;
+                    } else {
+                    evidenceContainers[e].parentNode.opened = false;
+                    }
+                }
+                
+            },
             _buildExportUri: function(env, entry){
-                //TODO change this later
+                //TODO "Internal note for dev team: Dev environment hardcoded here. Don't forget to change this before deploying to production..."
                 return "https://dev-api.nextprot.org" + "/entry/" + entry  + "/expression-profile.tsv";
             },
             _changeToTreeView: function () {
@@ -282,7 +301,7 @@ Annotation section used in function, medical, and expression views.
                 }
                 return groups;
 
-            },
+            }/*,
             _renameMicroArrayEvidenceCode: function(data) {
                 data.annot.forEach(function (annotation) {
                     annotation.evidences.forEach(function(evidence){
@@ -291,7 +310,7 @@ Annotation section used in function, medical, and expression views.
                         }
                     })
                 })
-            },
+            }*/,
             _enrichEvidenceWithResourceUrl: function(heatmapData, xrefs) {
                 heatmapData.forEach(function(data){
                     data.annotation.evidences.forEach(function(evidence){
@@ -499,7 +518,7 @@ Annotation section used in function, medical, and expression views.
 
                 var self = this;
                 //According to specs the eco name is too long
-                this._renameMicroArrayEvidenceCode(data);
+                //this._renameMicroArrayEvidenceCode(data);
 
                 var heatmapFlatData = data.annot.map(function(a) {return {rowLabel : a.cvTermName,
                     name: a.cvTermAccessionCode,

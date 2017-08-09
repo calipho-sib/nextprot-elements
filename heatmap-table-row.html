@@ -10,10 +10,8 @@
         }
 
          .highlight-roots {
-
              font-weight: bold;
-             margin-top: 50px;
-
+             margin-top: 10px;
          }
 
         #grad {
@@ -46,6 +44,8 @@
 
         .evidence-row {
             border-bottom: solid 1px #d4d4d4;
+            background-color: #F9F9F9;
+            font-size: 90%;
         }
 
         .heatmap-row:hover {
@@ -172,7 +172,7 @@
 
         .evidenceNumber {
             background: #7CBA0F;
-            padding: 4px 8px;
+            padding: 2px 4px;
             border-radius: 2px;
             color: white;
             vertical-align: top;
@@ -202,7 +202,9 @@
                                 </template>
                                 <!-- Number of evidences are displayed for the given group --> 
                                 <div class="heatmap-column heatmap-group-count-size">
-                                    <span data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group, d)]]</span>
+                                    <template is="dom-if" if="[[ _computeCountForGroup(group, d)]]">
+                                        <span class="evidenceNumber" data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group, d)]]</span>
+                                    </template>
                                 </div>
                             </div>
                         </template>
@@ -212,7 +214,7 @@
                 <div id="annotation-[[d.annotation.annotationId]]-evidence-container" class="evidence-row"></div>
                 <template is="dom-if" if="[[hasChildren(d)]]">
                     <ul class$="{{_computeClassesForChildren(d)}}">
-                        <heatmap-table-row data="[[d.children]]" options="[[options]]"></heatmap-table-row>
+                        <heatmap-table-row data="[[d.children]]" options="[[options]]" display-evidences="[[displayEvidences]]"></heatmap-table-row>
                     </ul>
                 </template>
             </li>
@@ -225,14 +227,30 @@
             properties: {
                 data: {
                     type: Array,
-                    value: [],
-                    observer: "_reload"
+                    value: []
                 },
                 options: {
                     type: Object,
                     value: {}
+                }/*,
+                displayEvidences: {
+                    type: Boolean,
+                    value: false,
+                    observer: "_show"
+                }*/
+            }/*,
+            _show: function(){
+                var self = this;
+                if(this.displayEvidences) {
+                    this.data.forEach(function (d){
+                        d.groupValues.forEach(function (g){
+                           if(d.annotation) {
+                              self._showEvidences(g, d.annotation)
+                           }
+                        })
+                    })
                 }
-            },
+            }*/,
             _computeInitialCaret: function(d){
                 if(d.level < 2){
                     return "fa fa-caret-down"
@@ -260,10 +278,8 @@
 
                 var totalEvidenceForGroup = group.values.reduce(function(v1, v2) {return v1 + v2.currentNodeEvidenceCount}, 0);
                 if(totalEvidenceForGroup > 0){
-                    return "[" + totalEvidenceForGroup + "]";
+                    return totalEvidenceForGroup;
                 }
-
-                return "";
 
             },
             _computeStyle: function (data) {
@@ -315,7 +331,7 @@
 
 
             },
-            _showEvidences: function(e){
+            _showEvidences: function(e, annotation){
                 var annotation = JSON.parse(e.target.dataset.args);
                 var container = this.$$("#annotation-"+annotation.annotationId+"-evidence-container");
                 if(container.childElementCount===0){
@@ -327,6 +343,8 @@
                         }
                         var evidenceItem = document.createElement("evidence-item");
                         evidenceItem.setAttribute("index", new Number(evidenceIdx) + 1);
+                        evidenceItem.setAttribute("class", "grey-background");
+
                         evidenceItem.data=evidence;
                         container.appendChild(evidenceItem);
                         this.updateStyles();
@@ -336,12 +354,6 @@
                 } else {
                     container.hidden = true;
                 }
-            }
-            ,
-            _reload: function () {
-
-                //console.log(this.data)
-
             }
         });
     </script>
