@@ -93,6 +93,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                   self.getXrefByView(Object.keys(data.xrefs).map(function(k) { return data.xrefs[k] }));
                   self.$.spinner.active = false;
                 }).catch(function (err) {
+                    console.error("Error when querying API for entry "+self.nxConfig.entry, err);
                   // catch any error that happened so far
                   self.$.spinner.active = false;
                   self.count = 0;
@@ -138,6 +139,7 @@ Exteranl links section present in function, medical, expression, interactions, s
             else return 0;
           })
         }
+        console.log("DATA XREFS", data)
         this.data = data;
       },
       _filterExceptions: function(typeList) {
@@ -203,7 +205,10 @@ Exteranl links section present in function, medical, expression, interactions, s
                     });
                   }
                 })
-                newTypeList.push(ensembl);
+
+                  if ($.grep(ensembl.xrefs, function(e){ return e.prefix == "Protein"; }).length == 1) {
+                      newTypeList.push(ensembl);
+                  }
               }
             }
           }
@@ -224,14 +229,21 @@ Exteranl links section present in function, medical, expression, interactions, s
                   prefix : "mRNA",
                   suffix : ""
                 })
-                var translationID = $.grep(typeList[elem].properties, function(e){ return e.name === "protein sequence ID"; })[0].value;
-                var translation = $.grep(typeList, function(e){ return e.accession == translationID; })[0];
-                embl.xrefs.push({
-                  accession: translation.accession,
-                  url : translation.resolvedUrl,
-                  prefix : "Translation",
-                  suffix : suffix
-                })
+
+                var protSeqIdArray = $.grep(typeList[elem].properties, function(e){ return e.name === "protein sequence ID"; });
+
+                if (protSeqIdArray.length === 1) {
+                    var translationID = protSeqIdArray[0].value;
+                    var translation = $.grep(typeList, function (e) {
+                        return e.accession == translationID;
+                    })[0];
+                    embl.xrefs.push({
+                        accession: translation.accession,
+                        url: translation.resolvedUrl,
+                        prefix: "Translation",
+                        suffix: suffix
+                    })
+                }
               }
               else if (molType.value === "protein") {
                 var geneIDs = $.grep(typeList[elem].properties, function(e){ return e.name === "genomic sequence ID"; });

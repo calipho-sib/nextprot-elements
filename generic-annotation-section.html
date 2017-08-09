@@ -566,7 +566,7 @@ Annotation section used in function, medical, and expression views.
                 }
                 for (var i in Object.keys(data)) {
                     var category = Object.keys(data)[i];
-                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "OVERVIEW", "PTM"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByRank);
+                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "OVERVIEW", "PTM", "DOMAIN"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByRank);
                     else if (category==="INTERACTIONS") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortOverview);
                     else if (category==="SUBCELLULAR LOCATION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortSubcellular);
                     else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBiophysicochemical);

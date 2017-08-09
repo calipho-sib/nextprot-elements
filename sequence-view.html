@@ -5,7 +5,6 @@
 <link rel="import" href="generic-annotation-section.html">
 <link rel="import" href="keywords-section.html">
 <link rel="import" href="xrefs-section.html">
-<link rel="import" href="external-scripts.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
 
@@ -82,7 +81,7 @@ View listing sequence annotations.
       {
         "APIRef": "initiator-methionine",
         "metadata": {
-          "name": "Initiator meth",
+          "name": "Initiator Met",
           "className": "initMeth",
           "color": "#B3B3D1",
           "type": "unique",
@@ -400,7 +399,7 @@ View listing sequence annotations.
         <div class="row">
             <div id="nxAnnotations" class="col-md-12">
                 <generic-annotation-section id="annotationElement" section="sequence" goldOnly="[[goldOnly]]"
-                                            categories='["CAUTION", "DOMAIN-INFO", "PTM-INFO", "SEQUENCE-CAUTION"]'
+                                            categories='["DOMAIN-INFO", "PTM-INFO", "SEQUENCE-CAUTION", "CAUTION"]'
                                             category-titles='{"DOMAIN_INFO": "DOMAIN", "PTM_INFO": "PTM"}'
                                             count="{{annotationsCount}}" nx-config="[[nxConfig]]">
                 </generic-annotation-section>
