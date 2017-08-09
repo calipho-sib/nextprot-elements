@@ -129,21 +129,6 @@ View listing protein expression view.
           self.filtersShown = !self.filtersShown;
         }, 1);
       },
-      _toggleAllEvidences: function(){
-        this.async(function() {
-          this.evidencesShown=true;
-          var evidenceContainers = Polymer.dom(this.root).querySelectorAll(".evidences-container");
-          for (var e in evidenceContainers) {
-            if (this.showEvidences == true) {
-              evidenceContainers[e].parentNode.opened = true;
-            } else {
-              evidenceContainers[e].parentNode.opened = false;
-            }
-          }
-          this.evidencesShown = this.showEvidences;
-          this.showEvidences = !this.showEvidences;
-        }, 1);
-      },
       _checkAnnotations: function(){
 
         this.$.nxGenericAnnotations.hidden= (this.genericAnnotationsCount) ? false : true;
