@@ -1,0 +1,348 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+
+<dom-module id="heatmap-table-row">
+
+    <style include="nextprot-elements-shared-styles">
+         :host {
+            display: block;
+        }
+
+         .highlight-roots {
+
+             font-weight: bold;
+             margin-top: 50px;
+
+         }
+
+        #grad {
+            background: red;
+            /* For browsers that do not support gradients */
+            background: -webkit-linear-gradient(left top, red, yellow);
+            /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(bottom right, red, yellow);
+            /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(bottom right, red, yellow);
+            /* For Firefox 3.6 to 15 */
+            background: linear-gradient(to bottom right, red, yellow);
+            /* Standard syntax */
+        }
+
+        #heatmap-body {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .heatmap-tree {
+            display: none;
+        }
+
+        .heatmap-row {
+            border-bottom: solid 1px #d4d4d4;
+            overflow: hidden;
+            height: 25px;
+        }
+
+        .evidence-row {
+            border-bottom: solid 1px #d4d4d4;
+        }
+
+        .heatmap-row:hover {
+            background-color: aliceblue;
+        }
+
+        .heatmap-rowLabel {
+            display: inline-block;
+            margin-bottom: 0px;
+            word-break: break-all;
+            cursor: pointer;
+        }
+
+        .heatmap-no-cursor {
+            cursor: auto !important;
+        }
+
+        .heatmap-rowLabel a {
+            margin-left: 5px;
+            font-size: 12px;
+        }
+
+        .heatmap-rowLabel .glyphicon {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+        .heatmap-column {
+            float: left;
+            height: 20px;
+            width: 20px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .heatmap-group {
+            display: inline-block;
+            text-align: center;
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+
+        .heatmap-circle {
+            text-align: center;
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-top: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+        }
+
+        ul {
+            padding-left: 10px;
+            list-style-type: none;
+        }
+
+        .heatmap-inline {
+            display: inline-block;
+        }
+
+        .heatmap-zoom:hover {
+            cursor: pointer;
+        }
+        /* sandbox */
+
+        .heatmap-info {
+            display: none;
+            text-align: center;
+        }
+
+        .glyphicon-refresh-animate {
+            -animation: spin .7s infinite linear;
+            -webkit-animation: spin2 .7s infinite linear;
+        }
+
+        .openHmChildren {
+            display: block;
+        }
+
+        .heatmap-row * {
+            cursor: pointer !important;
+        }
+
+        .heatmap-hidden-circle {
+            display: none;
+        }
+
+        /*
+        //TODO
+        :host ul:nth-child(2) {
+            display: block;
+        }*/
+
+        .heatmap-square {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: solid;
+            border-width: 1px;
+        }
+
+        .heatmap-circle-size {
+            width: 12px;
+            font-size: 14px;
+        }
+
+        .heatmap-group-count-size {
+            width: 20px;
+            margin-right: 5px; 
+            font-size: 14px;
+        }
+
+        .heatmap-group {
+            display: inline-block; 
+            margin-right: 30px; 
+            border-right: thin solid lightgray
+        }
+
+        .grouped-values > .heatmap-group:nth-child(3) {
+            margin-right: 0px; 
+        }
+
+        .evidenceNumber {
+            background: #7CBA0F;
+            padding: 4px 8px;
+            border-radius: 2px;
+            color: white;
+            vertical-align: top;
+            cursor: pointer;
+        }
+
+    </style>
+    <template>
+        <template is="dom-repeat" items="[[data]]" as="d">
+            <li>
+                <div class$="{{_computeClassesForParent(d)}}" on-tap="toggleChildren">
+                    <template is="dom-if" if="[[hasChildren(d)]]">
+                        <i class$="{{_computeInitialCaret(d)}}"></i>
+                    </template>
+                    <p class="heatmap-no-cursor heatmap-rowLabel tree-toggler">
+                        <span class="rowLabel">[[d.rowLabel]]</span>
+                        <span><a href="[[d.linkURL]]" target="_blank">[[d.linkLabel]]</a></span>
+                    </p>
+                    <div class="pull-right grouped-values" style="margin-left: 25px">
+                        <!-- Groups are showed --> 
+                        <template is="dom-repeat" items="[[d.groupValues]]" as="group">
+                            <div class="heatmap-group">
+                                <template is="dom-repeat" items="[[group.values]]" as="value">
+                                    <div class="heatmap-column heatmap-circle-size">
+                                        <span class="heatmap-square" style$="{{_computeStyle(value)}}"></span>
+                                    </div>
+                                </template>
+                                <!-- Number of evidences are displayed for the given group --> 
+                                <div class="heatmap-column heatmap-group-count-size">
+                                    <span data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group, d)]]</span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <!-- Evidences container not displayed at erst-->
+                <div id="annotation-[[d.annotation.annotationId]]-evidence-container" class="evidence-row"></div>
+                <template is="dom-if" if="[[hasChildren(d)]]">
+                    <ul class$="{{_computeClassesForChildren(d)}}">
+                        <heatmap-table-row data="[[d.children]]" options="[[options]]"></heatmap-table-row>
+                    </ul>
+                </template>
+            </li>
+        </template>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'heatmap-table-row',
+            properties: {
+                data: {
+                    type: Array,
+                    value: [],
+                    observer: "_reload"
+                },
+                options: {
+                    type: Object,
+                    value: {}
+                }
+            },
+            _computeInitialCaret: function(d){
+                if(d.level < 2){
+                    return "fa fa-caret-down"
+                }else {
+                    return "fa fa-caret-right"
+                }
+            },
+            _computeClassesForParent: function(d){
+                if(d.level === 0){
+                    return "heatmap-row highlight-roots"
+                }
+                return "heatmap-row"
+
+            },
+            _computeClassesForChildren: function(d){
+
+                var baseClass = "tree heatmap-tree heatmap-opened"
+                if(d.level < 2){
+                    return baseClass + " openHmChildren"
+                }else {
+                    return "tree heatmap-tree"
+                }
+            },
+            _computeCountForGroup: function (group, data) {
+
+                var totalEvidenceForGroup = group.values.reduce(function(v1, v2) {return v1 + v2.currentNodeEvidenceCount}, 0);
+                if(totalEvidenceForGroup > 0){
+                    return "[" + totalEvidenceForGroup + "]";
+                }
+
+                return "";
+
+            },
+            _computeStyle: function (data) {
+
+                //There is data and there are children
+                if(data.currentNodeEvidenceCount > 0 && data.childrenFound) {
+                    return "background-color: " + data.color + "; border-bottom:solid; border-right: solid; border-size: 5px; border-color: black"
+                }
+
+                //There is data and there are no children
+                if(data.currentNodeEvidenceCount > 0 && !data.childrenFound) {
+                    return "background-color: " + data.color + " ; border: 0"
+                }
+
+                //There is not data but there are children
+                if(data.currentNodeEvidenceCount == 0 && data.childrenFound) {
+                    return "background-color: white; border-bottom:solid; border-right: solid; border-size: 5px; border-color: " + data.color
+                }
+
+
+                return "display: none";
+
+            },
+            hasChildren: function (d) {
+                var boolean = d.children && d.children.length;
+                return boolean;
+            }, _toggleEvidences: function(group) {
+
+
+            },toggleChildren: function (e) {
+
+                var liParent = e.srcElement.closest("li")
+                var icon = liParent.getElementsByTagName("i")[0]
+
+                var children = liParent.getElementsByTagName("ul")[0]
+                if(children && children.classList){
+                    children.classList.toggle("openHmChildren");
+                }
+
+                if(icon){
+                    if (icon.classList.contains("fa-caret-down")) {
+                        icon.classList.remove("fa-caret-down")
+                        icon.classList.add("fa-caret-right")
+                    } else {
+                        icon.classList.remove("fa-caret-right")
+                        icon.classList.add("fa-caret-down")
+                    }
+                }
+
+
+            },
+            _showEvidences: function(e){
+                var annotation = JSON.parse(e.target.dataset.args);
+                var container = this.$$("#annotation-"+annotation.annotationId+"-evidence-container");
+                if(container.childElementCount===0){
+                    for (evidenceIdx in annotation.evidences){
+                        var evidence = annotation.evidences[evidenceIdx]
+                        if(evidence.crossRef) {
+                            evidence.resourceAccession = evidence.crossRef.name;
+                            evidence.url = evidence.crossRef.url;
+                        }
+                        var evidenceItem = document.createElement("evidence-item");
+                        evidenceItem.setAttribute("index", new Number(evidenceIdx) + 1);
+                        evidenceItem.data=evidence;
+                        container.appendChild(evidenceItem);
+                        this.updateStyles();
+                    }
+                } else if (container.hidden) {
+                    container.hidden = false;
+                } else {
+                    container.hidden = true;
+                }
+            }
+            ,
+            _reload: function () {
+
+                //console.log(this.data)
+
+            }
+        });
+    </script>
+</dom-module>

@@ -88,7 +88,7 @@ Annotation section used in function, medical, and expression views.
             }
             #evidenceButton {
                 float: right;
-                padding: 0px 5px 0px 0px;
+                padding: 0px 6px 0px 0px;
             }
             #notice {
                 margin: 0 0 0 5px;
@@ -399,6 +399,8 @@ Annotation section used in function, medical, and expression views.
                             || a.description.toLowerCase().match(/.*diagnostic marker.*/))) continue;
                     } else if (this.section==="interactions"){
                         if (a.apicategory==="MISCELLANEOUS" && !(a.description.toLowerCase().match(/.*bind.*/) || a.description.toLowerCase().match(/^bind.*/))) continue;
+                    } else if (this.section==="sequence"){
+                        if (a.apicategory==="CAUTION" && !a.description.startsWith("It is uncertain whether Met")) continue;
                     }
                     if(a.apicategory==="SEQUENCE_CAUTION") {
                         for(var j in a.properties) {

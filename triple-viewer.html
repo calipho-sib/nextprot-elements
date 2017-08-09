@@ -4,6 +4,7 @@
 <link rel="import" href="quality-label.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
+<link rel="import" href="feature-table.html">
 <!--
 <script src="../jquery/dist/jquery.js"></script>
 <script src="../bootstrap/dist/js/bootstrap.js"></script>
@@ -100,9 +101,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             #featuresTable {
                 font-size:11px;
                 background:#fff;
-                padding:5px 15px;
+                padding:0px;
                 height:525px;
-                border: 1px solid #cfd9db;
+/*                border: 1px solid #cfd9db;*/
                 border-radius:4px;
                 margin:10px 0px;
             }
@@ -138,8 +139,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 background:#fff;
                 padding:5px 15px;
                 height:525px;
+/*
                 border: 1px solid #cfd9db;
                 border-radius:4px;
+*/
             }
             .seqHeader{
                 margin-bottom:5px;
@@ -255,6 +258,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
         </div>
         <div class="row">
             <div id="featuresTable">
+<!--
                 <div id="featTableScroller" class="section-scroller">
                     <table id="featTable" class="table table-striped table-fixed">
                         <thead>
@@ -315,6 +319,13 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         </template>
                     </table>
                 </div>
+-->
+<!--
+                <feature-table feat-by-iso="[[featuresForTable]]">
+                </feature-table>
+-->
+                <feature-table id="featTable" all-features="[[featuresForTable]]">
+                </feature-table>
             </div>
             <template is="dom-if" if="[[!hideSequenceViewer]]">
                 <div class="col-md-6 right-block">
@@ -333,7 +344,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 },
                 isoName: {
                     type: String,
-                    observer: "reloadSVG"
+                    notify: true,
+                    observer: "isoformChange"
                 },
                 selection: {
                   type: Object,
@@ -341,7 +353,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 },
                 featuresByIsoform: {
                     type: Array,
-                    value: []
+                    value: [],
+                    notify: true
                 },
                 featureList: {
                     type: Array,
@@ -354,6 +367,15 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 featuresForViewer: {
                     type: Array,
                     value: []
+                },
+                featuresByGroup:{
+                    type: Object,
+                    value:{}
+                },
+                featuresForTable: {
+                    type:Array,
+                    value:[],
+                    notify:true
                 },
                 filterOptions: {
                     type: Array,
@@ -378,11 +400,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     notify: true
                 }
             },
-            ready: function() {
+            attached: function() {
                 this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
                 this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
                 if(!this.isoName) this.isoName = this.nxEntry+"-1";
-                var self=this
+                var self=this;
                 Promise.all(self._getFeaturesByView())
                     .then(function (rawData) {
                     self.rawData = rawData;
@@ -393,24 +415,30 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     for (var i in self.rawData){
                         if (self.rawData[i].annot) count += self.rawData[i].annot.length;
                     }
+                    
                     self.count = count;
+                    
                     if(self.count){
                         self.reloadSVG();
                         self._addFiltering();
                         self.$.featViewerSpinner.active = false;
-                        self.$.featTableSpinner.active = false;
+//                        self.$.featTableSpinner.active = false;
                     }
                     if (self.hideSequenceViewer) self.$$("#featuresTable").classList.add("col-md-12");
                     else self.$$("#featuresTable").classList.add("col-md-6")
                 });
             },
+            isoformChange: function(){
+                this.featuresByGroup = {};
+                this.reloadSVG();
+            },
             reloadSVG: function(){
                 var self = this;
                 Polymer.RenderStatus.afterNextRender(this.$.featureViewer, function() {
-                    self.$.featTableSpinner.active = true;
+//                    self.$.featTableSpinner.active = true;
                     $("#featureViewer svg").remove();
-                    self._fillTable();
-                    if(self.featuresLength) {
+                    if(self.featuresByIsoform.length) {
+                        self._fillTable();
                         self.hidden=false;
                         self._renderFeatureViewer();
                         self._addFeatures();
@@ -420,7 +448,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     }else{
                         self.hidden=true;
                     }
-                    self.$.featTableSpinner.active = false;
+//                    self.$.featTableSpinner.active = false;
                 });
             },
             reload: function(){
@@ -431,15 +459,21 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             },
             _getFeaturesByIsoform: function(){
                 this.featuresForViewer = [];
-                this.featuresByIsoform = [];
-                this.isofroms = this.rawData[0];
+//                this.featuresByIsoform = [];
+                var featsByIso = [];
+                this.isoforms = this.rawData[0];
+                var isoLengths = {};
+                this.isoforms.forEach(function(i){
+                    isoLengths[i.uniqueName] = i.sequenceLength;
+                })
                 for (var i=1; i<this.rawData.length-1;i++) {
                     var feat = NXUtils.convertMappingsToIsoformMap(this.rawData[i],this.metaData[i].name,this.metaData[i].filter, "");
                     if (this.goldOnly) feat = this._filterGoldForViewer(feat);
-                    featForViewer = NXViewerUtils.convertNXAnnotations(feat,this.metaData[i]);
+                    featForViewer = NXViewerUtils.convertNXAnnotations(feat,this.metaData[i],isoLengths);
                     this.featuresForViewer.push(featForViewer);
-                    this.featuresByIsoform.push(feat);
+                    featsByIso.push(feat);
                 }
+                this.notifyPath("featuresByIsoform", featsByIso);
             },
             _getFeaturesByView: function() {
                 var featuresForViewer = [];
@@ -574,8 +608,27 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     }
                 }
             },
+            _sortGroup: function(a,b){
+                    return a["start"] - b["start"];
+//                })
+            },
+            _toFlat: function (obj) {
+                var self = this;
+                //                var newArr = [];
+                return Object.keys(obj).map(function (key) {
+                    if (!self.filterOptions[key.split(" ").join("_")]){
+                        return [];
+                    }
+                    var newObj = obj[key].sort(self._sortGroup);
+                    newObj[0]["first"]=true;
+                    return newObj;
+                }).reduce(function (a, b) {
+                    return a.concat(b);
+                }, []);
+            },
             _fillTable: function() {
-                if ($("#featuresTable").length > 0) {
+//                if ($("#featuresTable").length > 0) {
+                if (!Object.keys(this.featuresByGroup).length){
                     var number = 0;
                     var features = {};
                     var self=this;
@@ -584,6 +637,15 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         var featureList = this.featuresByIsoform[feat][self.isoName];
                         for (var i in featureList){
                             var feature = featureList[i];
+                            if (!feature.start){
+                                feature.start = "?";
+                            }
+                            if (!feature.end){
+                                feature.end = "?";
+                            }
+                            if (!feature.length){
+                                feature.length = "?";
+                            }
                             if(feature.variant){
                                 var crossRef = {};
                                 for (var j in feature.source){
@@ -614,13 +676,23 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             this.featuresByIsoform[feat][this.isoName][i].evidenceSources = this._getUniqueListOfEvidenceSources(this.featuresByIsoform[feat][this.isoName][i].source);
                         }
                     }
-                    this.notifyPath("groupedFeatures", features);
-                    this.featuresLength = number;
-                };
+                    this.featuresByGroup = features;
+//                    this.notifyPath("groupedFeatures", features);
+                    
+//                    this.featuresLength = number;
+                }
+//                Polymer.RenderStatus.afterNextRender(self.$.featTable, function(){
+                this.featuresForTable = this._toFlat(this.featuresByGroup);
+                document.querySelector('iron-list').fire('iron-resize');
+//                });
+//                else {
+//                    document.querySelector('iron-list').fire('iron-resize');
+//                }
+//                };
             },
             _reloadFeatureTable: function(){
                 this._fillTable();
-                if(this.$$("#featureTableTemplate")) this.$$("#featureTableTemplate").render();
+//                if(this.$$("#featureTableTemplate")) this.$$("#featureTableTemplate").render();
             },
             _highlightCategories: function(mouseEvent){
                 srcElement = mouseEvent.target || mouseEvent.srcElement || mouseEvent.srcElement.childNodes[1];
@@ -665,25 +737,29 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             _applyFiltering: function() {
                 for (var filter in this.activeFiltering) {
                     if ($("#"+filter).prop("checked")) {
-                        $("."+filter).show();
+//                        $("."+filter).show();
                         this.filterOptions[filter] = true;
                     } else {
-                        $("."+filter).hide();
+//                        $("."+filter).hide();
                         this.filterOptions[filter] = false;
                     }
                 }
             },
+            //Interaction if click on the feature Table
             tvSelection: function(event) {
-                var highlightedRows = document.getElementsByClassName("tableHighlight");
-                if (highlightedRows[0]) highlightedRows[0].classList.remove("tableHighlight");
-                var srcElement = event.target || event.srcElement;
-                srcElement.parentElement.parentElement.parentElement.classList.add("tableHighlight");
-                var currentId = srcElement.parentElement.parentElement.parentElement.id;
+//                var highlightedRows = document.getElementsByClassName("tableHighlight");
+//                if (highlightedRows[0]) highlightedRows[0].classList.remove("tableHighlight");
+//                var srcElement = event.target || event.srcElement;
+//                srcElement.parentElement.parentElement.parentElement.classList.add("tableHighlight");
+//                var currentId = srcElement.parentElement.parentElement.parentElement.id;
+                var currentId = event;
                 if (currentId) {
-                    var position = currentId.split("_").slice(1).map(Number);
+                    var position = currentId.split("_").slice(1,3).map(Number);
                     if (position.length === 1) position.push(position[0]);
                     var svgId = "#" + "f" + currentId;
                     position[0] -= 1;
+                    if (!position[0]) position[0] = 0;
+                    if (!position[1]) position[1] = this.currentSeq.length;
                     if (!this.hideSequenceViewer) {
                         this.seqView.selection(position[0], position[1], "#C50063");
                         this._scrollAuto(".stringSelected", ".scroller", 200);
@@ -693,6 +769,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 
                 }
             },
+            //Listen if click on the feature Table & feature Viewer
             eventTV: function() {
                 var self=this;
                 self.ft.onFeatureSelected(function(d){
@@ -700,16 +777,32 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     // update isoform selector
                     self.fvSelection(d.detail);
                 });
+//                console.log("LOOKING FOR THE DOM ELEMENT FEATTABLE");
+//                console.log(this.$.featTable);
+//                console.log(document.querySelector('feature-table'));
+                this.$.featTable.addEventListener('tv-feature-selected', function (e) {
+//                    console.log("EVENT LISTENER WORKED!!");
+//                    console.log(e);
+                    self.tvSelection(e.detail.id);
+                });
             },
+            //Listen if click on the feature Viewer
             fvSelection: function(d) {
                 if (!this.hideSequenceViewer) {
                     this.seqView.selection(d.start - 1,d.end,"#C50063");
                     this._scrollAuto(".stringSelected", ".scroller",200);
                 }
-                var featSelectedID = "#" + d.id;
-                $(".tableHighlight").removeClass("tableHighlight");
-                $(featSelectedID).addClass("tableHighlight");
-                this._scrollAuto(featSelectedID, "#featTableScroller",70);
+                console.log(d.id);
+                for (var i=0; i < this.featuresForTable.length;i++){
+                    if (this.featuresForTable[i].id === d.id){
+                        this.$.featTable.highlightFeature(i);
+                        break;
+                    }
+                }
+//                var featSelectedID = "#" + d.id;
+//                $(".tableHighlight").removeClass("tableHighlight");
+//                $(featSelectedID).addClass("tableHighlight");
+//                this._scrollAuto(featSelectedID, "#featTableScroller",70);
             },
             _scrollAuto: function(elem, container, shiftTop) {
                 var ElementTop = $(elem).position().top-shiftTop;

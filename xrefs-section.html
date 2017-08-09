@@ -77,6 +77,13 @@ Exteranl links section present in function, medical, expression, interactions, s
           notify: true
         }
       },
+        _status : {
+            ALT_TERM: 'Different termination',
+            ALT_INIT: 'Different initiation',
+            NOT_ANNOTATED_CDS:'No translation available',
+            ALT_SEQ:'Sequence problems',
+            ALT_FRAME:'Frameshift'
+        },
       ready: function(){
         var nx = new Nextprot.Client("xref-section", "ndu");
         if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
@@ -87,8 +94,6 @@ Exteranl links section present in function, medical, expression, interactions, s
                   self.$.spinner.active = false;
                 }).catch(function (err) {
                   // catch any error that happened so far
-                  console.log("Argh, broken: " + err.message);
-                  console.log("Error at line : " + err.stack);
                   self.$.spinner.active = false;
                   self.count = 0;
                 });
@@ -206,8 +211,9 @@ Exteranl links section present in function, medical, expression, interactions, s
             if (typeList[elem].properties.length > 0) {
               var molType = $.grep(typeList[elem].properties, function(e){ return e.name === "molecule type"; })[0];
               var addInfos = $.grep(typeList[elem].properties, function(e){ return e.name === "status"})[0];
-              var suffix = addInfos ? status[addInfos.value] : "";
-              var embl = {
+              var suffix = addInfos ? this._status[addInfos.value]+"." : "";
+
+                var embl = {
                 name: typeList[elem].databaseName,
                 xrefs : []
               };
