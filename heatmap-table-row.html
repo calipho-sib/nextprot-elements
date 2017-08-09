@@ -183,7 +183,7 @@
     <template>
         <template is="dom-repeat" items="[[data]]" as="d">
             <li>
-                <div class$="{{_computeClassesForParent(d)}}" on-tap="toggleChildren">
+                <div id="row_[[d.name]]" class$="{{_computeClassesForParent(d)}}" on-tap="toggleChildren">
                     <template is="dom-if" if="[[hasChildren(d)]]">
                         <i class$="{{_computeInitialCaret(d)}}"></i>
                     </template>
