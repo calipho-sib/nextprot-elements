@@ -48,7 +48,7 @@ View listing protein expression view.
         <div class="row category-row style-scope generic-annotation-section">
           <h4 class="annotation-category-title">Filter on positive / negative annotations</h4><br>
           <template is="dom-repeat" items="[[filterPositiveNegativeAnnotations]]" as="filterPN">
-            <label class="radio-inline"><input type="radio" name="optradio">[[filterPN]]</label>
+            <label class="radio-inline"><input type="radio" name="optradio" checked$="{{filterPN.checked}}">[[filterPN.label]]</label>
           </template>
         </div>
         <div class="row category-row style-scope generic-annotation-section">
@@ -57,16 +57,17 @@ View listing protein expression view.
             <label class="checkbox-inline"><input type="checkbox" value="">[[methodology]]</label>
           </template>
         </div>
-        <button id="applyFiltersButton"  class="btn btn-default pull-right" type="button">
-          <i class="fa fa-filter" aria-hidden="true"></i>
-          <span class="filter-submit-text">Apply filters</span>
-        </button>
+        <div class="row category-row">
+          <button id="applyFiltersButton" class="btn btn-default col-md-offset-5 col-md-2" type="button">
+            <i class="fa fa-filter" aria-hidden="true"></i>
+            <span class="filter-submit-text" on-tap="_applyFilters">Apply filters</span>
+          </button>
+        </div>
 
       </div>
     </div>
-
     <div id="nxExpressionAnnotations" class="row nxSection">
-      <expression-section id="expressionSection" section="expressionSection" gold-only="[[nxConfig.goldOnly]]" nx-config="[[nxConfig]]" count="{{expressionSectionAnnotationCount}}"></expression-section>
+      <expression-section id="expressionSection" section="expressionSection" gold-only="[[nxConfig.goldOnly]]" nx-config="[[nxConfig]]" count="{{expressionSectionAnnotationCount}}" filters={{filters}}></expression-section>
     </div>
     <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no expression information available in neXtProt for [[nxConfig.entry]].
       Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
@@ -87,13 +88,17 @@ View listing protein expression view.
           type: Object,
           value: {}
         },
+        filters: {
+          type: Object,
+          value: {positiveNegativeFilter: "All", methodology: []}
+        },
         filterOnMethodology: {
           type: Array,
           value: ["Microarray", "EST", "IHC"]
         },
         filterPositiveNegativeAnnotations: {
           type: Array,
-          value: ["All", "Positive", "Negative", "Positive only", "Negative only", "Only positive or only negative", "Both positive and negative"]
+          value: [{label: "All", checked:"checked"}, {label: "Positive"}, {label: "Negative"}, {label: "Positive only"}, {label: "Only positive or only negative"}, {label: "Both positive and negative", selected:false}]
         },
         expressionSectionAnnotationCount: {
           type: Number,
@@ -113,6 +118,9 @@ View listing protein expression view.
           type: Boolean,
           value: false
         }
+      },
+      _applyFilters : function (){
+        alert("Not yet implemented")
       },
       _toggleFilters: function(){
         var self = this;
