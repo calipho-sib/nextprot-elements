@@ -38,6 +38,7 @@ Annotation section used in function, medical, and expression views.
             .ontological-term {
                 padding-left: 5px;
                 margin: 1px;
+                cursor: pointer;
                 background-color: #f8f8f8;
                 border-width: 1px;
                 border-style: solid;
@@ -289,7 +290,7 @@ Annotation section used in function, medical, and expression views.
                                 }
                             }
                         }
-                        groupObject.values.push({currentNodeEvidenceCount : evidenceMatchCount, color : methodPossibleValue.color})
+                        groupObject.values.push({currentNodeEvidenceCount : evidenceMatchCount, color : methodPossibleValue.color, label: methodPossibleValue.expressionLevel + " for " + method.methodName})
 
                     })
 
@@ -301,16 +302,7 @@ Annotation section used in function, medical, and expression views.
                 }
                 return groups;
 
-            }/*,
-            _renameMicroArrayEvidenceCode: function(data) {
-                data.annot.forEach(function (annotation) {
-                    annotation.evidences.forEach(function(evidence){
-                        if(evidence.evidenceCodeName === "microarray RNA expression level evidence"){
-                            evidence.evidenceCodeName = "microarray evidence"
-                        }
-                    })
-                })
-            }*/,
+            },
             _enrichEvidenceWithResourceUrl: function(heatmapData, xrefs) {
                 heatmapData.forEach(function(data){
                     data.annotation.evidences.forEach(function(evidence){
@@ -449,6 +441,7 @@ Annotation section used in function, medical, and expression views.
                                         data.groupValues[g].values[v] = {
                                             currentNodeEvidenceCount: 0,
                                             color: firstChildFound.color,
+                                            label: firstChildFound.label,
                                             childrenFound: true,
                                         }
                                     }
@@ -547,7 +540,7 @@ Annotation section used in function, medical, and expression views.
                 var targetId = "#row_" + e.target.dataset.args;
                 var target = this.$.HTI_ontology.querySelector(targetId);
                 var container = this.$.HTI_ontology.querySelector(".heatmap-body");
-                var shiftTop = 415;
+                var shiftTop = $(container).position().top - 8;
                 var ElementTop = $(target).position().top-shiftTop;
                 var scrollPosition = $(container).scrollTop();
                 var scrollingLength = ElementTop + scrollPosition;

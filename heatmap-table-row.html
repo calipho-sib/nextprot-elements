@@ -197,7 +197,7 @@
                             <div class="heatmap-group">
                                 <template is="dom-repeat" items="[[group.values]]" as="value">
                                     <div class="heatmap-column heatmap-circle-size">
-                                        <span class="heatmap-square" style$="{{_computeStyle(value)}}"></span>
+                                        <span class="heatmap-square" style$="{{_computeStyle(value)}}"  data-toggle="tooltip" title$="{{_getToolTipForValue(value)}}"></span>
                                     </div>
                                 </template>
                                 <!-- Number of evidences are displayed for the given group --> 
@@ -251,6 +251,25 @@
                     })
                 }
             }*/,
+            attached: function () {
+                $('[data-toggle="tooltip"]').tooltip(); 
+            },
+            _getToolTipForValue: function (data){
+                //There is data and there are children
+                if(data.currentNodeEvidenceCount > 0 && data.childrenFound) {
+                    return data.label + " and also by propagation"
+                }
+
+                //There is data and there are no children
+                if(data.currentNodeEvidenceCount > 0 && !data.childrenFound) {
+                    return data.label
+                }
+
+                //There is not data but there are children
+                if(data.currentNodeEvidenceCount == 0 && data.childrenFound) {
+                    return data.label + " by propagation"
+                }
+            },
             _computeInitialCaret: function(d){
                 if(d.level < 2){
                     return "fa fa-caret-down"
