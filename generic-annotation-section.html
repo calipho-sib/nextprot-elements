@@ -336,8 +336,6 @@ Annotation section used in function, medical, and expression views.
                                 self.annotationsByCategory = categories;
                                 self._getAnnotationsByView();
                                 self.$.spinner.removeAttribute('active');
-                                console.log("DATA MAN", data);
-                                // sorting DOMAIN
                             }).catch(function (err) {
                                 // catch any error that happened so far
                                 console.log("Argh, broken: " + err.message);
