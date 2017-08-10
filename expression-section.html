@@ -38,6 +38,7 @@ Annotation section used in function, medical, and expression views.
             .ontological-term {
                 padding-left: 5px;
                 margin: 1px;
+                cursor: pointer;
                 background-color: #f8f8f8;
                 border-width: 1px;
                 border-style: solid;
@@ -81,14 +82,14 @@ Annotation section used in function, medical, and expression views.
                 <div id="nxOntologicalBrowser" class="row">
                     <template is="dom-repeat" items="[[hierarchyRoot]]" as="term">
                         <div class="col-md-4">
-                            <div class="ontological-term"><a href="#{{term}}">[[term.name]]</a></div>
+                            <div class="ontological-term"><a on-tap="_scrollToRow" data-args$="[[term.accession]]">[[term.name]]</a></div>
                         </div>
                     </template>
                 </div>
-                <heatmap-table-item data=[[heatmapData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
+                <heatmap-table-item id="HTI_ontology" data=[[heatmapData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
             </div>
             <div id="flatContent" hidden>
-                <heatmap-table-item data=[[heatmapFlatData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
+                <heatmap-table-item id="HTI_flat" data=[[heatmapFlatData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
             </div>
         </div>
 
@@ -289,7 +290,7 @@ Annotation section used in function, medical, and expression views.
                                 }
                             }
                         }
-                        groupObject.values.push({currentNodeEvidenceCount : evidenceMatchCount, color : methodPossibleValue.color})
+                        groupObject.values.push({currentNodeEvidenceCount : evidenceMatchCount, color : methodPossibleValue.color, label: methodPossibleValue.expressionLevel + " for " + method.methodName})
 
                     })
 
@@ -301,16 +302,7 @@ Annotation section used in function, medical, and expression views.
                 }
                 return groups;
 
-            }/*,
-            _renameMicroArrayEvidenceCode: function(data) {
-                data.annot.forEach(function (annotation) {
-                    annotation.evidences.forEach(function(evidence){
-                        if(evidence.evidenceCodeName === "microarray RNA expression level evidence"){
-                            evidence.evidenceCodeName = "microarray evidence"
-                        }
-                    })
-                })
-            }*/,
+            },
             _enrichEvidenceWithResourceUrl: function(heatmapData, xrefs) {
                 heatmapData.forEach(function(data){
                     data.annotation.evidences.forEach(function(evidence){
@@ -449,6 +441,7 @@ Annotation section used in function, medical, and expression views.
                                         data.groupValues[g].values[v] = {
                                             currentNodeEvidenceCount: 0,
                                             color: firstChildFound.color,
+                                            label: firstChildFound.label,
                                             childrenFound: true,
                                         }
                                     }
@@ -542,6 +535,16 @@ Annotation section used in function, medical, and expression views.
                 return heatmapFlatData;
 
 
+            },
+            _scrollToRow: function(e){
+                var targetId = "#row_" + e.target.dataset.args;
+                var target = this.$.HTI_ontology.querySelector(targetId);
+                var container = this.$.HTI_ontology.querySelector(".heatmap-body");
+                var shiftTop = $(container).position().top - 8;
+                var ElementTop = $(target).position().top-shiftTop;
+                var scrollPosition = $(container).scrollTop();
+                var scrollingLength = ElementTop + scrollPosition;
+                $(container).animate({scrollTop: scrollingLength}, 500);
             }
         });
     </script>
