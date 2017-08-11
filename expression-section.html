@@ -127,11 +127,20 @@ Annotation section used in function, medical, and expression views.
                 },
                 heatmapOptions: {
                     type: Object,
-                    value: { "methods" : [ {
+                    value: { "methods" : [ 
+                        {
                         methodName : "Microarray", methodEvidenceCodeName: "microarray RNA expression level evidence",
                         possibleValues : [{expressionLevel : "positive", color: "#ffa10a"},
                             {expressionLevel : "negative", color : "#969e96"}]
-                    },
+                        },
+                        {
+                            methodName : "RNA-Seq", methodEvidenceCodeName: "RNA-seq evidence",
+                            possibleValues : [{expressionLevel: "high", color: "#ffa10a"},
+                                {expressionLevel: "medium", color: "#ffc870"},
+                                {expressionLevel: "low", color: "#ffe6bd"},
+                                {expressionLevel: "not detected", color: "#969e96"}]
+                            
+                        },
                         {
                             methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",
                             possibleValues : [{expressionLevel: "positive", color: "#ffa10a"}]
