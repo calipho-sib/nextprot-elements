@@ -47,13 +47,13 @@ View listing protein expression view.
       <div id="filtersContent" hidden>
         <div class="row category-row style-scope generic-annotation-section">
           <h4 class="annotation-category-title">Filter on positive / negative annotations</h4><br>
-          <template is="dom-repeat" items="[[filterPositiveNegativeAnnotations]]" as="filterPN">
+          <template is="dom-repeat" items="[[filters.posNeg]]" as="filterPN">
             <label class="radio-inline"><input type="radio" name="optradio" checked$="{{filterPN.checked}}">[[filterPN.label]]</label>
           </template>
         </div>
         <div class="row category-row style-scope generic-annotation-section">
           <h4 class="annotation-category-title">Filter on methodology</h4><br>
-          <template is="dom-repeat" items="[[filterOnMethodology]]" as="methodology">
+          <template is="dom-repeat" items="[[filters.methodology]]" as="methodology">
             <label class="checkbox-inline"><input type="checkbox" value="">[[methodology]]</label>
           </template>
         </div>
@@ -90,15 +90,9 @@ View listing protein expression view.
         },
         filters: {
           type: Object,
-          value: {positiveNegativeFilter: "All", methodology: []}
-        },
-        filterOnMethodology: {
-          type: Array,
-          value: ["Microarray", "EST", "IHC"]
-        },
-        filterPositiveNegativeAnnotations: {
-          type: Array,
-          value: [{label: "All", checked:"checked"}, {label: "Positive"}, {label: "Negative"}, {label: "Positive only"}, {label: "Only positive or only negative"}, {label: "Both positive and negative", selected:false}]
+          value: {
+            posNeg: [{label: "All", checked:"checked"}, {label: "Positive"}, {label: "Negative"}, {label: "Positive only"}, {label: "Negative only"}, {label: "Only positive or only negative"}, {label: "Both positive and negative", selected:false}],
+            methodology: ["Microarray", "EST", "RNA-Seq", "IHC"]}
         },
         expressionSectionAnnotationCount: {
           type: Number,
@@ -120,6 +114,7 @@ View listing protein expression view.
         }
       },
       _applyFilters : function (){
+
         alert("Not yet implemented")
       },
       _toggleFilters: function(){

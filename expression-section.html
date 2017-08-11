@@ -127,20 +127,30 @@ Annotation section used in function, medical, and expression views.
                 },
                 heatmapOptions: {
                     type: Object,
-                    value: { "methods" : [ {
+                    value: { "methods" : [ 
+                        {
                         methodName : "Microarray", methodEvidenceCodeName: "microarray RNA expression level evidence",
-                        possibleValues : [{expressionLevel : "positive", color: "#ffa10a"},
-                            {expressionLevel : "negative", color : "#969e96"}]
-                    },
+                        possibleValues : [{expressionLevel : "positive", tooltip: "positive", color: "#ffa10a"},
+                            {expressionLevel : "negative", tooltip: "negative", color : "#969e96"}]
+                        },
+                        {
+                            methodName : "RNA-Seq", methodEvidenceCodeName: "RNA-seq evidence",
+                            possibleValues : [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
+                                {expressionLevel: "medium", tooltip: "positive (medium)", color: "#ffc870"},
+                                {expressionLevel: "low", tooltip: "positive (low)", color: "#ffe6bd"},
+                                {expressionLevel: "not detected", tooltip: "negative", color: "#969e96"}]
+                            
+                        },
                         {
                             methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",
-                            possibleValues : [{expressionLevel: "positive", color: "#ffa10a"}]
+                            possibleValues : [{expressionLevel: "positive", tooltip: "positive", color: "#ffa10a"}]
                         },
                         {   methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence",
-                            possibleValues : [{expressionLevel: "high", color: "#ffa10a"},
-                                {expressionLevel: "medium", color: "#ffc870"},
-                                {expressionLevel: "low", color: "#ffe6bd"},
-                                {expressionLevel: "not detected", color: "#969e96"}]
+                            possibleValues : [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
+                                {expressionLevel: "medium", tooltip: "positive (medium)", color: "#ffc870"},
+                                {expressionLevel: "low", tooltip: "positive (low)", color: "#ffe6bd"},
+                                {expressionLevel: "not detected", tooltip: "negative", color: "#969e96"}]
+
                         }]
 
                     }
@@ -216,7 +226,10 @@ Annotation section used in function, medical, and expression views.
                             // Deep copy
                             var flatDataCopy = jQuery.extend(true, [], self.heatmapFlatData);
                             self.heatmapData = self._propagateFlatDataToTree(flatDataCopy);
-
+                            
+                            Polymer.RenderStatus.afterNextRender(self.$.HTI_ontology, function(){
+                                $('[data-toggle="tooltip"]').tooltip();
+                            });
                         }
 
 
@@ -290,7 +303,7 @@ Annotation section used in function, medical, and expression views.
                                 }
                             }
                         }
-                        groupObject.values.push({currentNodeEvidenceCount : evidenceMatchCount, color : methodPossibleValue.color, label: methodPossibleValue.expressionLevel + " for " + method.methodName})
+                        groupObject.values.push({currentNodeEvidenceCount : evidenceMatchCount, color : methodPossibleValue.color, tooltip: methodPossibleValue.tooltip})
 
                     })
 
@@ -441,7 +454,7 @@ Annotation section used in function, medical, and expression views.
                                         data.groupValues[g].values[v] = {
                                             currentNodeEvidenceCount: 0,
                                             color: firstChildFound.color,
-                                            label: firstChildFound.label,
+                                            tooltip: firstChildFound.tooltip,
                                             childrenFound: true,
                                         }
                                     }

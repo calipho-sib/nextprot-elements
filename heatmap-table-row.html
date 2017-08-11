@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
+<link rel="import" href="quality-label.html">
 
 <dom-module id="heatmap-table-row">
 
@@ -127,7 +128,11 @@
             display: block;
         }
 
-        .heatmap-row * {
+        .heatmap-rowLabel {
+            cursor: pointer !important;
+        }
+
+        .cursor-for-expand {
             cursor: pointer !important;
         }
 
@@ -135,18 +140,13 @@
             display: none;
         }
 
-        /*
-        //TODO
-        :host ul:nth-child(2) {
-            display: block;
-        }*/
-
         .heatmap-square {
             display: inline-block;
             width: 18px;
             height: 18px;
             border: solid;
             border-width: 1px;
+            cursor:pointer;
         }
 
         .heatmap-circle-size {
@@ -190,6 +190,7 @@
                     <p class="heatmap-no-cursor heatmap-rowLabel tree-toggler">
                         <span class="rowLabel">[[d.rowLabel]]</span>
                         <span><a href="[[d.linkURL]]" target="_blank">[[d.linkLabel]]</a></span>
+                        <quality-label quality="[[d.annotation.qualityQualifier]]"></quality-label>
                     </p>
                     <div class="pull-right grouped-values" style="margin-left: 25px">
                         <!-- Groups are showed --> 
@@ -252,29 +253,29 @@
                 }
             }*/,
             attached: function () {
-                $('[data-toggle="tooltip"]').tooltip(); 
+//                $('[data-toggle="tooltip"]').tooltip(); 
             },
             _getToolTipForValue: function (data){
                 //There is data and there are children
                 if(data.currentNodeEvidenceCount > 0 && data.childrenFound) {
-                    return data.label + " and also by propagation"
+                    return data.tooltip + " and children found"
                 }
 
                 //There is data and there are no children
                 if(data.currentNodeEvidenceCount > 0 && !data.childrenFound) {
-                    return data.label
+                    return data.tooltip
                 }
 
                 //There is not data but there are children
                 if(data.currentNodeEvidenceCount == 0 && data.childrenFound) {
-                    return data.label + " by propagation"
+                    return data.tooltip + " by propagation"
                 }
             },
             _computeInitialCaret: function(d){
                 if(d.level < 2){
-                    return "fa fa-caret-down"
+                    return "fa fa-caret-down cursor-for-expand"
                 }else {
-                    return "fa fa-caret-right"
+                    return "fa fa-caret-right cursor-for-expand"
                 }
             },
             _computeClassesForParent: function(d){
@@ -330,7 +331,9 @@
 
             },toggleChildren: function (e) {
 
-                var liParent = e.srcElement.closest("li")
+                var srcElement = e.target || e.srcElement;
+
+                var liParent = srcElement.closest("li")
                 var icon = liParent.getElementsByTagName("i")[0]
 
                 var children = liParent.getElementsByTagName("ul")[0]
