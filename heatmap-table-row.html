@@ -127,7 +127,7 @@
             display: block;
         }
 
-        .heatmap-row * {
+        .heatmap-rowLabel {
             cursor: pointer !important;
         }
 
@@ -251,23 +251,20 @@
                     })
                 }
             }*/,
-            attached: function () {
-                $('[data-toggle="tooltip"]').tooltip(); 
-            },
             _getToolTipForValue: function (data){
                 //There is data and there are children
                 if(data.currentNodeEvidenceCount > 0 && data.childrenFound) {
-                    return data.label + " and also by propagation"
+                    return data.tooltip + " and children found"
                 }
 
                 //There is data and there are no children
                 if(data.currentNodeEvidenceCount > 0 && !data.childrenFound) {
-                    return data.label
+                    return data.tooltip
                 }
 
                 //There is not data but there are children
                 if(data.currentNodeEvidenceCount == 0 && data.childrenFound) {
-                    return data.label + " by propagation"
+                    return data.tooltip + " by propagation"
                 }
             },
             _computeInitialCaret: function(d){
@@ -330,7 +327,9 @@
 
             },toggleChildren: function (e) {
 
-                var liParent = e.srcElement.closest("li")
+                var srcElement = e.target || e.srcElement;
+
+                var liParent = srcElement.closest("li")
                 var icon = liParent.getElementsByTagName("i")[0]
 
                 var children = liParent.getElementsByTagName("ul")[0]

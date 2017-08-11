@@ -116,7 +116,7 @@ Annotation section used in function, medical, and expression views.
                 <template is="dom-if" if="[[_checkCategoryLabel(category.name)]]">
                     <div class="row category-row">
                     <div>
-                        <h4 class="annotation-category-title"> [[category.name]]
+                        <h4 class="annotation-category-title"> [[_displayCategoryTitle(category.name)]]
                             <template is="dom-if" if="[[_isProteinProteinInteraction(category)]]">
                                 <div class="grey-x right-column-header">Number of IntAct expt.</div>
                             </template>
@@ -585,6 +585,12 @@ Annotation section used in function, medical, and expression views.
                     this.$$("#evidenceButton").style.display = "block";
                     this.$$("#notice").innerHTML = "<i>Annotations in this section apply to all the isoforms if not specified otherwise.</i>";
                 }
+            },
+             //Rename some titles if necessary
+            _displayCategoryTitle: function(name){
+              if (name === "EXPRESSION INFO"){
+                return "EXPRESSION"
+              } else return name;  
             },
             _sortAlphabetically: function(a,b) {
                 if(a.isoformSpecific && !b.isoformSpecific) return 1;
