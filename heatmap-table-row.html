@@ -146,6 +146,7 @@
             height: 18px;
             border: solid;
             border-width: 1px;
+            cursor:pointer;
         }
 
         .heatmap-circle-size {
@@ -251,6 +252,9 @@
                     })
                 }
             }*/,
+            attached: function () {
+//                $('[data-toggle="tooltip"]').tooltip(); 
+            },
             _getToolTipForValue: function (data){
                 //There is data and there are children
                 if(data.currentNodeEvidenceCount > 0 && data.childrenFound) {

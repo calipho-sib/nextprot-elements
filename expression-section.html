@@ -228,10 +228,8 @@ Annotation section used in function, medical, and expression views.
                             self.heatmapData = self._propagateFlatDataToTree(flatDataCopy);
                             
                             Polymer.RenderStatus.afterNextRender(self.$.HTI_ontology, function(){
-                                var elements = $('[data-toggle="tooltip"]');
-                                elements.tooltip(); 
-                            })
-
+                                $('[data-toggle="tooltip"]').tooltip();
+                            });
                         }
 
 
