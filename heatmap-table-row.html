@@ -2,6 +2,7 @@
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
 <link rel="import" href="quality-label.html">
+<link rel="import" href="heatmap-square.html">
 
 <dom-module id="heatmap-table-row">
 
@@ -50,7 +51,8 @@
         }
 
         .heatmap-row:hover {
-            background-color: aliceblue;
+            background-color: #efefef;
+/*            background-color: aliceblue;*/
         }
 
         .heatmap-rowLabel {
@@ -72,21 +74,6 @@
         .heatmap-rowLabel .glyphicon {
             margin-right: 5px;
             font-size: 12px;
-        }
-
-        .heatmap-column {
-            float: left;
-            height: 20px;
-            width: 20px;
-            text-align: center;
-            margin-left: 10px;
-        }
-
-        .heatmap-group {
-            display: inline-block;
-            text-align: center;
-            margin-right: 5px;
-            margin-left: 5px;
         }
 
         .heatmap-circle {
@@ -155,29 +142,38 @@
         }
 
         .heatmap-group-count-size {
+            float: right;
             width: 20px;
-            margin-right: 5px; 
-            font-size: 14px;
+            height: 20px;
+            margin: 4px 0px 0px 4px;
+            font-size: 12px;
+            text-align: center;
         }
 
         .heatmap-group {
             display: inline-block; 
-            margin-right: 30px; 
+            text-align: center;
+            padding-right: 5px; 
+            padding-left: 20px; 
             border-right: thin solid lightgray
         }
 
-        .grouped-values > .heatmap-group:nth-child(3) {
-            margin-right: 0px; 
+        .grouped-values > .heatmap-group:nth-child(4) {
+            padding-right : 2px; 
+            padding-left : 15px; 
         }
 
         .evidenceNumber {
             background: #7CBA0F;
-            padding: 2px 4px;
+            padding: 2px 6px;
             border-radius: 2px;
             color: white;
             vertical-align: top;
             cursor: pointer;
         }
+            heatmap-square{
+                margin-top:2px;
+            }
 
     </style>
     <template>
@@ -195,17 +191,18 @@
                     <div class="pull-right grouped-values" style="margin-left: 25px">
                         <!-- Groups are showed --> 
                         <template is="dom-repeat" items="[[d.groupValues]]" as="group">
+                            
                             <div class="heatmap-group">
+                                <div class="square-container" style="display:inline-block">
                                 <template is="dom-repeat" items="[[group.values]]" as="value">
-                                    <div class="heatmap-column heatmap-circle-size">
-                                        <span class="heatmap-square" style$="{{_computeStyle(value)}}"  data-toggle="tooltip" title$="{{_getToolTipForValue(value)}}"></span>
-                                    </div>
+                                        <heatmap-square front$="{{_computeStyleFirstSquare(value)}}" back$="{{_computeStyleSecondSquare(value)}}" tooltip-text$="{{_getToolTipForValue(value)}}"></heatmap-square>
                                 </template>
                                 <!-- Number of evidences are displayed for the given group --> 
                                 <div class="heatmap-column heatmap-group-count-size">
                                     <template is="dom-if" if="[[ _computeCountForGroup(group, d)]]">
                                         <span class="evidenceNumber" data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group, d)]]</span>
                                     </template>
+                                </div>
                                 </div>
                             </div>
                         </template>
@@ -301,6 +298,18 @@
                     return totalEvidenceForGroup;
                 }
 
+            },
+            _computeStyleFirstSquare: function(data){
+                if (data.currentNodeEvidenceCount){
+                    return true;
+                }
+                return false;
+            },
+            _computeStyleSecondSquare: function(data){
+                if (data.childrenFound){
+                    return true;
+                }
+                return false;
             },
             _computeStyle: function (data) {
 

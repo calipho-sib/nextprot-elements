@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>heatmap-square</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../heatmap-square.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .vertical-section-container {
+            max-width: 80%;
+        }
+        heatmap-square{
+            margin:10px;
+        }
+    </style>
+</head>
+<body>
+<div class="vertical-section-container centered">
+    <h3>Basic heatmap-square demo</h3>
+    <demo-snippet>
+        <template>
+            <heatmap-square front back></heatmap-square>
+            <heatmap-square back></heatmap-square>
+            <heatmap-square front></heatmap-square>
+            <heatmap-square></heatmap-square>
+        </template>
+    </demo-snippet>
+</div>
+
+</body>
+</html>
