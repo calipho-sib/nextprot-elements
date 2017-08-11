@@ -72,6 +72,9 @@ Exteranl links section present in function, medical, expression, interactions, s
         categories: {
           type: Array
         },
+        view: {
+          type: String
+        },
         count: {
           type: Number,
           notify: true
@@ -88,7 +91,7 @@ Exteranl links section present in function, medical, expression, interactions, s
         var nx = new Nextprot.Client("xref-section", "ndu");
         if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
         var self=this;
-        nx.getAnnotationsByCategory(self.nxConfig.entry, "xref")
+        nx.getEntryXrefInPageView(self.nxConfig.entry, self.view)
                 .then(function (data) {
                   self.getXrefByView(Object.keys(data.xrefs).map(function(k) { return data.xrefs[k] }));
                   self.$.spinner.active = false;
