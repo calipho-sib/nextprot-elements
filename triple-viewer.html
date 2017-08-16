@@ -660,7 +660,12 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                 feature.crossRef = this._toArray(crossRef).sort(this._sortCrossRef);
                             }
                             if(this._isDisulfideBondFeature(feature.category)){
-                                featureList[i].range = feature.start+"&#x256d;&#x256e;"+feature.end;
+                                featureList[i].length = "";
+                                if (featureList[i].description.toLowerCase().startsWith("interchain")){
+                                    featureList[i].range = feature.start;
+                                } else {
+                                    featureList[i].range = feature.start+"&#x256d;&#x256e;"+feature.end;
+                                }
                             }else if(this._isSingleResidueFeature(feature.length)){
                                 featureList[i].range = feature.start;
                             }else{
