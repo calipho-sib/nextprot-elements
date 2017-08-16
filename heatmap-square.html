@@ -7,10 +7,12 @@
 <link rel="import" href="external-scripts.html">
 <link rel="import" href="heatmap-table-row.html">
 
-<!-- 
+ 
+<!--
     <script src="../../jquery/dist/jquery.js"></script>
 <script src="../../bootstrap/dist/js/bootstrap.js"></script>
-    -->
+-->
+    
 
 <!--
 `heatmap-square`
@@ -60,15 +62,15 @@ A heatmap square
 /*                background-color:red;*/
             }
             .filled{
-                background-color:orange;
+                background-color: var(--heatmap-square-color, orange);
             }
             .emptied{
                 background-color:white;
             }
             </style>
-        <div class="square-container" data-toggle="tooltip" data-placement="top" title="[[tooltipText]]" hidden$=[[_hideSquare(front,back)]]>
-            <div class$="[[_computeStyleSquare(front)]]"></div>
-            <div class$="[[_computeStyleSquare(back)]]"></div>
+        <div class="square-container" data-toggle="tooltip" data-placement="top" title="[[tooltipText]]">
+            <div class$="[[_computeStyleSquare(front)]]" hidden$=[[_hideSquare(front,back)]]></div>
+            <div class$="[[_computeStyleSquare(back)]]" hidden$="[[_hideSquare(back)]]"></div>
         </div>
     </template>
 
@@ -90,7 +92,6 @@ A heatmap square
                 }
             },
             attached: function(){
-                
             },
             _computeStyleSquare: function(param){
                 console.log()

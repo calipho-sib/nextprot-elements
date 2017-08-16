@@ -240,7 +240,9 @@ Annotation section used in function, medical, and expression views.
                             self.heatmapData = self._propagateFlatDataToTree(flatDataCopy);
                             
                             Polymer.RenderStatus.afterNextRender(self.$.HTI_ontology, function(){
-                                $('[data-toggle="tooltip"]').tooltip();
+                                $('[data-toggle="tooltip"]').tooltip({
+                                    html: true
+                                });
                             });
                         }
 
@@ -272,7 +274,14 @@ Annotation section used in function, medical, and expression views.
             },
             _buildExportUri: function(env, entry){
                 //TODO "Internal note for dev team: Dev environment hardcoded here. Don't forget to change this before deploying to production..."
-                return "https://dev-api.nextprot.org" + "/entry/" + entry  + "/expression-profile.tsv";
+                var apiBaseUrl = "https://api.nextprot.org";
+                if (this.nxConfig.env === "dev"){
+                    apiBaseUrl = "https://dev-api.nextprot.org";
+                }
+                else if (this.nxConfig.env === "alpha"){
+                    apiBaseUrl = "http://alpha-api.nextprot.org";
+                }
+                return apiBaseUrl + "/entry/" + entry  + "/expression-profile.tsv";
             },
             _changeToTreeView: function () {
                 this.$.ontologyContent.hidden = false;
@@ -298,7 +307,6 @@ Annotation section used in function, medical, and expression views.
 
                 var groups = []
                 var atLeastOneEvidenceValid = false;
-
                 this.heatmapOptions.methods.forEach(function (method) {
                     var methodPossibleValues = method.possibleValues;
                     var groupObject = {name: method.methodName, values: []}
@@ -315,7 +323,7 @@ Annotation section used in function, medical, and expression views.
                                 }
                             }
                         }
-                        groupObject.values.push({currentNodeEvidenceCount : evidenceMatchCount, color : methodPossibleValue.color, tooltip: methodPossibleValue.tooltip})
+                        groupObject.values.push({currentNodeEvidenceCount : evidenceMatchCount, color : methodPossibleValue.color, tooltip: methodPossibleValue.tooltip, expressionLevel : methodPossibleValue.expressionLevel})
 
                     })
 
@@ -466,6 +474,7 @@ Annotation section used in function, medical, and expression views.
                                         data.groupValues[g].values[v] = {
                                             currentNodeEvidenceCount: 0,
                                             color: firstChildFound.color,
+                                            expressionLevel : firstChildFound.expressionLevel,
                                             tooltip: firstChildFound.tooltip,
                                             childrenFound: true,
                                         }

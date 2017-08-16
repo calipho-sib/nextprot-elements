@@ -171,9 +171,22 @@
             vertical-align: top;
             cursor: pointer;
         }
-            heatmap-square{
-                margin-top:2px;
-            }
+        heatmap-square{
+            margin-top:2px;
+        }
+        .high-level{
+            --heatmap-square-color: #FFA10A;
+        }
+        .medium-level{
+            --heatmap-square-color: #ffc870;
+        }
+        .low-level{
+            --heatmap-square-color: #ffe6bd;
+        }
+        .not-detected{
+            --heatmap-square-color: #969e96;
+        }
+        
 
     </style>
     <template>
@@ -195,7 +208,7 @@
                             <div class="heatmap-group">
                                 <div class="square-container" style="display:inline-block">
                                 <template is="dom-repeat" items="[[group.values]]" as="value">
-                                        <heatmap-square front$="{{_computeStyleFirstSquare(value)}}" back$="{{_computeStyleSecondSquare(value)}}" tooltip-text$="{{_getToolTipForValue(value)}}"></heatmap-square>
+                                        <heatmap-square front$="{{_computeStyleFirstSquare(value)}}" back$="{{_computeStyleSecondSquare(value)}}" tooltip-text$="{{_getToolTipForValue(value)}}" class$="[[_computeColor(value)]]"></heatmap-square>
                                 </template>
                                 <!-- Number of evidences are displayed for the given group --> 
                                 <div class="heatmap-column heatmap-group-count-size">
@@ -255,17 +268,20 @@
             _getToolTipForValue: function (data){
                 //There is data and there are children
                 if(data.currentNodeEvidenceCount > 0 && data.childrenFound) {
-                    return data.tooltip + " and children found"
+//                    return data.tooltip + " and children found"
+                    return "<span style='font-weight:500'>"+data.tooltip+"</span>" + "<br> in this anatomical entity and at least one subentity"
                 }
 
                 //There is data and there are no children
                 if(data.currentNodeEvidenceCount > 0 && !data.childrenFound) {
-                    return data.tooltip
+//                    return data.tooltip
+                    return "<span style='font-weight:500'>"+data.tooltip+"</span>" + "<br> in this anatomical entity"
                 }
 
                 //There is not data but there are children
                 if(data.currentNodeEvidenceCount == 0 && data.childrenFound) {
-                    return data.tooltip + " by propagation"
+//                    return data.tooltip + " by propagation"
+                    return "<span style='font-weight:500'>"+data.tooltip+"</span>" + "<br> in at least one anatomical subentity"
                 }
             },
             _computeInitialCaret: function(d){
@@ -310,6 +326,18 @@
                     return true;
                 }
                 return false;
+            },
+            _computeColor: function(data){
+                if (["positive", "high"].indexOf(data.expressionLevel) > -1){
+                    return "high-level";
+                }
+                else if (data.expressionLevel === "medium"){
+                    return "medium-level";
+                }
+                else if (data.expressionLevel === "low"){
+                    return "low-level";
+                }
+                else return "not-detected"
             },
             _computeStyle: function (data) {
 

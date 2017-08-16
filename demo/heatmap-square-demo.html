@@ -19,6 +19,9 @@
         heatmap-square{
             margin:10px;
         }
+        .test{
+            --heatmap-square-color: orangered;
+        }
     </style>
 </head>
 <body>
@@ -26,9 +29,9 @@
     <h3>Basic heatmap-square demo</h3>
     <demo-snippet>
         <template>
-            <heatmap-square front back></heatmap-square>
-            <heatmap-square back></heatmap-square>
-            <heatmap-square front></heatmap-square>
+            <heatmap-square front back tooltip-text="first"></heatmap-square>
+            <heatmap-square back tooltip-text="second"></heatmap-square>
+            <heatmap-square class="test" front tooltip-text="third"></heatmap-square>
             <heatmap-square></heatmap-square>
         </template>
     </demo-snippet>
