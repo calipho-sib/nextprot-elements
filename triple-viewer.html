@@ -609,6 +609,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 }
             },
             _sortGroup: function(a,b){
+                    if (a["start"] === "?") return true;
                     return a["start"] - b["start"];
 //                })
             },
@@ -772,11 +773,19 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             //Listen if click on the feature Table & feature Viewer
             eventTV: function() {
                 var self=this;
-                self.ft.onFeatureSelected(function(d){
+                this.ft.onFeatureSelected(function(d){
                     self.selection = d.detail;
                     // update isoform selector
+                    console.log("feature selected");
+                    console.log(d);
                     self.fvSelection(d.detail);
                 });
+                
+                this.ft.onFeatureDeselected(function(d){
+                    self.selection = {};
+                    self.$.featTable.rowSelection = -1;
+                    self.seqView.selection(0,0,"#C50063");
+                })
 //                console.log("LOOKING FOR THE DOM ELEMENT FEATTABLE");
 //                console.log(this.$.featTable);
 //                console.log(document.querySelector('feature-table'));
@@ -792,7 +801,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     this.seqView.selection(d.start - 1,d.end,"#C50063");
                     this._scrollAuto(".stringSelected", ".scroller",200);
                 }
-                console.log(d.id);
+//                console.log(d.id);
                 for (var i=0; i < this.featuresForTable.length;i++){
                     if (this.featuresForTable[i].id === d.id){
                         this.$.featTable.highlightFeature(i);

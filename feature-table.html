@@ -405,14 +405,16 @@ View list of chromosome names.
 /*              background-color:rgba(197, 0, 99, 0.5);*/
 /*              background-color: rgba(197, 0, 100, 0.4) !important;*/
 /*              background-color:#FF695D !important;*/
-              background-color:#FF695D !important;
+              background-color:rgba(180, 180, 180, 0.2) !important;
               box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
               border-bottom:0px !important;
+              border-left: 5px solid #C50063;
+              padding-bottom:2px;
 /*              font-weight: 700;*/
           }
         .search_selection .general-info{
 /*            background-color:rgba(142, 221, 156, 0.7);*/
-            background-color:rgba(76, 207, 99, 0.6);
+            background-color:rgba(76, 207, 99, 0.5);
         }
             .featPosition{
                 cursor:pointer;
@@ -839,7 +841,6 @@ View list of chromosome names.
 //                }
             },
             highlightFeature: function(index){
-                console.log("highlighted called!")
                 this.rowSelection = index;
                 
                 this.$.itemList.scrollToIndex(index);
@@ -1122,6 +1123,7 @@ View list of chromosome names.
                 this.$.itemList.clearSelection();
                 this.selectedItemsLength = this.featureSelected ? this.featureSelected.length : 0;
                 this.selectionPointer = 0;
+                this.rowSelection = -1;
 //                console.log("featureSelected");
 //                console.log(this.featureSelected);
 //                console.log(this.selectedItemsLength);
