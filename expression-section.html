@@ -94,7 +94,7 @@ Annotation section used in function, medical, and expression views.
                 <div id="nxOntologicalBrowser" class="row">
                     <template is="dom-repeat" items="[[hierarchyRoot]]" as="term">
                         <div class="col-md-4">
-                            <div class="ontological-term"><a on-tap="_scrollToRow" data-args$="[[term.accession]]"><span class="fa fa-link"></span>[[term.name]]</a></div>
+                            <div class="ontological-term"><a on-tap="_scrollToRow" data-args$="[[term.accession]]">[[term.name]]</a></div>
                         </div>
                     </template>
                 </div>
@@ -546,6 +546,13 @@ Annotation section used in function, medical, and expression views.
                 var self = this;
                 //According to specs the eco name is too long
                 //this._renameMicroArrayEvidenceCode(data);
+
+                console.log("GOLD ONLY IS: ", this.nxConfig.goldOnly);
+
+                //Filter by gold Only
+                if(this.nxConfig.goldOnly){
+                    data = data.annot.filter(function (a){ return a.qualityQualifier === "GOLD"})
+                }
 
                 var heatmapFlatData = data.annot.map(function(a) {return {rowLabel : a.cvTermName,
                     name: a.cvTermAccessionCode,
