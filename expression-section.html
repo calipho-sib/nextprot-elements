@@ -547,11 +547,9 @@ Annotation section used in function, medical, and expression views.
                 //According to specs the eco name is too long
                 //this._renameMicroArrayEvidenceCode(data);
 
-                console.log("GOLD ONLY IS: ", this.nxConfig.goldOnly);
-
-                //Filter by gold Only
+                //Filter by gold only if present
                 if(this.nxConfig.goldOnly){
-                    data = data.annot.filter(function (a){ return a.qualityQualifier === "GOLD"})
+                    data.annot = data.annot.filter(function (a){ return a.qualityQualifier === "GOLD"})
                 }
 
                 var heatmapFlatData = data.annot.map(function(a) {return {rowLabel : a.cvTermName,
