@@ -32,7 +32,7 @@ View listing protein expression view.
       <generic-annotation-section id="expressionInfoElement" section="expressionInfo" gold-only="[[nxConfig.goldOnly]]" categories='["EXPRESSION-INFO", "INDUCTION", "DEVELOPMENTAL-STAGE-INFO"]' nx-config="[[nxConfig]]" count="{{genericAnnotationsCount}}"></generic-annotation-section>
     </div>
 
-
+    <!--
     <div id="filterPositiveNegativeSection" class="row nxSection">
       <button id="showFilterButton" class="btn btn-default pull-right" on-tap="_toggleFilters">
         <template is="dom-if" if="[[filtersShown]]">
@@ -66,6 +66,7 @@ View listing protein expression view.
 
       </div>
     </div>
+    -->
     <div id="nxExpressionAnnotations" class="row nxSection">
       <expression-section id="expressionSection" section="expressionSection" gold-only="[[nxConfig.goldOnly]]" nx-config="[[nxConfig]]" count="{{expressionSectionAnnotationCount}}" filters={{filters}}></expression-section>
     </div>
