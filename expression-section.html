@@ -101,7 +101,7 @@ Annotation section used in function, medical, and expression views.
                 <heatmap-table-item id="HTI_ontology" data=[[heatmapData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
             </div>
             <div id="flatContent" hidden>
-                <heatmap-table-item id="HTI_flat" data=[[heatmapFlatData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
+                <heatmap-table-item id="HTI_flat" flat="true" data=[[heatmapFlatData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
             </div>
         </div>
 
@@ -574,6 +574,7 @@ Annotation section used in function, medical, and expression views.
 
             },
             _scrollToRow: function(e){
+
                 var targetId = "#row_" + e.target.dataset.args;
                 var target = this.$.HTI_ontology.querySelector(targetId);
                 var container = this.$.HTI_ontology.querySelector(".heatmap-body");

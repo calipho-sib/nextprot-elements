@@ -300,11 +300,11 @@
             },
             _computeClassesForChildren: function(d){
 
-                var baseClass = "tree heatmap-tree heatmap-opened"
+                var baseClass = "tree heatmap-tree"
                 if(d.level < 2){
-                    return baseClass + " openHmChildren"
+                    return baseClass + " openByDefault openHmChildren"
                 }else {
-                    return "tree heatmap-tree"
+                    return baseClass;
                 }
             },
             _computeCountForGroup: function (group, data) {
