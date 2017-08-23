@@ -219,7 +219,9 @@ Annotation section used in function, medical, and expression views.
                         nxAnatomy.forEach(function (t){
                             self.hierarchyMap[t.accession] = t
                         })
+
                         self.heatmapFlatData = self._convertNextProtDataIntoHeatMapTableFlatFormat(self.expressionProfileData)
+                        console.log("Heatmap Flat Data length: ", self.heatmapFlatData.length);
                         self.count = self.heatmapFlatData.length;
 
                         if( self.count > 0){
@@ -545,7 +547,6 @@ Annotation section used in function, medical, and expression views.
                 }
 
                 console.log("Data elements after filtering:", data.annot.length);
-
 
 
                 var heatmapFlatData = data.annot.map(function(a) {return {rowLabel : a.cvTermName,
