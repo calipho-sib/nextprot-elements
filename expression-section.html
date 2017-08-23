@@ -109,6 +109,10 @@ Annotation section used in function, medical, and expression views.
                     type: Object,
                     value: {}
                 },
+                goldOnly: {
+                    type: Boolean,
+                    observer: "_computeData"
+                },
                 evidencesShown: {
                     type: Boolean,
                     value: false
@@ -167,7 +171,7 @@ Annotation section used in function, medical, and expression views.
                 },
                 hierarchyRoot: {
                     type: Object,
-                    value: [{name:"Alimentary system", code: "alimentary-system", accession: "TS-1293"}/*,
+                    value: [{name:"Alimentary system", code: "alimentary-system", accession: "TS-1293"},
                         {name:"Cardiovascular system", code: "cardiovascular-system", accession : "TS-1297"},
                         {name:"Dermal system", code: "dermal-system", accession: "TS-1299"},
                         {name:"Endocrine system", code: "endocrine-system", accession: "TS-1301"},
@@ -183,7 +187,7 @@ Annotation section used in function, medical, and expression views.
                         {name:"Tissue", code: "tissue", accession: "TS-2090"},
                         {name:"Cell type", code: "cell-type", accession: "TS-2035"},
                         {name:"Fluid and secretion", code: "fluid-and-secretion", accession: "TS-2101"},
-                        {name:"Gestational structure", code: "gestational-structure", accession: "TS-2092"}*/   ]
+                        {name:"Gestational structure", code: "gestational-structure", accession: "TS-2092"}   ]
                 },
                 section: {
                     type: String
@@ -222,22 +226,7 @@ Annotation section used in function, medical, and expression views.
                             self.hierarchyMap[t.accession] = t
                         })
 
-                        self.heatmapFlatData = self._convertNextProtDataIntoHeatMapTableFlatFormat(self.expressionProfileData)
-                        console.log("Heatmap Flat Data length: ", self.heatmapFlatData.length);
-                        self.count = self.heatmapFlatData.length;
-
-                        if( self.count > 0){
-                            // Deep copy
-                            var flatDataCopy = jQuery.extend(true, [], self.heatmapFlatData);
-                            self.heatmapData = self._propagateFlatDataToTree(flatDataCopy);
-                            
-                            Polymer.RenderStatus.afterNextRender(self.$.HTI_ontology, function(){
-                                $('[data-toggle="tooltip"]').tooltip({
-                                    html: true
-                                });
-                            });
-                        }
-
+                        self._computeData();
 
                     }).catch(function (err) {
                         // catch any error that happened so far
@@ -248,6 +237,32 @@ Annotation section used in function, medical, and expression views.
                     });
 
                 });
+            },
+            _computeData: function (){
+
+                var self = this;
+                if(self.expressionProfileData.annot){
+
+                    console.log(self.expressionProfileData)
+
+                    self.heatmapFlatData = self._convertNextProtDataIntoHeatMapTableFlatFormat(self.expressionProfileData)
+                    console.log("Heatmap Flat Data length: ", self.heatmapFlatData.length);
+                    self.count = self.heatmapFlatData.length;
+
+                    if( self.count > 0){
+                        // Deep copy
+                        var flatDataCopy = jQuery.extend(true, [], self.heatmapFlatData);
+                        self.heatmapData = self._propagateFlatDataToTree(flatDataCopy);
+
+                        Polymer.RenderStatus.afterNextRender(self.$.HTI_ontology, function(){
+                            $('[data-toggle="tooltip"]').tooltip({
+                                html: true
+                            });
+                        });
+                    }
+                }
+
+
             },
             _toggleAllEvidences: function (){
                 
