@@ -173,7 +173,7 @@ Annotation section used in function, medical, and expression views.
                 },
                 hierarchyRoot: {
                     type: Object,
-                    value: [{name:"Alimentary system", code: "alimentary-system", accession: "TS-1293"},
+                    value: [{name:"Alimentary system", code: "alimentary-system", accession: "TS-1293"}/*,
                         {name:"Cardiovascular system", code: "cardiovascular-system", accession : "TS-1297"},
                         {name:"Dermal system", code: "dermal-system", accession: "TS-1299"},
                         {name:"Endocrine system", code: "endocrine-system", accession: "TS-1301"},
@@ -189,14 +189,10 @@ Annotation section used in function, medical, and expression views.
                         {name:"Tissue", code: "tissue", accession: "TS-2090"},
                         {name:"Cell type", code: "cell-type", accession: "TS-2035"},
                         {name:"Fluid and secretion", code: "fluid-and-secretion", accession: "TS-2101"},
-                        {name:"Gestational structure", code: "gestational-structure", accession: "TS-2092"}]
+                        {name:"Gestational structure", code: "gestational-structure", accession: "TS-2092"}*/   ]
                 },
                 section: {
                     type: String
-                },
-                goldOnly: {
-                    type: Boolean,
-                    observer: "_getAnnotationsByView"
                 },
                 count: {
                     type: Number,
