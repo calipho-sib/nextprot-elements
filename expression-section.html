@@ -548,6 +548,12 @@ Annotation section used in function, medical, and expression views.
 
                 console.log("Data elements after filtering:", data.annot.length);
 
+                data.annot.forEach(function(annot) {
+                    if(annot.cvTermAccessionCode === "TS-1315"){
+                        console.log("MOUTH IS HERE!!!!!!!!!")
+                    }
+                })
+
 
                 var heatmapFlatData = data.annot.map(function(a) {return {rowLabel : a.cvTermName,
                     name: a.cvTermAccessionCode,
