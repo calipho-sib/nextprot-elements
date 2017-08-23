@@ -545,10 +545,16 @@ Annotation section used in function, medical, and expression views.
 
                 //Filter by gold only if present
                 console.log("Config is ", this.nxConfig);
+                console.log("Data elements ", data.annot.length);
 
                 if(this.nxConfig.goldOnly){
+                    console.log("Filtering annotations on GOLD");
                     data.annot = data.annot.filter(function (a){ return a.qualityQualifier === "GOLD"})
                 }
+
+                console.log("Data elements after filtering:", data.annot.length);
+
+
 
                 var heatmapFlatData = data.annot.map(function(a) {return {rowLabel : a.cvTermName,
                     name: a.cvTermAccessionCode,
