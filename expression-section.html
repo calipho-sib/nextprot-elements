@@ -544,8 +544,8 @@ Annotation section used in function, medical, and expression views.
                 //this._renameMicroArrayEvidenceCode(data);
 
                 //Filter by gold only if present
-                console.log("Config is " + this.nxConfig);
-                
+                console.log("Config is ", this.nxConfig);
+
                 if(this.nxConfig.goldOnly){
                     data.annot = data.annot.filter(function (a){ return a.qualityQualifier === "GOLD"})
                 }
