@@ -268,17 +268,17 @@
             _getToolTipForValue: function (data){
                 //There is data and there are children
                 if(data.currentNodeEvidenceCount > 0 && data.childrenFound) {
-                    return "<span>"+data.tooltip+"</span>" + "<br> in this anatomical entity and at least one subentity"
+                    return data.tooltip + " in this anatomical entity and at least one subentity"
                 }
 
                 //There is data and there are no children
                 if(data.currentNodeEvidenceCount > 0 && !data.childrenFound) {
-                    return "<span>"+data.tooltip+"</span>" + "<br> in this anatomical entity"
+                    return data.tooltip  + " in this anatomical entity"
                 }
 
                 //There is not data but there are children
                 if(data.currentNodeEvidenceCount == 0 && data.childrenFound) {
-                    return "<span>"+data.tooltip+"</span>" + "<br> in at least one anatomical subentity"
+                    return data.tooltip + " in at least one anatomical subentity"
                 }
             },
             _computeInitialCaret: function(d){
