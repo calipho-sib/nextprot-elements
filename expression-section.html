@@ -64,16 +64,11 @@ Annotation section used in function, medical, and expression views.
         </style>
 
         <div>
-            <button id="expressionEvidenceButton" class="btn btn-default pull-right" on-tap="_toggleAllEvidences">
-                <template is="dom-if" if="[[evidencesShown]]">
-                    <iron-icon icon="arrow-drop-up"></iron-icon>
-                    Hide evidences
-                </template>
-                <template is="dom-if" if="[[!evidencesShown]]">
-                    <iron-icon icon="arrow-drop-down"></iron-icon>
-                    Show evidences
-                </template>
+            <a style="color:black" href$="{{_buildExportUri(nxConfig.env, nxConfig.entry)}}">
+            <button id="expressionEvidenceButton" class="btn btn-default pull-right">
+                &nbsp;Export data in TSV&nbsp;
             </button>
+            </a>
 
         </div>
 
@@ -83,9 +78,6 @@ Annotation section used in function, medical, and expression views.
             </li>
             <li id="flatTab" on-tap="_changeToFlatView">
                 <a href="javascript:void(0)">Table</a>
-            </li>
-            <li>
-                <a href$="{{_buildExportUri(nxConfig.env, nxConfig.entry)}}">Export&nbsp;<span class="glyphicon glyphicon-download-alt"></span></a>
             </li>
         </ul>
 
