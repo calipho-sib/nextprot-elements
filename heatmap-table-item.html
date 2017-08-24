@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
-
+<link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="evidence-item.html">
 <link rel="import" href="quality-label.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
@@ -95,6 +95,12 @@ A heatmap table
                 /* transform: rotate(-30deg); */
            }
 
+            .expand-collapse-button {
+                padding: 0px 10px 0px 5px;
+                margin-right: 20px;
+            }
+
+
             </style>
             <div id="tableHeaderContainer">
                 <table id="tableHeader" class="table">
@@ -102,10 +108,14 @@ A heatmap table
                         <th rowspan="3" style="text-align: left">Tissue / Cell type&nbsp;
                             <template is="dom-if" if="[[!flat]]">
                                 <template is="dom-if" if="[[!isExpanded]]">
-                                    <span on-tap="_expandAll" class="pull-right expandCollapse" style="margin-right: 20px">Expand all</span>
+                                    <a on-tap="_expandAll" class="expandCollapse">
+                                        <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-down"></iron-icon>Expand all</button>
+                                    </a>
                                 </template>
                                 <template is="dom-if" if="[[isExpanded]]">
-                                    <span on-tap="_collapseAll" class="pull-right expandCollapse" style="margin-right: 20px">Collapse all</span>
+                                    <a on-tap="_collapseAll" class="expandCollapse">
+                                        <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-up"></iron-icon>Collapse all</button>
+                                    </a>
                                 </template>
                             </template>
                         </th>
@@ -166,6 +176,7 @@ A heatmap table
                 this._reload();
             },
             _expandAll: function () {
+
                 var container = this.$.hmroot.querySelectorAll(".heatmap-tree");
                 container.forEach(function (ctn){
                     ctn.classList.add('openHmChildren');
