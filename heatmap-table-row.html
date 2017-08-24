@@ -191,6 +191,7 @@
     </style>
     <template>
         <template is="dom-repeat" items="[[data]]" as="d">
+            <template is="dom-if" if="[[hasSomeData(d)]]">
             <li>
                 <div id="row_[[d.name]]" class$="{{_computeClassesForParent(d)}}" on-tap="toggleChildren">
                     <template is="dom-if" if="[[hasChildren(d)]]">
@@ -225,10 +226,11 @@
                 <div id="annotation-[[d.annotation.annotationId]]-evidence-container" class="evidence-row"></div>
                 <template is="dom-if" if="[[hasChildren(d)]]">
                     <ul class$="{{_computeClassesForChildren(d)}}">
-                        <heatmap-table-row data="[[d.children]]" options="[[options]]" display-evidences="[[displayEvidences]]"></heatmap-table-row>
+                            <heatmap-table-row data="[[d.children]]" options="[[options]]" display-evidences="[[displayEvidences]]"></heatmap-table-row>
                     </ul>
                 </template>
             </li>
+            </template>
         </template>
     </template>
 
@@ -356,6 +358,15 @@
 
                 return "display: none";
 
+            },
+            //May have data directly or children may have
+            hasSomeData: function (d) {
+                if(!d.groupValues || d.groupValues.length == 0) { //If there is no data for this tissue
+                    if (!d.propagatedValuesFromChildren || d.propagatedValuesFromChildren.length == 0) { //Nor data for the children
+                        return false;
+                    }
+                }
+                return true
             },
             hasChildren: function (d) {
                 var boolean = d.children && d.children.length;
