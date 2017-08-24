@@ -88,10 +88,10 @@ Annotation section used in function, medical, and expression views.
                         </div>
                     </template>
                 </div>
-                <heatmap-table-item id="HTI_ontology" data=[[heatmapData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
+                <heatmap-table-item id="HTI_ontology" hm-type='{"flat": false}' data=[[heatmapData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
             </div>
             <div id="flatContent" hidden>
-                <heatmap-table-item id="HTI_flat" flat="true" data=[[heatmapFlatData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
+                <heatmap-table-item id="HTI_flat" hm-type='{"flat": true}' data=[[heatmapFlatData]] options=[[heatmapOptions]] display-evidences=[[evidencesShown]]></heatmap-table-item>
             </div>
         </div>
 

@@ -106,7 +106,7 @@ A heatmap table
                 <table id="tableHeader" class="table">
                     <tr>
                         <th rowspan="3" style="text-align: left">Tissue / Cell type&nbsp;
-                            <template is="dom-if" if="[[!flat]]">
+                            <template is="dom-if" if="[[!hmType.flat]]">
                                 <template is="dom-if" if="[[!isExpanded]]">
                                     <a on-tap="_expandAll" class="expandCollapse">
                                         <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-down"></iron-icon>Expand all</button>
@@ -115,6 +115,18 @@ A heatmap table
                                 <template is="dom-if" if="[[isExpanded]]">
                                     <a on-tap="_collapseAll" class="expandCollapse">
                                         <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-up"></iron-icon>Collapse all</button>
+                                    </a>
+                                </template>
+                            </template>
+                            <template is="dom-if" if="[[hmType.flat]]">
+                                <template is="dom-if" if="[[!areEvidencesShown]]">
+                                    <a on-tap="_showEvidences" class="expandCollapse">
+                                        <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-down"></iron-icon>Show evidences</button>
+                                    </a>
+                                </template>
+                                <template is="dom-if" if="[[areEvidencesShown]]">
+                                    <a on-tap="_hideEvidences" class="expandCollapse">
+                                        <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-up"></iron-icon>Hide evidences</button>
                                     </a>
                                 </template>
                             </template>
@@ -148,9 +160,8 @@ A heatmap table
                     type: Object,
                     value: {}
                 },
-                displayEvidences: {
-                    type: Boolean,
-                    value: false
+                hmType: {
+                    type: Object
                 },
                 options: {
                     type: Object,
@@ -160,20 +171,21 @@ A heatmap table
                     type: Boolean,
                     value: false
                 },
-                flat: {
+                areEvidencesShown: {
                     type: Boolean,
                     value: false
                 },
                 data: {
                     type: Array,
                     value: [],
-                    observer: "_reload"
+                    observer: "_removeSpinner"
                 }
             },
             ready: function () {
             },
             attached: function () {
-                this._reload();
+                this._removeSpinner();
+
             },
             _expandAll: function () {
 
@@ -197,8 +209,7 @@ A heatmap table
 
 
             },
-            _reload: function () {
-
+            _removeSpinner: function () {
 
                 //Nothing to do here???
                 if (this.data && this.data.length) {
