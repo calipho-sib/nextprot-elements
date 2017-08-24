@@ -346,20 +346,25 @@ Annotation section used in function, medical, and expression views.
             _enrichEvidenceWithResourceUrl: function(heatmapData, xrefs) {
                 heatmapData.forEach(function(data){
                     data.annotation.evidences.forEach(function(evidence){
-
                         var resource = xrefs[evidence.resourceId]
                         evidence.url = resource.resolvedUrl.replace(/amp;/g, "")
 
                         //Define the URL label
-                        if(evidence.properties["antibodies acc"]){
-                            evidence.urlLabel = evidence.properties["antibodies acc"]
-                        }else {
+                        if(evidence.resourceDb == "HPA"){
 
-                            var geneId = evidence.resourceAccession.slice(evidence.resourceAccession.indexOf("gene_id=") + 8);
-                            if (geneId.indexOf("&amp") !== -1) {
-                                geneId = geneId.substring(0, geneId.indexOf("&amp"));
+                            if(evidence.evidenceCodeAC == "ECO:0000087"){
+                                evidence.urlLabel = evidence.properties["antibodies acc"]
+                            }else {
+                                evidence.urlLabel = evidence.resourceAccession;
                             }
-                            evidence.urlLabel = geneId;
+
+                        } else if(evidence.resourceDb == "Bgee"){
+                            var geneId = evidence.resourceAccession.slice(evidence.resourceAccession.indexOf("gene_id=") + 8);
+
+                            if(geneId.indexOf("&") != -1){
+                                geneId = geneId.substring(0, geneId.indexOf("&"));
+                            }
+                            evidence.urlLabel = geneId
                         }
                     })
                 })
