@@ -226,7 +226,7 @@
                 <div id="annotation-[[d.annotation.annotationId]]-evidence-container" class="evidence-row"></div>
                 <template is="dom-if" if="[[hasChildren(d)]]">
                     <ul class$="{{_computeClassesForChildren(d)}}">
-                            <heatmap-table-row data="[[d.children]]" options="[[options]]" display-evidences="[[displayEvidences]]"></heatmap-table-row>
+                            <heatmap-table-row data="[[d.children]]" options="[[options]]"></heatmap-table-row>
                     </ul>
                 </template>
             </li>
@@ -245,25 +245,8 @@
                 options: {
                     type: Object,
                     value: {}
-                }/*,
-                displayEvidences: {
-                    type: Boolean,
-                    value: false,
-                    observer: "_show"
-                }*/
-            }/*,
-            _show: function(){
-                var self = this;
-                if(this.displayEvidences) {
-                    this.data.forEach(function (d){
-                        d.groupValues.forEach(function (g){
-                           if(d.annotation) {
-                              self._showEvidences(g, d.annotation)
-                           }
-                        })
-                    })
                 }
-            }*/,
+            },
             attached: function () {
 //                $('[data-toggle="tooltip"]').tooltip(); 
             },
@@ -413,9 +396,20 @@
                 }
             },
 
+            /*
+             * we want the evidences be sorted by method (eco name)
+             */
+            _sortEvidences: function(evidences) {
+                evidences.sort(function(a,b) {
+                    return a.evidenceCodeName.toLowerCase().localeCompare(b.evidenceCodeName.toLowerCase());
+                });
+            },
+
             _showEvidences: function(e){
                 //console.log("show evidences", e);
                 var annotation = JSON.parse(e.target.dataset.args);
+                this._sortEvidences(annotation.evidences);
+                //console.log(annotation.evidences);
                 var container = this.$$("#annotation-"+annotation.annotationId+"-evidence-container");
                 var oldeco = this._ecoCurrentlyHighlighted(container);
                 var neweco = e.target.attributes["method-ecocode"].nodeValue;
