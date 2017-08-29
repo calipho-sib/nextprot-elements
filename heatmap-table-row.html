@@ -214,7 +214,7 @@
                                 <!-- Number of evidences are displayed for the given group --> 
                                 <div class="heatmap-column heatmap-group-count-size">
                                     <template is="dom-if" if="[[ _computeCountForGroup(group, d)]]">
-                                        <span class="evidenceNumber" data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group, d)]]</span>
+                                        <span class="evidenceNumber"  method-ecocode$="[[group.ecoCode]]" data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group, d)]]</span>
                                     </template>
                                 </div>
                                 </div>
@@ -308,6 +308,7 @@
             },
             _computeCountForGroup: function (group, data) {
 
+                //console.log("group",group)
                 var totalEvidenceForGroup = group.values.reduce(function(v1, v2) {return v1 + v2.currentNodeEvidenceCount}, 0);
                 if(totalEvidenceForGroup > 0){
                     return totalEvidenceForGroup;
@@ -399,7 +400,10 @@
 
             },
             _showEvidences: function(e, annotation){
+                //console.log("e:",e);
                 var annotation = JSON.parse(e.target.dataset.args);
+                var eco = e.target.attributes["method-ecocode"].nodeValue;
+                console.log("my eco:", eco);
                 var container = this.$$("#annotation-"+annotation.annotationId+"-evidence-container");
                 if(container.childElementCount===0){
                     for (evidenceIdx in annotation.evidences){
@@ -410,7 +414,14 @@
                         }
                         var evidenceItem = document.createElement("evidence-item");
                         evidenceItem.setAttribute("index", new Number(evidenceIdx) + 1);
-                        evidenceItem.setAttribute("class", "grey-background");
+                        if (eco === evidence.evidenceCodeAC) {
+                            console.log("same eco");
+                            evidenceItem.setAttribute("class", "grey-background");
+                        } else {
+                            console.log("other eco");
+                            evidenceItem.setAttribute("style", "{background-color: red;}");
+
+                        }
 
                         evidenceItem.data=evidence;
                         container.appendChild(evidenceItem);
