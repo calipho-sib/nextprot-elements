@@ -200,25 +200,24 @@
             "intensity": null,
             "subjectProteinOrigin": null,
             "sourceAccession_TODEBUG": null
-          }' id="evi2" index="2" highlighted="no"></evidence-item>
+          }' index="2" highlighted="no"></evidence-item>
         </template>
     </demo-snippet>
 </div>
 <script>
 
     function inverseHighlight() {
-        alert('Ow!');
-        //var v = document.getElementById("evi1").getAttribute("highlighted").getValue();
-
-    }
-/*
-    Polymer({
-        is: 'x-custom',
-        inverseHighlight: function() {
-            alert('Ow!');
+        var eviElems = document.querySelectorAll("evidence-item");
+        console.log("evidence items:", eviElems);
+        for (var i = 0; i < eviElems.length; i++) {
+            console.log("hilit:",i,eviElems[i].highlighted);
+            if (eviElems[i].highlighted === 'yes') {
+                eviElems[i].highlighted = 'no'
+            } else {
+                eviElems[i].highlighted = 'yes'
+            }
         }
-    });
-*/
+    }
 </script>
 </body>
 </html>

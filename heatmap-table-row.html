@@ -298,7 +298,6 @@
 
             },
             _computeClassesForChildren: function(d){
-
                 var baseClass = "tree heatmap-tree"
                 if(d.level < 2){
                     return baseClass + " openByDefault openHmChildren"
@@ -307,14 +306,13 @@
                 }
             },
             _computeCountForGroup: function (group, data) {
-
                 //console.log("group",group)
                 var totalEvidenceForGroup = group.values.reduce(function(v1, v2) {return v1 + v2.currentNodeEvidenceCount}, 0);
                 if(totalEvidenceForGroup > 0){
                     return totalEvidenceForGroup;
                 }
-
             },
+
             _computeStyleFirstSquare: function(data){
                 if (data.currentNodeEvidenceCount){
                     return true;
@@ -369,24 +367,21 @@
                 }
                 return true
             },
+
             hasChildren: function (d) {
                 var boolean = d.children && d.children.length;
                 return boolean;
-            }, _toggleEvidences: function(group) {
+            },
 
-
-            },toggleChildren: function (e) {
-
+            toggleChildren: function (e) {
+                //console.log("toggle children", e);
                 var srcElement = e.target || e.srcElement;
-
                 var liParent = srcElement.closest("li")
                 var icon = liParent.getElementsByTagName("i")[0]
-
                 var children = liParent.getElementsByTagName("ul")[0]
                 if(children && children.classList){
                     children.classList.toggle("openHmChildren");
                 }
-
                 if(icon){
                     if (icon.classList.contains("fa-caret-down")) {
                         icon.classList.remove("fa-caret-down")
@@ -396,15 +391,36 @@
                         icon.classList.add("fa-caret-down")
                     }
                 }
-
-
             },
-            _showEvidences: function(e, annotation){
-                //console.log("e:",e);
+
+            _ecoCurrentlyHighlighted: function(evidenceContainer) {
+                if (evidenceContainer.childElementCount > 0) {
+                    var evidenceItems = evidenceContainer.children;
+                    for (var i=0;i<evidenceItems.length;i++) {
+                        var evidenceItem=evidenceItems[i];
+                        if (evidenceItem.highlighted==='yes') return evidenceItem.data.evidenceCodeAC;
+                    }
+                }
+                return "";
+            },
+
+            _stopEventPropagation: function(event) {
+                if (event.stopPropagation){
+                    event.stopPropagation();
+                }
+                else if(window.event){
+                    window.event.cancelBubble=true;
+                }
+            },
+
+            _showEvidences: function(e){
+                //console.log("show evidences", e);
                 var annotation = JSON.parse(e.target.dataset.args);
-                var eco = e.target.attributes["method-ecocode"].nodeValue;
-                console.log("my eco:", eco);
                 var container = this.$$("#annotation-"+annotation.annotationId+"-evidence-container");
+                var oldeco = this._ecoCurrentlyHighlighted(container);
+                var neweco = e.target.attributes["method-ecocode"].nodeValue;
+
+                // if evidence-items are not yet created, create them and highlight those related to neweco
                 if(container.childElementCount===0){
                     for (evidenceIdx in annotation.evidences){
                         var evidence = annotation.evidences[evidenceIdx]
@@ -414,24 +430,28 @@
                         }
                         var evidenceItem = document.createElement("evidence-item");
                         evidenceItem.setAttribute("index", new Number(evidenceIdx) + 1);
-                        if (eco === evidence.evidenceCodeAC) {
-                            console.log("same eco");
-                            evidenceItem.setAttribute("class", "grey-background");
-                        } else {
-                            console.log("other eco");
-                            evidenceItem.setAttribute("style", "{background-color: red;}");
-
-                        }
-
+                        var hlValue = (neweco === evidence.evidenceCodeAC ? "yes" : "no");
+                        evidenceItem.setAttribute("highlighted", hlValue);
                         evidenceItem.data=evidence;
                         container.appendChild(evidenceItem);
                         this.updateStyles();
                     }
-                } else if (container.hidden) {
-                    container.hidden = false;
+                // else if we want to highlight evidence-itmes related to another eco,
+                // then update the highlighted value for all
+                } else if (oldeco != neweco) {
+                    for (var i=0;i<container.children.length;i++) {
+                        var evidenceItem=container.children[i];
+                        var hlValue = (neweco === evidenceItem.data.evidenceCodeAC ? "yes" : "no");
+                        evidenceItem.highlighted=hlValue;
+                        container.hidden = false;
+                    }
+                // we click again on same eco then toggle visibility of evidence-items
                 } else {
-                    container.hidden = true;
+                    container.hidden = ! container.hidden;
                 }
+                // prevents event to go on bubbling and this way prevents toggleChildren() to be executed
+                this._stopEventPropagation(e);
+
             }
         });
     </script>
