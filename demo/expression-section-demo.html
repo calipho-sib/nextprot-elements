@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>expression-view demo</title>
+    <title>expression-section demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
@@ -20,22 +20,40 @@
   <body>
 
     <div class="vertical-section-container centered">
-      <h3>Expression-view section Demo</h3>
-      <h4><span><label>Gold only</label><input type="checkbox" onchange="toggleGoldOnly()" style="margin-left: 20px;"></span></h4>
+      <h3>Expression-section Demo</h3>
+      <h4>
+        <span><label>Gold only</label><input type="checkbox" onchange="toggleGoldOnly()" style="margin-left: 10px;" checked></span>
+        <span><label>Flat view</label><input type="checkbox" onchange="toggleView()" style="margin-left: 10px;"></span>
+      </h4>
       <demo-snippet>
         <template>
-          <expression-section nx-config='{"env": "dev", "entry": "NX_P01308", "goldOnly" : true}'></expression-section>
+          <expression-section nx-config='{"env": "dev", "entry": "NX_Q9Y6N5", "goldOnly" : true}'></expression-section>
         </template>
       </demo-snippet>
     </div>
     <script>
       function toggleGoldOnly(){
-        var gasElement = document.querySelector("generic-annotation-section");
-        var tvElement = document.querySelector("triple-viewer");
-        if(gasElement && gasElement.hasAttribute("gold-only")) gasElement.removeAttribute("gold-only");
-        else if (gasElement) gasElement.setAttribute("gold-only","true");
-        if(tvElement && tvElement.hasAttribute("gold-only")) tvElement.removeAttribute("gold-only");
-        else if (tvElement) tvElement.setAttribute("gold-only","true");
+
+          toggleNXConfigBoolean("goldOnly");
+      }
+
+      function toggleView() {
+
+          toggleNXConfigBoolean("flatView");
+      }
+
+      function toggleNXConfigBoolean(nxConfigPropBoolean){
+          var element = document.querySelector("expression-section");
+
+          if (element && element.hasAttribute("nx-config")) {
+
+              var nxConfig = JSON.parse(element.getAttribute("nx-config"));
+
+              nxConfig[nxConfigPropBoolean] = nxConfig[nxConfigPropBoolean] !== true;
+
+              element.setAttribute("nx-config", JSON.stringify(nxConfig));
+              console.log("nxconfig updated", nxConfig);
+          }
       }
     </script>
   </body>
