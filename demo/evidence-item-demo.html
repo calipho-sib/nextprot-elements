@@ -18,13 +18,13 @@
     </style>
 </head>
 <body>
-
+<button onclick="inverseHighlight()">Inverse highlight</button>
 <div class="vertical-section-container centered">
     <h3>Basic evidence-item Demo</h3>
     <demo-snippet>
         <template>
             <h4>Evidence with DB reference</h4>
-            <evidence-item data='{
+            <evidence-item id="evi1" data='{
             "resourceId": 1076155,
             "resourceType": "database",
             "resourceAccession": "P52701",
@@ -63,7 +63,7 @@
             "intensity": null,
             "subjectProteinOrigin": null,
             "sourceAccession_TODEBUG": null
-          }' index=1></evidence-item>
+          }' index="1" highlighted="yes"></evidence-item>
             <h4>Evidence with publication reference</h4>
             <evidence-item data='{
             "resourceId": 692691,
@@ -200,9 +200,24 @@
             "intensity": null,
             "subjectProteinOrigin": null,
             "sourceAccession_TODEBUG": null
-          }' index=1></evidence-item>
+          }' index="2" highlighted="no"></evidence-item>
         </template>
     </demo-snippet>
 </div>
+<script>
+
+    function inverseHighlight() {
+        var eviElems = document.querySelectorAll("evidence-item");
+        console.log("evidence items:", eviElems);
+        for (var i = 0; i < eviElems.length; i++) {
+            console.log("hilit:",i,eviElems[i].highlighted);
+            if (eviElems[i].highlighted === 'yes') {
+                eviElems[i].highlighted = 'no'
+            } else {
+                eviElems[i].highlighted = 'yes'
+            }
+        }
+    }
+</script>
 </body>
 </html>

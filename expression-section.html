@@ -133,12 +133,12 @@ Annotation section used in function, medical, and expression views.
                     type: Object,
                     value: { "methods" : [ 
                         {
-                        methodName : "Microarray", methodEvidenceCodeName: "microarray RNA expression level evidence",
+                        methodName : "Microarray", methodEvidenceCodeName: "microarray RNA expression level evidence", ecoCode: "ECO:0000104",
                         possibleValues : [{expressionLevel : "positive", tooltip: "positive", color: "#ffa10a"},
                             {expressionLevel : "negative", tooltip: "negative", color : "#969e96"}]
                         },
                         {
-                            methodName : "RNA-Seq", methodEvidenceCodeName: "RNA-seq evidence",
+                            methodName : "RNA-Seq", methodEvidenceCodeName: "RNA-seq evidence",ecoCode: "ECO:0000295",
                             possibleValues : [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
                                 {expressionLevel: "medium", tooltip: "positive (medium)", color: "#ffc870"},
                                 {expressionLevel: "low", tooltip: "positive (low)", color: "#ffe6bd"},
@@ -146,10 +146,10 @@ Annotation section used in function, medical, and expression views.
                             
                         },
                         {
-                            methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",
+                            methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",ecoCode: "ECO:0000009",
                             possibleValues : [{expressionLevel: "positive", tooltip: "positive", color: "#ffa10a"}]
                         },
-                        {   methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence",
+                        {   methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence",ecoCode: "ECO:0000087",
                             possibleValues : [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
                                 {expressionLevel: "medium", tooltip: "positive (medium)", color: "#ffc870"},
                                 {expressionLevel: "low", tooltip: "positive (low)", color: "#ffe6bd"},
@@ -185,6 +185,10 @@ Annotation section used in function, medical, and expression views.
                 },
                 section: {
                     type: String
+                },
+                scrollOffset: {
+                    type: Number,
+                    value: 50  // default value equals height of nextprot page header (nav menu top page)
                 },
                 count: {
                     type: Number,
@@ -311,7 +315,7 @@ Annotation section used in function, medical, and expression views.
                 var atLeastOneEvidenceValid = false;
                 this.heatmapOptions.methods.forEach(function (method) {
                     var methodPossibleValues = method.possibleValues;
-                    var groupObject = {name: method.methodName, values: []}
+                    var groupObject = {name: method.methodName, values: [], ecoCode:method.ecoCode}
                     groups.push(groupObject)
                     methodPossibleValues.forEach(function (methodPossibleValue) {
 
@@ -453,7 +457,7 @@ Annotation section used in function, medical, and expression views.
 
                             //Create group if group is not present
                             if(!data.groupValues[g]){
-                                data.groupValues.push({name: group.name, values:[]})
+                                data.groupValues.push({name: group.name, values:[], ecoCode: group.ecoCode})
                             }
 
                             for(var v=0; v< group.values.length; v++){
@@ -594,16 +598,14 @@ Annotation section used in function, medical, and expression views.
 
 
             },
-            _scrollToRow: function(e){
 
+            _scrollToRow: function(e){
                 var targetId = "#row_" + e.target.dataset.args;
                 var target = this.$.HTI_ontology.querySelector(targetId);
-                var container = this.$.HTI_ontology.querySelector(".heatmap-body");
-                var shiftTop = $(container).position().top - 8;
-                var ElementTop = $(target).position().top-shiftTop;
-                var scrollPosition = $(container).scrollTop();
-                var scrollingLength = ElementTop + scrollPosition;
-                $(container).animate({scrollTop: scrollingLength}, 500);
+                var trgTop = target.offsetTop;
+                var cntTop = target.offsetParent.offsetTop;
+                //console.log("scrollOffset", this.scrollOffset, "trgTop",trgTop, "cntTop", cntTop);
+                $("html,body").animate({scrollTop: trgTop + cntTop + this.scrollOffset}, 500);
             }
         });
     </script>

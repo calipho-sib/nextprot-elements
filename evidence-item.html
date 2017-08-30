@@ -55,9 +55,14 @@ Block element representing an evidence record.
             .experiments-line {
                 color: #999;
             }
+            .evidence-highlighted {
+                background-color: rgba(223, 240, 216, 1);
+            }
+
         </style>
-        <template is="dom-if" if="[[data.evidenceCodeName]]">
-            <div class="evidence-container">
+        <template is="dom-if" if="[[data.evidenceCodeName]]" >
+
+            <div class$="[[_computeHighlighted(highlighted)]]" >
                 <div class="evidence-arrow">&#10549;</div>  Evidence [[index]]:
                 <span class="colored-label evidence-code-name">[[data.evidenceCodeName]]</span>
                 <span class="colored-label evidence-source">[[data.assignedBy]]</span>
@@ -111,8 +116,20 @@ Block element representing an evidence record.
                 },
                 index: {
                     type: Number
+                },
+                highlighted: {
+                    type: String,
+                    default: "no"
                 }
-            }
+
+            },
+            _computeHighlighted: function(state){
+                if(state === 'yes'){
+                    return "evidence-container evidence-highlighted";
+                }
+                return "evidence-container";
+
+            },
         });
     </script>
 </dom-module>
