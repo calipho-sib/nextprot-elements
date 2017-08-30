@@ -190,6 +190,10 @@ Annotation section used in function, medical, and expression views.
                 section: {
                     type: String
                 },
+                scrollOffset: {
+                    type: Number,
+                    value: 50  // default value equals height of nextprot page header (nav menu top page)
+                },
                 count: {
                     type: Number,
                     notify: true
@@ -598,16 +602,14 @@ Annotation section used in function, medical, and expression views.
 
 
             },
-            _scrollToRow: function(e){
 
+            _scrollToRow: function(e){
                 var targetId = "#row_" + e.target.dataset.args;
                 var target = this.$.HTI_ontology.querySelector(targetId);
-                var container = this.$.HTI_ontology.querySelector(".heatmap-body");
-                var shiftTop = $(container).position().top - 8;
-                var ElementTop = $(target).position().top-shiftTop;
-                var scrollPosition = $(container).scrollTop();
-                var scrollingLength = ElementTop + scrollPosition;
-                $(container).animate({scrollTop: scrollingLength}, 500);
+                var trgTop = target.offsetTop;
+                var cntTop = target.offsetParent.offsetTop;
+                //console.log("scrollOffset", this.scrollOffset, "trgTop",trgTop, "cntTop", cntTop);
+                $("html,body").animate({scrollTop: trgTop + cntTop + this.scrollOffset}, 500);
             }
         });
     </script>
