@@ -107,10 +107,6 @@ Annotation section used in function, medical, and expression views.
                     type: Object,
                     value: {}
                 },
-                goldOnly: {
-                    type: Boolean,
-                    observer: "_computeData"
-                },
                 evidencesShown: {
                     type: Boolean,
                     value: false
@@ -203,7 +199,16 @@ Annotation section used in function, medical, and expression views.
                     observer: {}
                 }
             },
+            observers: [
+                '_getDataFromAPI(nxConfig.goldOnly)'
+            ],
             ready: function () {
+
+                this._getDataFromAPI();
+            },
+            _getDataFromAPI: function (){
+
+                console.log("fetch data", this.nxConfig);
 
                 Polymer.RenderStatus.afterNextRender(this, function () {
                     var nx = new Nextprot.Client("neXtprot expression section", "Calipho Group");
@@ -222,10 +227,9 @@ Annotation section used in function, medical, and expression views.
                         self.expressionProfileData = result[1];
                         nxAnatomy.forEach(function (t){
                             self.hierarchyMap[t.accession] = t
-                        })
+                        });
 
                         self._computeData();
-
                     }).catch(function (err) {
                         // catch any error that happened so far
                         console.log("Argh, broken: " + err.message);
@@ -233,18 +237,14 @@ Annotation section used in function, medical, and expression views.
                         self.$.spinner.removeAttribute('active');
                         self.count = 0;
                     });
-
                 });
             },
             _computeData: function (){
 
                 var self = this;
-                if(self.expressionProfileData.annot){
+                if(self.expressionProfileData && self.expressionProfileData.annot){
 
-                    console.log(self.expressionProfileData)
-
-                    self.heatmapFlatData = self._convertNextProtDataIntoHeatMapTableFlatFormat(self.expressionProfileData)
-                    console.log("Heatmap Flat Data length: ", self.heatmapFlatData.length);
+                    self.heatmapFlatData = self._convertNextProtDataIntoHeatMapTableFlatFormat(self.expressionProfileData);
                     self.count = self.heatmapFlatData.length;
 
                     if( self.count > 0){
@@ -259,8 +259,6 @@ Annotation section used in function, medical, and expression views.
                         });
                     }
                 }
-
-
             },
             _toggleAllEvidences: function (){
                 
@@ -289,21 +287,20 @@ Annotation section used in function, medical, and expression views.
                 return apiBaseUrl + "/entry/" + entry  + "/expression-profile.tsv";
             },
             _changeToTreeView: function () {
+
                 this.$.ontologyContent.hidden = false;
                 this.$.flatContent.hidden = true;
 
-                this.$.ontologyTab.classList.toggle("active")
-                this.$.flatTab.classList.toggle("active")
-
+                this.$.ontologyTab.classList.add("active")
+                this.$.flatTab.classList.remove("active")
             },
             _changeToFlatView: function () {
 
                 this.$.ontologyContent.hidden = true;
                 this.$.flatContent.hidden = false;
 
-                this.$.ontologyTab.classList.toggle("active")
-                this.$.flatTab.classList.toggle("active")
-
+                this.$.ontologyTab.classList.remove("active")
+                this.$.flatTab.classList.add("active")
             },
             _computeStyle: function (value) {
                 return "margin: 5px; background-color: " + value
@@ -564,9 +561,8 @@ Annotation section used in function, medical, and expression views.
                 if(this.nxConfig.goldOnly){
                     console.log("Filtering annotations on GOLD");
                     data.annot = data.annot.filter(function (a){ return a.qualityQualifier === "GOLD"})
+                    console.log("Data elements (after filtering):", data.annot.length);
                 }
-
-                console.log("Data elements after filtering:", data.annot.length);
 
                 data.annot.forEach(function(annot) {
                     if(annot.cvTermAccessionCode === "TS-1315"){
