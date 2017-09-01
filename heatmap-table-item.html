@@ -48,6 +48,7 @@ A heatmap table
 
             paper-spinner-lite {
                 --paper-spinner-stroke-width: 3px;
+
             }
 
             .center {
@@ -57,6 +58,11 @@ A heatmap table
             #featHeatMapSpinner {
                 height: 32px;
                 width: 32px;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                margin-top: -16px; /* Negative half of height. */
+                margin-left: -16px; /* Negative half of width. */
             }
 
              .heatmap-body > ul > heatmap-table-row > li > ul {
@@ -102,7 +108,8 @@ A heatmap table
 
 
             </style>
-            <div id="tableHeaderContainer">
+        <paper-spinner-lite id="featHeatMapSpinner" alt="Loading data ..." active></paper-spinner-lite>
+        <div id="tableHeaderContainer">
                 <table id="tableHeader" class="table">
                     <tr>
                         <th rowspan="3" style="text-align: left">Tissue / Cell type&nbsp;
@@ -119,13 +126,13 @@ A heatmap table
                                 </template>
                             </template>
                             <template is="dom-if" if="[[hmType.flat]]">
-                                <template is="dom-if" if="[[!areEvidencesShown]]">
-                                    <a on-tap="_showEvidences" class="expandCollapse">
+                                <template is="dom-if" if="[[!areAllEvidencesShown]]">
+                                    <a on-tap="_showAllEvidences" class="expandCollapse">
                                         <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-down"></iron-icon>Show evidences</button>
                                     </a>
                                 </template>
-                                <template is="dom-if" if="[[areEvidencesShown]]">
-                                    <a on-tap="_hideEvidences" class="expandCollapse">
+                                <template is="dom-if" if="[[areAllEvidencesShown]]">
+                                    <a on-tap="_hideAllEvidences" class="expandCollapse">
                                         <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-up"></iron-icon>Hide evidences</button>
                                     </a>
                                 </template>
@@ -144,11 +151,8 @@ A heatmap table
             </div>
             <div class="heatmap-body">
             <ul>
-                <heatmap-table-row id="hmroot" data="[[data]]" options="[[options]]" display-evidences="[[displayEvidences]]"></heatmap-table-row>
+                <heatmap-table-row id="hmroot" data="[[data]]" show-all-evidences="[[areAllEvidencesShown]]" is-tabular="[[hmType.flat]]" slow-process="{{spinnerActive}}"></heatmap-table-row>
             </ul>
-        </div>
-        <div class="center">
-            <paper-spinner-lite id="featHeatMapSpinner" alt="Loading data ..." active></paper-spinner-lite>
         </div>
     </template>
 
@@ -161,9 +165,6 @@ A heatmap table
                     value: {}
                 },
                 hmType: {
-                    type: Object
-                },
-                options: {
                     type: Object,
                     value: {}
                 },
@@ -171,21 +172,26 @@ A heatmap table
                     type: Boolean,
                     value: false
                 },
-                areEvidencesShown: {
+                areAllEvidencesShown: {
                     type: Boolean,
                     value: false
+                },
+                spinnerActive: {
+                    type:Boolean,
+                    value: false,
+                    observer: "_handleSpinner"
                 },
                 data: {
                     type: Array,
                     value: [],
-                    observer: "_removeSpinner"
+                    observer: "_hideSpinnerOnDataReady"
                 }
             },
             ready: function () {
             },
             attached: function () {
-                this._removeSpinner();
-
+                //console.log("event attached");
+                this._handleSpinner(true);
             },
             _expandAll: function () {
 
@@ -204,16 +210,30 @@ A heatmap table
                         ctn.classList.remove('openHmChildren');
                     }
                 })
-
                 this.isExpanded = false;
-
-
             },
-            _removeSpinner: function () {
 
-                //Nothing to do here???
+            _showAllEvidences: function () {
+                //console.log("setting item areAllEvidencesShown to true");
+                this.areAllEvidencesShown = true;
+            },
+
+            _hideAllEvidences: function () {
+                //console.log("setting item areAllEvidencesShown to false");
+                this.areAllEvidencesShown = false;
+            },
+
+            _handleSpinner: function(value) {
+                //console.log("item handling spinner:", value);
+                var el = this.$.featHeatMapSpinner;
+                this.$.featHeatMapSpinner.active = value;
+                return value;
+            },
+
+            _hideSpinnerOnDataReady: function () {
                 if (this.data && this.data.length) {
-                    this.$.featHeatMapSpinner.active = false;
+                    //console.log("item hide spinner on data ready");
+                    this._handleSpinner(false);
                 }
             }
         });
