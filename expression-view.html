@@ -14,131 +14,152 @@ View listing protein expression view.
 @demo demo/expression-view-demo.html
 -->
 <dom-module id="expression-view">
-  <template>
-    <style include="nextprot-elements-shared-styles">
-      :host {
-        display: block;
-        background:#f8f8f8;
-        overflow-y: auto;
-      }
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
 
-    </style>
-    <div class="row">
-      <div id="nxOverview" class="col-md-12">
-        <protein-overview nx-config="[[nxConfig]]"></protein-overview>
-      </div>
-    </div>
-    <div id="nxGenericAnnotations" class="row nxSection">
-      <generic-annotation-section id="expressionInfoElement" section="expressionInfo" gold-only="[[nxConfig.goldOnly]]" categories='["EXPRESSION-INFO", "INDUCTION", "DEVELOPMENTAL-STAGE-INFO"]' nx-config="[[nxConfig]]" count="{{genericAnnotationsCount}}"></generic-annotation-section>
-    </div>
+        </style>
+        <div class="row">
+            <div id="nxOverview" class="col-md-12">
+                <protein-overview nx-config="[[nxConfig]]"></protein-overview>
+            </div>
+        </div>
+        <div id="nxGenericAnnotations" class="row nxSection">
+            <generic-annotation-section id="expressionInfoElement" section="expressionInfo"
+                                        gold-only="[[nxConfig.goldOnly]]"
+                                        categories='["EXPRESSION-INFO", "INDUCTION", "DEVELOPMENTAL-STAGE-INFO"]'
+                                        nx-config="[[nxConfig]]"
+                                        count="{{genericAnnotationsCount}}"></generic-annotation-section>
+        </div>
 
-    <!--
-    <div id="filterPositiveNegativeSection" class="row nxSection">
-      <button id="showFilterButton" class="btn btn-default pull-right" on-tap="_toggleFilters">
-        <template is="dom-if" if="[[filtersShown]]">
-          <iron-icon icon="arrow-drop-up"></iron-icon>
-          Hide filters &nbsp;
-        </template>
-        <template is="dom-if" if="[[!filtersShown]]">
-          <iron-icon icon="arrow-drop-down"></iron-icon>
-          Show filters &nbsp;
-        </template>
-      </button>
-      <div id="filtersContent" hidden>
-        <div class="row category-row style-scope generic-annotation-section">
-          <h4 class="annotation-category-title">Filter on positive / negative annotations</h4><br>
-          <template is="dom-repeat" items="[[filters.posNeg]]" as="filterPN">
-            <label class="radio-inline"><input type="radio" name="optradio" checked$="{{filterPN.checked}}">[[filterPN.label]]</label>
-          </template>
-        </div>
-        <div class="row category-row style-scope generic-annotation-section">
-          <h4 class="annotation-category-title">Filter on methodology</h4><br>
-          <template is="dom-repeat" items="[[filters.methodology]]" as="methodology">
-            <label class="checkbox-inline"><input type="checkbox" value="">[[methodology]]</label>
-          </template>
-        </div>
-        <div class="row category-row">
-          <button id="applyFiltersButton" class="btn btn-default col-md-offset-5 col-md-2" type="button">
-            <i class="fa fa-filter" aria-hidden="true"></i>
-            <span class="filter-submit-text" on-tap="_applyFilters">Apply filters</span>
+        <!--
+        <div id="filterPositiveNegativeSection" class="row nxSection">
+          <button id="showFilterButton" class="btn btn-default pull-right" on-tap="_toggleFilters">
+            <template is="dom-if" if="[[filtersShown]]">
+              <iron-icon icon="arrow-drop-up"></iron-icon>
+              Hide filters &nbsp;
+            </template>
+            <template is="dom-if" if="[[!filtersShown]]">
+              <iron-icon icon="arrow-drop-down"></iron-icon>
+              Show filters &nbsp;
+            </template>
           </button>
+          <div id="filtersContent" hidden>
+            <div class="row category-row style-scope generic-annotation-section">
+              <h4 class="annotation-category-title">Filter on positive / negative annotations</h4><br>
+              <template is="dom-repeat" items="[[filters.posNeg]]" as="filterPN">
+                <label class="radio-inline"><input type="radio" name="optradio" checked$="{{filterPN.checked}}">[[filterPN.label]]</label>
+              </template>
+            </div>
+            <div class="row category-row style-scope generic-annotation-section">
+              <h4 class="annotation-category-title">Filter on methodology</h4><br>
+              <template is="dom-repeat" items="[[filters.methodology]]" as="methodology">
+                <label class="checkbox-inline"><input type="checkbox" value="">[[methodology]]</label>
+              </template>
+            </div>
+            <div class="row category-row">
+              <button id="applyFiltersButton" class="btn btn-default col-md-offset-5 col-md-2" type="button">
+                <i class="fa fa-filter" aria-hidden="true"></i>
+                <span class="filter-submit-text" on-tap="_applyFilters">Apply filters</span>
+              </button>
+            </div>
+
+          </div>
         </div>
+        -->
+        <div id="nxExpressionAnnotations" class="row nxSection">
+            <expression-section id="expressionSection" section="expressionSection" nx-config="[[nxConfig]]"
+                                count="{{expressionSectionAnnotationCount}}" filters={{filters}}></expression-section>
+        </div>
+        <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no expression information available
+            in neXtProt for [[nxConfig.entry]].
+            Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
+        </div>
+        <div class="row">
+            <div id="nxXrefs" class="col-md-12">
+                <xrefs-section categories='["Bgee", "CleanEx","ExpressionAtlas","Genevisible", "Antibodypedia", "HPA"]'
+                               nx-config="[[nxConfig]]" view="expression" count="{{xrefsCount}}">
+                </xrefs-section>
+            </div>
+        </div>
+    </template>
 
-      </div>
-    </div>
-    -->
-    <div id="nxExpressionAnnotations" class="row nxSection">
-      <expression-section id="expressionSection" section="expressionSection" nx-config="[[nxConfig]]" count="{{expressionSectionAnnotationCount}}" filters={{filters}}></expression-section>
-    </div>
-    <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no expression information available in neXtProt for [[nxConfig.entry]].
-      Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
-    </div>
-    <div class="row">
-      <div id="nxXrefs" class="col-md-12">
-        <xrefs-section categories='["Bgee", "CleanEx","ExpressionAtlas","Genevisible", "Antibodypedia", "HPA"]' nx-config="[[nxConfig]]" view="expression" count="{{xrefsCount}}">
-        </xrefs-section>
-      </div>
-    </div>
-  </template>
+    <script>
+        Polymer({
+            is: 'expression-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                filters: {
+                    type: Object,
+                    value: {
+                        posNeg: [{
+                            label: "All",
+                            checked: "checked"
+                        }, {label: "Positive"}, {label: "Negative"}, {label: "Positive only"}, {label: "Negative only"}, {label: "Only positive or only negative"}, {
+                            label: "Both positive and negative",
+                            selected: false
+                        }],
+                        methodology: ["Microarray", "EST", "RNA-Seq", "IHC"]
+                    }
+                },
+                expressionSectionAnnotationCount: {
+                    type: Number,
+                    value: -1,
+                    observer: "_checkAnnotations"
+                },
+                genericAnnotationsCount: {
+                    type: Number,
+                    value: -1,
+                    observer: "_checkAnnotations"
+                },
+                xrefsCount: {
+                    type: Number,
+                    observer: "_checkXrefs"
+                },
+                filtersShown: {
+                    type: Boolean,
+                    value: false
+                },
+                tabularView: {
+                    type: Boolean,
+                    observer: "_updateTabularViewAttribute"
+                }
+            },
+            _applyFilters: function () {
+                alert("Not yet implemented")
+            },
+            _toggleFilters: function () {
+                var self = this;
+                this.async(function () {
+                    self.$.filtersContent.hidden = !self.$.filtersContent.hidden;
+                    self.filtersShown = !self.filtersShown;
+                }, 1);
+            },
+            _checkAnnotations: function () {
 
-  <script>
-    Polymer({
-      is: 'expression-view',
-      properties: {
-        nxConfig: {
-          type: Object,
-          value: {}
-        },
-        filters: {
-          type: Object,
-          value: {
-            posNeg: [{label: "All", checked:"checked"}, {label: "Positive"}, {label: "Negative"}, {label: "Positive only"}, {label: "Negative only"}, {label: "Only positive or only negative"}, {label: "Both positive and negative", selected:false}],
-            methodology: ["Microarray", "EST", "RNA-Seq", "IHC"]}
-        },
-        expressionSectionAnnotationCount: {
-          type: Number,
-          value: -1,
-          observer: "_checkAnnotations"
-        },
-        genericAnnotationsCount: {
-          type: Number,
-          value: -1,
-          observer: "_checkAnnotations"
-        },
-        xrefsCount: {
-          type: Number,
-          observer: "_checkXrefs"
-        },
-        filtersShown: {
-          type: Boolean,
-          value: false
-        }
-      },
-      _applyFilters : function (){
-        alert("Not yet implemented")
-      },
-      _toggleFilters: function(){
-        var self = this;
-        this.async(function() {
-          self.$.filtersContent.hidden = !self.$.filtersContent.hidden;
-          self.filtersShown = !self.filtersShown;
-        }, 1);
-      },
-      _checkAnnotations: function(){
+                this.$.nxGenericAnnotations.hidden = (this.genericAnnotationsCount) ? false : true;
 
-        this.$.nxGenericAnnotations.hidden= (this.genericAnnotationsCount) ? false : true;
+                this.$.nxExpressionAnnotations.hidden = (this.expressionSectionAnnotationCount) ? false : true;
 
-        this.$.nxExpressionAnnotations.hidden= (this.expressionSectionAnnotationCount) ? false : true;
+                if (this.expressionSectionAnnotationCount === 0 && this.genericAnnotationsCount === 0) {
+                    this.$.noDataWarning.hidden = false;
+                }
+                else this.$.noDataWarning.hidden = true;
+            },
+            _checkXrefs: function () {
+                this.xrefsCount === 0 ? this.$.nxXrefs.hidden = true : this.$.nxXrefs.hidden = false;
+            },
+            _updateTabularViewAttribute: function () {
 
-        if(this.expressionSectionAnnotationCount===0 && this.genericAnnotationsCount===0) {
-          this.$.noDataWarning.hidden=false;
-
-        }
-        else this.$.noDataWarning.hidden=true;
-      },
-      _checkXrefs: function(){
-        this.xrefsCount===0 ? this.$.nxXrefs.hidden=true : this.$.nxXrefs.hidden=false;
-      }
-    });
-  </script>
+                this.$.expressionSection.setAttribute('tabular-view', '');
+            }
+        });
+    </script>
 </dom-module>
