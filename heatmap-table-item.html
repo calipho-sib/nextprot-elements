@@ -58,11 +58,11 @@ A heatmap table
             #featHeatMapSpinner {
                 height: 32px;
                 width: 32px;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                margin-top: -16px; /* Negative half of height. */
-                margin-left: -16px; /* Negative half of width. */
+                position: relative;
+                top: 10px;
+                left: 30px;
+                margin-top: 0px; /* Negative half of height. */
+                margin-left: 0px; /* Negative half of width. */
             }
 
              .heatmap-body > ul > heatmap-table-row > li > ul {
@@ -107,11 +107,11 @@ A heatmap table
 
 
             </style>
-        <paper-spinner-lite id="featHeatMapSpinner" alt="Loading data ..." active></paper-spinner-lite>
         <div id="tableHeaderContainer">
                 <table id="tableHeader" class="table">
                     <tr>
                         <th rowspan="3" style="text-align: left; border-right: thin solid lightgray">Tissue / Cell type&nbsp;
+                            <paper-spinner-lite id="featHeatMapSpinner" alt="Loading data ..." active></paper-spinner-lite>
                             <template is="dom-if" if="[[!hmType.flat]]">
                                 <template is="dom-if" if="[[!isExpanded]]">
                                     <a on-tap="_expandAll" class="expandCollapse">
