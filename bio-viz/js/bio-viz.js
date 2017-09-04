@@ -30,7 +30,8 @@ var nxBioViz = (function () {
 
     // Set bioviz options
     var bv_options = {
-        biovizPath: "../../lib/bio-viz/biovizJS/bioviz.html",
+//        biovizPath: "../../lib/bio-viz/biovizJS/bioviz.html",        
+        biovizPath: "../../nextprot-elements/bio-viz/biovizJS/bioviz.html",
         startScript: false,
         background: '#333333',
 //        pdbCustomUrl: nx.getApiBaseUrl() + "/pdb/${id}"

@@ -1,0 +1,79 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<script src="../jquery-ui/jquery-ui.min.js"></script>
+<script src="../bootstrap/js/tooltip.js"></script>
+<script src="../bootstrap/js/popover.js"></script>
+<script src="../handlebars/handlebars.min.js"></script>
+<script src="bio-viz_v2/biovizJS/library/jquery.ui-contextmenu.min.js"></script>
+<script src="bio-viz_v2/dist/bio-viz.min.js"></script>
+<!--
+`bioviz_v2-section`
+Element joining bioviz viewer and 3D structures table
+
+@demo demo/bioviz_v2-section-demo.html
+-->
+<dom-module id="bioviz_v2-section">
+    <link rel="stylesheet" type="text/css" href="bio-viz_v2/css/style.css">
+    <link rel="stylesheet" type="text/css" href="bio-viz_v2/dist/bio-viz.min.css">
+    <link rel="stylesheet" type="text/css" href="bio-viz_v2/biovizJS/css/bioviz-theme/jquery-ui.min.css">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+            .ext-link:after {
+                content: "\f08e";
+                font-family: "FontAwesome";
+                font-size: 11px;
+                margin-left: 5px;
+                vertical-align: middle;
+            }
+        </style>
+        <div id="bioviz-container"></div>
+    </template>
+    <script>
+        Polymer({
+            is: 'bioviz_v2-section',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                nxEntry: {
+                    type: String,
+                    observer: "_setDefaultIsoform"
+                },
+                isoform: {
+                    type: String,
+                    observer: "_onIsoformChange"
+                },
+                selection: {
+                    type: Object,
+                    observer: "highlight"
+                }
+            },
+            attached: function() {
+                this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
+                this.nxConfig.env = "dev";
+                console.log("test env");
+                console.log(this.nxConfig.env);
+                if (this.nxConfig.env) this.nx.updateEnvironment(this.nxConfig.env);
+                console.log(this.nxConfig);
+                this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
+                this.bv = new nxBioViz();
+                console.log("going to init :");
+                this.bv.init("#bioviz-container", this.isoform);
+            },
+            highlight: function() {
+                this.bv.highlightFromRange([this.selection.start, this.selection.end]);
+            },
+            _setDefaultIsoform: function() {
+                this.isoform = this.nxEntry+"-1";
+            },
+            _onIsoformChange: function() {
+                if (this.$.bioviz) this.bv.reloadTable(this.isoform);
+            }
+        });
+    </script>
+</dom-module>
