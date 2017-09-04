@@ -212,18 +212,11 @@ Annotation section used in function, medical, and expression views.
             observers: [
                 '_getDataFromAPI(nxConfig.goldOnly)'
             ],
-            ready: function () {
-
-                this._getDataFromAPI();
-            },
-            _getDataFromAPI: function (){
+            _getDataFromAPI: function (newGoldOnlyValue) {
 
                 Polymer.RenderStatus.afterNextRender(this, function () {
                     var nx = new Nextprot.Client("neXtprot expression section", "Calipho Group");
                     if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
-
-                    //For development
-                    //nx.setApiBaseUrl(window.location.origin + "/components/nextprot-elements/mock-api-data")
 
                     var apiCall = [];
                     apiCall.push(nx.getTerminologyByName("nextprot-anatomy-cv"));
@@ -233,6 +226,11 @@ Annotation section used in function, medical, and expression views.
                     Promise.all(apiCall).then(function (result) {
                         var nxAnatomy = result[0]["cvTermList"]
                         self.expressionProfileData = result[1];
+
+                        // reset data structures at each api calls (whenever silver/gold status of nxConfig.goldOnly changed)
+                        self.hierarchyMap = {};
+                        self.flatDataMap = {};
+
                         nxAnatomy.forEach(function (t){
                             self.hierarchyMap[t.accession] = t
                         });
@@ -538,10 +536,10 @@ Annotation section used in function, medical, and expression views.
             _propagateFlatDataToTree: function (flatData) {
 
                 var polymerElem = this;
+
                 flatData.forEach(function (data){
                     polymerElem.flatDataMap[data.name]=data;
                 })
-
 
                 var polymerElm = this;
                 //For each root build children tree
@@ -570,13 +568,9 @@ Annotation section used in function, medical, and expression views.
                     data.annot = data.annot.filter(function (a){ return a.qualityQualifier === "GOLD"})
                     console.log("Data elements (after filtering):", data.annot.length);
                 }
-
-                data.annot.forEach(function(annot) {
-                    if(annot.cvTermAccessionCode === "TS-1315"){
-                        console.log("MOUTH IS HERE!!!!!!!!!")
-                    }
-                })
-
+                else {
+                    console.log("Do not filter annotations");
+                }
 
                 var heatmapFlatData = data.annot.map(function(a) {return {rowLabel : a.cvTermName,
                     name: a.cvTermAccessionCode,
@@ -598,8 +592,6 @@ Annotation section used in function, medical, and expression views.
                 })
 
                 return heatmapFlatData;
-
-
             },
 
             _scrollToRow: function(e){
