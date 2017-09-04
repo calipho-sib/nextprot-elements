@@ -124,16 +124,21 @@ A heatmap table
                                     </a>
                                 </template>
                             </template>
-                            <template is="dom-if" if="[[hmType.flat]]">
-                                <template is="dom-if" if="[[!areAllEvidencesShown]]">
-                                    <a on-tap="_showAllEvidences" class="expandCollapse">
-                                        <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-down"></iron-icon>Show evidences</button>
-                                    </a>
-                                </template>
-                                <template is="dom-if" if="[[areAllEvidencesShown]]">
-                                    <a on-tap="_hideAllEvidences" class="expandCollapse">
-                                        <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-up"></iron-icon>Hide evidences</button>
-                                    </a>
+
+                            <!-- hiding show evidence button because of bad performance -->
+                            <!-- TODO: fixing bad performance showing evidences -->
+                            <template hidden$="true">
+                                <template is="dom-if" if="[[hmType.flat]]">
+                                    <template is="dom-if" if="[[!areAllEvidencesShown]]">
+                                        <a on-tap="_showAllEvidences" class="expandCollapse">
+                                            <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-down"></iron-icon>Show evidences</button>
+                                        </a>
+                                    </template>
+                                    <template is="dom-if" if="[[areAllEvidencesShown]]">
+                                        <a on-tap="_hideAllEvidences" class="expandCollapse">
+                                            <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-up"></iron-icon>Hide evidences</button>
+                                        </a>
+                                    </template>
                                 </template>
                             </template>
                         </th>
