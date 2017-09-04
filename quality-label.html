@@ -65,8 +65,14 @@ Label used to display annotation and evidence qualifier
         }
       },
       _checkQualityValue: function(){
-        this.quality = this.quality.toLowerCase();
-        if (this.quality!=='gold' && this.quality!=='silver') this.quality = null;
+
+          if (this.quality) {
+              this.quality = this.quality.toLowerCase();
+              if (this.quality!=='gold' && this.quality!=='silver') this.quality = null;
+          }
+          else {
+              this.quality = null;
+          }
       }
     });
   </script>
