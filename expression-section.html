@@ -270,7 +270,6 @@ Annotation section used in function, medical, and expression views.
                 this.evidencesShown = !this.evidencesShown;
                 var evidenceContainers = Polymer.dom(this.root).querySelectorAll(".evidences-container");
 
-                console.log("Evidences found" + evidenceContainers.length)
                 for (var e in evidenceContainers) {
                     if (this.showEvidences == true) {
                     evidenceContainers[e].parentNode.opened = true;
