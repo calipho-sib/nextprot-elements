@@ -34,6 +34,7 @@ var nxBioViz = (function () {
     var bv_options = {
 //        biovizPath: "../../lib/bio-viz/biovizJS/bioviz.html",        
         biovizPath: "./bio-viz-v2/biovizJS/bioviz.html",
+//        biovizPath: "../../nextprot-elements/bio-viz/biovizJS/bioviz.html",
         startScript: false,
         enableScriptPlayer: false,
         background: '#333333',
