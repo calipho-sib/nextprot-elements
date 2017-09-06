@@ -1,0 +1,1134 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="iron-list-nx.html">
+<link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="evidence-item.html">
+
+<!--TO TEST :-->
+<!--
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+-->
+<!--<script src="../nextprot-js/dist/nextprot.min.js.map"></script>-->
+
+<!--
+`feature-table`
+View list of chromosome names.
+
+##### Example
+    <feature-table />
+@demo demo/feature-table-demo.html
+-->
+
+
+<dom-module id="feature-table">
+
+    <template>
+        <style is="custom-style" include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background: white;
+                /*                height: 500px;*/
+/*                width: 600px;*/
+                margin: auto;
+/*                box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);*/
+                /*                overflow: hidden;*/
+            }
+            
+            iron-list {
+                height: 416px;
+            }
+            
+            td[hidden] {
+                display: none;
+            }
+            
+            .filter-block>div {
+                box-shadow: 0px 2px 3px -1px rgba(0, 0, 0, 0.15);
+                margin-top: 15px;
+                display: inline-block;
+            }
+            
+            .filter-heading {
+                display: inline-block;
+                background: #F8F8F8;
+                padding: 0px 15px;
+                height: 100%;
+                border-color: #F8F8F8;
+                border: 1px #ddd solid;
+                vertical-align: middle;
+                border-top-left-radius: 2px;
+                border-bottom-left-radius: 2px;
+            }
+            
+            .filter-heading .fa {
+                margin-right: 3px;
+            }
+            
+            .filter-heading h5 {
+                display: inline-block;
+                color: #777;
+                padding: 0px;
+                height: 30px;
+                margin: 0px;
+                line-height: 30px;
+            }
+            
+            .filter-body {
+                display: inline-block;
+                background: #F8F8F8;
+                padding: 0px 15px 0px 0px;
+                height: 32px;
+                border-color: #F8F8F8;
+                border: 1px #ddd solid;
+                margin-left: -1px;
+                vertical-align: middle;
+                border-top-right-radius: 2px;
+                border-bottom-right-radius: 2px;
+            }
+            
+            #filtering {
+                margin-right: 10px;
+                font-size: 12px;
+            }
+            
+            #allFilters {
+                border: 0px;
+                height: 30px;
+                border-right: 1px solid #ddd;
+                border-radius: 0px;
+                color: #337ab7;
+                text-decoration: underline;
+            }
+            
+            .filter-box {
+                position: relative;
+                display: inline-block;
+                padding-left: 10px;
+                margin-bottom: 0;
+                font-weight: 400;
+                vertical-align: middle;
+                cursor: pointer;
+            }
+            
+            .filter-box input {
+                margin-right: 5px;
+            }
+            
+            .header-help:hover {
+                text-decoration: none;
+                cursor: pointer;
+            }
+            
+            span.label-info {
+                background: #5bc0de;
+            }
+            
+            #featuresTable {
+                font-size: 11px;
+                background: #fff;
+                /*                padding: 5px 15px;*/
+                /*                height: 525px;*/
+                /*                border: 1px solid #cfd9db;*/
+                padding: 5px 15px 10px;
+                text-align: left;
+                /*                margin:auto;*/
+                /*                border-radius: 4px;*/
+                /*                margin: 10px 0px;*/
+            }
+            
+            #featuresTable .variant-description {
+                color: #00C500;
+            }
+            
+            table#featTable>tbody>tr>th {
+                padding: 0 8px;
+            }
+            
+            table#featTable>tbody>tr:first-of-type + tr {
+                border-top: none;
+            }
+            
+            table#featTable>tbody>tr {
+                border-top: 1px solid #ddd;
+                border-bottom: none;
+            }
+            
+            table#featTable>tbody>tr>td {
+                border: none;
+            }
+            
+            table#featTable>tbody>tr .table-row-evidence {
+                padding: 0 16px 0 8px;
+            }
+            
+            #seqViewer::content > .seqHeader {
+                width: 100%;
+            }
+            
+            #seqViewer::content > .seqHeader > div {
+                display: inline-block;
+                vertical-align: top;
+                text-align: center;
+                width: 25%;
+            }
+            
+            #seqViewer {
+                background: #fff;
+                padding: 5px 15px;
+                height: 525px;
+/*
+                border: 1px solid #cfd9db;
+                border-radius: 4px;
+*/
+            }
+            
+            .seqHeader {
+                margin-bottom: 5px;
+                border-bottom: 1px solid #E7EAEC;
+                height: 45px;
+            }
+            
+            .seqHeader>div {
+                display: inline-block;
+                margin: 10px;
+            }
+            
+            #seqViewer .seqInfos {
+                display: inline-block;
+                vertical-align: middle;
+                font-size: 11px;
+                text-align: center;
+                float: right;
+                margin: 10px 5px 0px;
+            }
+            
+            #seqViewer .seqInfos>.seqLabel {
+                font-weight: 900;
+                color: #777;
+            }
+            
+            #seqViewer .seqInfos>.seqValue {
+                color: white;
+                padding: 3px 5px;
+                text-align: center;
+                border-radius: 3px;
+                float: right;
+            }
+            
+            #seqViewer .seqIso>.seqValue {
+                background-color: #23c6c8;
+            }
+            
+            #seqViewer .seqAALength>.seqValue {
+                background-color: #33C59E;
+                font-weight: 700;
+            }
+            
+            #seqViewer .seqMass>.seqValue {
+                background-color: #f8ac59;
+            }
+            
+            #seqViewer .seqpI>.seqValue {
+                background-color: #92896F;
+            }
+            
+            .evidenceRow {
+/*                display: table-row;*/
+/*                padding:0px 5px;*/
+            }
+            .table-row-evidence{
+                background-color:#f9f9f9;
+                padding:5px;
+                margin:0px 5px;
+                box-shadow: inset 0px 5px 5px -5px rgba(0,0,0,0.2);
+            }
+            
+            
+            .evidenceNumber {
+                background: #7CBA0F;
+                padding: 4px 8px;
+                border-radius: 2px;
+                color: white;
+                vertical-align: top;
+                cursor: pointer;
+            }
+            
+            .filter-block {
+                margin: 0px 20px;
+                float: left;
+            }
+            
+            .tableHighlight {
+                background-color: rgba(197, 0, 99, 0.1) !important;
+            }
+            
+            .tableHighlight td {
+                background-color: rgba(197, 0, 99, 0.1) !important;
+            }
+            
+            .right-block {
+                margin: 10px 0px;
+                padding-right: 0px;
+            }
+            
+            .sequenceRangeSpan {
+                line-height: 0.8;
+                vertical-align: top;
+            }
+            
+            .center {
+                position: absolute;
+                margin: 45px 40%;
+            }
+            
+            paper-spinner-lite {
+                --paper-spinner-stroke-width: 3px;
+            }
+            
+            #featTableSpinner {
+                height: 45px;
+                width: 45px;
+            }
+            
+            #featViewerSpinner {
+                position: absolute;
+                margin-left: 320px;
+                margin-top: 16px;
+                height: 32px;
+                width: 32px;
+            }
+            
+            .item {
+                margin: 0px 5px;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .item:last-child {
+                border-bottom: 0;
+            }
+            
+            evidence-item {
+                padding: 8px 0 0 0;
+                margin: 5px 40px;
+            }
+            
+            .tableHeader {
+                /*                border-bottom: 2px solid #ddd;*/
+                /*                box-shadow:2px 0px 4px black;*/
+                /*                box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);*/
+                box-shadow: 0 6px 6px -4px rgba(0, 0, 0, 0.2);
+            }
+            
+            .inBlock {
+                display: inline-block;
+                vertical-align: top;
+                padding: 8px;
+            }
+            
+            .colHeader {
+                font-weight: 700;
+            }
+            
+            .tableHeader .inBlock {
+                font-weight: 700;
+                padding: 12px;
+            }
+            
+            .ftHeader {
+                /*                background-color:#eee;*/
+                /*                border-bottom: 1px solid #ccc;*/
+            }
+            
+            .ftHeader>div {
+                margin: 0px;
+            }
+            
+            .ftHeader>div>div {
+                padding-left: 0px;
+            }
+            
+            paper-input {
+                width: calc(100% - 125px);
+                display: inline-block;
+                padding: 0px 5px 0px 15px;
+                --paper-input-container-focus-color: #C50063;
+                --paper-input-container: {
+                    padding: 0px;
+                    text-align: left;
+                }
+                --paper-input-container-label: {
+                    font-size: 14px;
+                }
+            }
+            /*
+            paper-input-container{
+                padding:0px;
+            }
+*/
+            
+            .buttonSearch {
+                width: 70px;
+            }
+            
+            paper-button {
+                background-color: #C50063;
+                color: white;
+            }
+            
+            #resetBtn {
+/*            paper-icon-button {*/
+                padding: 0px;
+                padding-bottom: 5px;
+                width: 25px;
+                height: 25px;
+            }
+            .chevron_buttons{
+                padding: 0px;
+/*                padding-bottom: 5px;*/
+                width: 25px;
+                height: 25px;
+            }
+            #selectionCounter{
+                padding-right:5px;
+                margin-top:-2px;
+            }
+            .noSelection{
+                color:#9b9b9b;
+            }
+          .row_selected .general-info{
+/*              background-color:rgba(197, 0, 99, 0.5);*/
+/*              background-color: rgba(197, 0, 100, 0.4) !important;*/
+/*              background-color:#FF695D !important;*/
+              background-color:rgba(180, 180, 180, 0.2) !important;
+              box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
+              border-bottom:0px !important;
+              border-left: 5px solid #C50063;
+              padding-bottom:2px;
+/*              font-weight: 700;*/
+          }
+        .search_selection .general-info{
+/*            background-color:rgba(142, 221, 156, 0.7);*/
+            background-color:rgba(76, 207, 99, 0.5);
+        }
+            .featPosition{
+                cursor:pointer;
+            }
+        paper-spinner-lite {
+            position: absolute;
+            top: 300px; 
+            left: 50%;
+            transform: translate(-50%, 0);
+            
+        }
+            .groupLabel{
+                padding:0px 0px 0px 6px;
+                color:#999;
+                font-weight:700;
+                font-size:13px;
+                border-top:2px solid #eee;
+            }
+            #itemIndex_0 .groupLabel{
+                border-top:0px;
+            }
+        </style>
+
+        <!--
+            <iron-list items="[[customData]]" as="item">
+                <template>
+                    <div class="item">Name : [[item.name]]</div>
+                </template>
+            </iron-list>
+-->
+        <!--        <div prefix><span class="fa fa-search"></span></div>-->
+        <div id="featuresTable">
+            <div class="ftHeader">
+                <!--                <div class="row">-->
+                <!--                    <div class="col-md-8 col-md-offset-4">-->
+                <iron-a11y-keys id="a11y" target="[[keyTarget]]" keys="enter" on-keys-pressed="_submitFiltering"></iron-a11y-keys>
+                <paper-input id="filterInput" label="Search a feature.." on-input="_checkForEmpty">
+                    <div slot="prefix"><span class="fa fa-search" style="margin-right:5px;"></span></div>
+                    <paper-icon-button id="resetBtn" disabled slot="suffix" icon="clear" on-click="_resetSearch"></paper-icon-button>
+                </paper-input>
+                <paper-button raised class="indigo" on-click="_submitFiltering">search</paper-button>
+                <div style="display:inline-block; text-align:right;vertical-align:top;">
+                    <div style="margin-top:15px;">
+                        <paper-icon-button class="chevron_buttons" id="pointerDown" disabled icon="expand-more" on-click="_shiftPointer"></paper-icon-button>
+                        <paper-icon-button class="chevron_buttons" id="pointerUp" disabled icon="expand-less" on-click="_shiftPointer"></paper-icon-button>
+                    </div>
+                    <div id="selectionCounter" class="noSelection"><span><span id="searchCount">[[selectionPointer]]</span>/[[selectedItemsLength]]</span>
+                    </div>
+                </div>
+                <!--
+                <paper-button raised class="indigo" on-click="_shiftPointer('up')">search</paper-button>
+                <paper-button raised class="indigo" on-click="_shiftPointer('down')">search</paper-button>
+-->
+                <!--                        <button class="buttonSearch" onclick="validate()">Validate!</button>-->
+                <!--                        <input class="form-control input-sm" type="text" name="ftSearch" placeholder="Search..">-->
+                <!--
+                    </div>
+                </div>
+-->
+            </div>
+            
+            <div class="tableHeader">
+                <div class="inBlock" style="width:24%">Name</div>
+                <div class="inBlock" style="width:12%">Position</div>
+                <div class="inBlock" style="width:8%">Length</div>
+                <div class="inBlock" style="width:35%">Description</div>
+                <div class="inBlock" style="width:16%">Evidence</div>
+            </div>
+            <paper-spinner-lite id="tableViewerSpinner" class="size" active$="{{ironProcess}}"></paper-spinner-lite>
+            
+            <!--            <iron-list items="[[_toFlat(groupedFeatures)]]" as="feature">-->
+            
+            <iron-list id="itemList" items="{{allFeatures}}" as="feature" selected-items="{{featureSelected}}" multi-selection max-physical-count="30" processing="{{ironProcess}}">
+                <template>
+                    <div id="itemIndex_[[index]]" style="width:100%" class$="item  [[_isSelected(selected,index,rowSelection)]]">
+                        <template  is="dom-if" if="{{_isFirstInGroup(feature)}}"><div class="groupLabel">[[feature.group]]</div></template>
+                        <div id=[[feature.id]] class$="item_[[index]] [[_formatClassName(feature.category, feature.group)]] general-info">
+                            <div class="inBlock" style="width:20%;text-align:left">[[feature.category]]</div>
+                            <div class="inBlock" style="width:12%;text-align:right" class="text-align-right">
+                                <a class="featPosition" on-tap="tvSelection">
+                                    <span inner-h-t-m-l="[[feature.range]]"></span>
+                                </a>
+                            </div>
+                            <div class="inBlock" style="width:10%;text-align:right" class="text-align-right">[[feature.length]]</div>
+                            <div class="inBlock" style="width:30%;"><span inner-h-t-m-l="[[feature.link]]"></span>
+                                <template is="dom-repeat" items="[[feature.crossRef]]" as="crossRef">
+                                    ; [[crossRef.value.dbName]]: <a class="ext-link" href="[[crossRef.value.url]]" target="_blank">[[crossRef.value.name]]</a>
+                                </template>
+                                <template is="dom-if" if="[[!feature.proteotypicity]]">
+                                    <span class="nonProteotypic">found in other entries</span>
+                                </template>
+                                <quality-label quality="[[feature.quality]]"></quality-label>
+                            </div>
+                            <template is="dom-if" if="[[feature.source]]">
+                                <div class="inBlock" style="width:10%;text-align:right;padding-right:0px;" class="text-align-right">
+                                    <span id="evidences-button-[[feature.id]]" class="evidenceNumber" data-args$="[[feature]]" on-tap="_showEvidences">[[feature.evidenceLength]]</span>
+                                </div>
+                                <div class="inBlock" style="width:13%;text-align:left;padding-left:0px;">
+                                    <div class="reference-label-container">
+                                        <template is="dom-repeat" items="[[feature.evidenceSources]]" as="source">
+                                            <div class="reference-label">[[source]]</div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                            <template is="dom-if" if="[[!feature.source]]">
+                                <div class="inBlock"></div>
+                                <div class="inBlock"></div>
+                            </template>
+                        </div>
+                        <div class$="evidenceRow [[_formatClassName(feature.category, feature.group)]] detailed-info">
+                            <div id="[[feature.id]]-evidence-container" class="table-row-evidence" hidden></div>
+                        </div>
+                    </div>
+                </template>
+            </iron-list>
+
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'feature-table',
+            properties: {
+                ironProcess:{
+                    type:Boolean,
+                    value:false,
+                    notify:true
+            },
+                customData: {
+                    value: []
+                },
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                isoName: {
+                    type: String
+//                    value:"NX_P01308-1"
+                        //                    observer: "reloadSVG"
+                },
+                featureSelected: {
+                    type: Array,
+                    notify: true
+                },
+                selectedItemsLength: {
+                    value: 0
+                },
+                selectionPointer: {
+                    value: 0
+                },
+                rowSelection:{
+                    value:-1  
+                },
+                featByIso: {
+                    type: Array,
+                    value: []
+//                    observer:"_reloadTable"
+                },
+                featureList: {
+                    type: Array,
+                    value: []
+                },
+                allFeatures: {
+                    type: Array,
+                    value: []
+//                    notify:true,
+//                    observer: "_reloadTable"
+                },
+//                featuresDisplayed: {
+//                    type: Array,
+//                    value: []
+//                },
+                keyTarget: {
+                    type: Object
+                }
+            },
+            ready: function () {
+                var self = this;
+                this.keyTarget = this.$.filterInput;
+                
+                
+                console.log("featByIso");
+                console.log(this.featByIso);
+//                if (!this.featByIso.length){
+                if (this.featureList.length){
+                    this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
+                    this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
+                    if (!this.isoName) this.isoName = this.nxEntry + "-1";
+                    
+                    console.log("starting promise ???????? O.O");
+                    console.log(this.featureList.length);
+                Promise.all(self._getFeaturesByView())
+                    .then(function (rawData) {
+                        console.log("entering ft promise!")
+                        self.rawData = rawData;
+                        self.sequences = rawData[0];
+                        self._getMetadataByView();
+                        self._getFeaturesByIsoform();
+                        var count = 0;
+
+                        self._fillTable();
+                    });
+                }
+//                else {
+//                    this._fillTable();
+//                }
+            },
+//            _reloadTable: function(){
+//                if (this.allFeatures.length){
+//                    console.log("reloading the table");
+//                    document.querySelector('iron-list').fire('iron-resize');
+//                    console.log(this.allFeatures);
+//                }
+//                console.log("reload Table called!!");
+                
+//                if (this.featByIso.length){
+//                    var tt = this.featByIso;
+//                    var ttn = this.featByIso.length;
+//                    console.log(this.featByIso);
+//                    console.log(this.featByIso.length);
+//                    this._fillTable();
+//                }
+//                console.log("this table items");
+//                console.log(this.$.itemList.items.length);
+//                console.log(this.$.itemList.items);
+//            },
+            _toArray: function (obj) {
+                if (typeof obj === 'object') {
+                    return Object.keys(obj).map(function (key) {
+                        return {
+                            name: key,
+                            value: obj[key]
+                        };
+                    });
+                }
+                return null;
+            },
+            _sortGroup: function(a,b){
+                    return a["start"] - b["start"];
+//                })
+            },
+            _toFlat: function (obj) {
+                var self = this;
+                //                var newArr = [];
+                return Object.keys(obj).map(function (key) {
+                    var newObj = obj[key].sort(self._sortGroup);
+                    newObj[0]["first"]=true;
+                    return newObj;
+                }).reduce(function (a, b) {
+                    return a.concat(b);
+                }, []);
+            },
+
+            _getFeaturesByView: function () {
+                var featuresForViewer = [];
+                for (var feat in this.featureList) {
+                    switch (this.featureList[feat].APIRef) {
+                    case "sequence":
+                        featuresForViewer.push(this.nx.getProteinSequence(this.nxEntry));
+                        break;
+                    case "antibody":
+                        featuresForViewer.push(this.nx.getAntibody(this.nxEntry));
+                        break;
+                    case "isoform-mapping":
+                        featuresForViewer.push(this.nx.getIsoformMapping(this.nxEntry));
+                        break;
+                    case "variant-medical":
+                        featuresForViewer.push(this.nx.getAnnotationsWithProperty(this.nxEntry, "variant", "disease-related", true));
+                        break;
+                    case "miscellaneous-region-interactions":
+                        featuresForViewer.push(this.nx.getAnnotationsWithProperty(this.nxEntry, "miscellaneous-region", "interaction-related", true));
+                        break;
+                    default:
+                        featuresForViewer.push(this.nx.getAnnotationsByCategory(this.nxEntry, this.featureList[feat].APIRef));
+                        break;
+                    }
+                }
+                return featuresForViewer;
+            },
+            _getMetadataByView: function () {
+                this.metaData = [];
+                for (var i = 0; i < this.featureList.length; i++) {
+                    this.metaData.push(this.featureList[i].metadata);
+                }
+            },
+            _getFeaturesByIsoform: function () {
+                this.featuresForViewer = [];
+                this.featByIso = [];
+                this.isofroms = this.rawData[0];
+                for (var i = 1; i < this.rawData.length; i++) {
+                    var feat = NXUtils.convertMappingsToIsoformMap(this.rawData[i], this.metaData[i].name, this.metaData[i].filter, "");
+                    if (this.goldOnly) feat = this._filterGoldForViewer(feat);
+                    featForViewer = NXViewerUtils.convertNXAnnotations(feat, this.metaData[i]);
+                    this.featuresForViewer.push(featForViewer);
+                    this.featByIso.push(feat);
+                }
+            },
+
+            _isDisulfideBondFeature: function (featureCategory) {
+                return featureCategory === "Disulfide bond";
+            },
+            _isSingleResidueFeature: function (residueLength) {
+                return residueLength === 1;
+            },
+            _getUniqueListOfEvidenceSources: function (evidenceList) {
+                var evidenceSourceList = [];
+                evidenceList.forEach(function (evidence) {
+                    if (evidence.assignedBy.toLowerCase() == "uniprotkb") evidence.assignedBy = "UniProtKB";
+                    if (evidence.assignedBy.toLowerCase() == "nextprot") evidence.assignedBy = "neXtProt";
+                    if (evidence.assignedBy.toLowerCase() == "cosmic") evidence.assignedBy = "COSMIC";
+                    if (evidence.assignedBy.toLowerCase() == "kegg_ptw") evidence.assignedBy = "KEGG";
+                    if (evidenceSourceList.indexOf(evidence.assignedBy) < 0) evidenceSourceList.push(evidence.assignedBy);
+                });
+                return evidenceSourceList.sort(NXUtils.sortByAlphabet);
+            },
+            _formatClassName: function (name, group) {
+                return name.replace(' ', '') + " " + group.split(" ").join("_");
+            },
+            _isFirstInGroup: function(feature){
+                return feature.first;
+            },
+
+            _showEvidences: function (e) {
+                var feature = JSON.parse(e.target.dataset.args);
+                var container = this.$$("#" + feature.id + "-evidence-container");
+                if (container.childElementCount === 0) {
+                    for (i in feature.source) {
+                        var evidence = feature.source[i];
+                        if (evidence.crossRef) {
+                            evidence.resourceAccession = evidence.crossRef.name;
+                            evidence.url = evidence.crossRef.url;
+                        }
+                        var evidenceItem = document.createElement("evidence-item");
+                        evidenceItem.setAttribute("index", new Number(i) + 1);
+                        evidenceItem.data = evidence;
+                        container.appendChild(evidenceItem);
+                        //                        this.updateStyles();
+                        //                        container.updateSizeForItem();
+                    }
+                } if (container.hidden) {
+                    container.hidden = false;
+                } else {
+                    container.hidden = true;
+                }
+                //                container.updateSizeForItem();
+                //                console.log("container.parentNode");
+                //                console.log(this.firstVisibleIndex);
+                //                console.log(container.parentNode);
+                //                console.log(container.parentNode.parentNode);
+                //                console.log(container.parentNode.parentNode.id);
+                //                console.log(this.$$(container.parentNode.parentNode));
+                //                var parentItem = container.parentNode.parentNode.id;
+                //                console.log("parentItem");
+                //                console.log(parentItem);
+                //                console.log(container);
+                //                console.log(this.$$(parentItem));
+                //                console.log(this.$$("#itemIndex_3"));
+                //                console.log(this.$$("#Betastrand_74_76_AN_P01308_0754-evidence-container"));
+                //                console.log(this);
+                //                console.log("e");
+                //                console.log(e);
+                //                var itemA = this.$.itemList.modelForElement(e.target.parentElement.parentElement);
+                var itemB1 = this.$.itemList;
+                var itemB2 = this.$.itemList.items;
+                var itemC = this.$.itemList.modelForElement(e.target.parentElement.parentElement.parentElement).feature;
+                //                this.$.itemList.
+//                console.log("itemA");
+                //                console.log(itemA);
+//                console.log(itemB1);
+//                console.log(itemB2);
+                //                console.log(itemC);
+                //                this.updateSizeForItem(container);
+                //                parentItem.updateSizeForItem();
+                this.$.itemList.updateSizeForItem(itemC);
+                //                document.querySelector('iron-list').fire('iron-resize');
+                //                document.querySelector('iron-list').updateSizeForItem(this.$.itemIndex_3);
+            },
+            tvSelection: function(event) {
+                // console.log("event");
+                // console.log(event);
+                var srcElement = event.target || event.srcElement;
+//                var highlightedRows = document.getElementsByClassName("search_selection");
+                var highlightedRows = document.querySelectorAll(".search_selection");
+//                console.log("highlightedRows");
+//                console.log(highlightedRows);
+                
+//                for (var i=0;i<highlightedRows.length;i++){
+//                    highlightedRows[i].classList.remove("search_selection");
+//                }
+//                console.log("srcElement")
+//                console.log(srcElement)
+//                console.log(srcElement.parentNode.parentNode);
+//                console.log(srcElement.parentNode.parentNode.parentNode);
+                var parentItem = srcElement.parentNode.parentNode.parentNode.parentNode;
+                var focusedElement = this.$.itemList.modelForElement(parentItem).feature;
+//                console.log("focusedElement");
+//                console.log(focusedElement);
+                console.log("focusedElement");
+                console.log(focusedElement);
+                var indexOfFocusedElement = this.$.itemList.items.indexOf(focusedElement);
+                this.rowSelection = indexOfFocusedElement;
+                this.fire('tv-feature-selected',{id:focusedElement.id});
+//                srcElement.parentNode.parentNode.parentNode.classList.add("row_selected");
+//                highlightedRows.forEach(function(h){
+//                    h
+//                })
+//                var highlightedRows = document.getElementsByClassName("search_selection");
+//                if (highlightedRows[0]) highlightedRows[0].classList.remove("tableHighlight");
+//                var srcElement = event.target || event.srcElement;
+//                srcElement.parentElement.parentElement.parentElement.classList.add("tableHighlight");
+//                var currentId = srcElement.parentElement.parentElement.parentElement.id;
+//                if (currentId) {
+//                    var position = currentId.split("_").slice(1).map(Number);
+//                    if (position.length === 1) position.push(position[0]);
+//                    var svgId = "#" + "f" + currentId;
+//                    position[0] -= 1;
+//                    if (!this.hideSequenceViewer) {
+//                        this.seqView.selection(position[0], position[1], "#C50063");
+//                        this._scrollAuto(".stringSelected", ".scroller", 200);
+//                    }
+//                    this.selection = {'start': position[0], 'end': position[1]};
+//                    this.ft.addRectSelection(svgId);
+
+//                }
+            },
+            highlightFeature: function(index){
+                this.rowSelection = index;
+                
+                this.$.itemList.scrollToIndex(index);
+            },
+            _fillTable: function () {
+                //                if ($("#featuresTable").length > 0) {
+                var number = 0;
+                var features = {};
+                var self = this;
+                console.log("feature by isoform :");
+                console.log(this.featByIso);
+                console.log(this.featByIso.length);
+                for (feat in this.featByIso) {
+                    if (this.featByIso[feat].hasOwnProperty(this.isoName)) {
+                        var group = this.featByIso[feat][self.isoName][0].group;
+                        var featureList = this.featByIso[feat][self.isoName];
+                        for (var i in featureList) {
+                            if (!featureList[i].start){
+                                featureList[i].start = "?";
+                                featureList[i].description.replace("NA","?");
+                            }
+                            if (!featureList[i].end){
+                                featureList[i].end = "?";
+                                featureList[i].description.replace("NA","?");
+                            }
+                            var feature = featureList[i];
+                            if (feature.variant) {
+                                var crossRef = {};
+                                for (var j in feature.source) {
+                                    if (feature.source[j].externalDb) {
+                                        if (feature.source[j].crossRef) {
+                                            if (feature.source[j].crossRef.dbName === "Cosmic") feature.source[j].crossRef.dbName = "COSMIC";
+                                            crossRef[feature.source[j].crossRef.name] = feature.source[j].crossRef;
+                                        }
+                                    }
+                                }
+                                feature.crossRef = this._toArray(crossRef).sort(this._sortCrossRef);
+                            }
+                            if (this._isDisulfideBondFeature(feature.category)) {
+                                featureList[i].range = feature.start + "&#x256d;&#x256e;" + feature.end;
+                            } else if (this._isSingleResidueFeature(feature.length)) {
+                                featureList[i].range = feature.start;
+                            } else {
+                                featureList[i].range = feature.start + "-" + feature.end;
+                            }
+                        }
+                        if (Object.keys(features).indexOf(group) < 0) {
+//                            featureList[0]["first"] = true;
+                            features[group] = featureList;
+                        } else {
+                            features[group] = features[group].concat(featureList);
+                        }
+                        number += feature.length;
+//                        for (var i = 0; i < this.featByIso[feat][this.isoName].length; i++)
+//                            if (this.featByIso[feat][this.isoName][i].source) {
+//                                this.featByIso[feat][this.isoName][i].evidenceSources = this._getUniqueListOfEvidenceSources(this.featByIso[feat][this.isoName][i].source);
+//                            }
+                    }
+                }
+//                Object.keys(features).forEach(function())
+                //                this.notifyPath("groupedFeatures", features);
+                console.log("features not flat yet : ");
+                console.log(features);
+                Polymer.RenderStatus.afterNextRender(self.$.itemList, function(){
+                self.allFeatures = self._toFlat(features);
+                console.log(self.allFeatures);
+//                var clonedArray = JSON.parse(JSON.stringify(this.allFeatures));
+//                console.log("clonedArray");
+//                console.log(clonedArray.length);
+//                console.log(clonedArray);
+                console.log("features list length : ");
+                console.log(self.$.itemList.items.length);
+                console.log(self.$.itemList.items);
+//                this.$.itemList.fire('iron-resize');
+                document.querySelector('iron-list').fire('iron-resize');
+//                this.$.itemList.toggleScrollListener(false);
+//                var self = this;
+//                setTimeout(function(){self.$.itemList.toggleScrollListener(true)},1000);
+                //                this.featuresDisplayed = this.allFeatures;
+//                console.log("features");
+//                console.log(features);
+//                console.log("this.featuresDisplayed.length : ");
+//                console.log(this.featuresDisplayed.length);
+//                console.log("selectedItems");
+//                console.log(this.featureSelected);
+                //                    this._toFlat(features);
+                self.featuresLength = number;
+                })
+                //                };
+            },
+            _searchObj: function (obj, query) {
+
+                for (var key in obj) {
+                    var value = obj[key];
+
+                    if (typeof value === 'object') {
+                        var found = this._searchObj(value, query);
+                        if (found) return true;
+                    }
+                    if (key !== "abstractText" && value && value.toString().toLowerCase().indexOf(query.toLowerCase()) !== -1) {
+//                        console.log("obj");
+//                        console.log(obj);
+//                        console.log(key);
+                        return true;
+                    }
+
+                }
+                return false;
+
+            },
+            _filteringItems: function (pattern) {
+//                this.selectedItems = [];
+                this.$.itemList.clearSelection();
+//                console.log("filtering items..");
+//                console.log(this.$.itemList.selectedItems);
+//                console.log(this.featureSelected);
+//                var featuresFound = [];
+                var self = this;
+                var firstIndex = -1;
+                this.allFeatures.forEach(function (f, i) {
+//                    var found = self._searchObj(f, pattern);
+                    var found = false;
+                    if (f["category"] && f["category"].toString().toLowerCase().indexOf(pattern.toLowerCase()) !== -1) {
+                        found = true;
+                    }
+                    else if (f["description"] && f["description"].toString().toLowerCase().indexOf(pattern.toLowerCase()) !== -1){
+                        found = true;
+                    }
+                    else if (f["group"] && f["group"].toString().toLowerCase().indexOf(pattern.toLowerCase()) !== -1){
+                        found = true;
+                    }
+                    else if (f["crossRef"] && f["crossRef"].map(function(c){return c.name}).join(" ").toLowerCase().indexOf(pattern.toLowerCase()) !== -1){
+                        found = true;
+                    }
+                    if (found) {
+//                        featuresFound.push(i);
+                        self.$.itemList.selectIndex(i);
+                        if (firstIndex < 0){
+                            firstIndex = i;
+                        }
+                    }
+                })
+//                console.log("middle filtering items")
+                console.log("feature selected");
+                console.log(this.featureSelected);
+                console.log(this.allFeatures[this.allFeatures.length-2]);
+                
+                this.selectedItemsLength = this.featureSelected ? this.featureSelected.length : 0;
+                this.selectionPointer = this.featureSelected && this.featureSelected.length ? 1 : 0;
+                this.rowSelection = firstIndex;
+                
+//                console.log("middle filtering items 2")
+//                
+//                console.log("featuresFound");
+//                console.log(featuresFound);
+//                console.log(this.featureSelected);
+//                console.log("iron list selected list");
+//                console.log(this.$.itemList.selectedItems);
+//                console.log("middle filtering items 3")
+//                console.log(this.$.itemList.items);
+//                console.log(this.$.itemList._collection);
+//                console.log("starting scrolling");
+//                this.$.itemList.scrollToItem(this.$.itemList.selectedItems[0]);
+//                this.$.itemList.scrollOffset(200)
+                this.$.itemList.scrollToItem(this.featureSelected[0]);
+//                this.$.itemList.scrollToItem(this.selectedItems[1]);
+//                console.log("after scroll");
+//                console.log(this.selectedItems);
+//                console.log(this.$.itemList.selectedItems);
+//                console.log(this.$.itemList.items);
+//                document.querySelector('iron-list').fire('iron-resize');
+//                document.querySelector('iron-list').fire('selected-items-changed');
+//                this.updateStyles();
+//                console.log("end filtering items")
+                //                var origin = this.allFeatures;
+                //                var patternLow = pattern.toLowerCase();
+                //                var filteredItems = origin.filter(function (f, i) {
+                //                        if (f.description && f.description.toLowerCase().indexOf(patternLow) !== -1) {
+                //                            return true;
+                //                        }
+                //                        if (f.group && f.group.toLowerCase().indexOf(patternLow) !== -1) {
+                //                            return true;
+                //                        }
+                //                        if (f.category && f.category.toLowerCase().indexOf(patternLow) !== -1) {
+                //                            return true;
+                //                        }
+                //                        return false;
+                //                    })
+                //                this.featuresDisplayed = filteredItems;
+                //                return filteredItems;
+            },
+            _shiftPointer: function (e) {
+                if (this.featureSelected && this.featureSelected.length){
+                    var direction = e.target.dataHost.id;
+                    if (direction === "pointerDown") {
+                        //                    console.log(this.selectionPointer);
+
+    //                    console.log("selectionPointer");
+    //                    console.log(this.selectionPointer);
+    //                    console.log(this.selectedItemsLength);
+                        //                    var newPointer
+                        this.selectionPointer = (this.selectionPointer % this.selectedItemsLength) + 1;
+                        //                    console.log("newPointer");
+                        //                    console.log(newPointer);
+                    } else if (direction === "pointerUp") {
+    //                    console.log(this.selectionPointer);
+    //                    console.log(this.selectedItemsLength);
+                        this.selectionPointer = this.selectionPointer - 1 > 0 ? this.selectionPointer - 1 : this.selectedItemsLength;
+                        //                    var newPointer = (this.selectionPointer % this.selectedItemsLength) - 1;
+                        //                    console.log(newPointer);
+                        //                    this.selectionPointer = newPointer > 0 ? newPointer : this.selectedItemsLength;
+                        //                    console.log("newPointer");
+                        //                    console.log(newPointer);
+                        //                    this.selectionPointer = newPointer;
+                    }
+                    var focusedElement = this.$.itemList.selectedItems[this.selectionPointer - 1];
+                    console.log("focusedElement");
+                    console.log(focusedElement);
+                    var indexOfFocusedElement = this.$.itemList.items.indexOf(focusedElement);
+                    console.log("indexOfFocusedElement");
+                    console.log(indexOfFocusedElement);
+                    this.rowSelection = indexOfFocusedElement;
+                    console.log(this.selectionPointer - 1);
+    //                document.querySelector('iron-list').fire('iron-resize');
+    //                this.updateStyles();
+    //                this.notifyPath('rowSelection');
+    //                this.$.itemList._focusPhysicalItem(indexOfFocusedElement);
+    //                self.$.itemList.selectIndex(i);
+    //                this.$.itemList.focusItem(indexOfFocusedElement);
+                    this.$.itemList.scrollToItem(this.$.itemList.selectedItems[this.selectionPointer - 1]);
+                }
+            },
+            _submitFiltering: function () {
+                if (this.$.filterInput.value != "") {
+//                    console.log("input value : ");
+//                    console.log(this.$.filterInput.value);
+                    this._filteringItems(this.$.filterInput.value);
+                } else {
+//                    this.featuresDisplayed = this.allFeatures;
+                }
+            },
+            _isSelected: function (isSelected, index, rsIndex){
+//                console.log("isSelected");
+//                console.log(isSelected);
+                var class_combined = "";
+                if (isSelected){
+                    class_combined += "search_selection";
+                }
+                if (index === rsIndex){
+                    class_combined += " row_selected";
+                }
+//                console.log("is selected ?")
+//                console.log(class_combined);
+                
+//                console.log("index isSelected :");
+//                console.log(index);
+//                console.log(class_combined);
+                return class_combined;
+//                else return "";
+            },
+            _checkForEmpty: function () {
+                if (this.$.filterInput.value === "") {
+                    this._resetSearch();
+                } else {
+//                    console.log('selectionCounter');
+//                    console.log(this.$.selectionCounter);
+//                    console.log(this.$.selectionCounter.classList);
+                    this.$.selectionCounter.classList.remove("noSelection");
+                    this.$.resetBtn.disabled = false;
+                    this.$.pointerUp.disabled = false;
+                    this.$.pointerDown.disabled = false;
+                }
+            },
+            _resetSearch: function () {
+                this.$.filterInput.value = "";
+                this.$.selectionCounter.classList.add("noSelection");
+                this.$.resetBtn.disabled = true;
+                this.$.pointerUp.disabled = true;
+                this.$.pointerDown.disabled = true;
+                this.$.itemList.clearSelection();
+                this.selectedItemsLength = this.featureSelected ? this.featureSelected.length : 0;
+                this.selectionPointer = 0;
+                this.rowSelection = -1;
+//                console.log("featureSelected");
+//                console.log(this.featureSelected);
+//                console.log(this.selectedItemsLength);
+//                this.selectedItems = [];
+            }
+        });
+    </script>
+</dom-module>

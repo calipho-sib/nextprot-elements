@@ -5,6 +5,12 @@
 <link rel="import" href="xrefs-section.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <!--
+TO TEST :
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+-->
+
+<!--
 `proteomics-view`
 View listing sequence annotations.
 
@@ -177,7 +183,7 @@ View listing sequence annotations.
       {
         "APIRef": "selenocysteine",
         "metadata": {
-          "name": "Non standart AA",
+          "name": "Non-standard AA",
           "className": "seleno",
           "color": "#859DE7",
           "type": "unique",
@@ -216,7 +222,7 @@ View listing sequence annotations.
                 <xrefs-section categories='["Gene3D","InterPro","Pfam","PRINTS","PROSITE","SMART","SUPFAM",
       "Ensembl", "KEGG", "UCSC", "MGI", "EvolutionaryTrace", "PMAP-CutDB", "PhosphoSite",
       "eggNOG", "GeneTree", "HOGENOM", "HOVERGEN", "InParanoid", "KO", "OMA", "PhylomeDB", "TreeFam", "BioMuta",
-      "CCDS", "EMBL", "PIR", "RefSeq", "UniProtKB", "DNASU"]' nx-config="[[nxConfig]]" count="{{xrefsCount}}">
+      "CCDS", "EMBL", "PIR", "RefSeq", "UniProtKB", "DNASU"]' nx-config="[[nxConfig]]" view="proteomics" count="{{xrefsCount}}">
                 </xrefs-section>
             </div>
         </div>

@@ -1,0 +1,245 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="evidence-item.html">
+<link rel="import" href="quality-label.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="heatmap-table-row.html">
+
+<!-- 
+    <script src="../../jquery/dist/jquery.js"></script>
+<script src="../../bootstrap/dist/js/bootstrap.js"></script>
+    -->
+
+<!--
+`heatmap-table-item`
+A heatmap table 
+@demo demo/heatmap-table-item-demo.html
+-->
+<dom-module id="heatmap-table-item">
+
+    <template>
+        <!-- Latest compiled and minified CSS -->
+        <style is="custom-style" include="nextprot-elements-shared-styles">
+             :host {
+                display: block;
+            }
+
+            ul {
+                padding-left: 10px;
+                list-style-type: none;
+            }
+
+            evidence-item {
+                padding: 8px 0 0 0;
+                margin: 5px 40px;
+            }
+
+            td[hidden] {
+                display: none;
+            }
+
+            .filter-block>div {
+                box-shadow: 0px 2px 3px -1px rgba(0, 0, 0, 0.15);
+                margin-top: 15px;
+                display: inline-block;
+            }
+
+            paper-spinner-lite {
+                --paper-spinner-stroke-width: 3px;
+
+            }
+
+            .center {
+                text-align: center;
+            }
+
+            #featHeatMapSpinner {
+                height: 32px;
+                width: 32px;
+                position: relative;
+                top: 10px;
+                left: 30px;
+                margin-top: 0px; /* Negative half of height. */
+                margin-left: 0px; /* Negative half of width. */
+            }
+
+             .heatmap-body > ul > heatmap-table-row > li > ul {
+                display: block;
+            }
+
+            .heatmap-body > ul > .heatmap-table-item > li > ul {
+                display: block;
+            }
+
+            #tableHeaderContainer {
+                margin-top:20px;
+                margin-bottom: 20px;
+                background-color: #F9F9F9;
+                box-shadow: 2px 3px 3px -1px rgba(0,0,0,0.15);  
+                border-left:1px solid #e7e7e7;
+                border-top:1px solid #ddd;
+                border-radius:3px;
+            }
+            .expandCollapse {
+                cursor: pointer;
+                color: #23527c;
+            }
+
+            #tableHeader {
+                width: 100%;
+                margin: 0px;
+            }
+            #tableHeader th, #tableHeader td {
+                text-align: center
+           }
+            #tableHeader td {
+                color: grey;
+                margin-bottom: 20px;
+                border-left: thin solid lightgray
+           }
+
+            .expand-collapse-button {
+                padding: 0px 10px 0px 5px;
+                margin-right: 20px;
+            }
+
+
+            </style>
+        <div id="tableHeaderContainer">
+                <table id="tableHeader" class="table">
+                    <tr>
+                        <th rowspan="3" style="text-align: left; border-right: thin solid lightgray">Tissue / Cell type&nbsp;
+                            <paper-spinner-lite id="featHeatMapSpinner" alt="Loading data ..." active></paper-spinner-lite>
+                            <template is="dom-if" if="[[!hmType.flat]]">
+                                <template is="dom-if" if="[[!isExpanded]]">
+                                    <a on-tap="_expandAll" class="expandCollapse">
+                                        <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-down"></iron-icon>Expand all</button>
+                                    </a>
+                                </template>
+                                <template is="dom-if" if="[[isExpanded]]">
+                                    <a on-tap="_collapseAll" class="expandCollapse">
+                                        <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-up"></iron-icon>Collapse all</button>
+                                    </a>
+                                </template>
+                            </template>
+
+                            <!-- hiding show evidence button because of bad performance -->
+                            <!-- TODO: fixing bad performance showing evidences -->
+                            <template hidden$="true">
+                                <template is="dom-if" if="[[hmType.flat]]">
+                                    <template is="dom-if" if="[[!areAllEvidencesShown]]">
+                                        <a on-tap="_showAllEvidences" class="expandCollapse">
+                                            <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-down"></iron-icon>Show evidences</button>
+                                        </a>
+                                    </template>
+                                    <template is="dom-if" if="[[areAllEvidencesShown]]">
+                                        <a on-tap="_hideAllEvidences" class="expandCollapse">
+                                            <button class="expand-collapse-button btn btn-default pull-right"><iron-icon icon="arrow-drop-up"></iron-icon>Hide evidences</button>
+                                        </a>
+                                    </template>
+                                </template>
+                            </template>
+                        </th>
+                        <th colspan="3">mRNA expression</th>
+                        <th style="width: 150px; border-left: thin solid lightgray">Protein expression</th>
+                    </tr>
+                    <tr style="font-weight: 300;letter-spacing: 1.05px;">
+                        <td style="width: 104px;">Microarray</td>
+                        <td style="width: 158px;">RNA-seq</td>
+                        <td style="width: 77px;">EST</td>
+                        <td style="border-left: thin solid lightgray">IHC</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="heatmap-body">
+            <ul>
+                <heatmap-table-row id="hmroot" data="[[data]]" show-all-evidences="[[areAllEvidencesShown]]" is-tabular="[[hmType.flat]]" slow-process="{{spinnerActive}}"></heatmap-table-row>
+            </ul>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'heatmap-table-item',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                hmType: {
+                    type: Object,
+                    value: {}
+                },
+                isExpanded: {
+                    type: Boolean,
+                    value: false
+                },
+                areAllEvidencesShown: {
+                    type: Boolean,
+                    value: false
+                },
+                spinnerActive: {
+                    type:Boolean,
+                    value: false,
+                    observer: "_handleSpinner"
+                },
+                data: {
+                    type: Array,
+                    value: [],
+                    observer: "_hideSpinnerOnDataReady"
+                }
+            },
+            ready: function () {
+            },
+            attached: function () {
+                //console.log("event attached");
+                this._handleSpinner(true);
+            },
+            _expandAll: function () {
+
+                var container = this.$.hmroot.querySelectorAll(".heatmap-tree");
+                container.forEach(function (ctn){
+                    ctn.classList.add('openHmChildren');
+                })
+                this.isExpanded = true;
+
+            },
+            _collapseAll: function () {
+
+                var container = this.$.hmroot.querySelectorAll(".heatmap-tree");
+                container.forEach(function (ctn){
+                    if(!ctn.classList.contains('openByDefault')){
+                        ctn.classList.remove('openHmChildren');
+                    }
+                })
+                this.isExpanded = false;
+            },
+
+            _showAllEvidences: function () {
+                //console.log("setting item areAllEvidencesShown to true");
+                this.areAllEvidencesShown = true;
+            },
+
+            _hideAllEvidences: function () {
+                //console.log("setting item areAllEvidencesShown to false");
+                this.areAllEvidencesShown = false;
+            },
+
+            _handleSpinner: function(value) {
+                //console.log("item handling spinner:", value);
+                var el = this.$.featHeatMapSpinner;
+                this.$.featHeatMapSpinner.active = value;
+                return value;
+            },
+
+            _hideSpinnerOnDataReady: function () {
+                if (this.data && this.data.length) {
+                    //console.log("item hide spinner on data ready");
+                    this._handleSpinner(false);
+                }
+            }
+        });
+    </script>
+</dom-module>

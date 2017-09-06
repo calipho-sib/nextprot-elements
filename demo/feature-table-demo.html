@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+    <title>feature-tab demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../feature-table.html">
+    <link rel="stylesheet" href="../../bootstrap/dist/css/bootstrap.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900" rel="stylesheet" type="text/css">
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .vertical-section-container {
+            max-width: 90%;
+        }
+        body{
+            font-family: Lato;
+        }
+    </style>
+</head>
+<body>
+<!--<div class="vertical-section-container centered">-->
+    <div style="margin:0 auto;text-align:center;width:60%;">
+    <h1 style="font-weight:300;margin-top:0px;">Feature-table with Polymer</h1>
+    <hr style="">
+<!--
+    <demo-snippet>
+        <template>
+-->
+<!--    <div class="row">-->
+<!--    <div class="col-md-8" style="padding:20px; background-color:white">-->
+            <feature-table nx-config='{"entry":"NX_P01308"}' feature-list='
+          [{
+                "APIRef": "sequence",
+                "metadata": {
+                    "name": "Sequence"
+                }
+            },
+          {"APIRef": "interacting-region",
+          "metadata": {
+          "name": "Interacting region",
+          "className": "intregion",
+          "color": "#B3C2F0",
+          "type": "rect",
+          "filter": "Region"
+          }
+          },
+          {
+          "APIRef": "miscellaneous-region",
+          "metadata": {
+          "name": "Region",
+          "className": "miscregion",
+          "color": "#B3C2B3",
+          "type": "rect",
+          "filter": "Region"
+          }
+          },
+          {"APIRef": "disulfide-bond",
+          "metadata": {
+          "name": "Disulfide bond",
+          "className": "disulfbond",
+          "color": "#B3C2F0",
+          "type": "path",
+          "filter": "Region"
+          }
+          },
+          {
+          "APIRef": "domain",
+          "metadata": {
+          "name": "Domain",
+          "className": "domain",
+          "color": "#B3C2C2",
+          "type": "rect",
+          "filter": "Region"
+          }
+          },
+          {
+          "APIRef": "repeat",
+          "metadata": {
+          "name": "Repeat",
+          "className": "repeat",
+          "color": "#98B7D5",
+          "type": "rect",
+          "filter": "Region"
+          }
+          },
+          {
+          "APIRef": "calcium-binding-region",
+          "metadata": {
+          "name": "Calcium binding",
+          "className": "calcium",
+          "color": "#B3C2E1",
+          "type": "rect",
+          "filter": "Region"
+          }
+          },
+          {
+          "APIRef": "zinc-finger-region",
+          "metadata": {
+          "name": "Zinc finger",
+          "className": "calcium",
+          "color": "#B3C2E1",
+          "type": "rect",
+          "filter": "Region"
+          }
+          },
+          {
+          "APIRef": "dna-binding-region",
+          "metadata": {
+          "name": "DNA binding",
+          "className": "dnabind",
+          "color": "#B3C2FF",
+          "type": "rect",
+          "filter": "Region"
+          }
+          },
+          {
+          "APIRef": "beta-strand",
+          "metadata": {
+          "name": "Beta strand",
+          "className": "betastrand",
+          "color": "#B3F0C2",
+          "type": "rect",
+          "filter": "Secondary structure"
+          }
+          },
+          {
+            "APIRef": "peptide-mapping",
+            "metadata": {
+              "name": "Peptide",
+              "className": "pep",
+              "color": "#B3E1D1",
+              "type": "rect",
+              "filter": "Peptide",
+              "height": 8
+            }
+          },
+          {
+          "APIRef": "helix",
+          "metadata": {
+          "name": "Helix",
+          "className": "helix",
+          "color": "#B3F0D1",
+          "type": "rect",
+          "filter": "Secondary structure"
+          }
+          },
+          {
+          "APIRef": "turn",
+          "metadata": {
+          "name": "Turn",
+          "className": "turn",
+          "color": "#B3F0E1",
+          "type": "rect",
+          "filter": "Secondary structure"
+          }
+          },
+        {
+        "APIRef": "variant",
+        "metadata": {
+          "name": "Variant",
+          "className": "variant",
+          "color": "rgba(0,255,154,0.3)",
+          "type": "unique",
+          "filter": "Variant"
+        }
+        }
+        ]'></feature-table>
+        </div>
+<!--        </div>-->
+<!--
+        </template>
+    </demo-snippet>
+-->
+<!--</div>-->
+</body>
+</html>

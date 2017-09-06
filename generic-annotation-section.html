@@ -88,7 +88,7 @@ Annotation section used in function, medical, and expression views.
             }
             #evidenceButton {
                 float: right;
-                padding: 0px 5px 0px 0px;
+                padding: 0px 6px 0px 0px;
             }
             #notice {
                 margin: 0 0 0 5px;
@@ -116,7 +116,7 @@ Annotation section used in function, medical, and expression views.
                 <template is="dom-if" if="[[_checkCategoryLabel(category.name)]]">
                     <div class="row category-row">
                     <div>
-                        <h4 class="annotation-category-title"> [[category.name]]
+                        <h4 class="annotation-category-title"> [[_displayCategoryTitle(category.name)]]
                             <template is="dom-if" if="[[_isProteinProteinInteraction(category)]]">
                                 <div class="grey-x right-column-header">Number of IntAct expt.</div>
                             </template>
@@ -399,6 +399,8 @@ Annotation section used in function, medical, and expression views.
                             || a.description.toLowerCase().match(/.*diagnostic marker.*/))) continue;
                     } else if (this.section==="interactions"){
                         if (a.apicategory==="MISCELLANEOUS" && !(a.description.toLowerCase().match(/.*bind.*/) || a.description.toLowerCase().match(/^bind.*/))) continue;
+                    } else if (this.section==="sequence"){
+                        if (a.apicategory==="CAUTION" && !a.description.startsWith("It is uncertain whether Met")) continue;
                     }
                     if(a.apicategory==="SEQUENCE_CAUTION") {
                         for(var j in a.properties) {
@@ -564,7 +566,7 @@ Annotation section used in function, medical, and expression views.
                 }
                 for (var i in Object.keys(data)) {
                     var category = Object.keys(data)[i];
-                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "OVERVIEW", "PTM"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByRank);
+                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "OVERVIEW", "PTM", "DOMAIN"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByRank);
                     else if (category==="INTERACTIONS") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortOverview);
                     else if (category==="SUBCELLULAR LOCATION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortSubcellular);
                     else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBiophysicochemical);
@@ -584,10 +586,21 @@ Annotation section used in function, medical, and expression views.
                     this.$$("#notice").innerHTML = "<i>Annotations in this section apply to all the isoforms if not specified otherwise.</i>";
                 }
             },
+             //Rename some titles if necessary
+            _displayCategoryTitle: function(name){
+              if (name === "EXPRESSION INFO"){
+                return "EXPRESSION"
+              } else return name;  
+            },
             _sortAlphabetically: function(a,b) {
                 if(a.isoformSpecific && !b.isoformSpecific) return 1;
                 else if(!a.isoformSpecific && b.isoformSpecific) return -1;
-                if(a.description.startsWith("<b>") || b.description.startsWith("<b>") || a.description.startsWith("<i>") || b.description.startsWith("<i>"))
+
+                if (!a.description)
+                    return 1;
+                else if (!b.description)
+                    return -1;
+                else if(a.description.startsWith("<b>") || b.description.startsWith("<b>") || a.description.startsWith("<i>") || b.description.startsWith("<i>"))
                     return a.description.replace("<i>Contributes to</i> ","").replace("<b>Not</b> ","").replace("<i>Colocalizes with</i>&nbsp;","").toLowerCase()
                     > b.description.replace("<i>Contributes to</i> ","").replace("<b>Not</b> ","").replace("<i>Colocalizes with</i>&nbsp;","").toLowerCase() ? 1 : -1;
                 return a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1;

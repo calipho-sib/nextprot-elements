@@ -2,7 +2,6 @@
   "name": "nextprot-elements",
   "main": "nextprot-elements.html",
   "dependencies": {
-    "jquery-ui": "^1.12.1",
     "font-awesome": "~4.7.0",
     "polymer": "Polymer/polymer#^1.4.0",
     "iron-collapse": "~1.3.0",
@@ -10,8 +9,13 @@
     "iron-icons": "^1.2.0",
     "iron-input": "^1.0.11",
     "iron-dropdown": "^1.5.4",
+    "iron-list": "2.0.0",
+    "iron-a11y-keys": "2.0.0",
     "iron-autogrow-textarea": "^1.0.15",
+    "paper-button": "2.0.0",
+    "paper-icon-button": "2.0.0",
     "paper-toggle-button": "^1.3.0",
+    "paper-input": "2.0.1",
     "neon-animation": "~1.2.4",
     "paper-spinner": "^1.2.1",
     "shibui-dropdown-menu": "https://github.com/ShibuiElements/shibui-dropdown-menu.git#^1.0.0",
@@ -26,7 +30,7 @@
     "biojs"
   ],
   "devDependencies": {
-    "webcomponentsjs": "~0.7.23",
+    "webcomponentsjs": "0.7.23",
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
     "web-component-tester": "^4.0.0",
@@ -34,5 +38,12 @@
     "d3": "~3.5.6",
     "nextprot": "x.x.x",
     "handlebars": "^4.0.5"
+  },
+  "resolutions": {
+    "polymer": "^1.1.0",
+    "paper-button": "2.0.0",
+    "paper-icon-button": "2.0.0",
+    "webcomponentsjs": "^0.7.24",
+    "iron-flex-layout": "^1.0.0"
   }
 }

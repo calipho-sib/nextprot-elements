@@ -1,0 +1,110 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+
+<link rel="import" href="evidence-item.html">
+<link rel="import" href="quality-label.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="heatmap-table-row.html">
+
+ 
+<!--
+    <script src="../../jquery/dist/jquery.js"></script>
+<script src="../../bootstrap/dist/js/bootstrap.js"></script>
+-->
+    
+
+<!--
+`heatmap-square`
+A heatmap square
+@demo demo/heatmap-square-demo.html
+-->
+<dom-module id="heatmap-square">
+
+    <template>
+        <!-- Latest compiled and minified CSS -->
+        <style is="custom-style" include="nextprot-elements-shared-styles">
+             :host {
+                display: inline-block;
+                width:24px;
+                height:21px;
+            }
+            .square-container{
+                display:inline-block;
+                position: relative;
+                width:100%;
+                height:100%;
+            }
+            .square-container div:first-child{
+                position:absolute;
+                top:0px;
+                left:0px;
+                z-index:2;
+            }
+            
+            .square-container div:last-child{
+                position:absolute;
+                top:5px;
+                left:8px;
+            }
+            .single-square{
+                display:inline-block;
+/*                background-color: #ffa10a;*/
+                border-bottom: solid;
+                border-right: solid;
+                border-radius: 2px;
+/*                border-size: 5px;*/
+                border-color: black;
+                border:1px solid black;
+                width:15px;
+                height:15px;
+                box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+/*                background-color:red;*/
+            }
+            .filled{
+                background-color: var(--heatmap-square-color, orange);
+            }
+            .emptied{
+                background-color:white;
+            }
+            </style>
+        <div class="square-container" data-toggle="tooltip" data-placement="top" title="[[tooltipText]]">
+            <div class$="[[_computeStyleSquare(front)]]" hidden$=[[_hideSquare(front,back)]]></div>
+            <div class$="[[_computeStyleSquare(back)]]" hidden$="[[_hideSquare(back)]]"></div>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'heatmap-square',
+            properties: {
+                front: {
+                    type: Boolean,
+                    value: false
+                },
+                back: {
+                    type: Boolean,
+                    value: false
+                },
+                tooltipText: {
+                    type: String,
+                    value:""
+                }
+            },
+            attached: function(){
+            },
+            _computeStyleSquare: function(param){
+                console.log()
+                if (param === true){
+                    return "single-square filled"
+                } else return "single-square emptied"
+            },
+            _hideSquare: function(p1,p2){
+                if (!p1 && !p2){
+                    return true;
+                }
+            }
+            
+        });
+    </script>
+</dom-module>

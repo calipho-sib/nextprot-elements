@@ -1,0 +1,483 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="quality-label.html">
+<link rel="import" href="heatmap-square.html">
+
+<dom-module id="heatmap-table-row">
+
+    <style include="nextprot-elements-shared-styles">
+         :host {
+            display: block;
+        }
+
+         .highlight-roots {
+             font-weight: bold;
+             margin-top: 10px;
+         }
+
+        #grad {
+            background: red;
+            /* For browsers that do not support gradients */
+            background: -webkit-linear-gradient(left top, red, yellow);
+            /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(bottom right, red, yellow);
+            /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(bottom right, red, yellow);
+            /* For Firefox 3.6 to 15 */
+            background: linear-gradient(to bottom right, red, yellow);
+            /* Standard syntax */
+        }
+
+        #heatmap-body {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .heatmap-tree {
+            display: none;
+        }
+
+        .heatmap-row {
+            border-bottom: solid 1px #d4d4d4;
+            overflow: hidden;
+            height: 25px;
+        }
+
+        .evidence-row {
+            border-bottom: solid 1px #d4d4d4;
+            background-color: #F9F9F9;
+            font-size: 90%;
+        }
+
+        .heatmap-row:hover {
+            background-color: #efefef;
+/*            background-color: aliceblue;*/
+        }
+
+        .heatmap-rowLabel {
+            display: inline-block;
+            margin-bottom: 0px;
+            word-break: break-all;
+            cursor: pointer;
+        }
+
+        .heatmap-no-cursor {
+            cursor: auto !important;
+        }
+
+        .heatmap-rowLabel a {
+            margin-left: 5px;
+            font-size: 12px;
+        }
+
+        .heatmap-rowLabel .glyphicon {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+        .heatmap-circle {
+            text-align: center;
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-top: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+        }
+
+        ul {
+            padding-left: 10px;
+            list-style-type: none;
+        }
+
+        .heatmap-inline {
+            display: inline-block;
+        }
+
+        .heatmap-zoom:hover {
+            cursor: pointer;
+        }
+        /* sandbox */
+
+        .heatmap-info {
+            display: none;
+            text-align: center;
+        }
+
+        .glyphicon-refresh-animate {
+            -animation: spin .7s infinite linear;
+            -webkit-animation: spin2 .7s infinite linear;
+        }
+
+        .openHmChildren {
+            display: block;
+        }
+
+        .heatmap-rowLabel {
+            cursor: pointer !important;
+        }
+
+        .cursor-for-expand {
+            cursor: pointer !important;
+        }
+
+        .heatmap-hidden-circle {
+            display: none;
+        }
+
+        .heatmap-square {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: solid;
+            border-width: 1px;
+            cursor:pointer;
+        }
+
+        .heatmap-circle-size {
+            width: 12px;
+            font-size: 14px;
+        }
+
+        .heatmap-group-count-size {
+            float: right;
+            width: 20px;
+            height: 20px;
+            margin: 2px 0px 0px 4px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .heatmap-group {
+            display: inline-block; 
+            text-align: center;
+            padding-right: 5px; 
+            padding-left: 20px; 
+            border-left: thin solid lightgray;
+        }
+
+        .grouped-values > .heatmap-group:nth-child(4) {
+            padding-right : 2px; 
+            padding-left : 15px; 
+        }
+
+        .evidenceNumber {
+            background: #7CBA0F;
+            padding: 2px 6px;
+            border-radius: 2px;
+            color: white;
+            vertical-align: top;
+            cursor: pointer;
+        }
+        heatmap-square{
+            margin-top:2px;
+        }
+        .high-level{
+            --heatmap-square-color: #FFA10A;
+        }
+        .medium-level{
+            --heatmap-square-color: #ffc870;
+        }
+        .low-level{
+            --heatmap-square-color: #ffe6bd;
+        }
+        .not-detected{
+            --heatmap-square-color: #969e96;
+        }
+        
+
+    </style>
+    <template>
+        <template is="dom-repeat" items="[[data]]" as="d">
+            <template is="dom-if" if="[[hasSomeData(d)]]">
+            <li>
+                <div id="row_[[d.name]]" class$="{{_computeClassesForParent(d)}}" on-tap="toggleChildren">
+                    <template is="dom-if" if="[[hasChildren(d)]]">
+                        <i class$="{{_computeInitialCaret(d)}}"></i>
+                    </template>
+                    <p class="heatmap-no-cursor heatmap-rowLabel tree-toggler">
+                        <span class="rowLabel">[[d.rowLabel]]</span>
+                        <span><a href="[[d.linkURL]]" target="_blank">[[d.linkLabel]]</a></span>
+                        <quality-label quality="[[d.annotation.qualityQualifier]]"></quality-label>
+                    </p>
+                    <div class="pull-right grouped-values" style="margin-left: 25px">
+                        <!-- Groups are showed --> 
+                        <template is="dom-repeat" items="[[d.groupValues]]" as="group">
+                            
+                            <div class="heatmap-group">
+                                <div class="square-container" style="display:inline-block">
+                                <template is="dom-repeat" items="[[group.values]]" as="value">
+                                        <heatmap-square front$="{{_computeStyleFirstSquare(value)}}" back$="{{_computeStyleSecondSquare(value)}}" tooltip-text$="{{_getToolTipForValue(value)}}" class$="[[_computeColor(value)]]"></heatmap-square>
+                                </template>
+                                <!-- Number of evidences are displayed for the given group --> 
+                                <div class="heatmap-column heatmap-group-count-size">
+                                    <template is="dom-if" if="[[ _computeCountForGroup(group, d)]]">
+                                        <span class="evidenceNumber"  method-ecocode$="[[group.ecoCode]]" data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group, d)]]</span>
+                                    </template>
+                                </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <!-- Evidences container not displayed at erst-->
+                <div id="annotation-[[d.annotation.annotationId]]-evidence-container" class="evidence-row"></div>
+                <template is="dom-if" if="[[hasChildren(d)]]">
+                    <ul class$="{{_computeClassesForChildren(d)}}">
+                            <heatmap-table-row data="[[d.children]]"></heatmap-table-row>
+                    </ul>
+                </template>
+            </li>
+            </template>
+        </template>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'heatmap-table-row',
+            properties: {
+                data: {
+                    type: Array,
+                    value: []
+                },
+                showAllEvidences: {
+                    type: Boolean,
+                    value: false,
+                    observer: "_showAllEvidencesHandler"
+                },
+                isTabular: {
+                    type: Boolean,
+                    value: false
+                },
+                slowProcess: {
+                    type: Boolean,
+                    value: false,
+                    notify: true
+                }
+            },
+            attached: function () {
+//                $('[data-toggle="tooltip"]').tooltip(); 
+            },
+            _getToolTipForValue: function (data){
+                //There is data and there are children
+                if(data.currentNodeEvidenceCount > 0 && data.childrenFound) {
+                    return data.tooltip + " in this anatomical entity and at least one subentity"
+                }
+
+                //There is data and there are no children
+                if(data.currentNodeEvidenceCount > 0 && !data.childrenFound) {
+                    return data.tooltip  + " in this anatomical entity"
+                }
+
+                //There is not data but there are children
+                if(data.currentNodeEvidenceCount == 0 && data.childrenFound) {
+                    return data.tooltip + " in at least one anatomical subentity"
+                }
+            },
+            _computeInitialCaret: function(d){
+                if(d.level < 2){
+                    return "fa fa-caret-down cursor-for-expand"
+                }else {
+                    return "fa fa-caret-right cursor-for-expand"
+                }
+            },
+            _computeClassesForParent: function(d){
+                if(d.level === 0){
+                    return "heatmap-row highlight-roots"
+                }
+                return "heatmap-row"
+
+            },
+            _computeClassesForChildren: function(d){
+                var baseClass = "tree heatmap-tree"
+                if(d.level < 2){
+                    return baseClass + " openByDefault openHmChildren"
+                }else {
+                    return baseClass;
+                }
+            },
+            _computeCountForGroup: function (group, data) {
+                //console.log("group",group)
+                var totalEvidenceForGroup = group.values.reduce(function(v1, v2) {return v1 + v2.currentNodeEvidenceCount}, 0);
+                if(totalEvidenceForGroup > 0){
+                    return totalEvidenceForGroup;
+                }
+            },
+
+            _computeStyleFirstSquare: function(data){
+                if (data.currentNodeEvidenceCount){
+                    return true;
+                }
+                return false;
+            },
+            _computeStyleSecondSquare: function(data){
+                if (data.childrenFound){
+                    return true;
+                }
+                return false;
+            },
+            _computeColor: function(data){
+                if (["positive", "high"].indexOf(data.expressionLevel) > -1){
+                    return "high-level";
+                }
+                else if (data.expressionLevel === "medium"){
+                    return "medium-level";
+                }
+                else if (data.expressionLevel === "low"){
+                    return "low-level";
+                }
+                else return "not-detected"
+            },
+            _computeStyle: function (data) {
+
+                //There is data and there are children
+                if(data.currentNodeEvidenceCount > 0 && data.childrenFound) {
+                    return "background-color: " + data.color + "; border-bottom:solid; border-right: solid; border-size: 5px; border-color: black"
+                }
+
+                //There is data and there are no children
+                if(data.currentNodeEvidenceCount > 0 && !data.childrenFound) {
+                    return "background-color: " + data.color + " ; border: 0"
+                }
+
+                //There is not data but there are children
+                if(data.currentNodeEvidenceCount == 0 && data.childrenFound) {
+                    return "background-color: white; border-bottom:solid; border-right: solid; border-size: 5px; border-color: " + data.color
+                }
+
+
+                return "display: none";
+
+            },
+            //May have data directly or children may have
+            hasSomeData: function (d) {
+                if(!d.groupValues || d.groupValues.length == 0) { //If there is no data for this tissue
+                    if (!d.propagatedValuesFromChildren || d.propagatedValuesFromChildren.length == 0) { //Nor data for the children
+                        return false;
+                    }
+                }
+                return true
+            },
+
+            hasChildren: function (d) {
+                var boolean = d.children && d.children.length;
+                return boolean;
+            },
+
+            toggleChildren: function (e) {
+                //console.log("toggle children", e);
+                var srcElement = e.target || e.srcElement;
+                var liParent = srcElement.closest("li")
+                var icon = liParent.getElementsByTagName("i")[0]
+                var children = liParent.getElementsByTagName("ul")[0]
+                if(children && children.classList){
+                    children.classList.toggle("openHmChildren");
+                }
+                if(icon){
+                    if (icon.classList.contains("fa-caret-down")) {
+                        icon.classList.remove("fa-caret-down")
+                        icon.classList.add("fa-caret-right")
+                    } else {
+                        icon.classList.remove("fa-caret-right")
+                        icon.classList.add("fa-caret-down")
+                    }
+                }
+            },
+
+            _ecoCurrentlyHighlighted: function(evidenceContainer) {
+                if (evidenceContainer.childElementCount > 0) {
+                    var evidenceItems = evidenceContainer.children;
+                    for (var i=0;i<evidenceItems.length;i++) {
+                        var evidenceItem=evidenceItems[i];
+                        if (evidenceItem.highlighted==='yes') return evidenceItem.data.evidenceCodeAC;
+                    }
+                }
+                return "";
+            },
+
+            _stopEventPropagation: function(event) {
+                if (event.stopPropagation){
+                    event.stopPropagation();
+                }
+                else if(window.event){
+                    window.event.cancelBubble=true;
+                }
+            },
+
+            /*
+             * we want the evidences be sorted by method (eco name)
+             */
+            _sortEvidences: function(evidences) {
+                evidences.sort(function(a,b) {
+                    return a.evidenceCodeName.toLowerCase().localeCompare(b.evidenceCodeName.toLowerCase());
+                });
+            },
+
+
+            _showEvidencesOfAnnotationAndEco: function(annotation, neweco){
+                if (annotation === undefined || annotation === null) return;
+                var container = this.$$("#annotation-"+annotation.annotationId+"-evidence-container");
+                if (container === undefined || container === null) return;
+
+                var oldeco = this._ecoCurrentlyHighlighted(container);
+                this._sortEvidences(annotation.evidences);
+                // if evidence-items are not yet created, create them and highlight those related to neweco
+                if(container.childElementCount===0){
+                    for (evidenceIdx in annotation.evidences){
+                        var evidence = annotation.evidences[evidenceIdx]
+                        if(evidence.crossRef) {
+                            evidence.resourceAccession = evidence.crossRef.name;
+                            evidence.url = evidence.crossRef.url;
+                        }
+                        var evidenceItem = document.createElement("evidence-item");
+                        evidenceItem.setAttribute("index", new Number(evidenceIdx) + 1);
+                        var hlValue = (neweco === evidence.evidenceCodeAC ? "yes" : "no");
+                        evidenceItem.setAttribute("highlighted", hlValue);
+                        evidenceItem.data=evidence;
+                        container.appendChild(evidenceItem);
+                        this.updateStyles();
+                    }
+                    // else if we want to highlight evidence-itmes related to another eco,
+                    // then update the highlighted value for all
+                } else if (oldeco != neweco) {
+                    for (var i=0;i<container.children.length;i++) {
+                        var evidenceItem=container.children[i];
+                        var hlValue = (neweco === evidenceItem.data.evidenceCodeAC ? "yes" : "no");
+                        evidenceItem.highlighted=hlValue;
+                        container.hidden = false;
+                    }
+                    // we click again on same eco then toggle visibility of evidence-items
+                } else {
+                    container.hidden = ! container.hidden;
+                }
+
+            },
+            _showAllEvidencesHandler: function(x) {
+                if (this.isTabular) {
+                    //console.log("calling _showAllEvidencesHandler");
+                    this.slowProcess = true;
+                    this.async(this._effectiveAllEvidencesHandler,500);
+                }
+            },
+
+            _effectiveAllEvidencesHandler: function() {
+                for (var i=0;i<this.data.length;i++) {
+                    console.log("handling all evidences",i+1,this.data.length);
+                    this._showEvidencesOfAnnotationAndEco(this.data[i].annotation, "");
+                }
+                this.slowProcess = false;
+            },
+
+            _showEvidences: function(e) {
+                var annotation = JSON.parse(e.target.dataset.args);
+                var neweco = e.target.attributes["method-ecocode"].nodeValue;
+                this._showEvidencesOfAnnotationAndEco(annotation, neweco);
+                // prevents event to go on bubbling and this way prevents toggleChildren() to be executed
+                this._stopEventPropagation(e);
+            }
+
+        });
+    </script>
+</dom-module>
