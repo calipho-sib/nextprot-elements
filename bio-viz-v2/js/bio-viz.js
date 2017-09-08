@@ -413,7 +413,8 @@ var nxBioViz = (function () {
             biovizWidget.bioviz("linkWithExternalSequence", selection, sequence);
 
 
-            biovizWidget.bioviz("highlight", selection, true, null, range, true);
+            biovizWidget.bioviz("highlightSequence", selection, true, range, true);
+//            biovizWidget.bioviz("highlight", selection, true, null, range, true);
         })
     }
 
