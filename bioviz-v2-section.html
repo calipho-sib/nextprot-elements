@@ -53,14 +53,14 @@ Element joining bioviz viewer and 3D structures table
             },
             attached: function() {
                 this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
-                this.nxConfig.env = "dev";
+                /*this.nxConfig.env = "dev";
                 console.log("test env");
-                console.log(this.nxConfig.env);
+                console.log(this.nxConfig.env);*/
                 if (this.nxConfig.env) this.nx.updateEnvironment(this.nxConfig.env);
-                console.log(this.nxConfig);
+                //console.log(this.nxConfig);
                 this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
                 this.bv = new nxBioViz();
-                console.log("going to init :");
+                //console.log("going to init :");
                 this.bv.init("#bioviz-container", this.isoform);
             },
             highlight: function() {
