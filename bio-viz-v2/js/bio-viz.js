@@ -79,7 +79,7 @@ var nxBioViz = (function () {
             
             if (!pdbData.length){
                 //Generate html template
-                $(div).append("<div class='noPdb alert alert-warning' role='alert'><strong><span class='glyphicon glyphicon-exclamation-sign'></span><span class='alert-text'>There is no PDB entry for any isoform.</span></strong></div>");
+                $(div).append("<div class='noPdb alert alert-warning' role='alert'><strong><span class='fa fa-exclamation-circle'></span><span class='alert-text'>There is no PDB entry for any isoform.</span></strong></div>");
                 
                 if (CustomEvent) {
                     var event = new CustomEvent(self.events.PDB_DATA_EVENT, {
@@ -115,7 +115,7 @@ var nxBioViz = (function () {
 
         if (!listChain.length){
             //Generate html template
-            $(container).html("<div class='noPdb alert alert-warning' role='alert'><strong><span class='glyphicon glyphicon-exclamation-sign'></span><span class='alert-text'>There is no PDB entry for this isoform.</span></strong></div>");
+            $(container).html("<div class='noPdb alert alert-warning' role='alert'><strong><span class='fa fa-exclamation-circle'></span><span class='alert-text'>There is no PDB entry for this isoform.</span></strong></div>");
         }
         else {
 
@@ -188,7 +188,7 @@ var nxBioViz = (function () {
         
         if (!listChain.length){
             //Generate html template
-            $(container).html("<div class='noPdb alert alert-warning' role='alert'><strong><span class='glyphicon glyphicon-exclamation-sign'></span><span class='alert-text'>There is no PDB entry for this isoform.</span></strong></div>");
+            $(container).html("<div class='noPdb alert alert-warning' role='alert'><strong><span class='fa fa-exclamation-circle'></span><span class='alert-text'>There is no PDB entry for this isoform.</span></strong></div>");
         }
         //Generate html template if empty
         else if (!$("#bioviz").length) {
@@ -447,7 +447,7 @@ var nxBioViz = (function () {
                     method: findElemByProperty(d.properties, "method"),
                     name: name,
                     resolution: findElemByProperty(d.properties, "resolution") || "-",
-                    position: positions ? positions.firstPosition + "-" + positions.lastPosition : "NA<i class='pdbPosException glyphicon glyphicon-asterisk' aria-hidden='true'></i>",
+                    position: positions ? positions.firstPosition + "-" + positions.lastPosition : "NA<i class='pdbPosException fa fa-asterisk' aria-hidden='true'></i>",
                     links: name
                 }
             }
