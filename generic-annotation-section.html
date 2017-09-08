@@ -735,19 +735,9 @@ Annotation section used in function, medical, and expression views.
             },
             _getPublication: function(pub){
                 if(pub){
-                    return {
-                        publicationId: pub.publicationId,
-                        localUrl: "/publications/"+pub.publicationId,
-                        title: pub.title,
-                        authors: pub.authors,
-                        journalResourceLocator: pub.journalResourceLocator,
-                        volume: pub.volume,
-                        firstPage: pub.firstPage,
-                        lastPage: pub.lastPage,
-                        publicationYear: pub.publicationYear,
-                        dbXrefs: pub.dbXrefs,
-                        abstractText: pub.abstractText
-                    }
+                    var pubCopy = jQuery.extend(true, {}, pub);
+                    pubCopy.localUrl = "/publications/"+pub.publicationId;
+                    return pubCopy;
                 }
             },
             _getUniqueListOfEvidenceSources: function(evidenceList){
