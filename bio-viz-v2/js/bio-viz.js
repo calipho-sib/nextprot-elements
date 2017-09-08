@@ -15,8 +15,6 @@ var nxBioViz = (function () {
     var clientInfo = 'calipho team with bioviz team';
     var nx = new Nextprot.Client(applicationName, clientInfo);
     var entry = nx.getEntryName();
-    nx.updateEnvironment("dev");
-    console.log(nx.getApiBaseUrl);
     var isoform = entry + "-1";
     var container = "";
     var containerElement;
@@ -56,18 +54,18 @@ var nxBioViz = (function () {
 
 
 //    function init() {
-    nxBioViz.prototype.init = function(div, isoName, sequences){
+    nxBioViz.prototype.init = function(div, nxEntry, isoName, sequences){
         //Init container & iso
         container = div;
         containerElement = $(div)[0];
         isoform = isoName;
+        entry = nxEntry;
         seqList = sequences ? sequences : [];
         
         var apiCalls = [nx.getAnnotationsByCategory(entry, "pdb-mapping")];
         if (!sequences) {
             apiCalls.push(nx.getProteinSequence(entry));
         }
-        
         Promise.all(apiCalls).then(function(data) {
             if (!sequences){
                 seqList = data[1];
@@ -77,8 +75,6 @@ var nxBioViz = (function () {
         
         //Get pdb data
 //        nx.getAnnotationsByCategory(entry, "pdb-mapping").then(function (data) {
-//            console.log("pdb-mapping data");
-//            console.log(data.annot);
 //            pdbData = data.annot;
             
             if (!pdbData.length){
@@ -103,7 +99,6 @@ var nxBioViz = (function () {
     
     function loadBioviz(){
         //Generate html template
-        console.log("loadBioviz function loaded");
         var template = HBtemplates['templates/bioviz.tmpl'];
         $(container).html(template);
 
@@ -179,8 +174,8 @@ var nxBioViz = (function () {
         isoform = isoName;
         var listChain = parsePDBData(pdbData);
         
-        console.log("data given to the table : ");
-        console.log(listChain);
+//        console.log("data given to the table : ");
+//        console.log(listChain);
         
         if (CustomEvent) {
             var event = new CustomEvent(self.events.PDB_DATA_EVENT, {
