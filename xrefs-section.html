@@ -93,6 +93,7 @@ Exteranl links section present in function, medical, expression, interactions, s
         var self=this;
         nx.getEntryXrefInPageView(self.nxConfig.entry, self.view)
                 .then(function (data) {
+                    
                   self.getXrefByView(Object.keys(data.xrefs).map(function(k) { return data.xrefs[k] }));
                   self.$.spinner.active = false;
                 }).catch(function (err) {
@@ -142,7 +143,7 @@ Exteranl links section present in function, medical, expression, interactions, s
             else return 0;
           })
         }
-        console.log("DATA XREFS", data)
+//        console.log("DATA XREFS", data)
         this.data = data;
       },
       _filterExceptions: function(typeList) {
