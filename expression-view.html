@@ -36,41 +36,6 @@ View listing protein expression view.
                                         count="{{genericAnnotationsCount}}"></generic-annotation-section>
         </div>
 
-        <!--
-        <div id="filterPositiveNegativeSection" class="row nxSection">
-          <button id="showFilterButton" class="btn btn-default pull-right" on-tap="_toggleFilters">
-            <template is="dom-if" if="[[filtersShown]]">
-              <iron-icon icon="arrow-drop-up"></iron-icon>
-              Hide filters &nbsp;
-            </template>
-            <template is="dom-if" if="[[!filtersShown]]">
-              <iron-icon icon="arrow-drop-down"></iron-icon>
-              Show filters &nbsp;
-            </template>
-          </button>
-          <div id="filtersContent" hidden>
-            <div class="row category-row style-scope generic-annotation-section">
-              <h4 class="annotation-category-title">Filter on positive / negative annotations</h4><br>
-              <template is="dom-repeat" items="[[filters.posNeg]]" as="filterPN">
-                <label class="radio-inline"><input type="radio" name="optradio" checked$="{{filterPN.checked}}">[[filterPN.label]]</label>
-              </template>
-            </div>
-            <div class="row category-row style-scope generic-annotation-section">
-              <h4 class="annotation-category-title">Filter on methodology</h4><br>
-              <template is="dom-repeat" items="[[filters.methodology]]" as="methodology">
-                <label class="checkbox-inline"><input type="checkbox" value="">[[methodology]]</label>
-              </template>
-            </div>
-            <div class="row category-row">
-              <button id="applyFiltersButton" class="btn btn-default col-md-offset-5 col-md-2" type="button">
-                <i class="fa fa-filter" aria-hidden="true"></i>
-                <span class="filter-submit-text" on-tap="_applyFilters">Apply filters</span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-        -->
         <div id="nxExpressionAnnotations" class="row nxSection">
             <expression-section id="expressionSection" section="expressionSection" nx-config="[[nxConfig]]"
                                 count="{{expressionSectionAnnotationCount}}" filters={{filters}}></expression-section>
@@ -126,10 +91,6 @@ View listing protein expression view.
                 filtersShown: {
                     type: Boolean,
                     value: false
-                },
-                tabularView: {
-                    type: Boolean,
-                    observer: "_updateTabularViewAttribute"
                 }
             },
             _applyFilters: function () {
@@ -155,10 +116,6 @@ View listing protein expression view.
             },
             _checkXrefs: function () {
                 this.xrefsCount === 0 ? this.$.nxXrefs.hidden = true : this.$.nxXrefs.hidden = false;
-            },
-            _updateTabularViewAttribute: function () {
-
-                this.$.expressionSection.setAttribute('tabular-view', '');
             }
         });
     </script>
