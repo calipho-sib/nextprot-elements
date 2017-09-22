@@ -74,7 +74,7 @@ Annotation section used in function, medical, and expression views.
         </div>
 
         <ul id="expression-tabs" class="nav nav-tabs" role="tablist">
-            <li id="ontologyTab" class="active" on-tap="_showOntologicalView">
+            <li id="ontologyTab" on-tap="_showOntologicalView">
                 <a href="javascript:void(0)">Ontological view</a>
             </li>
             <li id="flatTab" on-tap="_showTabularView">
@@ -107,11 +107,6 @@ Annotation section used in function, medical, and expression views.
                 nxConfig: {
                     type: Object,
                     value: {}
-                },
-                tabularView: {
-                    type: Boolean,
-                    value: false,
-                    observer: "_updateView"
                 },
                 evidencesShown: {
                     type: Boolean,
@@ -207,6 +202,11 @@ Annotation section used in function, medical, and expression views.
                 nxClient: {
                     type: Object,
                     observer: {}
+                },
+                _showTabViewPropertyName: {
+                    type: String,
+                    value: "view.expression.show-tabular-view",
+                    readOnly: true
                 }
             },
             observers: [
@@ -215,6 +215,8 @@ Annotation section used in function, medical, and expression views.
             _getDataFromAPI: function (newGoldOnlyValue) {
 
                 Polymer.RenderStatus.afterNextRender(this, function () {
+                    this._updateView();
+
                     var nx = new Nextprot.Client("neXtprot expression section", "Calipho Group");
                     if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
 
@@ -291,20 +293,29 @@ Annotation section used in function, medical, and expression views.
                 }
                 return apiBaseUrl + "/entry/" + entry  + "/expression-profile.tsv";
             },
-            _updateView: function (isTabularView) {
+            _showTabularView: function () {
 
-                this.$.ontologyContent.hidden = isTabularView;
-                this.$.flatContent.hidden = !isTabularView;
-                (isTabularView) ? this.$.ontologyTab.classList.remove("active"):this.$.ontologyTab.classList.add("active");
-                (isTabularView) ? this.$.flatTab.classList.add("active"):this.$.flatTab.classList.remove("active");
+                var showTabularViewValue = localStorage.getItem(this._showTabViewPropertyName);
+                return showTabularViewValue && showTabularViewValue === "true";
+            },
+            _updateView: function () {
+                var showTabularViewValue = localStorage.getItem(this._showTabViewPropertyName);
+                var showTabularView = showTabularViewValue && showTabularViewValue === "true";
+
+                this.$.ontologyContent.hidden = showTabularView;
+                this.$.flatContent.hidden = !showTabularView;
+                (showTabularView) ? this.$.ontologyTab.classList.remove("active"):this.$.ontologyTab.classList.add("active");
+                (showTabularView) ? this.$.flatTab.classList.add("active"):this.$.flatTab.classList.remove("active");
             },
             _showOntologicalView: function () {
 
-                this.tabularView = false;
+                localStorage.setItem(this._showTabViewPropertyName, "false");
+                this._updateView();
             },
             _showTabularView: function () {
 
-                this.tabularView = true;
+                localStorage.setItem(this._showTabViewPropertyName, "true");
+                this._updateView();
             },
             _computeStyle: function (value) {
                 return "margin: 5px; background-color: " + value
