@@ -260,11 +260,6 @@ Annotation section used in function, medical, and expression views.
                         //var flatDataCopy = jQuery.extend(true, [], self.heatmapFlatData);
                         self.heatmapData = self._propagateFlatDataToTree(self.heatmapFlatData);
 
-                        Polymer.RenderStatus.afterNextRender(self.$.HTI_ontology, function(){
-                            $('[data-toggle="tooltip"]').tooltip({
-                                html: true
-                            });
-                        });
                     }
                 }
             },
