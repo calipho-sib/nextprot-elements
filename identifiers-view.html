@@ -73,7 +73,7 @@ View listing identifiers annotations.
             ready: function(){
                 var nx = new Nextprot.Client("neXtprot identifiers view", "Calipho Group");
                 var self = this;
-                nx.getFullAnnotationsByCategory(nx.getEntryName(), "IDENTIFIER")
+                nx.getFullAnnotationsByCategory(this.nxConfig.entry, "IDENTIFIER")
                     .then(function (response) {
                         self._process(response.identifiers);
                     });
