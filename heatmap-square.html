@@ -92,6 +92,10 @@ A heatmap square
                 }
             },
             attached: function(){
+                var polymerSelection = Polymer.dom(this.root).querySelector(".square-container");
+                $(polymerSelection).tooltip({
+                    html: true
+                });
             },
             _computeStyleSquare: function(param){
                 console.log()

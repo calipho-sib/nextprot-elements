@@ -15,8 +15,6 @@ var nxBioViz = (function () {
     var clientInfo = 'calipho team with bioviz team';
     var nx = new Nextprot.Client(applicationName, clientInfo);
     var entry = nx.getEntryName();
-    nx.updateEnvironment("dev");
-    console.log(nx.getApiBaseUrl);
     var isoform = entry + "-1";
     var container = "";
     var containerElement;
@@ -56,18 +54,18 @@ var nxBioViz = (function () {
 
 
 //    function init() {
-    nxBioViz.prototype.init = function(div, isoName, sequences){
+    nxBioViz.prototype.init = function(div, nxEntry, isoName, sequences){
         //Init container & iso
         container = div;
         containerElement = $(div)[0];
         isoform = isoName;
+        entry = nxEntry;
         seqList = sequences ? sequences : [];
         
         var apiCalls = [nx.getAnnotationsByCategory(entry, "pdb-mapping")];
         if (!sequences) {
             apiCalls.push(nx.getProteinSequence(entry));
         }
-        
         Promise.all(apiCalls).then(function(data) {
             if (!sequences){
                 seqList = data[1];
@@ -77,13 +75,11 @@ var nxBioViz = (function () {
         
         //Get pdb data
 //        nx.getAnnotationsByCategory(entry, "pdb-mapping").then(function (data) {
-//            console.log("pdb-mapping data");
-//            console.log(data.annot);
 //            pdbData = data.annot;
             
             if (!pdbData.length){
                 //Generate html template
-                $(div).append("<div class='noPdb alert alert-warning' role='alert'><strong><span class='glyphicon glyphicon-exclamation-sign'></span><span class='alert-text'>There is no PDB entry for any isoform.</span></strong></div>");
+                $(div).append("<div class='noPdb alert alert-warning' role='alert'><strong><span class='fa fa-exclamation-circle'></span><span class='alert-text'>There is no PDB entry for any isoform.</span></strong></div>");
                 
                 if (CustomEvent) {
                     var event = new CustomEvent(self.events.PDB_DATA_EVENT, {
@@ -103,7 +99,6 @@ var nxBioViz = (function () {
     
     function loadBioviz(){
         //Generate html template
-        console.log("loadBioviz function loaded");
         var template = HBtemplates['templates/bioviz.tmpl'];
         $(container).html(template);
 
@@ -120,7 +115,7 @@ var nxBioViz = (function () {
 
         if (!listChain.length){
             //Generate html template
-            $(container).html("<div class='noPdb alert alert-warning' role='alert'><strong><span class='glyphicon glyphicon-exclamation-sign'></span><span class='alert-text'>There is no PDB entry for this isoform.</span></strong></div>");
+            $(container).html("<div class='noPdb alert alert-warning' role='alert'><strong><span class='fa fa-exclamation-circle'></span><span class='alert-text'>There is no PDB entry for this isoform.</span></strong></div>");
         }
         else {
 
@@ -179,8 +174,8 @@ var nxBioViz = (function () {
         isoform = isoName;
         var listChain = parsePDBData(pdbData);
         
-        console.log("data given to the table : ");
-        console.log(listChain);
+//        console.log("data given to the table : ");
+//        console.log(listChain);
         
         if (CustomEvent) {
             var event = new CustomEvent(self.events.PDB_DATA_EVENT, {
@@ -193,7 +188,7 @@ var nxBioViz = (function () {
         
         if (!listChain.length){
             //Generate html template
-            $(container).html("<div class='noPdb alert alert-warning' role='alert'><strong><span class='glyphicon glyphicon-exclamation-sign'></span><span class='alert-text'>There is no PDB entry for this isoform.</span></strong></div>");
+            $(container).html("<div class='noPdb alert alert-warning' role='alert'><strong><span class='fa fa-exclamation-circle'></span><span class='alert-text'>There is no PDB entry for this isoform.</span></strong></div>");
         }
         //Generate html template if empty
         else if (!$("#bioviz").length) {
@@ -418,7 +413,8 @@ var nxBioViz = (function () {
             biovizWidget.bioviz("linkWithExternalSequence", selection, sequence);
 
 
-            biovizWidget.bioviz("highlight", selection, true, null, range, true);
+            biovizWidget.bioviz("highlightSequence", selection, true, range, true);
+//            biovizWidget.bioviz("highlight", selection, true, null, range, true);
         })
     }
 
@@ -452,7 +448,7 @@ var nxBioViz = (function () {
                     method: findElemByProperty(d.properties, "method"),
                     name: name,
                     resolution: findElemByProperty(d.properties, "resolution") || "-",
-                    position: positions ? positions.firstPosition + "-" + positions.lastPosition : "NA<i class='pdbPosException glyphicon glyphicon-asterisk' aria-hidden='true'></i>",
+                    position: positions ? positions.firstPosition + "-" + positions.lastPosition : "NA<i class='pdbPosException fa fa-asterisk' aria-hidden='true'></i>",
                     links: name
                 }
             }

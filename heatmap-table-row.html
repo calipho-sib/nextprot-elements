@@ -190,7 +190,7 @@
 
     </style>
     <template>
-        <template is="dom-repeat" items="[[data]]" as="d">
+        <template is="dom-repeat" items="[[data]]" as="d" initial-count="1" target-framerate="1000">
             <template is="dom-if" if="[[hasSomeData(d)]]">
             <li>
                 <div id="row_[[d.name]]" class$="{{_computeClassesForParent(d)}}" on-tap="toggleChildren">

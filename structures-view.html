@@ -33,7 +33,7 @@ View listing sequence annotations.
         </div>
         <div class="row nxSection">
             <isoform-selector nx-config="{{nxConfig}}" iso-name="{{isoName}}"></isoform-selector>
-            <triple-viewer nx-config="{{nxConfig}}" iso-name="[[isoName]]" selection="{{selection}}"
+            <triple-viewer nx-config="{{nxConfig}}" gold-only="[[nxConfig.goldOnly]]" iso-name="[[isoName]]" selection="{{selection}}"
                            feature-list='[
                             {
                               "APIRef": "sequence",
@@ -295,8 +295,8 @@ View listing sequence annotations.
         </div>
         <div class="row">
             <div id="nxXrefs" class="col-md-12">
-                <xrefs-section categories='["ProteinModelPortal","HSSP","SMR","ModBase","DisProt"]'
-                               nx-config="{{nxConfig}}" view="structures" count="{{xrefsCount}}"></xrefs-section>
+                <xrefs-section categories='["DisProt","PDB","ProteinModelPortal","Proteopedia","SMR"]' nx-config="{{nxConfig}}" view="structures" count="{{xrefsCount}}"></xrefs-section>
+<!--                <xrefs-section categories='["DisProt","PDB","PDBSum","ProteinModelPortal","Proteopedia","SMR","HSSP","ModBase"]' nx-config="{{nxConfig}}" view="structures" count="{{xrefsCount}}"></xrefs-section>-->
             </div>
         </div>
     </template>

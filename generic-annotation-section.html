@@ -434,7 +434,9 @@ Annotation section used in function, medical, and expression views.
                         if (a.rank==1) a.prefix = "It is regulated in the following manner";
                         a.rank = 200+ a.rank;
                     }
-                    if(a.apicategory==="PATHWAY") a.apicategory=self._getUniqueListOfEvidenceSources(a.evidences)+" pathways";
+                    if(a.apicategory==="PATHWAY") {
+                        a.apicategory=self._getUniqueListOfEvidenceSources(a.evidences)+" pathways";
+                    }
                     if(a.apicategory==="UNIPROT_PATHWAYS") a.categoryLabel="UNIPATHWAYS";
                     if(a.apicategory==="SUBCELLULAR_LOCATION") {
                         a.additionalInfo = [];
@@ -718,7 +720,7 @@ Annotation section used in function, medical, and expression views.
                     if (e.assignedBy==="Uniprot") e.assignedBy="UniProt";
                     if (e.assignedBy==="Human protein atlas subcellular localization") e.assignedBy="HPA subcell";
                     if (e.assignedBy==="Alzheimers_University_of_Toronto") e.assignedBy="Alzheimers UoT";
-                    if (e.assignedBy.endsWith("_PTW")) e.assignedBy = e.assignedBy.replace("_PTW","");
+                    //if (e.assignedBy.endsWith("_PTW")) e.assignedBy = e.assignedBy.replace("_PTW","");
                     e.numberOfExperiments = e.properties ? e.properties.numberOfExperiments : undefined;
                     return {
                         "evidenceCodeName": e.evidenceCodeName,
@@ -735,24 +737,16 @@ Annotation section used in function, medical, and expression views.
             },
             _getPublication: function(pub){
                 if(pub){
-                    return {
-                        publicationId: pub.publicationId,
-                        localUrl: "/publications/"+pub.publicationId,
-                        title: pub.title,
-                        authors: pub.authors,
-                        journalResourceLocator: pub.journalResourceLocator,
-                        volume: pub.volume,
-                        firstPage: pub.firstPage,
-                        lastPage: pub.lastPage,
-                        publicationYear: pub.publicationYear,
-                        dbXrefs: pub.dbXrefs,
-                        abstractText: pub.abstractText
-                    }
+                    var pubCopy = jQuery.extend(true, {}, pub);
+                    pubCopy.localUrl = "/publications/"+pub.publicationId;
+                    return pubCopy;
                 }
             },
             _getUniqueListOfEvidenceSources: function(evidenceList){
                 var evidenceSourceList = [];
                 for (var i in evidenceList){
+                    if (evidenceList[i].assignedBy.endsWith("_PTW"))
+                        evidenceList[i].assignedBy = evidenceList[i].assignedBy.replace("_PTW","");
                     if(evidenceSourceList.indexOf(evidenceList[i].assignedBy) < 0) {
                         evidenceSourceList.push(evidenceList[i].assignedBy);
                     }

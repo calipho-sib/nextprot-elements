@@ -93,6 +93,7 @@ Exteranl links section present in function, medical, expression, interactions, s
         var self=this;
         nx.getEntryXrefInPageView(self.nxConfig.entry, self.view)
                 .then(function (data) {
+                    
                   self.getXrefByView(Object.keys(data.xrefs).map(function(k) { return data.xrefs[k] }));
                   self.$.spinner.active = false;
                 }).catch(function (err) {
@@ -122,6 +123,7 @@ Exteranl links section present in function, medical, expression, interactions, s
           t[Object.keys(t)[0]] = self._filterExceptions(t[Object.keys(t)[0]]);
           return t;
         });
+
         for (var i in data) {
           var cat = data[i][Object.keys(data[i])[0]];
           if (cat.length===0) data.splice(i, 1);
@@ -142,7 +144,7 @@ Exteranl links section present in function, medical, expression, interactions, s
             else return 0;
           })
         }
-        console.log("DATA XREFS", data)
+//        console.log("DATA XREFS", data)
         this.data = data;
       },
       _filterExceptions: function(typeList) {
@@ -221,7 +223,7 @@ Exteranl links section present in function, medical, expression, interactions, s
               var addInfos = $.grep(typeList[elem].properties, function(e){ return e.name === "status"})[0];
               var suffix = addInfos ? this._status[addInfos.value]+"." : "";
 
-                var embl = {
+              var embl = {
                 name: typeList[elem].databaseName,
                 xrefs : []
               };
@@ -275,6 +277,17 @@ Exteranl links section present in function, medical, expression, interactions, s
                   suffix : suffix
                 })
               }
+              else if (molType.value === "Unassigned_DNA" && addInfos.value) {
+                var geneIDs = $.grep(typeList[elem].properties, function(e){ return e.name === "genomic sequence ID"; });
+                embl.xrefs.push({
+                  accession: typeList[elem].accession,
+                  url : typeList[elem].resolvedUrl,
+                  prefix : "Unassigned DNA",
+                  suffix : suffix
+                })
+              }
+
+
               newTypeList.push(embl);
             }
           }
