@@ -737,6 +737,7 @@ View list of chromosome names.
                 return feature.first;
             },
             _hideEvidence: function(featureHiding){
+                if (featureHiding === undefined) return true;
                 return featureHiding;
             },
             _parseEvidence: function(evidence){
@@ -752,6 +753,7 @@ View list of chromosome names.
             },
             _showEvidences: function (e) {
                 var ft_index = parseInt(e.target.dataset.indx);
+                var ft_item = this.$.itemList.items[ft_index].hide;
 //                var container = this.$$("#" + feature.id + "-evidence-container");
 //                container.innerHTML = "";
 //                if (container.childElementCount === 0) {
@@ -771,7 +773,7 @@ View list of chromosome names.
 //                } 
 //                var itemC = this.$.itemList.modelForElement(e.target.parentElement.parentElement.parentElement).feature;
 //                if (e.model.feature.hide){
-                if (this.$.itemList.items[ft_index].hide){
+                if (ft_item || ft_item === undefined){
 //                    container.hidden = false;
 //                    this.$.itemList.modelForElement(e.target.parentElement.parentElement.parentElement).feature = false;
 //                    this.$.itemList.modelForElement(e.target.model.feature).feature = false;
