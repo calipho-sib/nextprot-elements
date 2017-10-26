@@ -510,7 +510,7 @@ View list of chromosome names.
                             </div>
                             <template is="dom-if" if="[[feature.source]]">
                                 <div class="inBlock" style="width:10%;text-align:right;padding-right:0px;" class="text-align-right">
-                                    <span id="evidences-button-[[feature.id]]" class="evidenceNumber" data-args$="[[feature]]" on-tap="_showEvidences">[[feature.evidenceLength]]</span>
+                                    <span id="evidences-button-[[feature.id]]" class="evidenceNumber" data-indx$=[[index]] on-tap="_showEvidences">[[feature.evidenceLength]]</span>
                                 </div>
                                 <div class="inBlock" style="width:13%;text-align:left;padding-left:0px;">
                                     <div class="reference-label-container">
@@ -526,7 +526,13 @@ View list of chromosome names.
                             </template>
                         </div>
                         <div class$="evidenceRow [[_formatClassName(feature.category, feature.group)]] detailed-info">
-                            <div id="[[feature.id]]-evidence-container" class="table-row-evidence" hidden></div>
+                            <div id="[[feature.id]]-evidence-container" class="table-row-evidence" hidden$="{{_hideEvidence(feature.hide)}}">
+                                <template is="dom-if" if="{{!_hideEvidence(feature.hide)}}">
+                                    <template is="dom-repeat" items="[[feature.source]]" as="sc">
+                                        <evidence-item data={{_parseEvidence(sc)}} index={{_displayIndex(index)}}></evidence-item>
+                                    </template>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -594,21 +600,17 @@ View list of chromosome names.
             ready: function () {
                 var self = this;
                 this.keyTarget = this.$.filterInput;
-                
-                
-                console.log("featByIso");
-                console.log(this.featByIso);
 //                if (!this.featByIso.length){
                 if (this.featureList.length){
                     this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
                     this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
                     if (!this.isoName) this.isoName = this.nxEntry + "-1";
-                    
-                    console.log("starting promise ???????? O.O");
-                    console.log(this.featureList.length);
+//                    
+//                    console.log("starting promise ???????? O.O");
+//                    console.log(this.featureList.length);
                 Promise.all(self._getFeaturesByView())
                     .then(function (rawData) {
-                        console.log("entering ft promise!")
+//                        console.log("entering ft promise!")
                         self.rawData = rawData;
                         self.sequences = rawData[0];
                         self._getMetadataByView();
@@ -624,7 +626,6 @@ View list of chromosome names.
             },
 //            _reloadTable: function(){
 //                if (this.allFeatures.length){
-//                    console.log("reloading the table");
 //                    document.querySelector('iron-list').fire('iron-resize');
 //                    console.log(this.allFeatures);
 //                }
@@ -633,13 +634,8 @@ View list of chromosome names.
 //                if (this.featByIso.length){
 //                    var tt = this.featByIso;
 //                    var ttn = this.featByIso.length;
-//                    console.log(this.featByIso);
-//                    console.log(this.featByIso.length);
 //                    this._fillTable();
 //                }
-//                console.log("this table items");
-//                console.log(this.$.itemList.items.length);
-//                console.log(this.$.itemList.items);
 //            },
             _toArray: function (obj) {
                 if (typeof obj === 'object') {
@@ -659,13 +655,17 @@ View list of chromosome names.
             _toFlat: function (obj) {
                 var self = this;
                 //                var newArr = [];
-                return Object.keys(obj).map(function (key) {
+                var flatObj = Object.keys(obj).map(function (key) {
                     var newObj = obj[key].sort(self._sortGroup);
                     newObj[0]["first"]=true;
                     return newObj;
                 }).reduce(function (a, b) {
                     return a.concat(b);
                 }, []);
+                return flatObj.map(function(o){
+                    o.hide = true;
+                    return o;
+                })
             },
 
             _getFeaturesByView: function () {
@@ -736,61 +736,65 @@ View list of chromosome names.
             _isFirstInGroup: function(feature){
                 return feature.first;
             },
-
-            _showEvidences: function (e) {
-                var feature = JSON.parse(e.target.dataset.args);
-                var container = this.$$("#" + feature.id + "-evidence-container");
-                if (container.childElementCount === 0) {
-                    for (i in feature.source) {
-                        var evidence = feature.source[i];
-                        if (evidence.crossRef) {
-                            evidence.resourceAccession = evidence.crossRef.name;
-                            evidence.url = evidence.crossRef.url;
-                        }
-                        var evidenceItem = document.createElement("evidence-item");
-                        evidenceItem.setAttribute("index", new Number(i) + 1);
-                        evidenceItem.data = evidence;
-                        container.appendChild(evidenceItem);
-                        //                        this.updateStyles();
-                        //                        container.updateSizeForItem();
-                    }
-                } if (container.hidden) {
-                    container.hidden = false;
-                } else {
-                    container.hidden = true;
+            _hideEvidence: function(featureHiding){
+                if (featureHiding === undefined) return true;
+                return featureHiding;
+            },
+            _parseEvidence: function(evidence){
+//                console.log("parsing evidence..!!")
+                if (evidence.crossRef) {
+                    evidence.resourceAccession = evidence.crossRef.name;
+                    evidence.url = evidence.crossRef.url;
                 }
-                //                container.updateSizeForItem();
-                //                console.log("container.parentNode");
-                //                console.log(this.firstVisibleIndex);
-                //                console.log(container.parentNode);
-                //                console.log(container.parentNode.parentNode);
-                //                console.log(container.parentNode.parentNode.id);
-                //                console.log(this.$$(container.parentNode.parentNode));
-                //                var parentItem = container.parentNode.parentNode.id;
-                //                console.log("parentItem");
-                //                console.log(parentItem);
-                //                console.log(container);
-                //                console.log(this.$$(parentItem));
-                //                console.log(this.$$("#itemIndex_3"));
-                //                console.log(this.$$("#Betastrand_74_76_AN_P01308_0754-evidence-container"));
-                //                console.log(this);
-                //                console.log("e");
-                //                console.log(e);
-                //                var itemA = this.$.itemList.modelForElement(e.target.parentElement.parentElement);
-                var itemB1 = this.$.itemList;
-                var itemB2 = this.$.itemList.items;
-                var itemC = this.$.itemList.modelForElement(e.target.parentElement.parentElement.parentElement).feature;
-                //                this.$.itemList.
-//                console.log("itemA");
-                //                console.log(itemA);
-//                console.log(itemB1);
-//                console.log(itemB2);
-                //                console.log(itemC);
-                //                this.updateSizeForItem(container);
-                //                parentItem.updateSizeForItem();
-                this.$.itemList.updateSizeForItem(itemC);
-                //                document.querySelector('iron-list').fire('iron-resize');
-                //                document.querySelector('iron-list').updateSizeForItem(this.$.itemIndex_3);
+                return evidence;
+            },
+            _displayIndex: function(index){
+                return index + 1
+            },
+            _showEvidences: function (e) {
+                var ft_index = parseInt(e.target.dataset.indx);
+                var ft_item = this.$.itemList.items[ft_index].hide;
+//                var container = this.$$("#" + feature.id + "-evidence-container");
+//                container.innerHTML = "";
+//                if (container.childElementCount === 0) {
+//                    for (i in feature.source) {
+//                        var evidence = feature.source[i];
+//                        if (evidence.crossRef) {
+//                            evidence.resourceAccession = evidence.crossRef.name;
+//                            evidence.url = evidence.crossRef.url;
+//                        }
+//                        var evidenceItem = document.createElement("evidence-item");
+//                        evidenceItem.setAttribute("index", new Number(i) + 1);
+//                        evidenceItem.data = evidence;
+//                        container.appendChild(evidenceItem);
+//                        this.updateStyles();
+//                        container.updateSizeForItem();
+//                    }
+//                } 
+//                var itemC = this.$.itemList.modelForElement(e.target.parentElement.parentElement.parentElement).feature;
+//                if (e.model.feature.hide){
+                if (ft_item || ft_item === undefined){
+//                    container.hidden = false;
+//                    this.$.itemList.modelForElement(e.target.parentElement.parentElement.parentElement).feature = false;
+//                    this.$.itemList.modelForElement(e.target.model.feature).feature = false;
+//                    this.allFeatures[ft_index].hide = false;
+//                    this.$.itemList.items[ft_index].hide = false;
+                    this.$.itemList.set('items.'+ft_index+'.hide',false);
+                }
+                else {
+                    this.$.itemList.set('items.'+ft_index+'.hide',true);
+                }
+//                this.updateSizeForItem(container);
+//                parentItem.updateSizeForItem();
+//                this.$.itemList._update();
+//                this.$.itemList._update();
+//                this.$.itemList.updateSizeForItem(itemC);
+//                this.$.itemList.updateSizeForItem(e.model.feature);
+//                this.updateStyles()
+//                this.$.itemList.updateStyles()
+//                this.$.itemList.fire('iron-resize');
+//                document.querySelector('iron-list').fire('iron-resize');
+//                document.querySelector('iron-list').updateSizeForItem(this.$.itemIndex_3);
             },
             tvSelection: function(event) {
                 // console.log("event");
@@ -798,16 +802,9 @@ View list of chromosome names.
                 var srcElement = event.target || event.srcElement;
 //                var highlightedRows = document.getElementsByClassName("search_selection");
                 var highlightedRows = document.querySelectorAll(".search_selection");
-//                console.log("highlightedRows");
-//                console.log(highlightedRows);
-                
 //                for (var i=0;i<highlightedRows.length;i++){
 //                    highlightedRows[i].classList.remove("search_selection");
 //                }
-//                console.log("srcElement")
-//                console.log(srcElement)
-//                console.log(srcElement.parentNode.parentNode);
-//                console.log(srcElement.parentNode.parentNode.parentNode);
                 var parentItem = srcElement.parentNode.parentNode.parentNode.parentNode;
                 var focusedElement = this.$.itemList.modelForElement(parentItem).feature;
 //                console.log("focusedElement");
@@ -902,30 +899,19 @@ View list of chromosome names.
                 }
 //                Object.keys(features).forEach(function())
                 //                this.notifyPath("groupedFeatures", features);
-                console.log("features not flat yet : ");
-                console.log(features);
+//                console.log("features not flat yet : ");
+//                console.log(features);
                 Polymer.RenderStatus.afterNextRender(self.$.itemList, function(){
                 self.allFeatures = self._toFlat(features);
                 console.log(self.allFeatures);
-//                var clonedArray = JSON.parse(JSON.stringify(this.allFeatures));
-//                console.log("clonedArray");
-//                console.log(clonedArray.length);
-//                console.log(clonedArray);
-                console.log("features list length : ");
-                console.log(self.$.itemList.items.length);
-                console.log(self.$.itemList.items);
-//                this.$.itemList.fire('iron-resize');
+//                console.log("features list length : ");
+//                console.log(self.$.itemList.items.length);
+//                console.log(self.$.itemList.items);
                 document.querySelector('iron-list').fire('iron-resize');
 //                this.$.itemList.toggleScrollListener(false);
 //                var self = this;
 //                setTimeout(function(){self.$.itemList.toggleScrollListener(true)},1000);
                 //                this.featuresDisplayed = this.allFeatures;
-//                console.log("features");
-//                console.log(features);
-//                console.log("this.featuresDisplayed.length : ");
-//                console.log(this.featuresDisplayed.length);
-//                console.log("selectedItems");
-//                console.log(this.featureSelected);
                 //                    this._toFlat(features);
                 self.featuresLength = number;
                 })
@@ -941,9 +927,6 @@ View list of chromosome names.
                         if (found) return true;
                     }
                     if (key !== "abstractText" && value && value.toString().toLowerCase().indexOf(query.toLowerCase()) !== -1) {
-//                        console.log("obj");
-//                        console.log(obj);
-//                        console.log(key);
                         return true;
                     }
 
@@ -954,9 +937,6 @@ View list of chromosome names.
             _filteringItems: function (pattern) {
 //                this.selectedItems = [];
                 this.$.itemList.clearSelection();
-//                console.log("filtering items..");
-//                console.log(this.$.itemList.selectedItems);
-//                console.log(this.featureSelected);
 //                var featuresFound = [];
                 var self = this;
                 var firstIndex = -1;
@@ -992,25 +972,10 @@ View list of chromosome names.
                 this.selectionPointer = this.featureSelected && this.featureSelected.length ? 1 : 0;
                 this.rowSelection = firstIndex;
                 
-//                console.log("middle filtering items 2")
-//                
-//                console.log("featuresFound");
-//                console.log(featuresFound);
-//                console.log(this.featureSelected);
-//                console.log("iron list selected list");
-//                console.log(this.$.itemList.selectedItems);
-//                console.log("middle filtering items 3")
-//                console.log(this.$.itemList.items);
-//                console.log(this.$.itemList._collection);
-//                console.log("starting scrolling");
 //                this.$.itemList.scrollToItem(this.$.itemList.selectedItems[0]);
 //                this.$.itemList.scrollOffset(200)
                 this.$.itemList.scrollToItem(this.featureSelected[0]);
 //                this.$.itemList.scrollToItem(this.selectedItems[1]);
-//                console.log("after scroll");
-//                console.log(this.selectedItems);
-//                console.log(this.$.itemList.selectedItems);
-//                console.log(this.$.itemList.items);
 //                document.querySelector('iron-list').fire('iron-resize');
 //                document.querySelector('iron-list').fire('selected-items-changed');
 //                this.updateStyles();
@@ -1092,12 +1057,6 @@ View list of chromosome names.
                 if (index === rsIndex){
                     class_combined += " row_selected";
                 }
-//                console.log("is selected ?")
-//                console.log(class_combined);
-                
-//                console.log("index isSelected :");
-//                console.log(index);
-//                console.log(class_combined);
                 return class_combined;
 //                else return "";
             },
@@ -1105,9 +1064,6 @@ View list of chromosome names.
                 if (this.$.filterInput.value === "") {
                     this._resetSearch();
                 } else {
-//                    console.log('selectionCounter');
-//                    console.log(this.$.selectionCounter);
-//                    console.log(this.$.selectionCounter.classList);
                     this.$.selectionCounter.classList.remove("noSelection");
                     this.$.resetBtn.disabled = false;
                     this.$.pointerUp.disabled = false;
@@ -1124,9 +1080,6 @@ View list of chromosome names.
                 this.selectedItemsLength = this.featureSelected ? this.featureSelected.length : 0;
                 this.selectionPointer = 0;
                 this.rowSelection = -1;
-//                console.log("featureSelected");
-//                console.log(this.featureSelected);
-//                console.log(this.selectedItemsLength);
 //                this.selectedItems = [];
             }
         });
