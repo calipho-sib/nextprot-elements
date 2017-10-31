@@ -24,10 +24,18 @@ View list of chromosome names.
     <feature-table />
 @demo demo/feature-table-demo.html
 -->
-
+<style>
+    
+    .ext-link::after {
+        content: "\f08e";
+        font-family: "FontAwesome";
+        font-size: 11px;
+        margin-left: 5px;
+        vertical-align: middle;
+    }
+</style>
 
 <dom-module id="feature-table">
-
     <template>
         <style is="custom-style" include="nextprot-elements-shared-styles">
             :host {
@@ -257,6 +265,13 @@ View list of chromosome names.
                 color: white;
                 vertical-align: top;
                 cursor: pointer;
+            }
+            a.ext-link::after {
+                content: "\f08e";
+                font-family: "FontAwesome";
+                font-size: 11px;
+                margin-left: 5px;
+                vertical-align: middle;
             }
             
             .filter-block {
@@ -624,6 +639,10 @@ View list of chromosome names.
 //                    this._fillTable();
 //                }
             },
+//            attached: function(){
+//                this.updateStyles();
+//                this.$.itemList.updateStyles();
+//            },
 //            _reloadTable: function(){
 //                if (this.allFeatures.length){
 //                    document.querySelector('iron-list').fire('iron-resize');
