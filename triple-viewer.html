@@ -340,7 +340,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             properties: {
                 nxConfig: {
                     type: Object,
-                    value: {}
+                    value: {},
+                    observer: "reload"
                 },
                 isoName: {
                     type: String,
@@ -386,10 +387,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 activeFiltering: {
                     type: Array,
                     value: {}
-                },
-                goldOnly: {
-                    type: Boolean,
-                    observer: "reload"
                 },
                 hideSequenceViewer: {
                     type: Boolean,
@@ -468,7 +465,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 })
                 for (var i=1; i<this.rawData.length-1;i++) {
                     var feat = NXUtils.convertMappingsToIsoformMap(this.rawData[i],this.metaData[i].name,this.metaData[i].filter, "");
-                    if (this.goldOnly) feat = this._filterGoldForViewer(feat);
+                    if (this.nxConfig.goldOnly) feat = this._filterGoldForViewer(feat);
                     featForViewer = NXViewerUtils.convertNXAnnotations(feat,this.metaData[i],isoLengths);
                     this.featuresForViewer.push(featForViewer);
                     featsByIso.push(feat);
@@ -732,7 +729,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 this.reloadSVG();
             },
             _filterGold: function(item){
-                if (this.goldOnly) return item.quality==="gold";
+                if (this.nxConfig.goldOnly) return item.quality==="gold";
                 return true;
             },
             _toggleFiltering: function() {
