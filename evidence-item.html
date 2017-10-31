@@ -58,6 +58,13 @@ Block element representing an evidence record.
             .evidence-highlighted {
                 background-color: rgba(223, 240, 216, 1);
             }
+            .ext-link:after {
+                content: "\f08e";
+                font-family: "FontAwesome";
+                font-size: 11px;
+                margin-left: 5px;
+                vertical-align: middle;
+            }
 
         </style>
         <template is="dom-if" if="[[data.evidenceCodeName]]" >

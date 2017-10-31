@@ -28,6 +28,13 @@ View listing sequence annotations.
                 background:#ECF0F1;
                 overflow-y: auto;
             }
+            .ext-link:after {
+                content: "\f08e";
+                font-family: "FontAwesome";
+                font-size: 11px;
+                margin-left: 5px;
+                vertical-align: middle;
+            }
         </style>
         <div class="row">
             <div id="nxOverview" class="col-md-12">
@@ -91,26 +98,6 @@ View listing sequence annotations.
         }
       },
       {
-        "APIRef": "topological-domain",
-        "metadata": {
-          "name": "Topo. domain",
-          "className": "topodomain",
-          "color": "#A5DBA5",
-          "type": "rect",
-          "filter": "Topology"
-        }
-      },
-      {
-        "APIRef": "transmembrane-region",
-        "metadata": {
-          "name": "Membrane",
-          "className": "membrane",
-          "color": "#A5DBB7",
-          "type": "rect",
-          "filter": "Topology"
-        }
-      },
-      {
         "APIRef": "disulfide-bond",
         "metadata": {
           "name": "Disulfide bond",
@@ -121,19 +108,9 @@ View listing sequence annotations.
         }
       },
       {
-        "APIRef": "antibody-mapping",
-        "metadata": {
-          "name": "Antibody",
-          "className": "anti",
-          "color": "#B3C2F0",
-          "type": "rect",
-          "filter": "Antibody"
-        }
-      },
-      {
         "APIRef": "initiator-methionine",
         "metadata": {
-          "name": "Initiator meth",
+          "name": "Initiator Met",
           "className": "initMeth",
           "color": "#B3B3D1",
           "type": "unique",
@@ -191,6 +168,16 @@ View listing sequence annotations.
         }
       },
       {
+        "APIRef": "antibody-mapping",
+        "metadata": {
+          "name": "Antibody",
+          "className": "anti",
+          "color": "#B3C2F0",
+          "type": "rect",
+          "filter": "Antibody"
+        }
+      },
+      {
         "APIRef": "peptide-mapping",
         "metadata": {
           "name": "Peptide",
@@ -219,7 +206,7 @@ View listing sequence annotations.
         </div>
         <div class="row">
             <div id="nxXrefs" class="col-md-12">
-                <xrefs-section categories='["EPD","MaxQB","PaxDb","PeptideAtlas","PhosphoSitePlus","Proteomes","PRIDE"]' nx-config="[[nxConfig]]" view="proteomics" count="{{xrefsCount}}">
+                <xrefs-section categories='["EPD","MaxQB","PaxDb","PeptideAtlas","PhosphoSitePlus","Proteomes","PRIDE","DOSAC-COBS-2DPAGE","OGP","REPRODUCTION-2DPAGE","TopDownProteomics"]' nx-config="[[nxConfig]]" view="proteomics" count="{{xrefsCount}}">
                 </xrefs-section>
             </div>
         </div>
