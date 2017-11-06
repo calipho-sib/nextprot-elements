@@ -20,12 +20,6 @@ View listing identifiers annotations.
                 background:#ECF0F1;
                 overflow-y: auto;
             }
-
-            .no-uppercase {
-                text-transform:unset;
-            }
-
-
         </style>
         <div class="row">
             <div id="nxOverview" class="col-md-12">
@@ -41,7 +35,7 @@ View listing identifiers annotations.
                     <template is="dom-repeat" items="[[_toCatArray(identifiers)]]" as="category">
                         <div class="row category-row">
                             <div class="col-xl-1 col-lg-3 col-md-4 col-sm-5 col-xs-6">
-                                <h4 class="annotation-category-title no-uppercase">[[category.key]]</h4>
+                                <h4 class="annotation-category-title">[[category.key]]</h4>
                             </div>
                             <div>
                                 <template is="dom-repeat" items="[[_toSubCatArray(category.value)]]" as="subcat">
