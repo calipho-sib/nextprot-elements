@@ -66,64 +66,70 @@ Publication item demo
     </style>
       <template is="dom-if" if="[[data]]">
         <template is="dom-if" if="[[_isOnlineResource()]]">
-          <b>[[data.publicationLocatorName]]</b>
+          <b>[[data.publication.publicationLocatorName]]</b>
           <template is="dom-if" if="[[!summary]]">
-            <p><template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
+            <p><template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
               <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
             </template></p>
           </template>
         </template>
-        <template is="dom-if" if="[[data.title]]">
-          <p><a href="/publication/[[data.publicationId]]"  target='_parent'>[[data.title]]</a></p>
+        <template is="dom-if" if="[[data.publication.title]]">
+          <p><a href="/publication/[[data.publication.publicationId]]"  target='_parent'>[[data.publication.title]]</a></p>
         </template>
         <template is="dom-if" if="[[!summary]]">
           <p><span class="hyperlink-blue">
-            <template is="dom-repeat" items="[[data.authors]]" as="author">
+            <template is="dom-repeat" items="[[data.publication.authors]]" as="author">
               <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">
-                [[author.lastName]] [[_formatInitials(author.initials)]]</a><template is="dom-if" if="[[!_checkIfLast(data.authors,index)]]">,</template>
+                [[author.lastName]] [[_formatInitials(author.initials)]]</a><template is="dom-if" if="[[!_checkIfLast(data.publication.authors,index)]]">,</template>
             </template>
           </span></p>
           <p>
             <template is="dom-if" if="[[_isPatent()]]">Patent number: [[data.dbXrefs.0.accession]] ([[data.textDate]])
-              <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">
+              <template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">
                 [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
               </template>
             </template>
             <template is="dom-if" if="[[_isArticle()]]">
-              [[data.journal]]
-              [[data.journalResourceLocator.abbrev]]<template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
-              <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template>
+              [[data.publication.journal]]
+              [[data.publication.journalResourceLocator.abbrev]]<template is="dom-if" if="[[data.publication.volume]]">, <strong>[[data.publication.volume]]</strong></template><template is="dom-if" if="[[data.publication.firstPage]]">, [[data.publication.firstPage]]</template>
+              <template is="dom-if" if="[[data.publication.lastPage]]">- [[data.publication.lastPage]]</template><template is="dom-if" if="[[data.publication.publicationYear]]"> ([[data.publication.publicationYear]])</template>
               <template is="dom-if" if="[[!_isOnlineResource()]]">
-                <template is="dom-repeat" items="[[data.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
+                <template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">[[[_formatXrefLabel(xref.databaseName)]]:
                   <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
                 </template>
               </template>
             </template>
-            <template is="dom-if" if="[[_isSubmission()]]">[[data.submission]] ([[data.textDate]])</template>
+            <template is="dom-if" if="[[_isSubmission()]]">[[data.publication.submission]] ([[data.publication.textDate]])</template>
           </p>
         </template>
         <template is="dom-if" if="[[summary]]">
-          <template is="dom-if" if="[[data.authors.0]]">[[data.authors.0.lastName]] [[_formatInitials(data.authors.0.initials)]] </template><template is="dom-if" if="[[data.authors.1]]">
-          <i>et al.</i></template><template is="dom-if" if="[[_isSubmission()]]">, <span class="grey-x">[[data.submission]] ([[data.textDate]])</span></template><template is="dom-if" if="[[_isPatent()]]">, <span class="grey-x">Patent number [[data.dbXrefs.0.accession]] ([[data.textDate]])</span></template><template is="dom-if" if="[[_isArticle()]]"><template is="dom-if" if="[[data.journal]]">, [[data.journal]] [[data.journalResourceLocator.medAbbrev]]</template><template is="dom-if" if="[[data.volume]]">, <strong>[[data.volume]]</strong></template><template is="dom-if" if="[[data.firstPage]]">, [[data.firstPage]]</template>
-          <template is="dom-if" if="[[data.lastPage]]">- [[data.lastPage]]</template><template is="dom-if" if="[[data.publicationYear]]"> ([[data.publicationYear]])</template></template>
+          <template is="dom-if" if="[[data.publication.authors.0]]">[[data.publication.authors.0.lastName]] [[_formatInitials(data.publication.authors.0.initials)]] </template><template is="dom-if" if="[[data.publication.authors.1]]">
+          <i>et al.</i></template><template is="dom-if" if="[[_isSubmission()]]">, <span class="grey-x">[[data.publication.submission]] ([[data.publication.textDate]])</span></template><template is="dom-if" if="[[_isPatent()]]">, <span class="grey-x">Patent number [[data.publication.dbXrefs.0.accession]] ([[data.publication.textDate]])</span></template><template is="dom-if" if="[[_isArticle()]]"><template is="dom-if" if="[[data.publication.journal]]">, [[data.publication.journal]] [[data.publication.journalResourceLocator.medAbbrev]]</template><template is="dom-if" if="[[data.publication.volume]]">, <strong>[[data.publication.volume]]</strong></template><template is="dom-if" if="[[data.publication.firstPage]]">, [[data.publication.firstPage]]</template>
+          <template is="dom-if" if="[[data.publication.lastPage]]">- [[data.publication.lastPage]]</template><template is="dom-if" if="[[data.publication.publicationYear]]"> ([[data.publication.publicationYear]])</template></template>
         </template>
       </template>
-      <template is="dom-if" if="[[data.abstractText]]">
+      <template is="dom-if" if="[[data.publication.abstractText]]">
         <span id="collapseButton" class="colored-label abstract-button" on-tap="_toggleAbstract">
           <span class="pubDisplayStatus"> </span>abstract
         </span>
       </template>
         <iron-collapse id="collapseAbstract" opened="[[showAbstract]]">
-          <template is="dom-if" if="[[data.abstractText]]">
+          <template is="dom-if" if="[[data.publication.abstractText]]">
             <div id="abstractHeader" hidden>Abstract</div>
           </template>
-          [[data.abstractText]]
+          [[data.publication.abstractText]]
         </iron-collapse>
-        <template is="dom-if" if="[[!data.abstractText]]">
+        <template is="dom-if" if="[[!data.publication.abstractText]]">
           <template is="dom-if" if="[[isArticle]]">No Abstract available</template>
         </template>
+      <p><span class="grey-x">CITED FOR: </span>
+      <template is="dom-repeat" items="[[_toArray(data.citedInViews)]]" as="cited">
+      <!--    cited.0 = key ('function', 'medical', ...), cited.1 = value (link) -->
+      <a href="[[cited.1]]" class="ext-link" target='_blank'>[[cited.0]]</a>
     </template>
-  </template>
+      </p>
+      <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope"> <p><span class="grey-x">[[annotscope.database]] [[annotscope.label]] </span> </template>
+     </template>
   <script>
     Polymer({
       is: 'publication-item',
@@ -181,19 +187,19 @@ Publication item demo
           this.$$("#collapseButton").removeAttribute("pushed");
       },
       _isArticle: function(){
-        if(this.data) return this.data.publicationType==="ARTICLE";
+        if(this.data) return this.data.publication.publicationType==="ARTICLE";
         return false;
       },
       _isPatent: function(){
-        if(this.data) return this.data.publicationType==="PATENT";
+        if(this.data) return this.data.publication.publicationType==="PATENT";
         return false;
       },
       _isSubmission: function(){
-        if(this.data) return this.data.publicationType==="SUBMISSION";
+        if(this.data) return this.data.publication.publicationType==="SUBMISSION";
         return false;
       },
       _isOnlineResource: function(){
-        if(this.data) return this.data.publicationType==="ONLINE_PUBLICATION";
+        if(this.data) return this.data.publication.publicationType==="ONLINE_PUBLICATION";
         return false;
       },
       _formatXrefLabel: function(name){
@@ -205,6 +211,11 @@ Publication item demo
       _checkIfLast: function(array,index){
         if(array.length-1===index) return true;
         return false;
+      },
+      _toArray: function(obj){
+        var citedArr = Object.keys(obj).map(function (key, value) { return [key, obj[key]]; });
+        //console.log(citedarr);
+        return citedArr;
       }
     });
   </script>
