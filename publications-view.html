@@ -1,17 +1,20 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="protein-overview.html">
 <link rel="import" href="publication-item.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="paginator-element.html">
+
 <!--
 `publications-view`
 Publications listing used in curated and additional publications pages.
 
 @demo demo/publications-view-demo.html
 -->
-<dom-module id="publications-view">
+
+<dom-module id="publications-newview">
     <template>
         <style is="custom-style" include="nextprot-elements-shared-styles">
             :host {
@@ -33,6 +36,16 @@ Publications listing used in curated and additional publications pages.
                 padding: 5px 10px 5px 3px;
             }
         </style>
+
+                 <!-- url="http://build-api.nextprot.org/entry-publications/[[acc]]/pubview/CURATED.json" -->
+        <iron-ajax
+                id ="pubAPIcall"
+                url= "http://build-api.nextprot.org/entry-publications/[[nxConfig.entry]]/category/[[nxConfig.pubType]].json"
+                handle-as="json"
+                on-response="_pubResponse"
+                on-error="_onPubError" >
+        </iron-ajax>
+
         <div class="row">
             <div id="nxOverview" class="col-md-12">
                 <protein-overview nx-config="[[nxConfig]]"></protein-overview>
@@ -80,11 +93,6 @@ Publications listing used in curated and additional publications pages.
                     type: Array,
                     notify: true
                 },
-                type: {
-                    type: String,
-                    value: "submissions",
-                    observer: "_checkType"
-                },
                 types: {
                     type: Array,
                     value: ["curated", "additional", "submissions", "patents", "online-resources"]
@@ -100,56 +108,73 @@ Publications listing used in curated and additional publications pages.
                 summary: {
                     type: Boolean,
                     value: true
+                },
+                _userPreferedPageSize: {
+                    type: Number,
+                    value: 10,
+                    readOnly: true
                 }
+
             },
             attached: function (){
-                this.nx = new Nextprot.Client("neXtprot publications view", "Calipho Group");
-                var self = this;
-                this.nx.getEntry(this.nxConfig.entry)
-                    .then(function (data) {
-                        var publications = [];
-                        data.publications.forEach(function(publication){
-                            if(self.type==="curated" && publication.publicationType==="ARTICLE" && publication.isCurated)
-                                publications.push(publication);
-                            else if(self.type==="additional" && publication.isComputed)
-                                publications.push(publication);
-                            else if(self.type==="patents" && publication.publicationType==="PATENT")
-                                publications.push(publication);
-                            else if(self.type==="submissions" && publication.publicationType==="SUBMISSION")
-                                publications.push(publication);
-                            else if(self.type==="online-resources" && publication.publicationType==="ONLINE_PUBLICATION")
-                                publications.push(publication);
-                        });
-                        self.header = self._getHeader();
-                        self.items = publications;
-                        self.count = publications.length;
-                        self.$.spinner.active = false;
-                    }).catch(function (err) {
-                        // catch any error that happened so far
-                        console.log("Argh, broken: " + err.message);
-                        console.log("Error at line : " + err.stack);
-                        self.$.spinner.active = false;
-                        self.count = 0;
-                    });
-            },
+                this.nx = new Nextprot.Client("neXtprot publications view", "Calipho Group");               
+                this.pageSize = 100;
+                this._userPreferedPageSize = localStorage.getItem(this._userPreferedPageSize);
+                if(this._userPreferedPageSize != null) this.pageSize = this._userPreferedPageSize;
+                console.log("PreferedPageSize: " + this._userPreferedPageSize);
+                this.$.pubAPIcall.generateRequest();
+           },
             _checkType: function(newValue, oldValue){
                 this.async(function(){
                     if (this.types.indexOf(newValue) === -1) {
-                        console.warn(this.type+" is not recognized as a valid publication type. "+oldValue+" publications will be displayed instead.");
-                        this.type = oldValue;
-                    }
+                        console.warn(this.nxConfig.pubType+" is not recognized as a valid publication type. "+oldValue+" publications will be displayed instead.");
+                        //this.type = oldValue;
+                   }
                 });
             },
             _getHeader: function(){
-                if (this.type==="curated") return "Curated publications";
-                else if (this.type==="additional") return "Additional publications";
-                else if (this.type==="submissions") return "Submissions";
-                else if (this.type==="patents") return "Patents";
-                else if (this.type==="online-resources") return "Online resources";
+                if (this.nxConfig.pubType==="curated") return "Curated publications";
+                else if (this.nxConfig.pubType==="additional") return "Additional publications";
+                else if (this.nxConfig.pubType==="submissions") return "Submissions";
+                else if (this.nxConfig.pubType==="patents") return "Patents";
+                else if (this.nxConfig.pubType==="online-resources") return "Online resources";
             },
             _changePageSize: function(evt){
                 this.pageSize = new Number(evt.srcElement[evt.srcElement.selectedIndex].value);
+                console.log(this.pageSize);
+                localStorage.setItem(this._userPreferedpageSize, this.pageSize);
+            },
+            _pubResponse: function (data) {
+                //console.log(data.detail.response.0);
+                var publications = [];
+                data.detail.response.forEach(function(publidata){
+                //console.log(publidata.directLinks);
+                publications.push(publidata);
+                });
+                this.header = this._getHeader();
+                this.items = publications;
+                this.count = publications.length;
+                this.$.spinner.active = false;
+            },
+            _onPubError: function(error) {
+                // catch any error that happened so far
+                console.log("Argh, broken: " + err.message);
+                console.log("Error at line : " + err.stack);
+                this.$.spinner.active = false;
+                this.count = 0;
+            },
+            _readJsonFile: function(file, callback) { // provided for testing from json files instead of API calls: this._readJsonFile("../NX_PO1308-CURATED.json", function(text){ var filedata = JSON.parse(text); ... filedata.forEach(function(publidata){...
+                var rawFile = new XMLHttpRequest();
+                rawFile.overrideMimeType("application/json");
+                rawFile.open("GET", file, true);
+                rawFile.onreadystatechange = function() {
+                  if (rawFile.readyState === 4 && rawFile.status == "200") {
+                       callback(rawFile.responseText);
+                    }
+                }
+                rawFile.send(null);
             }
+
         });
     </script>
 </dom-module>
