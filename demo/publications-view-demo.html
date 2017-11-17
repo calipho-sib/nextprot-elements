@@ -19,9 +19,41 @@
 <body>
 <div class="vertical-section-container centered">
     <h3>Basic publications-view demo</h3>
+    <!-- 5 Correct custom elements -->
     <demo-snippet>
         <template>
             <publications-view nx-config='{"entry": "NX_Q8WXG9", "env": "build", "pubType": "curated"}'></publications-view>
+        </template>
+    </demo-snippet>
+
+    <demo-snippet>
+        <template>
+            <publications-view nx-config='{"entry": "NX_Q8WXG9", "env": "build", "pubType": "additional"}'></publications-view>
+        </template>
+    </demo-snippet>
+
+    <demo-snippet>
+        <template>
+            <publications-view nx-config='{"entry": "NX_Q8WXG9", "env": "build", "pubType": "submission"}'></publications-view>
+        </template>
+    </demo-snippet>
+
+    <demo-snippet>
+        <template>
+            <publications-view nx-config='{"entry": "NX_Q8WXG9", "env": "build", "pubType": "patent"}'></publications-view>
+        </template>
+    </demo-snippet>
+
+    <demo-snippet>
+        <template>
+            <publications-view nx-config='{"entry": "NX_Q8WXG9", "env": "build", "pubType": "web-resource"}'></publications-view>
+        </template>
+    </demo-snippet>
+
+    <!-- 1 incorrect element with bad publication type -->
+    <demo-snippet>
+        <template>
+            <publications-view nx-config='{"entry": "NX_Q8WXG9", "env": "build", "pubType": "submissions"}'></publications-view>
         </template>
     </demo-snippet>
 </div>
