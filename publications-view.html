@@ -115,11 +115,15 @@ Publications listing used in curated and additional publications pages.
                 summary: {
                     type: Boolean,
                     value: true
+                },
+                _preferedPageSizeName: {
+                    type: String,
+                    value: "publications-view.prefered-size",
+                    readOnly: true
                 }
             },
             attached: function () {
 
-                this.preferedPageSizeName = "publications-view.prefered-size";
                 this.pageSize = this._getPreferedPageSizeFromLocalStorage();
 
                 if (this.nxConfig.pubType in this.expectedPubTypes)
@@ -134,19 +138,19 @@ Publications listing used in curated and additional publications pages.
             },
             _getPreferedPageSizeFromLocalStorage: function(){
 
-                var localStorageSizeValue = localStorage.getItem(this.preferedPageSizeName);
+                var localStorageSizeValue = localStorage.getItem(this._preferedPageSizeName);
 
                 // does not exist
                 if (localStorageSizeValue === null) {
                     localStorageSizeValue = 10;
-                    localStorage.setItem(this.preferedPageSizeName, localStorageSizeValue);
+                    localStorage.setItem(this._preferedPageSizeName, localStorageSizeValue);
                 }
 
                 return parseInt(localStorageSizeValue);
             },
             _changePageSize: function(evt){
                 this.pageSize = parseInt(evt.srcElement[evt.srcElement.selectedIndex].value);
-                localStorage.setItem(this.preferedPageSizeName, this.pageSize);
+                localStorage.setItem(this._preferedPageSizeName, this.pageSize);
             },
             _handleResponseData: function (data) {
                 var publications = [];
