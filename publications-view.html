@@ -64,7 +64,7 @@ Publications listing used in curated and additional publications pages.
                         <div class="no-padding col-lg-5"><template is="dom-if" if="[[items]]">Publications [[from]] to [[to]] of [[items.length]]</template></div>
                         <div class="col-lg-2">
                             show&nbsp;
-                            <select on-change="_changePageSize">
+                            <select on-change="_changePreferedPageSize">
                                 <option value="10">10</option>
                                 <option value="20">20</option>
                                 <option value="50">50</option>
@@ -100,7 +100,7 @@ Publications listing used in curated and additional publications pages.
                         "additional": "Additional publications",
                         "submission": "Submissions",
                         "patent": "Patents",
-                        "web-resource":"Online resources"
+                        "web_resource":"Online resources"
                     }
                 },
                 count: {
@@ -122,24 +122,31 @@ Publications listing used in curated and additional publications pages.
                 }
 
             },
-            attached: function (){
+            attached: function () {
 
-                this.pageSize = 100;
-                this._userPreferedPageSize = localStorage.getItem(this._userPreferedPageSize);
-                if(this._userPreferedPageSize != null) this.pageSize = this._userPreferedPageSize;
+                this.preferedPageSizeName = "publications-view.prefered-size";
 
                 if (this.nxConfig.pubType in this.expectedPubTypes) {
                     this.$.pubAPIcall.generateRequest();
                 }
                 else {
-                    this._onPubError("invalid pub type ", this.nxConfig.pubType +" is not recognized as a valid publication type (expected: ["+
+                    this._onPubError("invalid publication type ", this.nxConfig.pubType +" is not recognized as a valid publication type (expected: ["+
                         Object.keys(this.expectedPubTypes)+"])");
                 }
            },
-            _changePageSize: function(evt){
-                this.pageSize = new Number(evt.srcElement[evt.srcElement.selectedIndex].value);
-                console.log(this.pageSize);
-                localStorage.setItem(this._userPreferedpageSize, this.pageSize);
+            _getPreferedPageSizeFromLocalStorage: function(){
+
+                var sizeValue = localStorage.getItem(this.preferedPageSizeName);
+
+                if (sizeValue == null) {
+                    this.pageSize = sizeValue;
+                    localStorage.setItem(this.preferedPageSizeName, this.pageSize);
+                }
+            },
+            _changePreferedPageSize: function(evt){
+                this._userPreferedpageSize = evt.srcElement[evt.srcElement.selectedIndex].value;
+
+                localStorage.setItem(this.preferedPageSizeName, this._userPreferedpageSize);
             },
             _onPubResponse: function (data) {
                 var publications = [];
