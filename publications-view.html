@@ -37,12 +37,12 @@ Publications listing used in curated and additional publications pages.
             }
         </style>
 
-                 <!-- url="http://build-api.nextprot.org/entry-publications/[[acc]]/pubview/CURATED.json" -->
+        <!-- url="http://build-api.nextprot.org/entry-publications/[[acc]]/pubview/CURATED.json" -->
         <iron-ajax
                 id ="pubAPIcall"
                 url= "http://build-api.nextprot.org/entry-publications/[[nxConfig.entry]]/category/[[nxConfig.pubType]].json"
                 handle-as="json"
-                on-response="_pubResponse"
+                on-response="_onPubResponse"
                 on-error="_onPubError" >
         </iron-ajax>
 
@@ -93,9 +93,15 @@ Publications listing used in curated and additional publications pages.
                     type: Array,
                     notify: true
                 },
-                types: {
-                    type: Array,
-                    value: ["curated", "additional", "submissions", "patents", "online-resources"]
+                expectedPubTypes: {
+                    type: Object,
+                    value: {
+                        "curated": "Curated publications",
+                        "additional": "Additional publications",
+                        "submission": "Submissions",
+                        "patent": "Patents",
+                        "web-resource":"Online resources"
+                    }
                 },
                 count: {
                     type: Number,
@@ -117,64 +123,39 @@ Publications listing used in curated and additional publications pages.
 
             },
             attached: function (){
-                this.nx = new Nextprot.Client("neXtprot publications view", "Calipho Group");               
+
                 this.pageSize = 100;
                 this._userPreferedPageSize = localStorage.getItem(this._userPreferedPageSize);
                 if(this._userPreferedPageSize != null) this.pageSize = this._userPreferedPageSize;
-                console.log("PreferedPageSize: " + this._userPreferedPageSize);
-                this.$.pubAPIcall.generateRequest();
+
+                if (this.nxConfig.pubType in this.expectedPubTypes) {
+                    this.$.pubAPIcall.generateRequest();
+                }
+                else {
+                    this._onPubError("invalid pub type ", this.nxConfig.pubType +" is not recognized as a valid publication type (expected: ["+
+                        Object.keys(this.expectedPubTypes)+"])");
+                }
            },
-            _checkType: function(newValue, oldValue){
-                this.async(function(){
-                    if (this.types.indexOf(newValue) === -1) {
-                        console.warn(this.nxConfig.pubType+" is not recognized as a valid publication type. "+oldValue+" publications will be displayed instead.");
-                        //this.type = oldValue;
-                   }
-                });
-            },
-            _getHeader: function(){
-                if (this.nxConfig.pubType==="curated") return "Curated publications";
-                else if (this.nxConfig.pubType==="additional") return "Additional publications";
-                else if (this.nxConfig.pubType==="submissions") return "Submissions";
-                else if (this.nxConfig.pubType==="patents") return "Patents";
-                else if (this.nxConfig.pubType==="online-resources") return "Online resources";
-            },
             _changePageSize: function(evt){
                 this.pageSize = new Number(evt.srcElement[evt.srcElement.selectedIndex].value);
                 console.log(this.pageSize);
                 localStorage.setItem(this._userPreferedpageSize, this.pageSize);
             },
-            _pubResponse: function (data) {
-                //console.log(data.detail.response.0);
+            _onPubResponse: function (data) {
                 var publications = [];
                 data.detail.response.forEach(function(publidata){
-                //console.log(publidata.directLinks);
-                publications.push(publidata);
+                    publications.push(publidata);
                 });
-                this.header = this._getHeader();
+                this.header = this.expectedPubTypes[this.nxConfig.pubType];
                 this.items = publications;
                 this.count = publications.length;
                 this.$.spinner.active = false;
             },
             _onPubError: function(error) {
-                // catch any error that happened so far
-                console.log("Argh, broken: " + err.message);
-                console.log("Error at line : " + err.stack);
+                console.error("Error: ", error);
                 this.$.spinner.active = false;
                 this.count = 0;
-            },
-            _readJsonFile: function(file, callback) { // provided for testing from json files instead of API calls: this._readJsonFile("../NX_PO1308-CURATED.json", function(text){ var filedata = JSON.parse(text); ... filedata.forEach(function(publidata){...
-                var rawFile = new XMLHttpRequest();
-                rawFile.overrideMimeType("application/json");
-                rawFile.open("GET", file, true);
-                rawFile.onreadystatechange = function() {
-                  if (rawFile.readyState === 4 && rawFile.status == "200") {
-                       callback(rawFile.responseText);
-                    }
-                }
-                rawFile.send(null);
             }
-
         });
     </script>
 </dom-module>
