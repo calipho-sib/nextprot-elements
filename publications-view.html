@@ -134,7 +134,7 @@ Publications listing used in curated and additional publications pages.
             },
             _getPreferedPageSizeFromLocalStorage: function(){
 
-                var localStorageSizeValue = parseInt(localStorage.getItem(this.preferedPageSizeName));
+                var localStorageSizeValue = localStorage.getItem(this.preferedPageSizeName);
 
                 // does not exist
                 if (localStorageSizeValue === null) {
@@ -142,7 +142,7 @@ Publications listing used in curated and additional publications pages.
                     localStorage.setItem(this.preferedPageSizeName, localStorageSizeValue);
                 }
 
-                return localStorageSizeValue;
+                return parseInt(localStorageSizeValue);
             },
             _changePageSize: function(evt){
                 this.pageSize = parseInt(evt.srcElement[evt.srcElement.selectedIndex].value);
