@@ -37,13 +37,12 @@ Publications listing used in curated and additional publications pages.
             }
         </style>
 
-        <!-- url="http://build-api.nextprot.org/entry-publications/[[acc]]/pubview/CURATED.json" -->
         <iron-ajax
                 id ="pubAPIcall"
                 url= "http://build-api.nextprot.org/entry-publications/[[nxConfig.entry]]/category/[[nxConfig.pubType]].json"
                 handle-as="json"
-                on-response="_onPubResponse"
-                on-error="_onPubError" >
+                on-response="_handleResponseData"
+                on-error="_handleError" >
         </iron-ajax>
 
         <div class="row">
@@ -64,11 +63,10 @@ Publications listing used in curated and additional publications pages.
                         <div class="no-padding col-lg-5"><template is="dom-if" if="[[items]]">Publications [[from]] to [[to]] of [[items.length]]</template></div>
                         <div class="col-lg-2">
                             show&nbsp;
-                            <select on-change="_changePreferedPageSize">
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
+                            <select on-change="_changePageSize">
+                                <template is="dom-repeat" items="{{pageSizeOptions}}" as="pageSizeOption" >
+                                    <option value="{{pageSizeOption}}" selected$="{{_isPageSizeOptionSelected(pageSizeOption)}}">{{pageSizeOption}}</option>
+                                </template>
                             </select>
                         </div>
                         <div class="col-lg-5">
@@ -108,47 +106,50 @@ Publications listing used in curated and additional publications pages.
                     notify: true
                 },
                 pageSize: {
-                    type: Number,
-                    value: 10
+                    type: Number
+                },
+                pageSizeOptions: {
+                    type: Array,
+                    value: [10, 20, 50, 100]
                 },
                 summary: {
                     type: Boolean,
                     value: true
-                },
-                _userPreferedPageSize: {
-                    type: Number,
-                    value: 10,
-                    readOnly: true
                 }
-
             },
             attached: function () {
 
                 this.preferedPageSizeName = "publications-view.prefered-size";
+                this.pageSize = this._getPreferedPageSizeFromLocalStorage();
 
-                if (this.nxConfig.pubType in this.expectedPubTypes) {
+                if (this.nxConfig.pubType in this.expectedPubTypes)
                     this.$.pubAPIcall.generateRequest();
-                }
-                else {
-                    this._onPubError("invalid publication type ", this.nxConfig.pubType +" is not recognized as a valid publication type (expected: ["+
+                else
+                    this._handleError("invalid publication type ", this.nxConfig.pubType +" is not recognized as a valid publication type (expected: ["+
                         Object.keys(this.expectedPubTypes)+"])");
-                }
            },
+            _isPageSizeOptionSelected: function(pageSizeValue){
+
+                return this._getPreferedPageSizeFromLocalStorage() == pageSizeValue;
+            },
             _getPreferedPageSizeFromLocalStorage: function(){
 
-                var sizeValue = localStorage.getItem(this.preferedPageSizeName);
+                var localStorageSizeValue = localStorage.getItem(this.preferedPageSizeName);
 
-                if (sizeValue == null) {
-                    this.pageSize = sizeValue;
-                    localStorage.setItem(this.preferedPageSizeName, this.pageSize);
+                // does not exist
+                if (localStorageSizeValue === null) {
+                    localStorageSizeValue = 10;
+                    localStorage.setItem(this.preferedPageSizeName, localStorageSizeValue);
                 }
-            },
-            _changePreferedPageSize: function(evt){
-                this._userPreferedpageSize = evt.srcElement[evt.srcElement.selectedIndex].value;
 
-                localStorage.setItem(this.preferedPageSizeName, this._userPreferedpageSize);
+                return localStorageSizeValue;
             },
-            _onPubResponse: function (data) {
+            _changePageSize: function(evt){
+                this.pageSize = evt.srcElement[evt.srcElement.selectedIndex].value;
+
+                localStorage.setItem(this.preferedPageSizeName, this.pageSize);
+            },
+            _handleResponseData: function (data) {
                 var publications = [];
                 data.detail.response.forEach(function(publidata){
                     publications.push(publidata);
@@ -158,7 +159,7 @@ Publications listing used in curated and additional publications pages.
                 this.count = publications.length;
                 this.$.spinner.active = false;
             },
-            _onPubError: function(error) {
+            _handleError: function(error) {
                 console.error("Error: ", error);
                 this.$.spinner.active = false;
                 this.count = 0;
