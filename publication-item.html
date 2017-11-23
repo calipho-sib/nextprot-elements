@@ -120,14 +120,15 @@ Publication item demo
           [[data.publication.abstractText]]
         </iron-collapse>
         <template is="dom-if" if="[[!data.publication.abstractText]]">
-          <template is="dom-if" if="[[isArticle]]">No Abstract available</template>
+          <template is="dom-if" if="[[_isArticle()]]">No Abstract available</template>
         </template>
-      <p><span class="grey-x">CITED FOR: </span>
+        <template is="dom-if" if="[[data]]">
+      <p><template is="dom-if" if="[[_isCited()]]"><span class="grey-x">CITED FOR: </span> </template>
       <template is="dom-repeat" items="[[_toArray(data.citedInViews)]]" as="cited">
       <!--    cited.0 = key ('function', 'medical', ...), cited.1 = value (link) -->
       <a href="[[cited.1]]" class="ext-link" target='_blank'>[[cited.0]]</a>
     </template>
-      </p>
+      </p> </template>
       <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope"> <p><span class="grey-x">[[annotscope.database]] [[annotscope.label]] </span> </template>
      </template>
   <script>
@@ -185,6 +186,12 @@ Publication item demo
         this.$$("#collapseAbstract").opened ?
           this.$$("#collapseButton").setAttribute("pushed", null) :
           this.$$("#collapseButton").removeAttribute("pushed");
+      },
+      _isCited: function(){
+        //console.log("in _isCurated");
+        //console.log(this.data)
+        if(this.data) { return Object.keys(this.data.citedInViews).length>0;}
+        return false;
       },
       _isArticle: function(){
         if(this.data) return this.data.publication.publicationType==="ARTICLE";
