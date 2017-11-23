@@ -129,8 +129,7 @@ Publications listing used in curated and additional publications pages.
                 if (this.nxConfig.pubType in this.expectedPubTypes)
                     this.$.pubAPIcall.generateRequest();
                 else
-                    this._handleError("invalid publication type ", this.nxConfig.pubType +" is not recognized as a valid publication type (expected: ["+
-                        Object.keys(this.expectedPubTypes)+"])");
+                    this._handleError("invalid publication type " + this.nxConfig.pubType +" is not recognized as a valid publication type (expected: [" + Object.keys(this.expectedPubTypes)+"])");
            },
             _isPageSizeOptionSelected: function(pageSizeValue){
 
