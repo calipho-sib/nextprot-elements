@@ -63,6 +63,14 @@ Publication item demo
       #collapseAbstract {
         text-align: justify;
       }
+        .annotscope-bg {
+
+            background-color:#dedede;
+            color: #7A7A7A;
+            border-radius: 5px;
+            padding: 1px 3px;
+            font-size: 11px;
+        }
     </style>
       <template is="dom-if" if="[[data]]">
         <template is="dom-if" if="[[_isOnlineResource()]]">
@@ -129,7 +137,10 @@ Publication item demo
       <a href="[[cited.1]]" class="ext-link" target='_blank'>[[cited.0]]</a>
     </template>
       </p> </template>
-      <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope"> <p><span class="grey-x">[[annotscope.database]] [[annotscope.label]] </span> </template>
+      <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope"> <p>
+          <span class="annotscope-bg">[[annotscope.database]]</span>
+          <span>[[annotscope.label]] </span>
+      </template>
      </template>
   <script>
     Polymer({
