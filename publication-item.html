@@ -98,7 +98,6 @@ Publication item demo
               </template>
             </template>
             <template is="dom-if" if="[[_isArticle()]]">
-              [[data.publication.journal]]
               [[data.publication.journalResourceLocator.abbrev]]<template is="dom-if" if="[[data.publication.volume]]">, <strong>[[data.publication.volume]]</strong></template><template is="dom-if" if="[[data.publication.firstPage]]">, [[data.publication.firstPage]]</template>
               <template is="dom-if" if="[[data.publication.lastPage]]">- [[data.publication.lastPage]]</template><template is="dom-if" if="[[data.publication.publicationYear]]"> ([[data.publication.publicationYear]])</template>
               <template is="dom-if" if="[[!_isOnlineResource()]]">
@@ -112,7 +111,7 @@ Publication item demo
         </template>
         <template is="dom-if" if="[[summary]]">
           <template is="dom-if" if="[[data.publication.authors.0]]">[[data.publication.authors.0.lastName]] [[_formatInitials(data.publication.authors.0.initials)]] </template><template is="dom-if" if="[[data.publication.authors.1]]">
-          <i>et al.</i></template><template is="dom-if" if="[[_isSubmission()]]">, <span class="grey-x">[[data.publication.submission]] ([[data.publication.textDate]])</span></template><template is="dom-if" if="[[_isPatent()]]">, <span class="grey-x">Patent number [[data.publication.dbXrefs.0.accession]] ([[data.publication.textDate]])</span></template><template is="dom-if" if="[[_isArticle()]]"><template is="dom-if" if="[[data.publication.journal]]">, [[data.publication.journal]] [[data.publication.journalResourceLocator.medAbbrev]]</template><template is="dom-if" if="[[data.publication.volume]]">, <strong>[[data.publication.volume]]</strong></template><template is="dom-if" if="[[data.publication.firstPage]]">, [[data.publication.firstPage]]</template>
+          <i>et al.</i></template><template is="dom-if" if="[[_isSubmission()]]">, <span class="grey-x">[[data.publication.submission]] ([[data.publication.textDate]])</span></template><template is="dom-if" if="[[_isPatent()]]">, <span class="grey-x">Patent number [[data.publication.dbXrefs.0.accession]] ([[data.publication.textDate]])</span></template><template is="dom-if" if="[[_isArticle()]]"> [[data.publication.journalResourceLocator.medAbbrev]]<template is="dom-if" if="[[data.publication.volume]]">, <strong>[[data.publication.volume]]</strong></template><template is="dom-if" if="[[data.publication.firstPage]]">, [[data.publication.firstPage]]</template>
           <template is="dom-if" if="[[data.publication.lastPage]]">- [[data.publication.lastPage]]</template><template is="dom-if" if="[[data.publication.publicationYear]]"> ([[data.publication.publicationYear]])</template></template>
         </template>
       </template>
@@ -179,7 +178,7 @@ Publication item demo
           }
         }
       },
-      attached: function () {
+      attached: function () { //console.log("data:" , this.data);
         if (this.showAbstract) {
           this.async(function(){
             if(this.$$("#abstractHeader")) this.$$("#abstractHeader").removeAttribute("hidden");
