@@ -178,8 +178,10 @@ Publication item demo
           }
         }
       },
-      attached: function () { //console.log("data:" , this.data);
-        if (this.showAbstract) {
+      attached: function () {
+          //console.log("data:", JSON.stringify(this.data));
+
+          if (this.showAbstract) {
           this.async(function(){
             if(this.$$("#abstractHeader")) this.$$("#abstractHeader").removeAttribute("hidden");
             if(this.$$("#collapseButton")) this.$$("#collapseButton").hidden = true;
