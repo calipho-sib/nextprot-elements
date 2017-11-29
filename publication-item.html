@@ -202,10 +202,11 @@ Publication item demo
                 </template>
                 [[data.publication.abstractText]]
             </iron-collapse>
-            <template is="dom-if" if="[[!data.publication.abstractText]]">
-                <template is="dom-if" if="[[_isArticle()]]">
-                    No Abstract available
-                </template>
+        </template>
+
+        <template is="dom-if" if="[[!data.publication.abstractText]]">
+            <template is="dom-if" if="[[_isArticle()]]">
+                No Abstract available
             </template>
         </template>
 
