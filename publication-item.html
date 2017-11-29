@@ -64,14 +64,16 @@ Publication item demo
             #collapseAbstract {
                 text-align: justify;
             }
-            .cited-for {
+            .authors a {
+                color: #6a90d9;
+            }
 
+            .cited-for {
                 color: #7A7A7A;
                 font-size: 11px;
                 font-weight: bold;
             }
             .annotscope-bg {
-
                 background-color: #dedede;
                 color: #7A7A7A;
                 border-radius: 5px;
@@ -104,7 +106,7 @@ Publication item demo
             <template is="dom-if" if="[[!summary]]">
                 <p>
                     <!-- Authors -->
-                    <span class="hyperlink-blue">
+                    <span class="authors">
                         <template is="dom-repeat" items="[[data.publication.authors]]" as="author">
                             <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]]</a>
                             <template is="dom-if" if="[[!_checkIfLast(data.publication.authors,index)]]">,</template>
