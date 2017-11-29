@@ -67,7 +67,9 @@ Publication item demo
             .authors a {
                 color: #6a90d9;
             }
-
+            .np-grey-text {
+                color: #666;
+            }
             .cited-for {
                 color: #7A7A7A;
                 font-size: 11px;
@@ -116,7 +118,7 @@ Publication item demo
 
                 <p>
                     <!-- Patent -->
-                    <template is="dom-if" if="[[_isPatent()]]">Patent number: [[data.dbXrefs.0.accession]]([[data.textDate]])
+                    <template is="dom-if" if="[[_isPatent()]]">Patent number [[data.dbXrefs.0.accession]]([[data.publication.textDate]])
                         <template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">
                             [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
                         </template>
@@ -164,13 +166,13 @@ Publication item demo
                 </template>
 
                 <!-- Submission -->
-                <template is="dom-if" if="[[_isSubmission()]]">
-                    , <span class="grey-x">[[data.publication.submission]] ([[data.publication.textDate]])</span>
+                <template is="dom-if" if="[[_isSubmission()]]">,
+                    <span class="np-grey-text">[[data.publication.submission]] ([[data.publication.textDate]])</span>
                 </template>
 
                 <!-- Patent -->
                 <template is="dom-if" if="[[_isPatent()]]">
-                    , <span class="grey-x">Patent number [[data.publication.dbXrefs.0.accession]] ([[data.publication.textDate]])</span>
+                    , <span class="np-grey-text">Patent number [[data.publication.dbXrefs.0.accession]] ([[data.publication.textDate]])</span>
                 </template>
 
                 <!-- Article -->
