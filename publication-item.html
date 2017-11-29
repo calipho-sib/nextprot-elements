@@ -64,7 +64,12 @@ Publication item demo
             #collapseAbstract {
                 text-align: justify;
             }
+            .cited-for {
 
+                color: #7A7A7A;
+                font-size: 11px;
+                font-weight: bold;
+            }
             .annotscope-bg {
 
                 background-color: #dedede;
@@ -169,7 +174,7 @@ Publication item demo
                 <!-- Article -->
                 <template is="dom-if" if="[[_isArticle()]]"> [[data.publication.journalResourceLocator.medAbbrev]]
                     <template is="dom-if" if="[[data.publication.volume]]">
-                        ,<strong>[[data.publication.volume]]</strong>
+                        <strong>[[data.publication.volume]]</strong>
                     </template>
                     <template is="dom-if" if="[[data.publication.firstPage]]">
                         , [[data.publication.firstPage]]
@@ -202,23 +207,23 @@ Publication item demo
             </template>
         </template>
 
+        <p></p>
 
-        <!-- Cited For -->
         <template is="dom-if" if="[[data]]">
-            <p>
-                <template is="dom-if" if="[[_isCited()]]">
-                    <span class="grey-x">CITED FOR: </span>
-                </template>
-                <template is="dom-repeat" items="[[_toArray(data.citedInViews)]]" as="cited">
-                    <a href="[[cited.1]]" class="ext-link" target='_blank'>[[cited.0]]</a>
-                </template>
-            </p>
-        </template>
+            <!-- Cited For -->
+            <template is="dom-if" if="[[_isCited()]]">
+                <span class="cited-for">CITED FOR: </span>
+            </template>
+            <template is="dom-repeat" items="[[_toArray(data.citedInViews)]]" as="cited">
+                <a href="[[cited.1]]" class="ext-link" target='_blank'>[[cited.0]]</a>
+            </template>
 
-        <!-- Direct links -->
-        <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope"><p>
-            <span class="annotscope-bg">[[annotscope.database]]</span>
-            <span>[[annotscope.label]] </span>
+            <!-- Direct links -->
+            <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope">
+                <template is="dom-if" if="[[_isCited()]]"><br></template>
+                <span class="annotscope-bg">[[annotscope.database]]</span>
+                <span>[[annotscope.label]] </span>
+            </template>
         </template>
     </template>
     <script>
