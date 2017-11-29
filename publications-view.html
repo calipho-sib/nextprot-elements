@@ -39,7 +39,7 @@ Publications listing used in curated and additional publications pages.
 
         <iron-ajax
                 id ="pubAPIcall"
-                url= "http://build-api.nextprot.org/entry-publications/[[nxConfig.entry]]/category/[[nxConfig.pubType]].json"
+                url= "http://build-api.nextprot.org/entry-publications/entry/[[nxConfig.entry]]/category/[[nxConfig.pubType]].json"
                 handle-as="json"
                 on-response="_handleResponseData"
                 on-error="_handleError" >
