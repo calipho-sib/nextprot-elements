@@ -183,22 +183,25 @@ Publication item demo
                 </template>
             </template>
         </template>
+
+        <!-- Abstract button -->
         <template is="dom-if" if="[[showAbstractButton]]">
-            <span id="collapseButton" class="colored-label abstract-button" on-tap="_toggleAbstract">
+            <span id="collapseButton" class="colored-label abstract-button button-thin" on-tap="_toggleAbstract">
                 <span class="pubDisplayStatus"> </span>abstract
             </span>
-        </template>
-        <iron-collapse id="collapseAbstract" opened="[[showAbstract]]">
-            <template is="dom-if" if="[[data.publication.abstractText]]">
-                <div id="abstractHeader" hidden>Abstract</div>
+            <iron-collapse id="collapseAbstract" opened="[[showAbstract]]">
+                <template is="dom-if" if="[[data.publication.abstractText]]">
+                    <div id="abstractHeader" hidden>Abstract</div>
+                </template>
+                [[data.publication.abstractText]]
+            </iron-collapse>
+            <template is="dom-if" if="[[!data.publication.abstractText]]">
+                <template is="dom-if" if="[[_isArticle()]]">
+                    No Abstract available
+                </template>
             </template>
-            [[data.publication.abstractText]]
-        </iron-collapse>
-        <template is="dom-if" if="[[!data.publication.abstractText]]">
-            <template is="dom-if" if="[[_isArticle()]]">
-                No Abstract available
-            </template>
         </template>
+
 
         <!-- Cited For -->
         <template is="dom-if" if="[[data]]">
@@ -225,7 +228,7 @@ Publication item demo
             properties: {
                 data: {
                     type: Object,
-                    observer: "_dataUpdated"
+                    observer: "_updateShowAbstractButtonState"
                 },
                 showAbstractButton: {
                     type: Boolean,
@@ -237,7 +240,8 @@ Publication item demo
                 },
                 summary: {
                     type: Boolean,
-                    value: false
+                    value: false,
+                    observer: "_updateShowAbstractButtonState"
                 },
                 animationConfig: {
                     value: function () {
@@ -269,9 +273,8 @@ Publication item demo
                     }, 1);
                 }
             },
-            _dataUpdated: function() {
-
-                this.showAbstractButton = this.data.publication.abstractText && !this.summary;
+            _updateShowAbstractButtonState: function() {
+                this.showAbstractButton = !this.summary && this.data && this.data.publication.abstractText;
             },
             _toggleAbstract: function () {
                 this.$$("#collapseAbstract").opened ?
