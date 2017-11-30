@@ -128,13 +128,10 @@ Publication item demo
                     <template is="dom-if" if="[[_isArticle()]]">
                         [[data.publication.journalResourceLocator.abbrev]]
                         <template is="dom-if" if="[[data.publication.volume]]">
-                            <strong>[[data.publication.volume]]</strong>
+                            <strong>[[data.publication.volume]],</strong>
                         </template>
                         <template is="dom-if" if="[[data.publication.firstPage]]">
-                            , [[data.publication.firstPage]]
-                        </template>
-                        <template is="dom-if" if="[[data.publication.lastPage]]">
-                            - [[data.publication.lastPage]]
+                            [[data.publication.firstPage]]-[[data.publication.lastPage]]
                         </template>
                         <template is="dom-if" if="[[data.publication.publicationYear]]">
                             ([[data.publication.publicationYear]])
@@ -177,18 +174,9 @@ Publication item demo
 
                 <!-- Article -->
                 <template is="dom-if" if="[[_isArticle()]]"> [[data.publication.journalResourceLocator.medAbbrev]]
-                    <template is="dom-if" if="[[data.publication.volume]]">
-                        <strong>[[data.publication.volume]]</strong>
-                    </template>
-                    <template is="dom-if" if="[[data.publication.firstPage]]">
-                        , [[data.publication.firstPage]]
-                    </template>
-                    <template is="dom-if" if="[[data.publication.lastPage]]">
-                        - [[data.publication.lastPage]]
-                    </template>
-                    <template is="dom-if" if="[[data.publication.publicationYear]]">
-                        ([[data.publication.publicationYear]])
-                    </template>
+                    <template is="dom-if" if="[[data.publication.volume]]"><strong>[[data.publication.volume]],</strong></template>
+                    <template is="dom-if" if="[[data.publication.firstPage]]">[[data.publication.firstPage]]-[[data.publication.lastPage]]</template>
+                    <template is="dom-if" if="[[data.publication.publicationYear]]">([[data.publication.publicationYear]])</template>
                 </template>
             </template>
         </template>
