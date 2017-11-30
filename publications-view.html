@@ -39,14 +39,6 @@ Publications listing used in curated and additional publications pages.
             }
         </style>
 
-        <iron-ajax
-                id ="pubAPIcall"
-                url= "http://build-api.nextprot.org/entry-publications/entry/[[nxConfig.entry]]/category/[[nxConfig.pubType]].json"
-                handle-as="json"
-                on-response="_handleResponseData"
-                on-error="_handleError" >
-        </iron-ajax>
-
         <div class="row">
             <div id="nxOverview" class="col-md-12">
                 <protein-overview nx-config="[[nxConfig]]"></protein-overview>
@@ -127,12 +119,31 @@ Publications listing used in curated and additional publications pages.
             attached: function () {
 
                 this.pageSize = this._getPreferedPageSizeFromLocalStorage();
+                this._initApiClient();
 
-                if (this.nxConfig.pubType in this.expectedPubTypes)
-                    this.$.pubAPIcall.generateRequest();
-                else
-                    this._handleError("invalid publication type " + this.nxConfig.pubType +" is not recognized as a valid publication type (expected: [" + Object.keys(this.expectedPubTypes)+"])");
+                if (this.nxConfig.pubType in this.expectedPubTypes) {
+
+                    var self = this;
+
+                    this._npClient.getJSON("/entry-publications/entry/"+this.nxConfig.entry+"/category/"+this.nxConfig.pubType+".json")
+                        .then(function (response) {
+                            self._handleResponseData(response);
+                        })
+                        .catch(function (error) {
+                            self._handleError(error);
+                        });
+                }
+                else {
+                    this._handleError("invalid publication type " + this.nxConfig.pubType + " is not recognized as a valid publication type (expected: [" + Object.keys(this.expectedPubTypes) + "])");
+                }
            },
+            _initApiClient: function() {
+                this._npClient = new Nextprot.Client("neXtProt publications", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+            },
             _isPageSizeOptionSelected: function(pageSizeValue){
 
                 return this._getPreferedPageSizeFromLocalStorage() == pageSizeValue;
@@ -155,7 +166,7 @@ Publications listing used in curated and additional publications pages.
             },
             _handleResponseData: function (data) {
                 var publications = [];
-                data.detail.response.forEach(function(publidata){
+                data.forEach(function(publidata){
                     publications.push(publidata);
                 });
                 this.header = this.expectedPubTypes[this.nxConfig.pubType];
