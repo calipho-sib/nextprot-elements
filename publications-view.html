@@ -1,16 +1,19 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="protein-overview.html">
 <link rel="import" href="publication-item.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="paginator-element.html">
+
 <!--
 `publications-view`
 Publications listing used in curated and additional publications pages.
 
 @demo demo/publications-view-demo.html
 -->
+
 <dom-module id="publications-view">
     <template>
         <style is="custom-style" include="nextprot-elements-shared-styles">
@@ -18,6 +21,8 @@ Publications listing used in curated and additional publications pages.
                 display: block;
                 --paper-toggle-button-checked-button-color: #428bca;
                 --paper-toggle-button-checked-bar-color: #428bca;
+                background:#f8f8f8;
+                overflow-y: auto;
             }
             .control-header {
                 margin: 10px 0;
@@ -33,6 +38,7 @@ Publications listing used in curated and additional publications pages.
                 padding: 5px 10px 5px 3px;
             }
         </style>
+
         <div class="row">
             <div id="nxOverview" class="col-md-12">
                 <protein-overview nx-config="[[nxConfig]]"></protein-overview>
@@ -52,10 +58,9 @@ Publications listing used in curated and additional publications pages.
                         <div class="col-lg-2">
                             show&nbsp;
                             <select on-change="_changePageSize">
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
+                                <template is="dom-repeat" items="{{pageSizeOptions}}" as="pageSizeOption" >
+                                    <option value="{{pageSizeOption}}" selected$="{{_isPageSizeOptionSelected(pageSizeOption)}}">{{pageSizeOption}}</option>
+                                </template>
                             </select>
                         </div>
                         <div class="col-lg-5">
@@ -80,75 +85,99 @@ Publications listing used in curated and additional publications pages.
                     type: Array,
                     notify: true
                 },
-                type: {
-                    type: String,
-                    value: "submissions",
-                    observer: "_checkType"
-                },
-                types: {
-                    type: Array,
-                    value: ["curated", "additional", "submissions", "patents", "online-resources"]
+                expectedPubTypes: {
+                    type: Object,
+                    value: {
+                        "curated": "Curated publications",
+                        "additional": "Additional publications",
+                        "submission": "Submissions",
+                        "patent": "Patents",
+                        "web_resource":"Online resources"
+                    }
                 },
                 count: {
                     type: Number,
                     notify: true
                 },
                 pageSize: {
-                    type: Number,
-                    value: 10
+                    type: Number
+                },
+                pageSizeOptions: {
+                    type: Array,
+                    value: [10, 20, 50, 100]
                 },
                 summary: {
                     type: Boolean,
                     value: true
+                },
+                _preferedPageSizeName: {
+                    type: String,
+                    value: "publications-view.prefered-size",
+                    readOnly: true
                 }
             },
-            attached: function (){
-                this.nx = new Nextprot.Client("neXtprot publications view", "Calipho Group");
-                var self = this;
-                this.nx.getEntry(this.nxConfig.entry)
-                    .then(function (data) {
-                        var publications = [];
-                        data.publications.forEach(function(publication){
-                            if(self.type==="curated" && publication.publicationType==="ARTICLE" && publication.isCurated)
-                                publications.push(publication);
-                            else if(self.type==="additional" && publication.isComputed)
-                                publications.push(publication);
-                            else if(self.type==="patents" && publication.publicationType==="PATENT")
-                                publications.push(publication);
-                            else if(self.type==="submissions" && publication.publicationType==="SUBMISSION")
-                                publications.push(publication);
-                            else if(self.type==="online-resources" && publication.publicationType==="ONLINE_PUBLICATION")
-                                publications.push(publication);
+            attached: function () {
+
+                this.pageSize = this._getPreferedPageSizeFromLocalStorage();
+                this._initApiClient();
+
+                if (this.nxConfig.pubType in this.expectedPubTypes) {
+
+                    var self = this;
+
+                    this._npClient.getJSON("/entry-publications/entry/"+this.nxConfig.entry+"/category/"+this.nxConfig.pubType+".json")
+                        .then(function (response) {
+                            self._handleResponseData(response);
+                        })
+                        .catch(function (error) {
+                            self._handleError(error);
                         });
-                        self.header = self._getHeader();
-                        self.items = publications;
-                        self.count = publications.length;
-                        self.$.spinner.active = false;
-                    }).catch(function (err) {
-                        // catch any error that happened so far
-                        console.log("Argh, broken: " + err.message);
-                        console.log("Error at line : " + err.stack);
-                        self.$.spinner.active = false;
-                        self.count = 0;
-                    });
+                }
+                else {
+                    this._handleError("invalid publication type " + this.nxConfig.pubType + " is not recognized as a valid publication type (expected: [" + Object.keys(this.expectedPubTypes) + "])");
+                }
+           },
+            _initApiClient: function() {
+                this._npClient = new Nextprot.Client("neXtProt publications", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
             },
-            _checkType: function(newValue, oldValue){
-                this.async(function(){
-                    if (this.types.indexOf(newValue) === -1) {
-                        console.warn(this.type+" is not recognized as a valid publication type. "+oldValue+" publications will be displayed instead.");
-                        this.type = oldValue;
-                    }
-                });
+            _isPageSizeOptionSelected: function(pageSizeValue){
+
+                return this._getPreferedPageSizeFromLocalStorage() == pageSizeValue;
             },
-            _getHeader: function(){
-                if (this.type==="curated") return "Curated publications";
-                else if (this.type==="additional") return "Additional publications";
-                else if (this.type==="submissions") return "Submissions";
-                else if (this.type==="patents") return "Patents";
-                else if (this.type==="online-resources") return "Online resources";
+            _getPreferedPageSizeFromLocalStorage: function(){
+
+                var localStorageSizeValue = localStorage.getItem(this._preferedPageSizeName);
+
+                // does not exist
+                if (localStorageSizeValue === null) {
+                    localStorageSizeValue = 10;
+                    localStorage.setItem(this._preferedPageSizeName, localStorageSizeValue);
+                }
+
+                return parseInt(localStorageSizeValue);
             },
             _changePageSize: function(evt){
-                this.pageSize = new Number(evt.srcElement[evt.srcElement.selectedIndex].value);
+                this.pageSize = parseInt(evt.srcElement[evt.srcElement.selectedIndex].value);
+                localStorage.setItem(this._preferedPageSizeName, this.pageSize);
+            },
+            _handleResponseData: function (data) {
+                var publications = [];
+                data.forEach(function(publidata){
+                    publications.push(publidata);
+                });
+                this.header = this.expectedPubTypes[this.nxConfig.pubType];
+                this.items = publications;
+                this.count = publications.length;
+                this.$.spinner.active = false;
+            },
+            _handleError: function(error) {
+                console.error("Error: ", error);
+                this.$.spinner.active = false;
+                this.count = 0;
             }
         });
     </script>

@@ -10,7 +10,6 @@
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
 
     <link rel="import" href="../publications-view.html">
-
     <style is="custom-style" include="demo-pages-shared-styles">
         .vertical-section-container {
             max-width: 80%;
@@ -20,9 +19,34 @@
 <body>
 <div class="vertical-section-container centered">
     <h3>Basic publications-view demo</h3>
+    <!-- 5 Correct custom elements -->
     <demo-snippet>
         <template>
-            <publications-view nx-config='{"entry": "NX_P04637"}'></publications-view>
+            <publications-view nx-config='{"entry": "NX_P52701", "env": "build", "pubType": "curated"}'></publications-view>
+        </template>
+    </demo-snippet>
+
+    <demo-snippet>
+        <template>
+            <publications-view nx-config='{"entry": "NX_Q8WXG9", "env": "build", "pubType": "additional"}'></publications-view>
+        </template>
+    </demo-snippet>
+
+    <demo-snippet>
+        <template>
+            <publications-view nx-config='{"entry": "NX_Q8WXG9", "env": "build", "pubType": "submission"}'></publications-view>
+        </template>
+    </demo-snippet>
+
+    <demo-snippet>
+        <template>
+            <publications-view nx-config='{"entry": "NX_Q8TF47", "env": "build", "pubType": "patent"}'></publications-view>
+        </template>
+    </demo-snippet>
+
+    <demo-snippet>
+        <template>
+            <publications-view nx-config='{"entry": "NX_P52701", "env": "build", "pubType": "web_resource"}'></publications-view>
         </template>
     </demo-snippet>
 </div>
