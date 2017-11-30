@@ -65,7 +65,10 @@ Publication item demo
                 text-align: justify;
             }
             .authors a {
-                color: #6a90d9;
+                color: #5496cf;
+            }
+            .title-link {
+                color: #0F82BA;
             }
             .np-grey-text {
                 color: #666;
@@ -100,7 +103,7 @@ Publication item demo
             <!-- Title -->
             <template is="dom-if" if="[[data.publication.title]]">
                 <p>
-                    <a href="/publication/[[data.publication.publicationId]]" target='_parent'>[[data.publication.title]]</a>
+                    <a class="title-link" href="/publication/[[data.publication.publicationId]]" target='_parent'>[[data.publication.title]]</a>
                 </p>
             </template>
 
