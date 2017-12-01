@@ -43,45 +43,45 @@ Generic publication item demo
                 color: #666;
             }
         </style>
-        <template is="dom-if" if="[[data]]">
+        <template is="dom-if" if="[[publication]]">
             <!-- Title -->
-            <template is="dom-if" if="[[data.publication.title]]">
+            <template is="dom-if" if="[[publication.title]]">
                 <p>
-                    <strong>[[data.publication.title]]</strong>
+                    <strong>[[publication.title]]</strong>
                 </p>
 
                 <p>
                     <!-- Authors -->
                     <span class="authors">
-                        <template is="dom-repeat" items="[[data.publication.authors]]" as="author">
+                        <template is="dom-repeat" items="[[publication.authors]]" as="author">
                             <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]]</a>
-                            <template is="dom-if" if="[[!_checkIfLast(data.publication.authors,index)]]">,</template>
+                            <template is="dom-if" if="[[!_checkIfLast(publication.authors,index)]]">,</template>
                         </template>
                     </span>
                 </p>
 
                 <p>
                     <!-- Patent -->
-                    <template is="dom-if" if="[[_isPatent()]]">Patent number [[data.dbXrefs.0.accession]]([[data.publication.textDate]])
-                        <template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">
+                    <template is="dom-if" if="[[_isPatent()]]">Patent number [[dbXrefs.0.accession]]([[publication.textDate]])
+                        <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
                             [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
                         </template>
                     </template>
 
                     <!-- Article -->
                     <template is="dom-if" if="[[_isArticle()]]">
-                        [[data.publication.journalResourceLocator.abbrev]]
-                        <template is="dom-if" if="[[data.publication.volume]]">
-                            <strong>[[data.publication.volume]],</strong>
+                        [[publication.journalResourceLocator.abbrev]]
+                        <template is="dom-if" if="[[publication.volume]]">
+                            <strong>[[publication.volume]],</strong>
                         </template>
-                        <template is="dom-if" if="[[data.publication.firstPage]]">
-                            [[data.publication.firstPage]]-[[data.publication.lastPage]]
+                        <template is="dom-if" if="[[publication.firstPage]]">
+                            [[publication.firstPage]]-[[publication.lastPage]]
                         </template>
-                        <template is="dom-if" if="[[data.publication.publicationYear]]">
-                            ([[data.publication.publicationYear]])
+                        <template is="dom-if" if="[[publication.publicationYear]]">
+                            ([[publication.publicationYear]])
                         </template>
                         <template is="dom-if" if="[[!_isOnlineResource()]]">
-                            <template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">
+                            <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
                                 [[[_formatXrefLabel(xref.databaseName)]]:
                                 <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
                             </template>
@@ -90,19 +90,19 @@ Generic publication item demo
 
                     <!-- Submission -->
                     <template is="dom-if" if="[[_isSubmission()]]">
-                        [[data.publication.submission]]
-                        ([[data.publication.textDate]])
+                        [[publication.submission]]
+                        ([[publication.textDate]])
                     </template>
                 </p>
             </template>
         </template>
 
         <!-- Abstract -->
-        <template is="dom-if" if="[[hasAbstract]]">
+        <template is="dom-if" if="[[abstract]]">
             <div id="abstractHeader">Abstract</div>
-            [[data.publication.abstractText]]
+            [[abstract]]
         </template>
-        <template is="dom-if" if="[[!hasAbstract]]">
+        <template is="dom-if" if="[[!abstract]]">
             <template is="dom-if" if="[[_isArticle()]]">
                 No Abstract available
             </template>
@@ -113,39 +113,42 @@ Generic publication item demo
             is: 'generic-publication-item',
             behaviors: [Polymer.NeonAnimationRunnerBehavior],
             properties: {
-                data: {
+                publication: {
                     type: Object,
-                    observer: "_updateShowAbstractButtonState"
+                    observer: "_updateState"
                 },
-                hasAbstract: {
-                    type: Boolean
+                abstract: {
+                    type: String
+                },
+                isTitleALink: {
+                    type: Boolean,
+                    value: false
                 }
             },
-            _updateShowAbstractButtonState: function() {
-                this.hasAbstract = this.data && this.data.publication.abstractText;
-                if (this.data)
-                    console.log("abstract", this.data.publication.abstractText, this.hasAbstract);
+            attached: function () {
+
+                this._updateState();
             },
-            _isCited: function () {
-                if (this.data) {
-                    return Object.keys(this.data.citedInViews).length > 0;
+            _updateState: function() {
+
+                if (this.publication) {
+                    this.abstract = this.publication.abstractText;
                 }
-                return false;
             },
             _isArticle: function () {
-                if (this.data) return this.data.publication.publicationType === "ARTICLE";
+                if (this.publication) return this.publication.publicationType === "ARTICLE";
                 return false;
             },
             _isPatent: function () {
-                if (this.data) return this.data.publication.publicationType === "PATENT";
+                if (this.publication) return this.publication.publicationType === "PATENT";
                 return false;
             },
             _isSubmission: function () {
-                if (this.data) return this.data.publication.publicationType === "SUBMISSION";
+                if (this.publication) return this.publication.publicationType === "SUBMISSION";
                 return false;
             },
             _isOnlineResource: function () {
-                if (this.data) return this.data.publication.publicationType === "ONLINE_PUBLICATION";
+                if (this.publication) return this.publication.publicationType === "ONLINE_PUBLICATION";
                 return false;
             },
             _formatXrefLabel: function (name) {
@@ -157,12 +160,6 @@ Generic publication item demo
             _checkIfLast: function (array, index) {
                 if (array.length - 1 === index) return true;
                 return false;
-            },
-            _toArray: function (obj) {
-                var citedArr = Object.keys(obj).map(function (key, value) {
-                    return [key, obj[key]];
-                });
-                return citedArr;
             }
         });
     </script>
