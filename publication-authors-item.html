@@ -1,0 +1,77 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`generic-publication-item`
+Generic publication item demo
+
+@demo demo/publication-authors-item-demo.html
+-->
+<dom-module id="publication-authors-item">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+
+            .authors a {
+                color: #5496cf;
+            }
+        </style>
+        <template is="dom-if" if="[[authors]]">
+
+            <!-- Detailed view -->
+            <template is="dom-if" if="[[!summary]]">
+                <span class="authors">
+                    <template is="dom-repeat" items="[[authors]]" as="author">
+                        <template is="dom-if" if="[[!_checkIfLast(authors,index)]]">
+                            <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]],</a>
+                        </template>
+                        <template is="dom-if" if="[[_checkIfLast(publication.authors,index)]]">
+                            <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]]</a>
+                        </template>
+                    </template>
+                </span>
+            </template>
+
+            <!-- Summary view -->
+            <template is="dom-if" if="[[summary]]">
+                <!-- First author et al. -->
+                <template is="dom-if" if="[[authors.0]]">[[authors.0.lastName]]
+                    [[_formatInitials(authors.0.initials)]]
+                </template>
+                <template is="dom-if" if="[[authors.1]]">
+                    <i>et al.</i>
+                </template>
+            </template>
+
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'publication-authors-item',
+            properties: {
+                authors: {
+                    type: Object
+                },
+                summary: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            attached: function () {
+
+            },
+            _formatInitials: function (name) {
+                return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
+            },
+            _checkIfLast: function (array, index) {
+                if (array.length - 1 === index) return true;
+                return false;
+            }
+        });
+    </script>
+</dom-module>

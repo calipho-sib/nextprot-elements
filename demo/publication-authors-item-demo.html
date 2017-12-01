@@ -1,0 +1,251 @@
+<!doctype html>
+<html>
+  <head>
+    <title>publication-authors-item demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../publication-authors-item.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .vertical-section-container {
+        max-width: 80%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic publication-authors-item demo</h3>
+      <demo-snippet>
+            <h3>Detailed view</h3>
+            <template>
+              <publication-authors-item></publication-authors-item>
+            </template>
+      </demo-snippet>
+      <demo-snippet>
+            <h3>Summary view</h3>
+            <template>
+                <publication-authors-item summary></publication-authors-item>
+            </template>
+      </demo-snippet>
+
+      <demo-snippet>
+        <template>
+          <h4>Data binding</h4><hr>
+          <script>
+
+              var elements = document.querySelectorAll("publication-authors-item");
+              for(var i in elements) {
+                  elements[i].authors = [{
+                      "authorId": 31584695,
+                      "lastName": "Besnard",
+                      "foreName": "Thomas",
+                      "initials": "T",
+                      "suffix": "",
+                      "rank": 0,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584696,
+                      "lastName": "Vaché",
+                      "foreName": "Christel",
+                      "initials": "C",
+                      "suffix": "",
+                      "rank": 1,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584697,
+                      "lastName": "Baux",
+                      "foreName": "David",
+                      "initials": "D",
+                      "suffix": "",
+                      "rank": 2,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584698,
+                      "lastName": "Larrieu",
+                      "foreName": "Lise",
+                      "initials": "L",
+                      "suffix": "",
+                      "rank": 3,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584699,
+                      "lastName": "Abadie",
+                      "foreName": "Caroline",
+                      "initials": "C",
+                      "suffix": "",
+                      "rank": 4,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584700,
+                      "lastName": "Blanchet",
+                      "foreName": "Catherine",
+                      "initials": "C",
+                      "suffix": "",
+                      "rank": 5,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584701,
+                      "lastName": "Odent",
+                      "foreName": "Sylvie",
+                      "initials": "S",
+                      "suffix": "",
+                      "rank": 6,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584702,
+                      "lastName": "Blanchet",
+                      "foreName": "Patricia",
+                      "initials": "P",
+                      "suffix": "",
+                      "rank": 7,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584703,
+                      "lastName": "Calvas",
+                      "foreName": "Patrick",
+                      "initials": "P",
+                      "suffix": "",
+                      "rank": 8,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584704,
+                      "lastName": "Hamel",
+                      "foreName": "Christian",
+                      "initials": "C",
+                      "suffix": "",
+                      "rank": 9,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584705,
+                      "lastName": "Dollfus",
+                      "foreName": "Hélène",
+                      "initials": "H",
+                      "suffix": "",
+                      "rank": 10,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584706,
+                      "lastName": "Lina-Granade",
+                      "foreName": "Geneviève",
+                      "initials": "G",
+                      "suffix": "",
+                      "rank": 11,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584707,
+                      "lastName": "Lespinasse",
+                      "foreName": "James",
+                      "initials": "J",
+                      "suffix": "",
+                      "rank": 12,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584708,
+                      "lastName": "David",
+                      "foreName": "Albert",
+                      "initials": "A",
+                      "suffix": "",
+                      "rank": 13,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584709,
+                      "lastName": "Isidor",
+                      "foreName": "Bertrand",
+                      "initials": "B",
+                      "suffix": "",
+                      "rank": 14,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584710,
+                      "lastName": "Morin",
+                      "foreName": "Gilles",
+                      "initials": "G",
+                      "suffix": "",
+                      "rank": 15,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584711,
+                      "lastName": "Malcolm",
+                      "foreName": "Sue",
+                      "initials": "S",
+                      "suffix": "",
+                      "rank": 16,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584712,
+                      "lastName": "Tuffery-Giraud",
+                      "foreName": "Sylvie",
+                      "initials": "S",
+                      "suffix": "",
+                      "rank": 17,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584713,
+                      "lastName": "Claustres",
+                      "foreName": "Mireille",
+                      "initials": "M",
+                      "suffix": "",
+                      "rank": 18,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }, {
+                      "authorId": 31584714,
+                      "lastName": "Roux",
+                      "foreName": "Anne-Françoise",
+                      "initials": "AF",
+                      "suffix": "",
+                      "rank": 19,
+                      "person": true,
+                      "publicationId": 16748393,
+                      "editor": false
+                  }];
+              }
+          </script>
+        </template>
+      </demo-snippet>
+    </div>
+
+  </body>
+</html>
