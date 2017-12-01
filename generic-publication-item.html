@@ -1,0 +1,169 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`generic-publication-item`
+Generic publication item demo
+
+@demo demo/generic-publication-item-demo.html
+-->
+<dom-module id="generic-publication-item">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                border-bottom: var(--publication-item-border-bottom);
+                margin-bottom: var(--publication-item-padding-bottom);
+                padding-bottom: var(--publication-item-margin-bottom);
+            }
+
+            iron-collapse {
+                margin-top: 5px;
+            }
+
+            p {
+                margin: 0 0 5px;
+            }
+
+            #abstractHeader {
+                color: #666;
+                padding: 5px 0;
+            }
+
+            #collapseAbstract {
+                text-align: justify;
+            }
+            .authors a {
+                color: #5496cf;
+            }
+            .np-grey-text {
+                color: #666;
+            }
+        </style>
+        <template is="dom-if" if="[[data]]">
+            <!-- Title -->
+            <template is="dom-if" if="[[data.publication.title]]">
+                <p>
+                    <strong>[[data.publication.title]]</strong>
+                </p>
+
+                <p>
+                    <!-- Authors -->
+                    <span class="authors">
+                        <template is="dom-repeat" items="[[data.publication.authors]]" as="author">
+                            <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]]</a>
+                            <template is="dom-if" if="[[!_checkIfLast(data.publication.authors,index)]]">,</template>
+                        </template>
+                    </span>
+                </p>
+
+                <p>
+                    <!-- Patent -->
+                    <template is="dom-if" if="[[_isPatent()]]">Patent number [[data.dbXrefs.0.accession]]([[data.publication.textDate]])
+                        <template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">
+                            [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                        </template>
+                    </template>
+
+                    <!-- Article -->
+                    <template is="dom-if" if="[[_isArticle()]]">
+                        [[data.publication.journalResourceLocator.abbrev]]
+                        <template is="dom-if" if="[[data.publication.volume]]">
+                            <strong>[[data.publication.volume]],</strong>
+                        </template>
+                        <template is="dom-if" if="[[data.publication.firstPage]]">
+                            [[data.publication.firstPage]]-[[data.publication.lastPage]]
+                        </template>
+                        <template is="dom-if" if="[[data.publication.publicationYear]]">
+                            ([[data.publication.publicationYear]])
+                        </template>
+                        <template is="dom-if" if="[[!_isOnlineResource()]]">
+                            <template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">
+                                [[[_formatXrefLabel(xref.databaseName)]]:
+                                <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                            </template>
+                        </template>
+                    </template>
+
+                    <!-- Submission -->
+                    <template is="dom-if" if="[[_isSubmission()]]">
+                        [[data.publication.submission]]
+                        ([[data.publication.textDate]])
+                    </template>
+                </p>
+            </template>
+        </template>
+
+        <!-- Abstract -->
+        <template is="dom-if" if="[[hasAbstract]]">
+            <div id="abstractHeader">Abstract</div>
+            [[data.publication.abstractText]]
+        </template>
+        <template is="dom-if" if="[[!hasAbstract]]">
+            <template is="dom-if" if="[[_isArticle()]]">
+                No Abstract available
+            </template>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'generic-publication-item',
+            behaviors: [Polymer.NeonAnimationRunnerBehavior],
+            properties: {
+                data: {
+                    type: Object,
+                    observer: "_updateShowAbstractButtonState"
+                },
+                hasAbstract: {
+                    type: Boolean
+                }
+            },
+            _updateShowAbstractButtonState: function() {
+                this.hasAbstract = this.data && this.data.publication.abstractText;
+                if (this.data)
+                    console.log("abstract", this.data.publication.abstractText, this.hasAbstract);
+            },
+            _isCited: function () {
+                if (this.data) {
+                    return Object.keys(this.data.citedInViews).length > 0;
+                }
+                return false;
+            },
+            _isArticle: function () {
+                if (this.data) return this.data.publication.publicationType === "ARTICLE";
+                return false;
+            },
+            _isPatent: function () {
+                if (this.data) return this.data.publication.publicationType === "PATENT";
+                return false;
+            },
+            _isSubmission: function () {
+                if (this.data) return this.data.publication.publicationType === "SUBMISSION";
+                return false;
+            },
+            _isOnlineResource: function () {
+                if (this.data) return this.data.publication.publicationType === "ONLINE_PUBLICATION";
+                return false;
+            },
+            _formatXrefLabel: function (name) {
+                return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
+            },
+            _formatInitials: function (name) {
+                return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
+            },
+            _checkIfLast: function (array, index) {
+                if (array.length - 1 === index) return true;
+                return false;
+            },
+            _toArray: function (obj) {
+                var citedArr = Object.keys(obj).map(function (key, value) {
+                    return [key, obj[key]];
+                });
+                return citedArr;
+            }
+        });
+    </script>
+</dom-module>
