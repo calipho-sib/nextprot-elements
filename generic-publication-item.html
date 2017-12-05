@@ -3,7 +3,7 @@
 
 <link rel="import" href="publication-title-item.html">
 <link rel="import" href="publication-authors-and-journal.html">
-<link rel="import" href="publication-abstract-item.html">
+<link rel="import" href="publication-abstract.html">
 
 <!--
 `generic-publication-item`
@@ -42,8 +42,8 @@ Generic publication item demo
 
             <!-- Abstract -->
             <template is="dom-if" if="[[!_testView(view, 'summary')]]">
-                <publication-abstract-item content="[[publication.abstractText]]"
-                                           interactive$="[[_testView(view, 'detailed')]]"></publication-abstract-item>
+                <publication-abstract content="[[publication.abstractText]]"
+                                           interactive$="[[_testView(view, 'detailed')]]"></publication-abstract>
             </template>
         </template>
     </template>

@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>publication-abstract-item demo</title>
+    <title>publication-abstract demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
@@ -9,7 +9,7 @@
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
 
-    <link rel="import" href="../publication-abstract-item.html">
+    <link rel="import" href="../publication-abstract.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
         .vertical-section-container {
@@ -19,23 +19,23 @@
 </head>
 <body>
 <div class="vertical-section-container centered">
-    <h3>Basic publication-abstract-item demo</h3>
+    <h3>Basic publication-abstract demo</h3>
     <demo-snippet>
         <h3>Standard view</h3>
         <template>
-            <publication-abstract-item></publication-abstract-item>
+            <publication-abstract></publication-abstract>
         </template>
     </demo-snippet>
     <demo-snippet>
         <h3>Empty abstract view</h3>
         <template>
-            <publication-abstract-item content="empty"></publication-abstract-item>
+            <publication-abstract content="empty"></publication-abstract>
         </template>
     </demo-snippet>
     <demo-snippet>
         <h3>Interactive view</h3>
         <template>
-            <publication-abstract-item interactive></publication-abstract-item>
+            <publication-abstract interactive></publication-abstract>
         </template>
     </demo-snippet>
     <demo-snippet>
@@ -79,7 +79,7 @@
                     "locatedInScientificJournal": true
                 };
 
-                var elements = document.querySelectorAll("publication-abstract-item");
+                var elements = document.querySelectorAll("publication-abstract");
                 for (var i in elements) {
                     if (!elements[i].content) {
                         elements[i].content = publication.abstractText;
