@@ -22,17 +22,8 @@ Generic publication item demo
                 padding-bottom: var(--publication-item-margin-bottom);
             }
 
-            iron-collapse {
-                margin-top: 5px;
-            }
-
             p {
                 margin: 0 0 5px;
-            }
-
-            #abstractHeader {
-                color: #666;
-                padding: 5px 0;
             }
         </style>
         <template is="dom-if" if="[[publication]]">
@@ -44,7 +35,7 @@ Generic publication item demo
 
                 <p>
                     <!-- Authors -->
-                    <publication-authors-item authors="[[publication.authors]]"></publication-authors-item>
+                    <publication-authors-item id="authors" authors="[[publication.authors]]" summary$='[[summary]]'></publication-authors-item>
                 </p>
                 <p>
                     <!-- Patent -->
@@ -56,7 +47,7 @@ Generic publication item demo
 
                     <!-- Article -->
                     <template is="dom-if" if="[[_isArticle()]]">
-                        <article-item coordinates="publication.journalResourceLocator"></article-item>
+                        <article-item id="article" coordinates="publication.journalResourceLocator" summary$='[[summary]]'></article-item>
                     </template>
 
                     <!-- Submission -->
@@ -66,23 +57,14 @@ Generic publication item demo
                     </template>
                 </p>
             </template>
-        </template>
 
-        <!-- Abstract -->
-        <template is="dom-if" if="[[abstract]]">
-            <div id="abstractHeader">Abstract</div>
-            [[abstract]]
-        </template>
-        <template is="dom-if" if="[[!abstract]]">
-            <template is="dom-if" if="[[_isArticle()]]">
-                No Abstract available
-            </template>
+            <!-- Abstract -->
+            <publication-abstract-item content="[[publication.abstractText]]"></publication-abstract-item>
         </template>
     </template>
     <script>
         Polymer({
             is: 'generic-publication-item',
-            behaviors: [Polymer.NeonAnimationRunnerBehavior],
             properties: {
                 publication: {
                     type: Object,
@@ -93,15 +75,11 @@ Generic publication item demo
                 },
                 summary: {
                     type: Boolean,
-                    value: false,
-                    observer: "_updateSummaryProperties"
+                    value: false
                 },
                 isTitleALink: {
                     type: Boolean,
                     value: false
-                },
-                authorsHTML: {
-                    type: String
                 }
             },
             attached: function () {
@@ -111,20 +89,8 @@ Generic publication item demo
             _updateState: function() {
 
                 if (this.publication) {
-                    console.log(this.publication);
                     this.abstract = this.publication.abstractText;
-                }
-            },
-            _updateSummaryProperties: function() {
 
-                if (this.summary) {
-
-                    document.querySelectorAll("publication-authors-item")[0].setAttribute("summary", true);
-                    document.querySelectorAll("article-item")[0].setAttribute("summary", true);
-                }
-                else {
-                    document.querySelectorAll("publication-authors-item")[0].removeAttribute("summary");
-                    document.querySelectorAll("article-item")[0].removeAttribute("summary");
                 }
             },
             _isArticle: function () {
