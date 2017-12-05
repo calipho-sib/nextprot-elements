@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
-<link rel="import" href="publication-title-item.html">
+<link rel="import" href="publication-title.html">
 <link rel="import" href="publication-authors-and-journal.html">
 <link rel="import" href="publication-abstract.html">
 
@@ -29,11 +29,11 @@ Generic publication item demo
 
             <!-- Title -->
             <template is="dom-if" if="[[!_testView(view, 'standard')]]">
-                <publication-title-item content="[[publication.title]]"
-                                        link-id="[[publication.publicationId]]"></publication-title-item>
+                <publication-title title="[[publication.title]]"
+                                   link-id="[[publication.publicationId]]"></publication-title>
             </template>
             <template is="dom-if" if="[[_testView(view, 'standard')]]">
-                <publication-title-item content="[[publication.title]]"></publication-title-item>
+                <publication-title title="[[publication.title]]"></publication-title>
             </template>
 
             <!-- Authors -->
@@ -42,8 +42,8 @@ Generic publication item demo
 
             <!-- Abstract -->
             <template is="dom-if" if="[[!_testView(view, 'summary')]]">
-                <publication-abstract content="[[publication.abstractText]]"
-                                           interactive$="[[_testView(view, 'detailed')]]"></publication-abstract>
+                <publication-abstract abstract="[[publication.abstractText]]"
+                                      interactive$="[[_testView(view, 'detailed')]]"></publication-abstract>
             </template>
         </template>
     </template>

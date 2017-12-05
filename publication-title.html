@@ -1,12 +1,12 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <!--
-`publication-title-item`
+`publication-title`
 Publication title item demo
 
-@demo demo/publication-title-item-demo.html
+@demo demo/publication-title-demo.html
 -->
-<dom-module id="publication-title-item">
+<dom-module id="publication-title">
     <template>
         <style include="nextprot-elements-shared-styles">
             :host {
@@ -17,13 +17,13 @@ Publication title item demo
                 color: #0F82BA;
             }
         </style>
-        <template is="dom-if" if="[[content]]">
+        <template is="dom-if" if="[[title]]">
             <p>
                 <template is="dom-if" if="[[linkId]]">
-                    <a class="title-link" href="/publication/[[linkId]]" target='_parent'>[[content]]</a>
+                    <a class="title-link" href="/publication/[[linkId]]" target='_parent'>[[title]]</a>
                 </template>
                 <template is="dom-if" if="[[!linkId]]">
-                    <strong>[[content]]</strong>
+                    <strong>[[title]]</strong>
                 </template>
             </p>
         </template>
@@ -31,9 +31,9 @@ Publication title item demo
     </template>
     <script>
         Polymer({
-            is: 'publication-title-item',
+            is: 'publication-title',
             properties: {
-                content: {
+                title: {
                     type: String,
                     value: ""
                 },
