@@ -1,9 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-collapse/iron-collapse.html">
-<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
-<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
+
+<link rel="import" href="publication-title-item.html">
 <link rel="import" href="publication-authors-item.html">
 <link rel="import" href="publication-abstract-item.html">
 
@@ -30,16 +28,24 @@ Generic publication item demo
         <template is="dom-if" if="[[publication]]">
             <!-- Title -->
             <template is="dom-if" if="[[publication.title]]">
-                <p>
-                    <strong>[[publication.title]]</strong>
-                </p>
+
+                <!-- Title -->
+                <template is="dom-if" if="[[!_checkType(type, 'standard')]]">
+                    <publication-title-item content="[[publication.title]]" link-id="[[publication.publicationId]]"></publication-title-item>
+                </template>
+                <template is="dom-if" if="[[_checkType(type, 'standard')]]">
+                    <publication-title-item content="[[publication.title]]"></publication-title-item>
+                </template>
 
                 <!-- Authors -->
-                <publication-authors-item authors="[[publication.authors]]" summary$='[[summary]]'></publication-authors-item>
+                <publication-authors-item authors="[[publication.authors]]" summary$="[[_checkType(type, 'summary')]]"></publication-authors-item>
 
                 <!-- Abstract -->
-                <publication-abstract-item content="[[publication.abstractText]]"></publication-abstract-item>
-            </template>
+                <template is="dom-if" if="[[!_checkType(type, 'summary')]]">
+                    <publication-abstract-item content="[[publication.abstractText]]" interactive$="[[_checkType(type, 'detailed')]]"></publication-abstract-item>
+                </template>
+
+                </template>
         </template>
     </template>
     <script>
@@ -50,9 +56,9 @@ Generic publication item demo
                     type: Object,
                     value: {}
                 },
-                summary: {
-                    type: Boolean,
-                    value: false
+                type: {
+                    type: String,
+                    value: "standard" // detailed, summary
                 }
             },
             _isArticle: function () {
@@ -80,6 +86,9 @@ Generic publication item demo
             _checkIfLast: function (array, index) {
                 if (array.length - 1 === index) return true;
                 return false;
+            },
+            _checkType: function (type, test) {
+                return type === test;
             }
         });
     </script>
