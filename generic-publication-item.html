@@ -5,6 +5,7 @@
 <link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="publication-authors-item.html">
+<link rel="import" href="publication-abstract-item.html">
 
 <!--
 `generic-publication-item`
@@ -33,33 +34,12 @@ Generic publication item demo
                     <strong>[[publication.title]]</strong>
                 </p>
 
-                <p>
-                    <!-- Authors -->
-                    <publication-authors-item id="authors" authors="[[publication.authors]]" summary$='[[summary]]'></publication-authors-item>
-                </p>
-                <p>
-                    <!-- Patent -->
-                    <template is="dom-if" if="[[_isPatent()]]">Patent number [[publication.dbXrefs.0.accession]]([[publication.textDate]])
-                        <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
-                            [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
-                        </template>
-                    </template>
+                <!-- Authors -->
+                <publication-authors-item authors="[[publication.authors]]" summary$='[[summary]]'></publication-authors-item>
 
-                    <!-- Article -->
-                    <template is="dom-if" if="[[_isArticle()]]">
-                        <article-item id="article" coordinates="publication.journalResourceLocator" summary$='[[summary]]'></article-item>
-                    </template>
-
-                    <!-- Submission -->
-                    <template is="dom-if" if="[[_isSubmission()]]">
-                        [[publication.submission]]
-                        ([[publication.textDate]])
-                    </template>
-                </p>
+                <!-- Abstract -->
+                <publication-abstract-item content="[[publication.abstractText]]"></publication-abstract-item>
             </template>
-
-            <!-- Abstract -->
-            <publication-abstract-item content="[[publication.abstractText]]"></publication-abstract-item>
         </template>
     </template>
     <script>
@@ -68,29 +48,11 @@ Generic publication item demo
             properties: {
                 publication: {
                     type: Object,
-                    observer: "_updateState"
-                },
-                abstract: {
-                    type: String
+                    value: {}
                 },
                 summary: {
                     type: Boolean,
                     value: false
-                },
-                isTitleALink: {
-                    type: Boolean,
-                    value: false
-                }
-            },
-            attached: function () {
-
-                this._updateState();
-            },
-            _updateState: function() {
-
-                if (this.publication) {
-                    this.abstract = this.publication.abstractText;
-
                 }
             },
             _isArticle: function () {
