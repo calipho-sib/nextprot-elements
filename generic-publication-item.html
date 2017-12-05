@@ -2,7 +2,7 @@
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
 <link rel="import" href="publication-title-item.html">
-<link rel="import" href="publication-authors-item.html">
+<link rel="import" href="publication-authors-and-journal.html">
 <link rel="import" href="publication-abstract-item.html">
 
 <!--
@@ -37,28 +37,8 @@ Generic publication item demo
             </template>
 
             <!-- Authors -->
-            <publication-authors-item authors="[[publication.authors]]"
-                                      summary$="[[_testView(view, 'summary')]]"></publication-authors-item>
-
-            <!-- Article -->
-            <p>
-                <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]">
-                    [[publication.journalResourceLocator.abbrev]]
-                    <template is="dom-if" if="[[publication.volume]]">
-                        <strong>[[publication.volume]],</strong>
-                    </template>
-                    <template is="dom-if" if="[[publication.firstPage]]">
-                        [[publication.firstPage]]-[[publication.lastPage]]
-                    </template>
-                    <template is="dom-if" if="[[publication.publicationYear]]">
-                        ([[publication.publicationYear]])
-                    </template>
-                    <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
-                        [[[_formatXrefLabel(xref.databaseName)]]:
-                        <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
-                    </template>
-                </template>
-            </p>
+            <publication-authors-and-journal publication="[[publication]]"
+                                      summary$="[[_testView(view, 'summary')]]"></publication-authors-and-journal>
 
             <!-- Abstract -->
             <template is="dom-if" if="[[!_testView(view, 'summary')]]">
@@ -79,9 +59,6 @@ Generic publication item demo
                     type: String,
                     value: "standard" // detailed, summary
                 }
-            },
-            _testType: function (type, test) {
-                return type === test;
             },
             _formatXrefLabel: function (name) {
                 return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
