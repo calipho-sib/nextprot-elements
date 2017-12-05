@@ -1,0 +1,47 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`publication-title-item`
+Publication title item demo
+
+@demo demo/publication-title-item-demo.html
+-->
+<dom-module id="publication-title-item">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+
+            .title-link {
+                color: #0F82BA;
+            }
+        </style>
+        <template is="dom-if" if="[[content]]">
+            <p>
+                <template is="dom-if" if="[[linkId]]">
+                    <a class="title-link" href="/publication/[[linkId]]" target='_parent'>[[content]]</a>
+                </template>
+                <template is="dom-if" if="[[!linkId]]">
+                    <strong>[[content]]</strong>
+                </template>
+            </p>
+        </template>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'publication-title-item',
+            properties: {
+                content: {
+                    type: String,
+                    value: ""
+                },
+                linkId: {
+                    type: String,
+                    value: ""
+                }
+            }
+        });
+    </script>
+</dom-module>
