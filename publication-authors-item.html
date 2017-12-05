@@ -30,7 +30,7 @@ Generic publication item demo
                         <template is="dom-if" if="[[!_checkIfLast(authors,index)]]">
                             <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]],</a>
                         </template>
-                        <template is="dom-if" if="[[_checkIfLast(publication.authors,index)]]">
+                        <template is="dom-if" if="[[_checkIfLast(authors,index)]]">
                             <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]]</a>
                         </template>
                     </template>
@@ -69,8 +69,7 @@ Generic publication item demo
                 return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
             },
             _checkIfLast: function (array, index) {
-                if (array.length - 1 === index) return true;
-                return false;
+                return (array.length - 1 === index);
             }
         });
     </script>
