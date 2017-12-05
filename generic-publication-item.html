@@ -4,6 +4,8 @@
 <link rel="import" href="../neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="publication-authors-item.html">
+
 <!--
 `generic-publication-item`
 Generic publication item demo
@@ -32,16 +34,6 @@ Generic publication item demo
                 color: #666;
                 padding: 5px 0;
             }
-
-            #collapseAbstract {
-                text-align: justify;
-            }
-            .authors a {
-                color: #5496cf;
-            }
-            .np-grey-text {
-                color: #666;
-            }
         </style>
         <template is="dom-if" if="[[publication]]">
             <!-- Title -->
@@ -52,17 +44,11 @@ Generic publication item demo
 
                 <p>
                     <!-- Authors -->
-                    <span class="authors">
-                        <template is="dom-repeat" items="[[publication.authors]]" as="author">
-                            <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]]</a>
-                            <template is="dom-if" if="[[!_checkIfLast(publication.authors,index)]]">,</template>
-                        </template>
-                    </span>
+                    <publication-authors-item authors="[[publication.authors]]"></publication-authors-item>
                 </p>
-
                 <p>
                     <!-- Patent -->
-                    <template is="dom-if" if="[[_isPatent()]]">Patent number [[dbXrefs.0.accession]]([[publication.textDate]])
+                    <template is="dom-if" if="[[_isPatent()]]">Patent number [[publication.dbXrefs.0.accession]]([[publication.textDate]])
                         <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
                             [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
                         </template>
@@ -70,22 +56,7 @@ Generic publication item demo
 
                     <!-- Article -->
                     <template is="dom-if" if="[[_isArticle()]]">
-                        [[publication.journalResourceLocator.abbrev]]
-                        <template is="dom-if" if="[[publication.volume]]">
-                            <strong>[[publication.volume]],</strong>
-                        </template>
-                        <template is="dom-if" if="[[publication.firstPage]]">
-                            [[publication.firstPage]]-[[publication.lastPage]]
-                        </template>
-                        <template is="dom-if" if="[[publication.publicationYear]]">
-                            ([[publication.publicationYear]])
-                        </template>
-                        <template is="dom-if" if="[[!_isOnlineResource()]]">
-                            <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
-                                [[[_formatXrefLabel(xref.databaseName)]]:
-                                <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
-                            </template>
-                        </template>
+                        <article-item coordinates="publication.journalResourceLocator"></article-item>
                     </template>
 
                     <!-- Submission -->
@@ -120,9 +91,17 @@ Generic publication item demo
                 abstract: {
                     type: String
                 },
+                summary: {
+                    type: Boolean,
+                    value: false,
+                    observer: "_updateSummaryProperties"
+                },
                 isTitleALink: {
                     type: Boolean,
                     value: false
+                },
+                authorsHTML: {
+                    type: String
                 }
             },
             attached: function () {
@@ -132,7 +111,20 @@ Generic publication item demo
             _updateState: function() {
 
                 if (this.publication) {
+                    console.log(this.publication);
                     this.abstract = this.publication.abstractText;
+                }
+            },
+            _updateSummaryProperties: function() {
+
+                if (this.summary) {
+
+                    document.querySelectorAll("publication-authors-item")[0].setAttribute("summary", true);
+                    document.querySelectorAll("article-item")[0].setAttribute("summary", true);
+                }
+                else {
+                    document.querySelectorAll("publication-authors-item")[0].removeAttribute("summary");
+                    document.querySelectorAll("article-item")[0].removeAttribute("summary");
                 }
             },
             _isArticle: function () {
