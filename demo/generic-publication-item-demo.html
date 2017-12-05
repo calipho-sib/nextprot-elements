@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <title>generic-publication-item demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
@@ -12,24 +12,32 @@
     <link rel="import" href="../generic-publication-item.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
-      .vertical-section-container {
-        max-width: 80%;
-      }
+        .vertical-section-container {
+            max-width: 80%;
+        }
     </style>
-  </head>
-  <body>
-    <div class="vertical-section-container centered">
-      <h3>Basic generic-publication-item demo</h3>
-      <demo-snippet>
+</head>
+<body>
+<div class="vertical-section-container centered">
+    <h3>Basic generic-publication-item demo</h3>
+    <demo-snippet>
         <template>
-          <generic-publication-item></generic-publication-item>
+            <h3>Detailed</h3>
+            <generic-publication-item></generic-publication-item>
         </template>
-      </demo-snippet>
-      <demo-snippet>
+    </demo-snippet>
+    <demo-snippet>
         <template>
-          <h4>Data binding</h4><hr>
-          <script>
-              document.querySelector("generic-publication-item").publication = {
+            <h3>Summary</h3>
+            <generic-publication-item summary></generic-publication-item>
+        </template>
+    </demo-snippet>
+    <demo-snippet>
+        <template>
+            <h4>Data binding</h4>
+            <hr>
+            <script>
+                var publication = {
                     "md5": "f19605d5fb429e867daae74f55efe87b",
                     "title": "Non-USH2A mutations in USH2 patients.",
                     "abstractText": "We have systematically analyzed the two known minor genes involved in Usher syndrome type 2, DFNB31 and GPR98, for mutations in a cohort of 31 patients not linked to USH2A. PDZD7, an Usher syndrome type 2 (USH2) related gene, was analyzed when indicated. We found that mutations in GPR98 contribute significantly to USH2. We report 17 mutations in 10 individuals, doubling the number of GPR98 mutations reported to date. In contrast to mutations in usherin, the mutational spectrum of GPR98 predominantly results in a truncated protein product. This is true even when the mutation affects splicing, and we have incorporated a splicing reporter minigene assay to show this, where appropriate. Only two mutations were found which we believe to be genuine missense changes. Discrepancy in the mutational spectrum between GPR98 and USH2A is discussed. Only two patients were found with mutations in DFNB31, showing that mutations of this gene contribute to only a very small extent to USH2. Close examination of the clinical details, where available, for patients in whom no mutation was found in USH2A, GPR98, or DFNB31, showed that most of them had atypical features. In effect, these three genes account for the vast majority of USH2 patients and their analysis provide a robust pathway for routine molecular diagnosis.",
@@ -296,10 +304,15 @@
                     "localizable": true,
                     "locatedInScientificJournal": true
                 };
-          </script>
-        </template>
-      </demo-snippet>
-    </div>
 
-  </body>
+                var elements = document.querySelectorAll("generic-publication-item");
+                for (var i in elements) {
+                    elements[i].publication = publication;
+                }
+            </script>
+        </template>
+    </demo-snippet>
+</div>
+
+</body>
 </html>
