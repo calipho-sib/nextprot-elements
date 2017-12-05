@@ -26,26 +26,45 @@ Generic publication item demo
             }
         </style>
         <template is="dom-if" if="[[publication]]">
+
             <!-- Title -->
-            <template is="dom-if" if="[[publication.title]]">
+            <template is="dom-if" if="[[!_testView(view, 'standard')]]">
+                <publication-title-item content="[[publication.title]]"
+                                        link-id="[[publication.publicationId]]"></publication-title-item>
+            </template>
+            <template is="dom-if" if="[[_testView(view, 'standard')]]">
+                <publication-title-item content="[[publication.title]]"></publication-title-item>
+            </template>
 
-                <!-- Title -->
-                <template is="dom-if" if="[[!_checkType(type, 'standard')]]">
-                    <publication-title-item content="[[publication.title]]" link-id="[[publication.publicationId]]"></publication-title-item>
-                </template>
-                <template is="dom-if" if="[[_checkType(type, 'standard')]]">
-                    <publication-title-item content="[[publication.title]]"></publication-title-item>
-                </template>
+            <!-- Authors -->
+            <publication-authors-item authors="[[publication.authors]]"
+                                      summary$="[[_testView(view, 'summary')]]"></publication-authors-item>
 
-                <!-- Authors -->
-                <publication-authors-item authors="[[publication.authors]]" summary$="[[_checkType(type, 'summary')]]"></publication-authors-item>
-
-                <!-- Abstract -->
-                <template is="dom-if" if="[[!_checkType(type, 'summary')]]">
-                    <publication-abstract-item content="[[publication.abstractText]]" interactive$="[[_checkType(type, 'detailed')]]"></publication-abstract-item>
+            <!-- Article -->
+            <p>
+                <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]">
+                    [[publication.journalResourceLocator.abbrev]]
+                    <template is="dom-if" if="[[publication.volume]]">
+                        <strong>[[publication.volume]],</strong>
+                    </template>
+                    <template is="dom-if" if="[[publication.firstPage]]">
+                        [[publication.firstPage]]-[[publication.lastPage]]
+                    </template>
+                    <template is="dom-if" if="[[publication.publicationYear]]">
+                        ([[publication.publicationYear]])
+                    </template>
+                    <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
+                        [[[_formatXrefLabel(xref.databaseName)]]:
+                        <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                    </template>
                 </template>
+            </p>
 
-                </template>
+            <!-- Abstract -->
+            <template is="dom-if" if="[[!_testView(view, 'summary')]]">
+                <publication-abstract-item content="[[publication.abstractText]]"
+                                           interactive$="[[_testView(view, 'detailed')]]"></publication-abstract-item>
+            </template>
         </template>
     </template>
     <script>
@@ -56,26 +75,13 @@ Generic publication item demo
                     type: Object,
                     value: {}
                 },
-                type: {
+                view: {
                     type: String,
                     value: "standard" // detailed, summary
                 }
             },
-            _isArticle: function () {
-                if (this.publication) return this.publication.publicationType === "ARTICLE";
-                return false;
-            },
-            _isPatent: function () {
-                if (this.publication) return this.publication.publicationType === "PATENT";
-                return false;
-            },
-            _isSubmission: function () {
-                if (this.publication) return this.publication.publicationType === "SUBMISSION";
-                return false;
-            },
-            _isOnlineResource: function () {
-                if (this.publication) return this.publication.publicationType === "ONLINE_PUBLICATION";
-                return false;
+            _testType: function (type, test) {
+                return type === test;
             },
             _formatXrefLabel: function (name) {
                 return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
@@ -87,7 +93,7 @@ Generic publication item demo
                 if (array.length - 1 === index) return true;
                 return false;
             },
-            _checkType: function (type, test) {
+            _testView: function (type, test) {
                 return type === test;
             }
         });
