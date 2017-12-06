@@ -46,33 +46,27 @@ Publication abstract demo
                 text-align: justify;
             }
         </style>
-        <template is="dom-if" if="[[!interactive]]">
-            <!-- Abstract -->
-            <template is="dom-if" if="[[content]]">
+
+        <template is="dom-if" if="[[abstract]]">
+            <template is="dom-if" if="[[!interactive]]">
                 <div class="abstractHeader">Abstract</div>
-                [[content]]
+                [[abstract]]
             </template>
-            <template is="dom-if" if="[[!content]]">
-                No Abstract available
+            <template is="dom-if" if="[[interactive]]">
+                <span id="collapseButton" class="colored-label abstract-button button-thin" on-tap="_toggleAbstract">
+                    <span class="pubDisplayStatus"> </span>abstract
+                </span>
+                <iron-collapse id="collapseAbstract" opened="[[showAbstract]]">
+                    <template is="dom-if" if="[[abstract]]">
+                        <div id="abstractHeader" hidden>Abstract</div>
+                    </template>
+                    [[abstract]]
+                </iron-collapse>
             </template>
         </template>
 
-        <template is="dom-if" if="[[interactive]]">
-            <!-- Abstract button -->
-            <template is="dom-if" if="[[content]]">
-            <span id="collapseButton" class="colored-label abstract-button button-thin" on-tap="_toggleAbstract">
-                <span class="pubDisplayStatus"> </span>abstract
-            </span>
-                <iron-collapse id="collapseAbstract" opened="[[showAbstract]]">
-                    <template is="dom-if" if="[[content]]">
-                        <div id="abstractHeader" hidden>Abstract</div>
-                    </template>
-                    [[content]]
-                </iron-collapse>
-            </template>
-            <template is="dom-if" if="[[!content]]">
-                No Abstract available
-            </template>
+        <template is="dom-if" if="[[!abstract]]">
+            No Abstract available
         </template>
     </template>
     <script>
@@ -80,7 +74,7 @@ Publication abstract demo
             is: 'publication-abstract',
             behaviors: [Polymer.NeonAnimationRunnerBehavior],
             properties: {
-                content: {
+                abstract: {
                     type: String,
                     value: ""
                 },
