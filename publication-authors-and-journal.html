@@ -60,6 +60,14 @@ Publication authors with journal demo
                         [[publication.submission]]
                         ([[publication.textDate]])
                     </template>
+
+                    <!-- Patent -->
+                    <template is="dom-if" if="[[_testType(publication.publicationType, 'PATENT')]]]">
+                        Patent number [[dbXrefs.0.accession]]([[publication.textDate]])
+                        <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
+                            [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                        </template>
+                    </template>
                 </p>
             </template>
 
