@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
-<link rel="import" href="generic-publication-item.html">
+<link rel="import" href="publication.html">
 
 <!--
 `publication-item`
@@ -52,7 +52,7 @@ Publication item demo
         <template is="dom-if" if="[[data]]">
 
             <!-- view={"standard", "detailed", "summary"} -->
-            <generic-publication-item publication="[[data.publication]]" view="[[_toView(summary)]]"></generic-publication-item>
+            <np-publication publication="[[data.publication]]" view="[[_toView(summary)]]"></np-publication>
 
             <p></p>
 

@@ -20,6 +20,10 @@ Publication authors with journal demo
             .authors a {
                 color: #5496cf;
             }
+
+            .np-grey-text {
+                color: #666;
+            }
         </style>
         <template is="dom-if" if="[[publication]]">
 
@@ -62,7 +66,7 @@ Publication authors with journal demo
                     </template>
 
                     <!-- Patent -->
-                    <template is="dom-if" if="[[_testType(publication.publicationType, 'PATENT')]]]">
+                    <template is="dom-if" if="[[_testType(publication.publicationType, 'PATENT')]]">
                         Patent number [[dbXrefs.0.accession]]([[publication.textDate]])
                         <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
                             [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]

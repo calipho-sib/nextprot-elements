@@ -6,22 +6,32 @@
 <link rel="import" href="publication-abstract.html">
 
 <!--
-`generic-publication-item`
-Generic publication item demo
+`publication`
+Publication item demo
 
-@demo demo/generic-publication-item-demo.html
+@demo demo/publication-demo.html
 -->
-<dom-module id="generic-publication-item">
+<dom-module id="np-publication">
     <template>
         <style include="nextprot-elements-shared-styles">
             :host {
                 display: block;
-                border-bottom: var(--publication-item-border-bottom);
-                margin-bottom: var(--publication-item-padding-bottom);
-                padding-bottom: var(--publication-item-margin-bottom);
             }
         </style>
         <template is="dom-if" if="[[publication]]">
+
+            <!-- Online resources -->
+            <template is="dom-if" if="[[_testType(publication.publicationType, 'ONLINE_PUBLICATION')]]">
+                <b>[[publication.publicationLocatorName]]</b>
+                <template is="dom-if" if="[[!_testView(view, 'summary')]]">
+                    <p>
+                        <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
+                            [[[_formatXrefLabel(xref.databaseName)]]:
+                            <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                        </template>
+                    </p>
+                </template>
+            </template>
 
             <!-- Title -->
             <template is="dom-if" if="[[!_testView(view, 'standard')]]">
@@ -47,7 +57,8 @@ Generic publication item demo
     </template>
     <script>
         Polymer({
-            is: 'generic-publication-item',
+            // https://www.webcomponents.org/community/articles/how-should-i-name-my-element
+            is: 'np-publication',
             properties: {
                 publication: {
                     type: Object,

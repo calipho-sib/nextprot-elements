@@ -9,7 +9,7 @@
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
 
-    <link rel="import" href="../generic-publication-item.html">
+    <link rel="import" href="../publication.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
         .vertical-section-container {
@@ -19,23 +19,23 @@
 </head>
 <body>
 <div class="vertical-section-container centered">
-    <h3>Basic generic-publication-item demo</h3>
+    <h3>Basic publication demo</h3>
     <demo-snippet>
         <template>
             <h3>Publication view</h3>
-            <generic-publication-item view="standard"></generic-publication-item>
+            <np-publication view="standard"></np-publication>
         </template>
     </demo-snippet>
     <demo-snippet>
         <template>
             <h3>Entry publication summary view</h3>
-            <generic-publication-item view="summary"></generic-publication-item>
+            <np-publication view="summary"></np-publication>
         </template>
     </demo-snippet>
     <demo-snippet>
         <template>
             <h3>Entry publication detailed view</h3>
-            <generic-publication-item view="detailed"></generic-publication-item>
+            <np-publication view="detailed"></np-publication>
         </template>
     </demo-snippet>
     <demo-snippet>
@@ -311,7 +311,7 @@
                     "locatedInScientificJournal": true
                 };
 
-                var elements = document.querySelectorAll("generic-publication-item");
+                var elements = document.querySelectorAll("np-publication");
                 for (var i in elements) {
                     elements[i].publication = publication;
                 }
