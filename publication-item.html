@@ -2,6 +2,7 @@
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
 <link rel="import" href="publication.html">
+<link rel="import" href="entry-view-reference.html">
 
 <!--
 `publication-item`
@@ -35,12 +36,6 @@ Publication item demo
                 margin: 0 0 5px;
             }
 
-            .cited-for {
-                color: #7A7A7A;
-                font-size: 11px;
-                font-weight: bold;
-            }
-
             .annotscope-bg {
                 background-color: #dedede;
                 color: #7A7A7A;
@@ -57,12 +52,7 @@ Publication item demo
             <p></p>
 
             <!-- Cited For -->
-            <template is="dom-if" if="[[_isCited()]]">
-                <span class="cited-for">CITED FOR: </span>
-                <template is="dom-repeat" items="[[_toArray(data.citedInViews)]]" as="cited">
-                    <a href="[[cited.1]]" class="ext-link" target='_blank'>[[cited.0]]</a>
-                </template>
-            </template>
+            <entry-view-reference refs="[[data.citedInViews]]"></entry-view-reference>
 
             <!-- Direct links -->
             <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope">
@@ -85,18 +75,6 @@ Publication item demo
                     type: Boolean,
                     value: false
                 }
-            },
-            _isCited: function () {
-                if (this.data && this.data.citedInViews) {
-                    return Object.keys(this.data.citedInViews).length > 0;
-                }
-                return false;
-            },
-            _toArray: function (obj) {
-                var citedArr = Object.keys(obj).map(function (key, value) {
-                    return [key, obj[key]];
-                });
-                return citedArr;
             },
             _toView: function (summary) {
                 return (summary) ? "summary" : "detailed";

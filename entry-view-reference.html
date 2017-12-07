@@ -1,0 +1,52 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`entry-view-reference`
+Entry view reference
+
+@demo demo/entry-view-reference-demo.html
+-->
+<dom-module id="entry-view-reference">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+
+            .cited-for {
+                color: #7A7A7A;
+                font-size: 11px;
+                font-weight: bold;
+            }
+        </style>
+
+        <template is="dom-if" if="[[_isCited(refs)]]">
+            <span class="cited-for">CITED FOR: </span>
+            <template is="dom-repeat" items="[[_toArray(refs)]]" as="cited">
+                <a href="[[cited.1]]" class="ext-link" target='_blank'>[[cited.0]]</a>
+            </template>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'entry-view-reference',
+            properties: {
+                refs: {
+                    type: Object
+                }
+            },
+            _isCited: function (refs) {
+                if (refs) {
+                    return Object.keys(refs).length > 0;
+                }
+                return false;
+            },
+            _toArray: function (obj) {
+                var citedArr = Object.keys(obj).map(function (key, value) {
+                    return [key, obj[key]];
+                });
+                return citedArr;
+            }
+        });
+    </script>
+</dom-module>
