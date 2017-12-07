@@ -1,9 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-collapse/iron-collapse.html">
-<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
-<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
+
+<link rel="import" href="generic-publication-item.html">
+
 <!--
 `publication-item`
 Publication item demo
@@ -32,52 +31,16 @@ Publication item demo
                 padding-bottom: var(--publication-item-margin-bottom);
             }
 
-            iron-collapse {
-                margin-top: 5px;
-            }
-
             p {
                 margin: 0 0 5px;
             }
 
-            span[pushed] .pubDisplayStatus:before {
-                content: "Hide";
-                display: inline-block;
-            }
-
-            span .pubDisplayStatus:before {
-                content: "Show";
-            }
-
-            .abstract-button {
-                background-color: #337ab7;
-                color: white;
-                border-radius: 2px;
-                cursor: pointer;
-            }
-
-            #abstractHeader {
-                color: #666;
-                padding: 5px 0;
-            }
-
-            #collapseAbstract {
-                text-align: justify;
-            }
-            .authors a {
-                color: #5496cf;
-            }
-            .title-link {
-                color: #0F82BA;
-            }
-            .np-grey-text {
-                color: #666;
-            }
             .cited-for {
                 color: #7A7A7A;
                 font-size: 11px;
                 font-weight: bold;
             }
+
             .annotscope-bg {
                 background-color: #dedede;
                 color: #7A7A7A;
@@ -87,248 +50,56 @@ Publication item demo
             }
         </style>
         <template is="dom-if" if="[[data]]">
-            <!-- Online resources -->
-            <template is="dom-if" if="[[_isOnlineResource()]]">
-                <b>[[data.publication.publicationLocatorName]]</b>
-                <template is="dom-if" if="[[!summary]]">
-                    <p>
-                        <template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">
-                            [[[_formatXrefLabel(xref.databaseName)]]:
-                            <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
-                        </template>
-                    </p>
-                </template>
-            </template>
 
-            <!-- Title -->
-            <template is="dom-if" if="[[data.publication.title]]">
-                <p>
-                    <a class="title-link" href="/publication/[[data.publication.publicationId]]" target='_parent'>[[data.publication.title]]</a>
-                </p>
-            </template>
+            <!-- view={"standard", "detailed", "summary"} -->
+            <generic-publication-item publication="[[data.publication]]" view="[[_toView(summary)]]"></generic-publication-item>
 
-            <!-- Details -->
-            <template is="dom-if" if="[[!summary]]">
-                <p>
-                    <!-- Authors -->
-                    <span class="authors">
-                        <template is="dom-repeat" items="[[data.publication.authors]]" as="author">
-                            <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]]</a>
-                            <template is="dom-if" if="[[!_checkIfLast(data.publication.authors,index)]]">,</template>
-                        </template>
-                    </span>
-                </p>
+            <p></p>
 
-                <p>
-                    <!-- Patent -->
-                    <template is="dom-if" if="[[_isPatent()]]">Patent number [[data.dbXrefs.0.accession]]([[data.publication.textDate]])
-                        <template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">
-                            [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
-                        </template>
-                    </template>
-
-                    <!-- Article -->
-                    <template is="dom-if" if="[[_isArticle()]]">
-                        [[data.publication.journalResourceLocator.abbrev]]
-                        <template is="dom-if" if="[[data.publication.volume]]">
-                            <strong>[[data.publication.volume]],</strong>
-                        </template>
-                        <template is="dom-if" if="[[data.publication.firstPage]]">
-                            [[data.publication.firstPage]]-[[data.publication.lastPage]]
-                        </template>
-                        <template is="dom-if" if="[[data.publication.publicationYear]]">
-                            ([[data.publication.publicationYear]])
-                        </template>
-                        <template is="dom-if" if="[[!_isOnlineResource()]]">
-                            <template is="dom-repeat" items="[[data.publication.dbXrefs]]" as="xref">
-                                [[[_formatXrefLabel(xref.databaseName)]]:
-                                <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
-                            </template>
-                        </template>
-                    </template>
-
-                    <!-- Submission -->
-                    <template is="dom-if" if="[[_isSubmission()]]">
-                        [[data.publication.submission]]
-                        ([[data.publication.textDate]])
-                    </template>
-                </p>
-            </template>
-
-            <!-- Summary -->
-            <template is="dom-if" if="[[summary]]">
-                <!-- First author et al. -->
-                <template is="dom-if" if="[[data.publication.authors.0]]">[[data.publication.authors.0.lastName]]
-                    [[_formatInitials(data.publication.authors.0.initials)]]
-                </template>
-                <template is="dom-if" if="[[data.publication.authors.1]]">
-                    <i>et al.</i>
-                </template>
-
-                <!-- Submission -->
-                <template is="dom-if" if="[[_isSubmission()]]">,
-                    <span class="np-grey-text">[[data.publication.submission]] ([[data.publication.textDate]])</span>
-                </template>
-
-                <!-- Patent -->
-                <template is="dom-if" if="[[_isPatent()]]">
-                    , <span class="np-grey-text">Patent number [[data.publication.dbXrefs.0.accession]] ([[data.publication.textDate]])</span>
-                </template>
-
-                <!-- Article -->
-                <template is="dom-if" if="[[_isArticle()]]"> [[data.publication.journalResourceLocator.medAbbrev]]
-                    <template is="dom-if" if="[[data.publication.volume]]"><strong>[[data.publication.volume]],</strong></template>
-                    <template is="dom-if" if="[[data.publication.firstPage]]">[[data.publication.firstPage]]-[[data.publication.lastPage]]</template>
-                    <template is="dom-if" if="[[data.publication.publicationYear]]">([[data.publication.publicationYear]])</template>
-                </template>
-            </template>
-        </template>
-
-        <!-- Abstract button -->
-        <template is="dom-if" if="[[!summary]]">
-            <template is="dom-if" if="[[hasAbstract]]">
-                <span id="collapseButton" class="colored-label abstract-button button-thin" on-tap="_toggleAbstract">
-                    <span class="pubDisplayStatus"> </span>abstract
-                </span>
-                <iron-collapse id="collapseAbstract" opened="[[showAbstract]]">
-                    <template is="dom-if" if="[[data.publication.abstractText]]">
-                        <div id="abstractHeader" hidden>Abstract</div>
-                    </template>
-                    [[data.publication.abstractText]]
-                </iron-collapse>
-            </template>
-            <template is="dom-if" if="[[!hasAbstract]]">
-                <template is="dom-if" if="[[_isArticle()]]">
-                    No Abstract available
-                </template>
-            </template>
-        </template>
-
-        <p></p>
-
-        <template is="dom-if" if="[[data]]">
             <!-- Cited For -->
             <template is="dom-if" if="[[_isCited()]]">
                 <span class="cited-for">CITED FOR: </span>
-            </template>
-            <template is="dom-repeat" items="[[_toArray(data.citedInViews)]]" as="cited">
-                <a href="[[cited.1]]" class="ext-link" target='_blank'>[[cited.0]]</a>
+                <template is="dom-repeat" items="[[_toArray(data.citedInViews)]]" as="cited">
+                    <a href="[[cited.1]]" class="ext-link" target='_blank'>[[cited.0]]</a>
+                </template>
             </template>
 
             <!-- Direct links -->
             <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope">
-                <template is="dom-if" if="[[_isCited()]]"><br></template>
+                <template is="dom-if" if="[[_isCited()]]">
+                    <br>
+                </template>
                 <span class="annotscope-bg">[[annotscope.database]]</span>
-                <span>[[annotscope.label]] </span>
+                <span>[[annotscope.label]]</span>
             </template>
         </template>
     </template>
     <script>
         Polymer({
             is: 'publication-item',
-            behaviors: [Polymer.NeonAnimationRunnerBehavior],
             properties: {
                 data: {
-                    type: Object,
-                    observer: "_updateShowAbstractButtonState"
-                },
-                hasAbstract: {
-                    type: Boolean,
-                    value: false
-                },
-                showAbstract: {
-                    type: Boolean,
-                    value: false
+                    type: Object
                 },
                 summary: {
                     type: Boolean,
-                    value: false,
-                    observer: "_updateShowAbstractButtonState"
-                },
-                animationConfig: {
-                    value: function () {
-                        return {
-                            "showAbstract": {
-                                name: "fade-in-animation",
-                                node: this.$.collapseAbstract,
-                                timing: {
-                                    duration: 1200
-                                }
-                            },
-                            "hideAbstract": {
-                                name: "fade-out-animation",
-                                node: this.$.collapseAbstract,
-                                timing: {
-                                    duration: 200
-                                }
-                            }
-                        }
-                    }
+                    value: false
                 }
-            },
-            attached: function () {
-
-                if (this.showAbstract) {
-                    this.async(function () {
-                        if (this.$$("#abstractHeader")) this.$$("#abstractHeader").removeAttribute("hidden");
-                        if (this.$$("#collapseButton")) this.$$("#collapseButton").hidden = true;
-                    }, 1);
-                }
-            },
-            _updateShowAbstractButtonState: function() {
-                this.hasAbstract = this.data && this.data.publication.abstractText;
-            },
-            _toggleAbstract: function () {
-                this.$$("#collapseAbstract").opened ?
-                    this.playAnimation("hideAbstract") : this.playAnimation("showAbstract");
-                this.$$("#collapseAbstract").toggle();
-                this._toggleButton();
-            },
-            _toggleButton: function () {
-                this.$$("#collapseAbstract").opened ?
-                    this.$$("#collapseButton").setAttribute("pushed", null) :
-                    this.$$("#collapseButton").removeAttribute("pushed");
             },
             _isCited: function () {
-                //console.log("in _isCurated");
-                //console.log(this.data)
-                if (this.data) {
+                if (this.data && this.data.citedInViews) {
                     return Object.keys(this.data.citedInViews).length > 0;
                 }
-                return false;
-            },
-            _isArticle: function () {
-                if (this.data) return this.data.publication.publicationType === "ARTICLE";
-                return false;
-            },
-            _isPatent: function () {
-                if (this.data) return this.data.publication.publicationType === "PATENT";
-                return false;
-            },
-            _isSubmission: function () {
-                if (this.data) return this.data.publication.publicationType === "SUBMISSION";
-                return false;
-            },
-            _isOnlineResource: function () {
-                if (this.data) return this.data.publication.publicationType === "ONLINE_PUBLICATION";
-                return false;
-            },
-            _formatXrefLabel: function (name) {
-                return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
-            },
-            _formatInitials: function (name) {
-                return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
-            },
-            _checkIfLast: function (array, index) {
-                if (array.length - 1 === index) return true;
                 return false;
             },
             _toArray: function (obj) {
                 var citedArr = Object.keys(obj).map(function (key, value) {
                     return [key, obj[key]];
                 });
-                //console.log(citedarr);
                 return citedArr;
+            },
+            _toView: function (summary) {
+                return (summary) ? "summary" : "detailed";
             }
         });
     </script>

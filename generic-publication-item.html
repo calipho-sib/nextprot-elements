@@ -20,10 +20,6 @@ Generic publication item demo
                 margin-bottom: var(--publication-item-padding-bottom);
                 padding-bottom: var(--publication-item-margin-bottom);
             }
-
-            p {
-                margin: 0 0 5px;
-            }
         </style>
         <template is="dom-if" if="[[publication]]">
 
@@ -41,9 +37,11 @@ Generic publication item demo
                                       summary$="[[_testView(view, 'summary')]]"></publication-authors-and-journal>
 
             <!-- Abstract -->
-            <template is="dom-if" if="[[!_testView(view, 'summary')]]">
-                <publication-abstract abstract="[[publication.abstractText]]"
+            <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]">
+                <template is="dom-if" if="[[!_testView(view, 'summary')]]">
+                    <publication-abstract abstract="[[publication.abstractText]]"
                                       interactive$="[[_testView(view, 'detailed')]]"></publication-abstract>
+                </template>
             </template>
         </template>
     </template>
@@ -71,6 +69,9 @@ Generic publication item demo
                 return false;
             },
             _testView: function (type, test) {
+                return type === test;
+            },
+            _testType: function (type, test) {
                 return type === test;
             }
         });
