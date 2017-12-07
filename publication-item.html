@@ -56,9 +56,6 @@ Publication item demo
 
             <!-- Direct links -->
             <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope">
-                <template is="dom-if" if="[[_isCited()]]">
-                    <br>
-                </template>
                 <span class="annotscope-bg">[[annotscope.database]]</span>
                 <span>[[annotscope.label]]</span>
             </template>
