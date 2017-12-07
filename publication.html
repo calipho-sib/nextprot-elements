@@ -1,0 +1,90 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+
+<link rel="import" href="publication-title.html">
+<link rel="import" href="publication-authors-and-journal.html">
+<link rel="import" href="publication-abstract.html">
+
+<!--
+`publication`
+Publication item demo
+
+@demo demo/publication-demo.html
+-->
+<dom-module id="np-publication">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+        </style>
+        <template is="dom-if" if="[[publication]]">
+
+            <!-- Online resources -->
+            <template is="dom-if" if="[[_testType(publication.publicationType, 'ONLINE_PUBLICATION')]]">
+                <b>[[publication.publicationLocatorName]]</b>
+                <template is="dom-if" if="[[!_testView(view, 'summary')]]">
+                    <p>
+                        <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
+                            [[[_formatXrefLabel(xref.databaseName)]]:
+                            <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                        </template>
+                    </p>
+                </template>
+            </template>
+
+            <!-- Title -->
+            <template is="dom-if" if="[[!_testView(view, 'standard')]]">
+                <publication-title title="[[publication.title]]"
+                                   link-id="[[publication.publicationId]]"></publication-title>
+            </template>
+            <template is="dom-if" if="[[_testView(view, 'standard')]]">
+                <publication-title title="[[publication.title]]"></publication-title>
+            </template>
+
+            <!-- Authors -->
+            <publication-authors-and-journal publication="[[publication]]"
+                                      summary$="[[_testView(view, 'summary')]]"></publication-authors-and-journal>
+
+            <!-- Abstract -->
+            <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]">
+                <template is="dom-if" if="[[!_testView(view, 'summary')]]">
+                    <publication-abstract abstract="[[publication.abstractText]]"
+                                      interactive$="[[_testView(view, 'detailed')]]"></publication-abstract>
+                </template>
+            </template>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            // https://www.webcomponents.org/community/articles/how-should-i-name-my-element
+            is: 'np-publication',
+            properties: {
+                publication: {
+                    type: Object,
+                    value: {}
+                },
+                view: {
+                    type: String,
+                    value: "standard" // detailed, summary
+                }
+            },
+            _formatXrefLabel: function (name) {
+                return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
+            },
+            _formatInitials: function (name) {
+                return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
+            },
+            _checkIfLast: function (array, index) {
+                if (array.length - 1 === index) return true;
+                return false;
+            },
+            _testView: function (type, test) {
+                return type === test;
+            },
+            _testType: function (type, test) {
+                return type === test;
+            }
+        });
+    </script>
+</dom-module>

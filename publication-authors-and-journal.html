@@ -1,0 +1,137 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`publication-authors-and-journal`
+Publication authors with journal demo
+
+@demo demo/publication-authors-and-journal-demo.html
+-->
+<dom-module id="publication-authors-and-journal">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+
+            .authors a {
+                color: #5496cf;
+            }
+
+            .np-grey-text {
+                color: #666;
+            }
+        </style>
+        <template is="dom-if" if="[[publication]]">
+
+            <!-- Detailed view -->
+            <template is="dom-if" if="[[!summary]]">
+                <span class="authors">
+                    <template is="dom-repeat" items="[[publication.authors]]" as="author">
+                        <template is="dom-if" if="[[!_checkIfLast(publication.authors,index)]]">
+                            <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]],</a>
+                        </template>
+                        <template is="dom-if" if="[[_checkIfLast(publication.authors,index)]]">
+                            <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]]</a>
+                        </template>
+                    </template>
+                </span>
+
+                <p>
+                    <!-- Article -->
+                    <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]">
+                        [[publication.journalResourceLocator.abbrev]]
+                        <template is="dom-if" if="[[publication.volume]]">
+                            <strong>[[publication.volume]],</strong>
+                        </template>
+                        <template is="dom-if" if="[[publication.firstPage]]">
+                            [[publication.firstPage]]-[[publication.lastPage]]
+                        </template>
+                        <template is="dom-if" if="[[publication.publicationYear]]">
+                            ([[publication.publicationYear]])
+                        </template>
+                        <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
+                            [[[_formatXrefLabel(xref.databaseName)]]:
+                            <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                        </template>
+                    </template>
+
+                    <!-- Submission -->
+                    <template is="dom-if" if="[[_testType(publication.publicationType, 'SUBMISSION')]]">
+                        [[publication.submission]]
+                        ([[publication.textDate]])
+                    </template>
+
+                    <!-- Patent -->
+                    <template is="dom-if" if="[[_testType(publication.publicationType, 'PATENT')]]">
+                        Patent number [[dbXrefs.0.accession]]([[publication.textDate]])
+                        <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
+                            [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                        </template>
+                    </template>
+                </p>
+            </template>
+
+            <!-- Summary view -->
+            <template is="dom-if" if="[[summary]]">
+                <!-- First author et al. -->
+                <template is="dom-if" if="[[publication.authors.0]]">[[publication.authors.0.lastName]]
+                    [[_formatInitials(publication.authors.0.initials)]]
+                </template>
+                <template is="dom-if" if="[[publication.authors.1]]">
+                    <i>et al.,</i>
+                </template>
+
+                <!-- Submission -->
+                <template is="dom-if" if="[[_testType(publication.publicationType, 'SUBMISSION')]]">
+                    <span class="np-grey-text">[[publication.submission]] ([[publication.textDate]])</span>
+                </template>
+
+                <!-- Patent -->
+                <template is="dom-if" if="[[_testType(publication.publicationType, 'PATENT')]]">
+                    <span class="np-grey-text">Patent number [[publication.dbXrefs.0.accession]] ([[publication.textDate]])</span>
+                </template>
+
+                <!-- Article -->
+                <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]"> [[publication.journalResourceLocator.medAbbrev]]
+                    <template is="dom-if" if="[[publication.volume]]"><strong>[[publication.volume]],</strong></template>
+                    <template is="dom-if" if="[[publication.firstPage]]">[[publication.firstPage]]-[[publication.lastPage]]</template>
+                    <template is="dom-if" if="[[publication.publicationYear]]">([[publication.publicationYear]])</template>
+                </template>
+            </template>
+
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'publication-authors-and-journal',
+            properties: {
+                publication: {
+                    type: Object
+                },
+                summary: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            attached: function () {
+
+            },
+            _formatInitials: function (name) {
+                return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
+            },
+            _checkIfLast: function (array, index) {
+                return (array.length - 1 === index);
+            },
+            _formatXrefLabel: function (name) {
+                return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
+            },
+            _testType: function (type, test) {
+                return type === test;
+            }
+        });
+    </script>
+</dom-module>

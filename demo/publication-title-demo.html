@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>publication-title-item demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../publication-title.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .vertical-section-container {
+        max-width: 80%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic publication-title demo</h3>
+      <demo-snippet>
+            <h3>Standard title</h3>
+            <template>
+              <publication-title title="Non-USH2A mutations in USH2 patients."></publication-title>
+            </template>
+      </demo-snippet>
+      <demo-snippet>
+            <h3>Title with link</h3>
+            <template>
+                <publication-title title="Non-USH2A mutations in USH2 patients." link-id="14880806"></publication-title>
+            </template>
+      </demo-snippet>
+    </div>
+
+  </body>
+</html>
