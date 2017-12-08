@@ -1,9 +1,12 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
 
 <link rel="import" href="publication.html">
 <link rel="import" href="paginator-element.html">
-<link rel="import" href="entry-view-reference.html">
+<link rel="import" href="entry-item.html">
 
 <!--
 `publication-with-linked-entries-view`
@@ -13,17 +16,89 @@ Publication with linked entries view demo
 -->
 <dom-module id="publication-with-linked-entries-view">
     <template>
-        <style include="nextprot-elements-shared-styles">
+        <style is="custom-style" include="nextprot-elements-shared-styles">
             :host {
                 display: block;
+                --paper-toggle-button-checked-button-color: #428bca;
+                --paper-toggle-button-checked-bar-color: #428bca;
+                background: #f8f8f8;
+                overflow-y: auto;
             }
+
+            .control-header {
+                margin: 10px 0;
+                padding-bottom: 25px;
+                display: flex;
+                border-bottom: 1px solid #E7EAEC;
+            }
+
+            .mode-toggle {
+                display: inline-flex;
+                margin-top: -3px;
+            }
+
+            .toggle-label {
+                padding: 5px 10px 5px 3px;
+            }
+
+            .title-header {
+                border-bottom: 1px solid rgb(170, 170, 170);
+                font-weight:bold;
+                font-size: 150%;
+            }
+
         </style>
         <template is="dom-if" if="[[data]]">
 
-            <np-publication publication="[[data.publication]]" view="standard"></np-publication>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="title-header">
+                        <publication-authors-and-journal publication="[[data.publication]]" summary></publication-authors-and-journal>
+                    </div>
+                    <np-publication publication="[[data.publication]]" view="standard"></np-publication>
+                </div>
+            </div>
 
-            <p></p>
-            <paginator-element items="[[items]]" layout="publication-item" page-size="[[pageSize]]" bind-attribute="summary" bind-value="[[summary]]" from="{{from}}" to="{{to}}"></paginator-element>
+            <div class="row">
+                <div class="col-md-12">
+                    <!--<div>
+                        <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+                    </div>-->
+
+                    <div class="title-header">
+                        Relevant for
+                    </div>
+                    <template is="dom-if" if="[[data.entryPublicationList.length]]">
+                        <div class="control-header">
+                            <div class="no-padding col-lg-5">
+                                <template is="dom-if" if="[[data.entryPublicationList]]">Proteins [[from]] to [[to]] of [[data.entryPublicationList.length]]</template>
+                            </div>
+                            <div class="col-lg-2">
+                                show&nbsp;
+                                <select on-change="_changePageSize">
+                                    <template is="dom-repeat" items="{{pageSizeOptions}}" as="pageSizeOption">
+                                        <option value="{{pageSizeOption}}"
+                                                selected$="{{_isPageSizeOptionSelected(pageSizeOption)}}">
+                                            {{pageSizeOption}}
+                                        </option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="mode-toggle"><span class="toggle-label">summary</span>
+                                    <paper-toggle-button checked="{{!summary}}"></paper-toggle-button>
+                                    <span class="toggle-label">details</span>
+                                </div>
+                            </div>
+                        </div>
+                        <paginator-element items="[[data.entryPublicationList]]" layout="entry-item"
+                                           page-size="[[pageSize]]" bind-attribute="summary" bind-value="[[summary]]"
+                                           from="{{from}}" to="{{to}}"></paginator-element>
+                    </template>
+                    <template is="dom-if" if="[[!data.entryPublicationList.length]]"><span class="grey-x">Nothing to show</span>
+                    </template>
+                </div>
+            </div>
         </template>
     </template>
     <script>
@@ -35,11 +110,28 @@ Publication with linked entries view demo
                     value: {}
                 },
                 data: {
-                    type: Object
+                    type: Object,
+                    notify: true
                 },
                 summary: {
                     type: Boolean,
                     value: false
+                },
+                count: {
+                    type: Number,
+                    notify: true
+                },
+                pageSize: {
+                    type: Number
+                },
+                pageSizeOptions: {
+                    type: Array,
+                    value: [10, 20, 50, 100]
+                },
+                _preferedPageSizeName: {
+                    type: String,
+                    value: "publications-with-linked-entries-view.prefered-size",
+                    readOnly: true
                 }
             },
             attached: function () {
@@ -47,11 +139,10 @@ Publication with linked entries view demo
                 this.pageSize = this._getPreferedPageSizeFromLocalStorage();
                 this._initApiClient();
 
-                if (this.nxConfig.pubType in this.expectedPubTypes) {
-
+                if (this.nxConfig.publicationId) {
                     var self = this;
 
-                    this._npClient.getJSON("/entry-publications/entry/"+this.nxConfig.entry+"/category/"+this.nxConfig.pubType+".json")
+                    this._npClient.getJSON("/entry-publications/pubid/" + this.nxConfig.publicationId + ".json")
                         .then(function (response) {
                             self._handleResponseData(response);
                         })
@@ -59,16 +150,43 @@ Publication with linked entries view demo
                             self._handleError(error);
                         });
                 }
-                else {
-                    this._handleError("invalid publication type " + this.nxConfig.pubType + " is not recognized as a valid publication type (expected: [" + Object.keys(this.expectedPubTypes) + "])");
-                }
             },
-            _initApiClient: function() {
-                this._npClient = new Nextprot.Client("neXtProt publications", "Calipho Group");
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtProt publication with linked entries", "Calipho Group");
 
                 if (this.nxConfig.env) {
                     this._npClient.updateEnvironment(this.nxConfig.env);
+
                 }
+            },
+            _isPageSizeOptionSelected: function (pageSizeValue) {
+
+                return this._getPreferedPageSizeFromLocalStorage() == pageSizeValue;
+            },
+            _getPreferedPageSizeFromLocalStorage: function () {
+
+                var localStorageSizeValue = localStorage.getItem(this._preferedPageSizeName);
+
+                // does not exist
+                if (localStorageSizeValue === null) {
+                    localStorageSizeValue = 10;
+                    localStorage.setItem(this._preferedPageSizeName, localStorageSizeValue);
+                }
+
+                return parseInt(localStorageSizeValue);
+            },
+            _changePageSize: function (evt) {
+                this.pageSize = parseInt(evt.srcElement[evt.srcElement.selectedIndex].value);
+                localStorage.setItem(this._preferedPageSizeName, this.pageSize);
+            },
+            _handleResponseData: function (data) {
+                this.data = data;
+                //this.$.spinner.active = false;
+            },
+            _handleError: function (error) {
+                console.error("Error: ", error);
+                //this.$.spinner.active = false;
+                this.count = 0;
             },
             _toView: function (summary) {
                 return (summary) ? "summary" : "detailed";
