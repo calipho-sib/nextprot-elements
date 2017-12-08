@@ -1,0 +1,78 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+
+<link rel="import" href="publication.html">
+<link rel="import" href="paginator-element.html">
+<link rel="import" href="entry-view-reference.html">
+
+<!--
+`publication-with-linked-entries-view`
+Publication with linked entries view demo
+
+@demo demo/publication-with-linked-entries-view-demo.html
+-->
+<dom-module id="publication-with-linked-entries-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+        </style>
+        <template is="dom-if" if="[[data]]">
+
+            <np-publication publication="[[data.publication]]" view="standard"></np-publication>
+
+            <p></p>
+            <paginator-element items="[[items]]" layout="publication-item" page-size="[[pageSize]]" bind-attribute="summary" bind-value="[[summary]]" from="{{from}}" to="{{to}}"></paginator-element>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'publication-with-linked-entries-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                data: {
+                    type: Object
+                },
+                summary: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            attached: function () {
+
+                this.pageSize = this._getPreferedPageSizeFromLocalStorage();
+                this._initApiClient();
+
+                if (this.nxConfig.pubType in this.expectedPubTypes) {
+
+                    var self = this;
+
+                    this._npClient.getJSON("/entry-publications/entry/"+this.nxConfig.entry+"/category/"+this.nxConfig.pubType+".json")
+                        .then(function (response) {
+                            self._handleResponseData(response);
+                        })
+                        .catch(function (error) {
+                            self._handleError(error);
+                        });
+                }
+                else {
+                    this._handleError("invalid publication type " + this.nxConfig.pubType + " is not recognized as a valid publication type (expected: [" + Object.keys(this.expectedPubTypes) + "])");
+                }
+            },
+            _initApiClient: function() {
+                this._npClient = new Nextprot.Client("neXtProt publications", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+            },
+            _toView: function (summary) {
+                return (summary) ? "summary" : "detailed";
+            }
+        });
+    </script>
+</dom-module>
