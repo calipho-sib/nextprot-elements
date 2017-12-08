@@ -1,0 +1,58 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+
+<link rel="import" href="entry-view-reference.html">
+
+<!--
+`entry-item`
+Protein entry item demo
+
+@demo demo/entry-item-demo.html
+-->
+<dom-module id="entry-item">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                border-bottom: var(--publication-item-border-bottom);
+                margin-bottom: var(--publication-item-padding-bottom);
+                padding-bottom: var(--publication-item-margin-bottom);
+            }
+        </style>
+        <template is="dom-if" if="[[data]]">
+
+            <template is="dom-if" if="[[summary]]">
+                <a href="/entry/[[data.accession]]">[[data.proteinName]] <em>([[data.geneName]])</em> [[[data.accession]]]</a>
+            </template>
+
+            <template is="dom-if" if="[[!summary]]">
+                TODO
+            </template>
+
+            <!-- Cited For -->
+            <entry-view-reference refs="[[data.citedInViews]]"></entry-view-reference>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'entry-item',
+            properties: {
+                data: {
+                    type: Object,
+                    notify: true
+                },
+                summary: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            attached: function () {
+
+                console.log("DATA", this.data);
+            },
+            _toView: function (summary) {
+                return (summary) ? "summary" : "detailed";
+            }
+        });
+    </script>
+</dom-module>
