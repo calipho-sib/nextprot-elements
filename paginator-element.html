@@ -126,7 +126,7 @@ Element to allow pagination on a page when given an array of JSON object.
                 var end = start + this.pageSize;
                 this.to = this.items.length<end?this.items.length:end;
                 for(var i = start; i < end && i < this.items.length; i++){
-                    var node = document.createElement(this.layout);
+                    var node = document.createElement((this.layout) ? this.layout : 'pagination-item');
                     node.data = this.items[i];
                     node[this.bindAttribute] = this.bindValue;
                     this.$.container.appendChild(node);
