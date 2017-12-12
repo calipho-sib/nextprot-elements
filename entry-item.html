@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
 <link rel="import" href="entry-view-reference.html">
@@ -19,10 +20,20 @@ Protein entry item demo
                 padding-bottom: var(--publication-item-margin-bottom);
             }
         </style>
+        <iron-ajax
+                id="APIcall"
+                url="https://api.nextprot.org/search/entry.json"
+                handle-as="json"
+                content-type="application/json"
+                method="POST"
+                body="{{_getAjaxBody(data)}}"
+                on-response="_handleResponseData"
+                debounce-duration="300">
+        </iron-ajax>
         <template is="dom-if" if="[[data]]">
 
             <!-- Entry view -->
-            <a href="/entry/[[data.accession]]">[[data.proteinName]] <em>([[data.geneName]])</em> [[[data.accession]]]</a>
+            <a href="/entry/[[ac]]">[[protName]] <em>([[gene]])</em> [[[ac]]]</a>
 
             <template is="dom-if" if="[[!summary]]">
                 <div>
@@ -41,16 +52,145 @@ Protein entry item demo
             is: 'entry-item',
             properties: {
                 data: {
-                    type: Object
+                    type: Object,
+                    observer: "APIcaller"
+                },
+                desc: {
+                    type: String
+                },
+                ac: {
+                    type: String
+                },
+                gene: {
+                    type: String
+                },
+                protName: {
+                    type: String
+                },
+                chrLoc: {
+                    type: String
+                },
+                isoformNum: {
+                    type: Number
+                },
+                ptmNum: {
+                    type: Number
+                },
+                aaLength: {
+                    type: Number
+                },
+                varNum: {
+                    type: Number
+                },
+                isDisease: {
+                    type: Boolean
+                },
+                isExpression: {
+                    type: Boolean
+                },
+                isMutagenesis: {
+                    type: Boolean
+                },
+                isProteomics: {
+                    type: Boolean
+                },
+                isStructure: {
+                    type: Boolean
+                },
+                protExistence: {
+                    type: String
                 },
                 summary: {
                     type: Boolean,
                     value: false
                 }
             },
-            attached: function () {
+            APIcaller: function () {
 
-                console.log("DATA", this.data);
+                this.$.APIcall.generateRequest();
+            },
+            _getAjaxBody: function(data) {
+
+                return {
+                    quality:"gold",
+                    query:"id:"+data.accession
+                };
+            },
+            _handleResponseData: function (data) {
+
+                var response = data.detail.response.results[0];
+                console.log("response", response);
+
+                console.log("DESC", response.function_desc[0]);
+                this.desc = response.function_desc[0];
+
+                console.log("AC", response.recommended_ac);
+                this.ac = response.recommended_ac;
+
+                console.log("GENE", response.recommended_gene_names);
+                this.gene = response.recommended_gene_names;
+
+                console.log("PROT DESC", response.recommended_name);
+                this.protName = response.recommended_name;
+
+                console.log("Chromosomal location:", response.chr_loc);
+                this.chrLoc = response.chr_loc;
+
+                console.log("Isoforms:", response.isoform_num);
+                this.isoformNum = response.isoform_num;
+
+                console.log("PTMs:", response.ptm_num);
+                this.ptmNum = response.ptm_num;
+
+                console.log("Sequence length:", response.aa_length);
+                this.aaLength = response.aa_length;
+
+                console.log("Variants:", response.var_num);
+                this.varNum = response.var_num;
+
+                console.log("Disease:", response.filters.indexOf("filterdisease") != -1);
+                this.isDisease = response.filters.indexOf("filterdisease") != -1;
+
+                console.log("Expression:", response.filters.indexOf("filterexpressionprofile") != -1);
+                this.isExpression = response.filters.indexOf("filterexpressionprofile") != -1;
+
+                console.log("Mutagenesis:", response.filters.indexOf("filtermutagenesis") != -1);
+                this.isMutagenesis = response.filters.indexOf("filtermutagenesis") != -1;
+
+                console.log("Proteomics:", response.filters.indexOf("filterproteomics") != -1);
+                this.isProteomics = response.filters.indexOf("filterproteomics") != -1;
+
+                console.log("Structure:", response.filters.indexOf("filterstructure") != -1);
+                this.isStructure = response.filters.indexOf("filterstructure") != -1;
+
+                console.log("Proteins existence:", response.protein_existence);
+                this.protExistence = response.protein_existence;
+
+                /*
+                    TODO: FIXING PERFORMANCE ISSUE
+                    instead of requesting n API calls from this element:
+                      ex:
+                      {
+                        quality:"gold",
+                        query:"id:NX_P02675"
+                      }
+                      {
+                        quality:"gold",
+                        query:"id:NX_P02679"
+                      }
+                      {
+                        quality:"gold",
+                        query:"id:NX_P02671"
+                      }
+                    a single API call should be done at the level of publication-with-linked-entries:
+                      ex: {
+                        quality:"gold",
+                        query:"id%:(NX_P02675 OR NX_P02679 OR NX_P02671)
+                          &fl=filters, protein_existence, chr_loc, var_num, aa_length, ptm_num, isoform_num, function_desc, recommended_ac, recommended_gene_names, recommended_name
+                          &wt=json"
+                      }
+
+                 */
             }
         });
     </script>
