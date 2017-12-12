@@ -21,16 +21,19 @@ Protein entry item demo
         </style>
         <template is="dom-if" if="[[data]]">
 
-            <template is="dom-if" if="[[summary]]">
-                <a href="/entry/[[data.accession]]">[[data.proteinName]] <em>([[data.geneName]])</em> [[[data.accession]]]</a>
-            </template>
+            <!-- Entry view -->
+            <a href="/entry/[[data.accession]]">[[data.proteinName]] <em>([[data.geneName]])</em> [[[data.accession]]]</a>
 
             <template is="dom-if" if="[[!summary]]">
+                <div>
                 TODO
+                </div>
             </template>
 
             <!-- Cited For -->
-            <entry-view-reference refs="[[data.citedInViews]]"></entry-view-reference>
+            <template is="dom-if" if="[[data.citedInViews]]">
+                <entry-view-reference refs="[[data.citedInViews]]"></entry-view-reference>
+            </template>
         </template>
     </template>
     <script>
@@ -38,8 +41,7 @@ Protein entry item demo
             is: 'entry-item',
             properties: {
                 data: {
-                    type: Object,
-                    notify: true
+                    type: Object
                 },
                 summary: {
                     type: Boolean,
@@ -49,9 +51,6 @@ Protein entry item demo
             attached: function () {
 
                 console.log("DATA", this.data);
-            },
-            _toView: function (summary) {
-                return (summary) ? "summary" : "detailed";
             }
         });
     </script>

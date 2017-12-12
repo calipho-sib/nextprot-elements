@@ -198,9 +198,10 @@ Publication with linked entries view demo
                     self.data.entries.push(entry);
 
                     self._npClient.getProteinOverview(entry.accession).then(function (overview) {
-                        console.log("pname", overview.proteinNames[0].name)
                         entry.proteinName = overview.proteinNames[0].name;
                         entry.geneName = overview.geneNames[0].name;
+                        console.log("proteinName", entry.proteinName, "geneName",  entry.geneName)
+
                     }, function(error){
                         self._handleError(error);
                     });
