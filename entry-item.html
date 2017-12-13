@@ -19,6 +19,9 @@ Protein entry item demo
                 margin-bottom: var(--publication-item-padding-bottom);
                 padding-bottom: var(--publication-item-margin-bottom);
             }
+            .gray {
+                color: #888;
+            }
         </style>
         <iron-ajax
                 id="APIcall"
@@ -36,8 +39,19 @@ Protein entry item demo
             <a href="/entry/[[ac]]">[[protName]] <em>([[gene]])</em> [[[ac]]]</a>
 
             <template is="dom-if" if="[[!summary]]">
-                <div>
-                TODO
+                <div class="gray small">
+                    Chromosomal location: <a href="entry/[[ac]]/exons">[[chrLoc]]</a>
+                    Isoforms: <a href="entry/[[ac]]/sequence">[[isoformNum]]</a>
+                    PTMs: <a href="entry/[[ac]]/sequence">[[ptmNum]]</a>
+                    Sequence length: <a href="entry/[[ac]]/sequence">[[aaLength]]</a>
+                    Variants: <a href="entry/[[ac]]/sequence">[[varNum]]</a>
+                    <br>
+                    Disease: <a class$="[[_computeATagClass(isDisease)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isDisease)]]</a>
+                    Expression: <a class$="[[_computeATagClass(isExpression)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isExpression)]]</a>
+                    Mutagenesis: <a class$="[[_computeATagClass(isMutagenesis)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isMutagenesis)]]</a>
+                    Proteomics: <a class$="[[_computeATagClass(isProteomics)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isProteomics)]]</a>
+                    Structure: <a class$="[[_computeATagClass(isStructure)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isStructure)]]</a>
+                    Proteins existence: <a href="entry/[[ac]]/function">[[protExistence]]</a>
                 </div>
             </template>
 
@@ -71,16 +85,20 @@ Protein entry item demo
                     type: String
                 },
                 isoformNum: {
-                    type: Number
+                    type: Number,
+                    value: 0
                 },
                 ptmNum: {
-                    type: Number
+                    type: Number,
+                    value: 0
                 },
                 aaLength: {
-                    type: Number
+                    type: Number,
+                    value: 0
                 },
                 varNum: {
-                    type: Number
+                    type: Number,
+                    value: 0
                 },
                 isDisease: {
                     type: Boolean
@@ -119,52 +137,22 @@ Protein entry item demo
             _handleResponseData: function (data) {
 
                 var response = data.detail.response.results[0];
-                console.log("response", response);
 
-                console.log("DESC", response.function_desc[0]);
                 this.desc = response.function_desc[0];
-
-                console.log("AC", response.recommended_ac);
                 this.ac = response.recommended_ac;
-
-                console.log("GENE", response.recommended_gene_names);
                 this.gene = response.recommended_gene_names;
-
-                console.log("PROT DESC", response.recommended_name);
                 this.protName = response.recommended_name;
-
-                console.log("Chromosomal location:", response.chr_loc);
                 this.chrLoc = response.chr_loc;
-
-                console.log("Isoforms:", response.isoform_num);
                 this.isoformNum = response.isoform_num;
-
-                console.log("PTMs:", response.ptm_num);
                 this.ptmNum = response.ptm_num;
-
-                console.log("Sequence length:", response.aa_length);
                 this.aaLength = response.aa_length;
-
-                console.log("Variants:", response.var_num);
                 this.varNum = response.var_num;
-
-                console.log("Disease:", response.filters.indexOf("filterdisease") != -1);
-                this.isDisease = response.filters.indexOf("filterdisease") != -1;
-
-                console.log("Expression:", response.filters.indexOf("filterexpressionprofile") != -1);
-                this.isExpression = response.filters.indexOf("filterexpressionprofile") != -1;
-
-                console.log("Mutagenesis:", response.filters.indexOf("filtermutagenesis") != -1);
-                this.isMutagenesis = response.filters.indexOf("filtermutagenesis") != -1;
-
-                console.log("Proteomics:", response.filters.indexOf("filterproteomics") != -1);
-                this.isProteomics = response.filters.indexOf("filterproteomics") != -1;
-
-                console.log("Structure:", response.filters.indexOf("filterstructure") != -1);
-                this.isStructure = response.filters.indexOf("filterstructure") != -1;
-
-                console.log("Proteins existence:", response.protein_existence);
-                this.protExistence = response.protein_existence;
+                this.isDisease = response.filters.indexOf("filterdisease") !== -1;
+                this.isExpression = response.filters.indexOf("filterexpressionprofile") !== -1;
+                this.isMutagenesis = response.filters.indexOf("filtermutagenesis") !== -1;
+                this.isProteomics = response.filters.indexOf("filterproteomics") !== -1;
+                this.isStructure = response.filters.indexOf("filterstructure") !== -1;
+                this.protExistence = response.protein_existence.split("_").join(" ");
 
                 /*
                     TODO: FIXING PERFORMANCE ISSUE
@@ -191,6 +179,12 @@ Protein entry item demo
                       }
 
                  */
+            },
+            _computeATagClass: function (boolean) {
+                return (boolean) ? '' : 'inactive';
+            },
+            _convertBooleanToYesOrNo: function (boolean) {
+                return (boolean) ? 'yes' : 'no';
             }
         });
     </script>
