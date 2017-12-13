@@ -78,28 +78,26 @@ Publication authors with journal demo
             <!-- Summary view -->
             <template is="dom-if" if="[[summary]]">
                 <!-- First author et al. -->
-                <template is="dom-if" if="[[publication.authors.0]]">[[publication.authors.0.lastName]]
-                    [[_formatInitials(publication.authors.0.initials)]]
-                </template>
-                <template is="dom-if" if="[[publication.authors.1]]">
-                    <i>et al.,</i>
-                </template>
+                <span inner-h-t-m-l="[[firstAuthorAndAl]]"></span>
 
-                <!-- Submission -->
-                <template is="dom-if" if="[[_testType(publication.publicationType, 'SUBMISSION')]]">
-                    <span class="np-grey-text">[[publication.submission]] ([[publication.textDate]])</span>
-                </template>
+                <template is="dom-if" if="[[!journalYearOnly]]">
 
-                <!-- Patent -->
-                <template is="dom-if" if="[[_testType(publication.publicationType, 'PATENT')]]">
-                    <span class="np-grey-text">Patent number [[publication.dbXrefs.0.accession]] ([[publication.textDate]])</span>
-                </template>
+                    <!-- Submission -->
+                    <template is="dom-if" if="[[_testType(publication.publicationType, 'SUBMISSION')]]">
+                        <span class="np-grey-text">[[publication.submission]] ([[publication.textDate]])</span>
+                    </template>
 
-                <!-- Article -->
-                <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]"> [[publication.journalResourceLocator.medAbbrev]]
-                    <template is="dom-if" if="[[publication.volume]]"><strong>[[publication.volume]],</strong></template>
-                    <template is="dom-if" if="[[publication.firstPage]]">[[publication.firstPage]]-[[publication.lastPage]]</template>
-                    <template is="dom-if" if="[[publication.publicationYear]]">([[publication.publicationYear]])</template>
+                    <!-- Patent -->
+                    <template is="dom-if" if="[[_testType(publication.publicationType, 'PATENT')]]">
+                        <span class="np-grey-text">Patent number [[publication.dbXrefs.0.accession]] ([[publication.textDate]])</span>
+                    </template>
+
+                    <!-- Article -->
+                    <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]"> [[publication.journalResourceLocator.medAbbrev]]
+                        <template is="dom-if" if="[[publication.volume]]"><strong>[[publication.volume]],</strong></template>
+                        <template is="dom-if" if="[[publication.firstPage]]">[[publication.firstPage]]-[[publication.lastPage]]</template>
+                        <template is="dom-if" if="[[publication.publicationYear]]">([[publication.publicationYear]])</template>
+                    </template>
                 </template>
             </template>
 
@@ -110,15 +108,38 @@ Publication authors with journal demo
             is: 'publication-authors-and-journal',
             properties: {
                 publication: {
-                    type: Object
+                    type: Object,
+                    observer: '_formatFirstAuthorAndAl'
+                },
+                firstAuthorAndAl: {
+                    type: String
+                },
+                journalYearOnly: {
+                    type: Boolean,
+                    value: false
                 },
                 summary: {
                     type: Boolean,
                     value: false
                 }
             },
-            attached: function () {
+            _formatFirstAuthorAndAl: function () {
 
+                if (this.publication && this.publication.authors.length > 0) {
+
+                    this.firstAuthorAndAl = this.publication.authors[0].lastName+" "+this._formatInitials(this.publication.authors[0].initials);
+
+                    if (this.publication.authors.length > 1) {
+                        this.firstAuthorAndAl += "<i>et al.</i>";
+                    }
+
+                    if (this.journalYearOnly) {
+                        this.firstAuthorAndAl += " (" + this.publication.publicationYear + ")";
+                    }
+                    else {
+                        this.firstAuthorAndAl += ", ";
+                    }
+                }
             },
             _formatInitials: function (name) {
                 return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
