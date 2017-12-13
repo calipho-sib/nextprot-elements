@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
+
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
 <link rel="import" href="entry-view-reference.html">
@@ -22,6 +23,9 @@ Protein entry item demo
             .gray {
                 color: #888;
             }
+            .grayLink {
+                color: grey;
+            }
         </style>
         <iron-ajax
                 id="APIcall"
@@ -39,6 +43,20 @@ Protein entry item demo
             <a href="/entry/[[ac]]">[[protName]] <em>([[gene]])</em> [[[ac]]]</a>
 
             <template is="dom-if" if="[[!summary]]">
+                <div class="small">
+                    <template is="dom-if" if="[[desc]]">
+                        <template is="dom-if" if="[[!_isSame(desc, shortDesc)]]">
+                            <span>[[displayedDesc]]</span>
+                            <span><a class="grayLink" on-click="_toggleDescription">[[[linkMessage]]]</a></span>
+                        </template>
+                        <template is="dom-if" if="[[_isSame(desc, shortDesc)]]">
+                            <span>[[desc]]</span>
+                        </template>
+                    </template>
+                    <template is="dom-if" if="[[!desc]]">
+                        <span> No functional information for this protein. </span>&nbsp;
+                    </template>
+                </div>
                 <div class="gray small">
                     Chromosomal location: <a href="entry/[[ac]]/exons">[[chrLoc]]</a>
                     Isoforms: <a href="entry/[[ac]]/sequence">[[isoformNum]]</a>
@@ -69,7 +87,17 @@ Protein entry item demo
                     type: Object,
                     observer: "APIcaller"
                 },
+                linkMessage: {
+                    type: String,
+                    value: "more"
+                },
                 desc: {
+                    type: String
+                },
+                shortDesc: {
+                    type: String
+                },
+                displayedDesc: {
                     type: String
                 },
                 ac: {
@@ -139,6 +167,8 @@ Protein entry item demo
                 var response = data.detail.response.results[0];
 
                 this.desc = response.function_desc[0];
+                this.shortDesc = this._shorten(this.desc);
+                this.displayedDesc = this.shortDesc;
                 this.ac = response.recommended_ac;
                 this.gene = response.recommended_gene_names;
                 this.protName = response.recommended_name;
@@ -185,6 +215,22 @@ Protein entry item demo
             },
             _convertBooleanToYesOrNo: function (boolean) {
                 return (boolean) ? 'yes' : 'no';
+            },
+            _shorten: function (str) {
+                return (str.length > 300) ? str.substr(0, 300) : str;
+            },
+            _isSame: function (str1, str2) {
+                return str1 === str2;
+            },
+            _toggleDescription: function () {
+                if (this.linkMessage === "more") {
+                    this.linkMessage = "less";
+                    this.displayedDesc = this.desc;
+                }
+                else {
+                    this.linkMessage = "more";
+                    this.displayedDesc = this.shortDesc;
+                }
             }
         });
     </script>
