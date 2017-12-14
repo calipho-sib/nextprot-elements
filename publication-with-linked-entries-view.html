@@ -1,6 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
-<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
 
@@ -52,6 +51,9 @@ Publication with linked entries view demo
             }
 
         </style>
+        <div>
+            <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+        </div>
         <template is="dom-if" if="[[data]]">
 
             <div class="row padded">
@@ -65,10 +67,6 @@ Publication with linked entries view demo
 
             <div class="row">
                 <div class="col-md-12">
-                    <!--<div>
-                        <paper-spinner-lite id="spinner" active></paper-spinner-lite>
-                    </div>-->
-
                     <div class="title-header">
                         Relevant for
                     </div>
@@ -202,11 +200,11 @@ Publication with linked entries view demo
                     self.data.entries.push(entry);
                 });
 
-                //this.$.spinner.active = false;
+                this.$.spinner.active = false;
             },
             _handleError: function (error) {
                 console.error("Error: ", error);
-                //this.$.spinner.active = false;
+                this.$.spinner.active = false;
                 this.count = 0;
             },
             _toView: function (summary) {
