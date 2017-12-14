@@ -160,7 +160,6 @@ Publication with linked entries view demo
 
                 if (this.nxConfig.env) {
                     this._npClient.updateEnvironment(this.nxConfig.env);
-
                 }
             },
             _isPageSizeOptionSelected: function (pageSizeValue) {
@@ -184,27 +183,23 @@ Publication with linked entries view demo
                 localStorage.setItem(this._preferedPageSizeName, this.pageSize);
             },
             _handleResponseData: function (data) {
+                var self = this;
+
                 this.data = data;
                 this.data.entries = [];
 
-                var self = this;
+                var entrySolrResultMap = data.entrySolrResultMap;
 
-                data.entryPublicationList.forEach(function (entryPublication) {
+                Object.values(data.entryPublicationMap).forEach(function (entryPublication) {
+                    var entry = {
+                        accession: entryPublication.entryAccession,
+                        citedInViews: entryPublication.citedInViews
 
-                    var entry = {};
+                    };
 
-                    entry.accession = entryPublication.entryAccession;
-                    entry.citedInViews = entryPublication.citedInViews;
+                    $.extend(entry, entrySolrResultMap[entryPublication.entryAccession]);
+
                     self.data.entries.push(entry);
-
-                    self._npClient.getProteinOverview(entry.accession).then(function (overview) {
-                        entry.proteinName = overview.proteinNames[0].name;
-                        entry.geneName = overview.geneNames[0].name;
-                        console.log("proteinName", entry.proteinName, "geneName",  entry.geneName)
-
-                    }, function(error){
-                        self._handleError(error);
-                    });
                 });
 
                 //this.$.spinner.active = false;
