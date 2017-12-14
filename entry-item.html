@@ -1,5 +1,4 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-ajax/iron-ajax.html">
 
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
@@ -27,20 +26,10 @@ Protein entry item demo
                 color: grey;
             }
         </style>
-        <iron-ajax
-                id="APIcall"
-                url="https://api.nextprot.org/search/entry.json"
-                handle-as="json"
-                content-type="application/json"
-                method="POST"
-                body="{{_getAjaxBody(data)}}"
-                on-response="_handleResponseData"
-                debounce-duration="300">
-        </iron-ajax>
         <template is="dom-if" if="[[data]]">
 
             <!-- Entry view -->
-            <a href="/entry/[[ac]]">[[protName]] <em>([[gene]])</em> [[[ac]]]</a>
+            <a href="/entry/[[data.accession]]">[[data.recommended_name]] <em>([[data.recommended_gene_names]])</em> [[[data.accession]]]</a>
 
             <template is="dom-if" if="[[!summary]]">
                 <div class="small">
@@ -58,11 +47,11 @@ Protein entry item demo
                     </template>
                 </div>
                 <div class="gray small">
-                    Chromosomal location: <a href="entry/[[ac]]/exons">[[chrLoc]]</a>
-                    Isoforms: <a href="entry/[[ac]]/sequence">[[isoformNum]]</a>
-                    PTMs: <a href="entry/[[ac]]/sequence">[[ptmNum]]</a>
-                    Sequence length: <a href="entry/[[ac]]/sequence">[[aaLength]]</a>
-                    Variants: <a href="entry/[[ac]]/sequence">[[varNum]]</a>
+                    Chromosomal location: <a href="entry/[[data.accession]]/exons">[[data.chr_loc]]</a>
+                    Isoforms: <a href="entry/[[data.accession]]/sequence">[[data.isoform_num]]</a>
+                    PTMs: <a href="entry/[[data.accession]]/sequence">[[data.ptm_num]]</a>
+                    Sequence length: <a href="entry/[[data.accession]]/sequence">[[data.aa_length]]</a>
+                    Variants: <a href="entry/[[data.accession]]/sequence">[[data.var_num]]</a>
                     <br>
                     Disease: <a class$="[[_computeATagClass(isDisease)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isDisease)]]</a>
                     Expression: <a class$="[[_computeATagClass(isExpression)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isExpression)]]</a>
@@ -85,7 +74,7 @@ Protein entry item demo
             properties: {
                 data: {
                     type: Object,
-                    observer: "APIcaller"
+                    observer: "_handleData"
                 },
                 linkMessage: {
                     type: String,
@@ -99,34 +88,6 @@ Protein entry item demo
                 },
                 displayedDesc: {
                     type: String
-                },
-                ac: {
-                    type: String
-                },
-                gene: {
-                    type: String
-                },
-                protName: {
-                    type: String
-                },
-                chrLoc: {
-                    type: String
-                },
-                isoformNum: {
-                    type: Number,
-                    value: 0
-                },
-                ptmNum: {
-                    type: Number,
-                    value: 0
-                },
-                aaLength: {
-                    type: Number,
-                    value: 0
-                },
-                varNum: {
-                    type: Number,
-                    value: 0
                 },
                 isDisease: {
                     type: Boolean
@@ -151,64 +112,19 @@ Protein entry item demo
                     value: false
                 }
             },
-            APIcaller: function () {
+            _handleData: function (data) {
 
-                this.$.APIcall.generateRequest();
-            },
-            _getAjaxBody: function(data) {
+                console.log("data", data)
 
-                return {
-                    quality:"gold",
-                    query:"id:"+data.accession
-                };
-            },
-            _handleResponseData: function (data) {
-
-                var response = data.detail.response.results[0];
-
-                this.desc = response.function_desc[0];
+                this.desc = data.function_desc[0];
                 this.shortDesc = this._shorten(this.desc);
                 this.displayedDesc = this.shortDesc;
-                this.ac = response.recommended_ac;
-                this.gene = response.recommended_gene_names;
-                this.protName = response.recommended_name;
-                this.chrLoc = response.chr_loc;
-                this.isoformNum = response.isoform_num;
-                this.ptmNum = response.ptm_num;
-                this.aaLength = response.aa_length;
-                this.varNum = response.var_num;
-                this.isDisease = response.filters.indexOf("filterdisease") !== -1;
-                this.isExpression = response.filters.indexOf("filterexpressionprofile") !== -1;
-                this.isMutagenesis = response.filters.indexOf("filtermutagenesis") !== -1;
-                this.isProteomics = response.filters.indexOf("filterproteomics") !== -1;
-                this.isStructure = response.filters.indexOf("filterstructure") !== -1;
-                this.protExistence = response.protein_existence.split("_").join(" ");
-
-                /*
-                    TODO: FIXING PERFORMANCE ISSUE
-                    instead of requesting n API calls from this element:
-                      ex:
-                      {
-                        quality:"gold",
-                        query:"id:NX_P02675"
-                      }
-                      {
-                        quality:"gold",
-                        query:"id:NX_P02679"
-                      }
-                      {
-                        quality:"gold",
-                        query:"id:NX_P02671"
-                      }
-                    a single API call should be done at the level of publication-with-linked-entries:
-                      ex: {
-                        quality:"gold",
-                        query:"id%:(NX_P02675 OR NX_P02679 OR NX_P02671)
-                          &fl=filters, protein_existence, chr_loc, var_num, aa_length, ptm_num, isoform_num, function_desc, recommended_ac, recommended_gene_names, recommended_name
-                          &wt=json"
-                      }
-
-                 */
+                this.isDisease = data.filters.indexOf("filterdisease") !== -1;
+                this.isExpression = data.filters.indexOf("filterexpressionprofile") !== -1;
+                this.isMutagenesis = data.filters.indexOf("filtermutagenesis") !== -1;
+                this.isProteomics = data.filters.indexOf("filterproteomics") !== -1;
+                this.isStructure = data.filters.indexOf("filterstructure") !== -1;
+                this.protExistence = data.protein_existence.split("_").join(" ");
             },
             _computeATagClass: function (boolean) {
                 return (boolean) ? '' : 'inactive';
