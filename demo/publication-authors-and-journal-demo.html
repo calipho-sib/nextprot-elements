@@ -41,6 +41,13 @@
     </demo-snippet>
 
     <demo-snippet>
+        <h3>Book type (summary view)</h3>
+        <template>
+            <publication-authors-and-journal id="book" summary></publication-authors-and-journal>
+        </template>
+    </demo-snippet>
+
+    <demo-snippet>
         <template>
             <h4>Data binding</h4>
             <hr>
@@ -316,6 +323,110 @@
                 for (var i in elements) {
                     elements[i].publication = publication;
                 }
+
+                document.getElementById("book").publication = {
+                    "md5": "5569a8202ee3d75edaa8f11effcacbad",
+                    "title": "The Immunoglobulin FactsBook",
+                    "abstractText": "",
+                    "publicationType": "BOOK",
+                    "publicationDate": 978303600000,
+                    "textDate": "2001",
+                    "submission": null,
+                    "authors": [
+                        {
+                            "authorId": 44939045,
+                            "lastName": "Lefranc",
+                            "foreName": "",
+                            "initials": "M.P.",
+                            "suffix": "",
+                            "rank": 0,
+                            "person": true,
+                            "publicationId": null,
+                            "editor": false
+                        },
+                        {
+                            "authorId": 44939046,
+                            "lastName": "Lefranc",
+                            "foreName": "",
+                            "initials": "G.",
+                            "suffix": "",
+                            "rank": 1,
+                            "person": true,
+                            "publicationId": null,
+                            "editor": false
+                        }
+                    ],
+                    "dbXrefs": [],
+                    "publicationResourceLocator": {
+                        "name": "The Immunoglobulin FactsBook.",
+                        "firstPage": "1",
+                        "lastPage": "458",
+                        "publisher": "Academic Press",
+                        "city": "London.",
+                        "editors": [
+                            {
+                                "authorId": 44939047,
+                                "lastName": "Lefranc",
+                                "foreName": "",
+                                "initials": "M.P.",
+                                "suffix": "",
+                                "rank": 2,
+                                "person": true,
+                                "publicationId": null,
+                                "editor": true
+                            },
+                            {
+                                "authorId": 44939048,
+                                "lastName": "Lefranc",
+                                "foreName": "",
+                                "initials": "G.",
+                                "suffix": "",
+                                "rank": 3,
+                                "person": true,
+                                "publicationId": null,
+                                "editor": true
+                            }
+                        ]
+                    },
+                    "publicationId": 47654286,
+                    "editors": [
+                        {
+                            "authorId": 44939047,
+                            "lastName": "Lefranc",
+                            "foreName": "",
+                            "initials": "M.P.",
+                            "suffix": "",
+                            "rank": 2,
+                            "person": true,
+                            "publicationId": null,
+                            "editor": true
+                        },
+                        {
+                            "authorId": 44939048,
+                            "lastName": "Lefranc",
+                            "foreName": "",
+                            "initials": "G.",
+                            "suffix": "",
+                            "rank": 3,
+                            "person": true,
+                            "publicationId": null,
+                            "editor": true
+                        }
+                    ],
+                    "publicationYear": "2001",
+                    "publicationLocatorName": "The Immunoglobulin FactsBook.",
+                    "volume": "",
+                    "firstPage": "1",
+                    "localizable": true,
+                    "locatedInScientificJournal": false,
+                    "locatedInEditedVolumeBook": true,
+                    "localizableInBookMedium": true,
+                    "issue": "",
+                    "lastPage": "458",
+                    "publisherName": "Academic Press",
+                    "publisherCity": "London.",
+                    "journalResourceLocator": null
+                };
             </script>
         </template>
     </demo-snippet>
