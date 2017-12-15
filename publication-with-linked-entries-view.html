@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
 
@@ -188,24 +189,22 @@ Publication with linked entries view demo
                 localStorage.setItem(this._preferedPageSizeName, this.pageSize);
             },
             _handleResponseData: function (data) {
-                var self = this;
 
-                this.data = data;
-                this.data.entries = [];
-
-                var entrySolrResultMap = data.entrySolrResultMap;
+                var entries = [];
 
                 Object.values(data.entryPublicationMap).forEach(function (entryPublication) {
                     var entry = {
                         accession: entryPublication.entryAccession,
                         citedInViews: entryPublication.citedInViews
-
                     };
 
-                    $.extend(entry, entrySolrResultMap[entryPublication.entryAccession]);
+                    $.extend(entry, data.entrySolrResultMap[entry.accession]);
 
-                    self.data.entries.push(entry);
+                    entries.push(entry);
                 });
+
+                this.data = data;
+                this.data.entries = entries;
 
                 this.$.spinner.active = false;
                 this.$.spinner.hidden = true;

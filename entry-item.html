@@ -87,7 +87,8 @@ Protein entry item demo
                     type: String
                 },
                 displayedDesc: {
-                    type: String
+                    type: String,
+                    value: ""
                 },
                 isDisease: {
                     type: Boolean
@@ -114,9 +115,14 @@ Protein entry item demo
             },
             _handleData: function (data) {
 
-                this.desc = data.function_desc[0];
-                this.shortDesc = this._shorten(this.desc);
-                this.displayedDesc = this.shortDesc;
+                if (data.function_desc) {
+                    this.desc = data.function_desc[0];
+                    this.shortDesc = this._shorten(this.desc);
+                    this.displayedDesc = this.shortDesc;
+                }
+                else {
+                    this.desc = this.shortDesc = this.displayedDesc = "No description";
+                }
                 this.isDisease = data.filters.indexOf("filterdisease") !== -1;
                 this.isExpression = data.filters.indexOf("filterexpressionprofile") !== -1;
                 this.isMutagenesis = data.filters.indexOf("filtermutagenesis") !== -1;
