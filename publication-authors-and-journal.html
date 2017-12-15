@@ -152,17 +152,28 @@ Publication authors with journal demo
 
                 if (this.publication && this.publication.authors.length > 0) {
 
-                    this.firstAuthorAndAl = this.publication.authors[0].lastName+" "+this._formatInitials(this.publication.authors[0].initials);
+                    if (this.publication.authors.length > 2) {
+                        this.firstAuthorAndAl = this.publication.authors[0].lastName + " " + this._formatInitials(this.publication.authors[0].initials);
 
-                    if (this.publication.authors.length > 1) {
-                        this.firstAuthorAndAl += "<i>et al.</i>";
+                        if (this.publication.authors.length > 1) {
+                            this.firstAuthorAndAl += " <i>et al.</i>";
+                        }
+
+                        if (this.journalYearOnly) {
+                            this.firstAuthorAndAl += " (" + this.publication.publicationYear + ")";
+                        }
+                        else {
+                            this.firstAuthorAndAl += ", ";
+                        }
                     }
+                    else if (this.publication.authors.length === 2) {
 
-                    if (this.journalYearOnly) {
-                        this.firstAuthorAndAl += " (" + this.publication.publicationYear + ")";
+                        this.firstAuthorAndAl = this.publication.authors[0].lastName + " " + this._formatInitials(this.publication.authors[0].initials) + " and "
+                            + this.publication.authors[1].lastName + " " + this._formatInitials(this.publication.authors[1].initials);
                     }
                     else {
-                        this.firstAuthorAndAl += ", ";
+
+                        this.firstAuthorAndAl = this.publication.authors[0].lastName
                     }
                 }
             },
