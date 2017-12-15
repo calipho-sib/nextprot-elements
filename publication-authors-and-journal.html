@@ -98,6 +98,31 @@ Publication authors with journal demo
                         <template is="dom-if" if="[[publication.firstPage]]">[[publication.firstPage]]-[[publication.lastPage]]</template>
                         <template is="dom-if" if="[[publication.publicationYear]]">([[publication.publicationYear]])</template>
                     </template>
+
+                    <!-- Book -->
+                    <template is="dom-if" if="[[_testType(publication.publicationType, 'BOOK')]]">
+                        <span class="np-grey-text">
+                            <template is="dom-if" if="[[publication.publicationResourceLocator.editors]]">
+                                (Eds)
+                                <template is="dom-repeat" items="[[publication.publicationResourceLocator.editors]]" as="editor">
+                                    <template is="dom-if" if="[[!_checkIfLast(publication.publicationResourceLocator.editors,index)]]">
+                                        [[editor.lastName]] [[_formatInitials(editor.initials)]],
+                                    </template>
+                                    <template is="dom-if" if="[[_checkIfLast(publication.publicationResourceLocator.editors,index)]]">
+                                        [[editor.lastName]] [[_formatInitials(editor.initials)]]
+                                    </template>
+                                </template>
+                            </template>
+                        </span>
+                        <br>
+                        <span class="np-grey-text">
+                            <template is="dom-if" if="[[publication.publicationResourceLocator.name]]">(In) [[publication.publicationResourceLocator.name]],</template>
+                            <template is="dom-if" if="[[publication.firstPage]]">pp.[[publication.firstPage]]-[[publication.lastPage]],</template>
+                            <template is="dom-if" if="[[publication.publicationResourceLocator.publisher]]">[[publication.publicationResourceLocator.publisher]],</template>
+                            <template is="dom-if" if="[[publication.publicationResourceLocator.city]]">[[publication.publicationResourceLocator.city]]</template>
+                            <template is="dom-if" if="[[publication.publicationYear]]">([[publication.publicationYear]])</template>
+                        </span>
+                    </template>
                 </template>
             </template>
 
