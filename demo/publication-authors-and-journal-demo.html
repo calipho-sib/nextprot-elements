@@ -43,7 +43,14 @@
     <demo-snippet>
         <h3>Book type (summary view)</h3>
         <template>
-            <publication-authors-and-journal id="book" summary></publication-authors-and-journal>
+            <publication-authors-and-journal id="books" summary></publication-authors-and-journal>
+        </template>
+    </demo-snippet>
+
+    <demo-snippet>
+        <h3>Book type (detailed view)</h3>
+        <template>
+            <publication-authors-and-journal id="bookd"></publication-authors-and-journal>
         </template>
     </demo-snippet>
 
@@ -324,7 +331,7 @@
                     elements[i].publication = publication;
                 }
 
-                document.getElementById("book").publication = {
+                var book = {
                     "md5": "5569a8202ee3d75edaa8f11effcacbad",
                     "title": "The Immunoglobulin FactsBook",
                     "abstractText": "",
@@ -427,6 +434,9 @@
                     "publisherCity": "London.",
                     "journalResourceLocator": null
                 };
+
+                document.getElementById("books").publication = book;
+                document.getElementById("bookd").publication = book;
             </script>
         </template>
     </demo-snippet>

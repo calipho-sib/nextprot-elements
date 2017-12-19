@@ -72,6 +72,13 @@ Publication authors with journal demo
                             [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
                         </template>
                     </template>
+
+                    <!-- Book -->
+                    <template is="dom-if" if="[[_testType(publication.publicationType, 'BOOK')]]">
+                        <eds-and-in locator="[[publication.publicationResourceLocator]]"
+                                    first-page="[[publication.firstPage]]" last-page="[[publication.lastPage]]"
+                                    publication-year="[[publication.publicationYear]]"></eds-and-in>
+                    </template>
                 </p>
             </template>
 
@@ -101,27 +108,9 @@ Publication authors with journal demo
 
                     <!-- Book -->
                     <template is="dom-if" if="[[_testType(publication.publicationType, 'BOOK')]]">
-                        <span class="np-grey-text">
-                            <template is="dom-if" if="[[publication.publicationResourceLocator.editors]]">
-                                (Eds)
-                                <template is="dom-repeat" items="[[publication.publicationResourceLocator.editors]]" as="editor">
-                                    <template is="dom-if" if="[[!_checkIfLast(publication.publicationResourceLocator.editors,index)]]">
-                                        [[editor.lastName]] [[_formatInitials(editor.initials)]],
-                                    </template>
-                                    <template is="dom-if" if="[[_checkIfLast(publication.publicationResourceLocator.editors,index)]]">
-                                        [[editor.lastName]] [[_formatInitials(editor.initials)]]
-                                    </template>
-                                </template>
-                            </template>
-                        </span>
-                        <br>
-                        <span class="np-grey-text">
-                            <template is="dom-if" if="[[publication.publicationResourceLocator.name]]">(In) [[publication.publicationResourceLocator.name]],</template>
-                            <template is="dom-if" if="[[publication.firstPage]]">pp.[[publication.firstPage]]-[[publication.lastPage]],</template>
-                            <template is="dom-if" if="[[publication.publicationResourceLocator.publisher]]">[[publication.publicationResourceLocator.publisher]],</template>
-                            <template is="dom-if" if="[[publication.publicationResourceLocator.city]]">[[publication.publicationResourceLocator.city]]</template>
-                            <template is="dom-if" if="[[publication.publicationYear]]">([[publication.publicationYear]])</template>
-                        </span>
+                        <eds-and-in locator="[[publication.publicationResourceLocator]]"
+                                    first-page="[[publication.firstPage]]" last-page="[[publication.lastPage]]"
+                                    publication-year="[[publication.publicationYear]]" summary></eds-and-in>
                     </template>
                 </template>
             </template>
@@ -188,6 +177,78 @@ Publication authors with journal demo
             },
             _testType: function (type, test) {
                 return type === test;
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="eds-and-in">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            .inline-grey {
+                color: #666;
+                display: inline-block;
+            }
+        </style>
+        <template is="dom-if" if="[[locator]]">
+            <div class$="[[divClass]]">
+                <template is="dom-if" if="[[locator.editors]]">
+                    (Eds)
+                    <template is="dom-repeat" items="[[locator.editors]]" as="editor">
+                        <template is="dom-if" if="[[!_checkIfLast(locator.editors,index)]]">
+                            [[editor.lastName]] [[_formatInitials(editor.initials)]],
+                        </template>
+                        <template is="dom-if" if="[[_checkIfLast(locator.editors,index)]]">
+                            [[editor.lastName]] [[_formatInitials(editor.initials)]]
+                        </template>
+                    </template>
+                </template>
+            </div>
+            <div class$="[[divClass]]">
+                    <template is="dom-if" if="[[locator.name]]">(In) [[locator.name]],</template>
+                    <template is="dom-if" if="[[firstPage]]">pp.[[firstPage]]-[[lastPage]],</template>
+                    <template is="dom-if" if="[[locator.publisher]]">[[locator.publisher]],</template>
+                    <template is="dom-if" if="[[locator.city]]">[[locator.city]]</template>
+                    <template is="dom-if" if="[[publicationYear]]">([[publicationYear]])</template>
+            </div>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'eds-and-in',
+            properties: {
+                summary: {
+                    type: Boolean,
+                    value: false
+                },
+                editors: {
+                    type: Object
+                },
+                locator: {
+                    type: Object
+                },
+                firstPage: {
+                    type: String
+                },
+                lastPage: {
+                    type: String
+                },
+                publicationYear: {
+                    type: String
+                },
+                divClass: {
+                    type: String
+                }
+            },
+            attached: function() {
+
+                this.divClass = (this.summary) ? "inline-grey" : "";
+            },
+            _formatInitials: function (name) {
+                return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
+            },
+            _checkIfLast: function (array, index) {
+                return (array.length - 1 === index);
             }
         });
     </script>
