@@ -193,6 +193,7 @@ Publication authors with journal demo
         <template is="dom-if" if="[[locator]]">
             <div class$="[[divClass]]">
                 <template is="dom-if" if="[[locator.editors]]">
+                    <!-- TODO: add a comma before Eds in summary mode-->
                     (Eds)
                     <template is="dom-repeat" items="[[locator.editors]]" as="editor">
                         <template is="dom-if" if="[[!_checkIfLast(locator.editors,index)]]">
