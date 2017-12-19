@@ -30,14 +30,7 @@ Publication authors with journal demo
             <!-- Detailed view -->
             <template is="dom-if" if="[[!summary]]">
                 <span class="authors">
-                    <template is="dom-repeat" items="[[publication.authors]]" as="author">
-                        <template is="dom-if" if="[[!_checkIfLast(publication.authors,index)]]">
-                            <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]],</a>
-                        </template>
-                        <template is="dom-if" if="[[_checkIfLast(publication.authors,index)]]">
-                            <a href="/publications/search?query=author:[[author.lastName]] [[author.foreName]]">[[author.lastName]] [[_formatInitials(author.initials)]]</a>
-                        </template>
-                    </template>
+                    <span inner-h-t-m-l="[[_formatAuthorsUrlList(publication.authors)]]"></span>
                 </span>
 
                 <p>
@@ -85,7 +78,7 @@ Publication authors with journal demo
             <!-- Summary view -->
             <template is="dom-if" if="[[summary]]">
                 <!-- First author et al. -->
-                <span inner-h-t-m-l="[[firstAuthorAndAl]]"></span>
+                <span inner-h-t-m-l="[[_formatFirstAuthorAndAl(publication.authors)]]"></span>
 
                 <template is="dom-if" if="[[!journalYearOnly]]">
 
@@ -125,9 +118,6 @@ Publication authors with journal demo
                     type: Object,
                     observer: '_formatFirstAuthorAndAl'
                 },
-                firstAuthorAndAl: {
-                    type: String
-                },
                 journalYearOnly: {
                     type: Boolean,
                     value: false
@@ -137,34 +127,38 @@ Publication authors with journal demo
                     value: false
                 }
             },
-            _formatFirstAuthorAndAl: function () {
+            _formatFirstAuthorAndAl: function (authors) {
 
-                if (this.publication && this.publication.authors.length > 0) {
+                var firstAuthorAndAl = "";
 
-                    if (this.publication.authors.length > 2) {
-                        this.firstAuthorAndAl = this.publication.authors[0].lastName + " " + this._formatInitials(this.publication.authors[0].initials);
+                if (this.publication && authors.length > 0) {
 
-                        if (this.publication.authors.length > 1) {
-                            this.firstAuthorAndAl += " <i>et al.</i>";
+                    if (authors.length > 2) {
+                        firstAuthorAndAl = authors[0].lastName + " " + this._formatInitials(authors[0].initials);
+
+                        if (authors.length > 1) {
+                            firstAuthorAndAl += " <i>et al.</i>";
                         }
 
                         if (this.journalYearOnly) {
-                            this.firstAuthorAndAl += " (" + this.publication.publicationYear + ")";
+                            firstAuthorAndAl += " (" + this.publication.publicationYear + ")";
                         }
                         else {
-                            this.firstAuthorAndAl += ", ";
+                            firstAuthorAndAl += ", ";
                         }
                     }
-                    else if (this.publication.authors.length === 2) {
+                    else if (authors.length === 2) {
 
-                        this.firstAuthorAndAl = this.publication.authors[0].lastName + " " + this._formatInitials(this.publication.authors[0].initials) + " and "
-                            + this.publication.authors[1].lastName + " " + this._formatInitials(this.publication.authors[1].initials);
+                        firstAuthorAndAl = authors[0].lastName + " " + this._formatInitials(authors[0].initials) + " and "
+                            + authors[1].lastName + " " + this._formatInitials(authors[1].initials);
                     }
                     else {
 
-                        this.firstAuthorAndAl = this.publication.authors[0].lastName
+                        firstAuthorAndAl = authors[0].lastName
                     }
                 }
+
+                return firstAuthorAndAl;
             },
             _formatInitials: function (name) {
                 return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
@@ -177,6 +171,26 @@ Publication authors with journal demo
             },
             _testType: function (type, test) {
                 return type === test;
+            },
+            _formatAuthorsUrlList: function (authors) {
+                var urls = "";
+
+                var len = authors.length;
+                for (i=0; i<len; ++i) {
+
+                    var href = "/publications/search?query=author:"+authors[i].lastName+ " " + authors[i].foreName;
+
+                    urls += "<a href=\""+href +"\">" + authors[i].lastName+ " " + this._formatInitials(authors[i].initials)+ "</a>";
+
+                    if (i < len-1) {
+
+                        urls += ", ";
+                    }
+                }
+                return urls;
+            },
+            _checkTooLongList: function (array) {
+                return array.length > 20;
             }
         });
     </script>
