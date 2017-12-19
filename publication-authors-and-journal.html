@@ -204,6 +204,9 @@ Publication authors with journal demo
                     </template>
                 </template>
             </div>
+            <template is="dom-if" if="[[summary]]">
+                <br>
+            </template>
             <div class$="[[divClass]]">
                     <template is="dom-if" if="[[locator.name]]">(In) [[locator.name]],</template>
                     <template is="dom-if" if="[[firstPage]]">pp.[[firstPage]]-[[lastPage]],</template>
