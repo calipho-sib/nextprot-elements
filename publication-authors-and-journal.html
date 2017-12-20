@@ -37,13 +37,13 @@ Publication authors with journal demo
                     <template is="dom-if" if="[[authorUrls]]">
                         <!-- beyond max number of authors-->
                         <template is="dom-if" if="[[_isAuthorUrlListBeyondMax(authorUrls)]]">
-                            <template is="dom-if" if="[[_isAuthorUrlListCollapsed(linkMessage)]]">
+                            <template is="dom-if" if="[[_isAuthorUrlListCollapsed(accordionText)]]">
                                 <span inner-h-t-m-l="[[_collapseAuthorUrlList(authorUrls)]]"></span>
                             </template>
-                            <template is="dom-if" if="[[!_isAuthorUrlListCollapsed(linkMessage)]]">
+                            <template is="dom-if" if="[[!_isAuthorUrlListCollapsed(accordionText)]]">
                                 <span inner-h-t-m-l="[[_expandAuthorUrlListWithoutLast(authorUrls)]]"></span>
                             </template>
-                            <span><a class="grayLink" on-click="_toggleDescription">[[[linkMessage]]]</a>,</span>
+                            <span><a class="grayLink" on-click="_toggleDescription">[[[accordionText]]]</a>,</span>
                             <span inner-h-t-m-l="[[lastAuthorUrl]]"></span>
                         </template>
                         <!-- acceptable number of authors -->
@@ -154,7 +154,7 @@ Publication authors with journal demo
                     type: Number,
                     value: 20
                 },
-                linkMessage: {
+                accordionText: {
                     type: String,
                     value: "more"
                 }
@@ -253,11 +253,11 @@ Publication authors with journal demo
                 return linkName === "more";
             },
             _toggleDescription: function () {
-                if (this.linkMessage === "more") {
-                    this.linkMessage = "less";
+                if (this.accordionText === "more") {
+                    this.accordionText = "less";
                 }
                 else {
-                    this.linkMessage = "more";
+                    this.accordionText = "more";
                 }
             }
         });
