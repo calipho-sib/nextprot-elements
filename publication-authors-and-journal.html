@@ -88,6 +88,11 @@ Publication authors with journal demo
                                     first-page="[[publication.firstPage]]" last-page="[[publication.lastPage]]"
                                     publication-year="[[publication.publicationYear]]"></eds-and-in>
                     </template>
+
+                    <!-- Thesis -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'THESIS')]]">
+                        Thesis ([[publication.textDate]]), [[publication.journalResourceLocator.institute]], [[publication.journalResourceLocator.country]]</span>
+                    </template>
                 </p>
             </template>
 
@@ -120,6 +125,11 @@ Publication authors with journal demo
                         <eds-and-in locator="[[publication.publicationResourceLocator]]"
                                     first-page="[[publication.firstPage]]" last-page="[[publication.lastPage]]"
                                     publication-year="[[publication.publicationYear]]" summary></eds-and-in>
+                    </template>
+
+                    <!-- Thesis -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'THESIS')]]">
+                        <span class="np-grey-text">Thesis ([[publication.textDate]]), [[publication.journalResourceLocator.institute]], [[publication.journalResourceLocator.country]]</span>
                     </template>
                 </template>
             </template>
