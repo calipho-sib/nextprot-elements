@@ -23,7 +23,7 @@ Entry view reference
         <template is="dom-if" if="[[_isCited(refs)]]">
             <span class="cited-for">CITED FOR: </span>
             <template is="dom-repeat" items="[[_toArray(refs)]]" as="cited">
-                <a href="[[cited.1]]" class="ext-link" target='_blank'>[[cited.0]]</a>
+                <a href="[[cited.1]]" target='_blank'>[[cited.0]]</a>
             </template>
         </template>
     </template>
