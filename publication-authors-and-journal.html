@@ -166,10 +166,15 @@ Publication authors with journal demo
 
                 var firstAuthorAndAl = "";
 
-                if (authors.length > 2) {
+                if (authors.length > 0) {
                     firstAuthorAndAl = authors[0].lastName + " " + this._formatInitials(authors[0].initials);
 
-                    if (authors.length > 1) {
+                    if (authors.length === 2) {
+
+                        firstAuthorAndAl += " and "
+                            + authors[1].lastName + " " + this._formatInitials(authors[1].initials);
+                    }
+                    else if (authors.length > 2) {
                         firstAuthorAndAl += " <i>et al.</i>";
                     }
 
@@ -179,15 +184,6 @@ Publication authors with journal demo
                     else {
                         firstAuthorAndAl += ", ";
                     }
-                }
-                else if (authors.length === 2) {
-
-                    firstAuthorAndAl = authors[0].lastName + " " + this._formatInitials(authors[0].initials) + " and "
-                        + authors[1].lastName + " " + this._formatInitials(authors[1].initials);
-                }
-                else if (authors.length > 0) {
-
-                    firstAuthorAndAl = authors[0].lastName
                 }
 
                 return firstAuthorAndAl;

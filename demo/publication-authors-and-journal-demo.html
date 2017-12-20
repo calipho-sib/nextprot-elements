@@ -49,17 +49,28 @@
     <demo-snippet>
         <h3>Book type (summary view)</h3>
         <template>
-            <publication-authors-and-journal id="books" summary></publication-authors-and-journal>
+            <publication-authors-and-journal id="book-summary" summary></publication-authors-and-journal>
         </template>
     </demo-snippet>
 
     <demo-snippet>
         <h3>Book type (detailed view)</h3>
         <template>
-            <publication-authors-and-journal id="bookd"></publication-authors-and-journal>
+            <publication-authors-and-journal id="book-detailed"></publication-authors-and-journal>
         </template>
     </demo-snippet>
-
+    <demo-snippet>
+        <h3>One author thesis (summary view)</h3>
+        <template>
+            <publication-authors-and-journal id="thesis-summary" summary></publication-authors-and-journal>
+        </template>
+    </demo-snippet>
+    <demo-snippet>
+        <h3>One author thesis (detailed view)</h3>
+        <template>
+            <publication-authors-and-journal id="thesis-detailed"></publication-authors-and-journal>
+        </template>
+    </demo-snippet>
     <demo-snippet>
         <template>
             <h4>Data binding</h4>
@@ -441,8 +452,48 @@
                     "journalResourceLocator": null
                 };
 
-                document.getElementById("books").publication = book;
-                document.getElementById("bookd").publication = book;
+                var thesis = {
+                    "md5" : "33816f917d0837fa276f6caea923a9a4",
+                    "title" : "",
+                    "abstractText" : "",
+                    "publicationType" : "THESIS",
+                    "publicationDate" : 978303600000,
+                    "textDate" : "2001",
+                    "submission" : null,
+                    "authors" : [ {
+                        "authorId" : 44994677,
+                        "lastName" : "Schmidt",
+                        "foreName" : "T.",
+                        "initials" : "T.",
+                        "suffix" : "",
+                        "rank" : 0,
+                        "person" : true,
+                        "publicationId" : 15624251,
+                        "editor" : false
+                    } ],
+                    "dbXrefs" : [ ],
+                    "publicationResourceLocator" : null,
+                    "publicationId" : 15624251,
+                    "editors" : [ ],
+                    "publicationYear" : "2001",
+                    "publicationLocatorName" : null,
+                    "volume" : "",
+                    "firstPage" : "",
+                    "localizable" : false,
+                    "locatedInScientificJournal" : false,
+                    "locatedInEditedVolumeBook" : false,
+                    "localizableInBookMedium" : false,
+                    "issue" : "",
+                    "lastPage" : "",
+                    "publisherName" : "",
+                    "publisherCity" : "",
+                    "journalResourceLocator" : null
+                }
+
+                document.getElementById("book-summary").publication = book;
+                document.getElementById("book-detailed").publication = book;
+                document.getElementById("thesis-summary").publication = thesis;
+                document.getElementById("thesis-detailed").publication = thesis;
             </script>
         </template>
     </demo-snippet>
