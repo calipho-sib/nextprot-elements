@@ -24,10 +24,6 @@ Publication authors with journal demo
             .np-grey-text {
                 color: #666;
             }
-
-            .grayLink {
-                color: grey;
-            }
         </style>
         <template is="dom-if" if="[[publication]]">
 
@@ -43,7 +39,7 @@ Publication authors with journal demo
                             <template is="dom-if" if="[[!_isAuthorUrlListCollapsed(accordionText)]]">
                                 <span inner-h-t-m-l="[[_expandAuthorUrlListWithoutLast(authorUrls)]]"></span>
                             </template>
-                            <span><a class="grayLink" on-click="_toggleDescription">[[[accordionText]]]</a>,</span>
+                            <span><a style="color:grey;" on-click="_toggleDescription">[[[accordionText]]]</a>,</span>
                             <span inner-h-t-m-l="[[lastAuthorUrl]]"></span>
                         </template>
                         <!-- acceptable number of authors -->
