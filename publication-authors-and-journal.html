@@ -43,7 +43,7 @@ Publication authors with journal demo
                             <template is="dom-if" if="[[!_isAuthorUrlListCollapsed(linkMessage)]]">
                                 <span inner-h-t-m-l="[[_expandAuthorUrlListWithoutLast(authorUrls)]]"></span>
                             </template>
-                            <span><a class="grayLink" on-click="_toggleDescription">[[[linkMessage]]]</a></span>
+                            <span><a class="grayLink" on-click="_toggleDescription">[[[linkMessage]]]</a>,</span>
                             <span inner-h-t-m-l="[[lastAuthorUrl]]"></span>
                         </template>
                         <!-- acceptable number of authors -->
@@ -224,12 +224,12 @@ Publication authors with journal demo
             _collapseAuthorUrlList: function (authorUrlList) {
 
                 if (authorUrlList.length > this.authorsMax) {
-                    return this._concatAuthorUrlList(authorUrlList.slice(0, this.authorsMax-1));
+                    return this._concatAuthorUrlList(authorUrlList.slice(0, this.authorsMax-1))+ ",";
                 }
-                return this._concatAuthorUrlList(authorUrlList);
+                return this._concatAuthorUrlList(authorUrlList)
             },
             _expandAuthorUrlListWithoutLast: function (authorUrlList) {
-                return this._concatAuthorUrlList(authorUrlList.slice(0, authorUrlList.length-1));
+                return this._concatAuthorUrlList(authorUrlList.slice(0, authorUrlList.length-1))+ ",";
             },
             _concatAuthorUrlList: function (authorUrlList) {
                 var urls = "";
