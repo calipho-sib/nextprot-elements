@@ -24,18 +24,38 @@ Publication authors with journal demo
             .np-grey-text {
                 color: #666;
             }
+
+            .grayLink {
+                color: grey;
+            }
         </style>
         <template is="dom-if" if="[[publication]]">
 
             <!-- Detailed view -->
             <template is="dom-if" if="[[!summary]]">
                 <span class="authors">
-                    <span inner-h-t-m-l="[[_formatAuthorsUrlList(publication.authors)]]"></span>
+                    <template is="dom-if" if="[[authorUrls]]">
+                        <!-- beyond max number of authors-->
+                        <template is="dom-if" if="[[_isAuthorUrlListBeyondMax(authorUrls)]]">
+                            <template is="dom-if" if="[[_isAuthorUrlListCollapsed(linkMessage)]]">
+                                <span inner-h-t-m-l="[[_collapseAuthorUrlList(authorUrls)]]"></span>
+                            </template>
+                            <template is="dom-if" if="[[!_isAuthorUrlListCollapsed(linkMessage)]]">
+                                <span inner-h-t-m-l="[[_expandAuthorUrlListWithoutLast(authorUrls)]]"></span>
+                            </template>
+                            <span><a class="grayLink" on-click="_toggleDescription">[[[linkMessage]]]</a></span>
+                            <span inner-h-t-m-l="[[lastAuthorUrl]]"></span>
+                        </template>
+                        <!-- acceptable number of authors -->
+                        <template is="dom-if" if="[[!_isAuthorUrlListBeyondMax(authorUrls)]]">
+                            <span inner-h-t-m-l="[[_concatAuthorUrlList(authorUrls)]]"></span>
+                        </template>
+                    </template>
                 </span>
 
                 <p>
                     <!-- Article -->
-                    <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]">
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'ARTICLE')]]">
                         [[publication.journalResourceLocator.abbrev]]
                         <template is="dom-if" if="[[publication.volume]]">
                             <strong>[[publication.volume]],</strong>
@@ -53,13 +73,13 @@ Publication authors with journal demo
                     </template>
 
                     <!-- Submission -->
-                    <template is="dom-if" if="[[_testType(publication.publicationType, 'SUBMISSION')]]">
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'SUBMISSION')]]">
                         [[publication.submission]]
                         ([[publication.textDate]])
                     </template>
 
                     <!-- Patent -->
-                    <template is="dom-if" if="[[_testType(publication.publicationType, 'PATENT')]]">
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'PATENT')]]">
                         Patent number [[dbXrefs.0.accession]]([[publication.textDate]])
                         <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
                             [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
@@ -67,7 +87,7 @@ Publication authors with journal demo
                     </template>
 
                     <!-- Book -->
-                    <template is="dom-if" if="[[_testType(publication.publicationType, 'BOOK')]]">
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'BOOK')]]">
                         <eds-and-in locator="[[publication.publicationResourceLocator]]"
                                     first-page="[[publication.firstPage]]" last-page="[[publication.lastPage]]"
                                     publication-year="[[publication.publicationYear]]"></eds-and-in>
@@ -83,24 +103,24 @@ Publication authors with journal demo
                 <template is="dom-if" if="[[!journalYearOnly]]">
 
                     <!-- Submission -->
-                    <template is="dom-if" if="[[_testType(publication.publicationType, 'SUBMISSION')]]">
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'SUBMISSION')]]">
                         <span class="np-grey-text">[[publication.submission]] ([[publication.textDate]])</span>
                     </template>
 
                     <!-- Patent -->
-                    <template is="dom-if" if="[[_testType(publication.publicationType, 'PATENT')]]">
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'PATENT')]]">
                         <span class="np-grey-text">Patent number [[publication.dbXrefs.0.accession]] ([[publication.textDate]])</span>
                     </template>
 
                     <!-- Article -->
-                    <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]"> [[publication.journalResourceLocator.medAbbrev]]
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'ARTICLE')]]"> [[publication.journalResourceLocator.medAbbrev]]
                         <template is="dom-if" if="[[publication.volume]]"><strong>[[publication.volume]],</strong></template>
                         <template is="dom-if" if="[[publication.firstPage]]">[[publication.firstPage]]-[[publication.lastPage]]</template>
                         <template is="dom-if" if="[[publication.publicationYear]]">([[publication.publicationYear]])</template>
                     </template>
 
                     <!-- Book -->
-                    <template is="dom-if" if="[[_testType(publication.publicationType, 'BOOK')]]">
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'BOOK')]]">
                         <eds-and-in locator="[[publication.publicationResourceLocator]]"
                                     first-page="[[publication.firstPage]]" last-page="[[publication.lastPage]]"
                                     publication-year="[[publication.publicationYear]]" summary></eds-and-in>
@@ -116,49 +136,78 @@ Publication authors with journal demo
             properties: {
                 publication: {
                     type: Object,
-                    observer: '_formatFirstAuthorAndAl'
+                    observer: '_formatAuthors'
                 },
                 journalYearOnly: {
                     type: Boolean,
                     value: false
                 },
+                authorUrls: {
+                    type: Array,
+                    value: []
+                },
                 summary: {
                     type: Boolean,
                     value: false
+                },
+                authorsMax: {
+                    type: Number,
+                    value: 20
+                },
+                linkMessage: {
+                    type: String,
+                    value: "more"
                 }
             },
-            _formatFirstAuthorAndAl: function (authors) {
+            _formatAuthors: function() {
+
+                this.authorUrls = this._formatAuthorsAsUrls(this.publication.authors);
+                if (this.publication.authors.length > 0) {
+                    this.lastAuthorUrl = this.authorUrls[this.publication.authors.length - 1];
+                }
+            },
+            _formatFirstAuthorAndAl: function(authors) {
 
                 var firstAuthorAndAl = "";
 
-                if (this.publication && authors.length > 0) {
+                if (authors.length > 2) {
+                    firstAuthorAndAl = authors[0].lastName + " " + this._formatInitials(authors[0].initials);
 
-                    if (authors.length > 2) {
-                        firstAuthorAndAl = authors[0].lastName + " " + this._formatInitials(authors[0].initials);
-
-                        if (authors.length > 1) {
-                            firstAuthorAndAl += " <i>et al.</i>";
-                        }
-
-                        if (this.journalYearOnly) {
-                            firstAuthorAndAl += " (" + this.publication.publicationYear + ")";
-                        }
-                        else {
-                            firstAuthorAndAl += ", ";
-                        }
+                    if (authors.length > 1) {
+                        firstAuthorAndAl += " <i>et al.</i>";
                     }
-                    else if (authors.length === 2) {
 
-                        firstAuthorAndAl = authors[0].lastName + " " + this._formatInitials(authors[0].initials) + " and "
-                            + authors[1].lastName + " " + this._formatInitials(authors[1].initials);
+                    if (this.journalYearOnly) {
+                        firstAuthorAndAl += " (" + this.publication.publicationYear + ")";
                     }
                     else {
-
-                        firstAuthorAndAl = authors[0].lastName
+                        firstAuthorAndAl += ", ";
                     }
+                }
+                else if (authors.length === 2) {
+
+                    firstAuthorAndAl = authors[0].lastName + " " + this._formatInitials(authors[0].initials) + " and "
+                        + authors[1].lastName + " " + this._formatInitials(authors[1].initials);
+                }
+                else if (authors.length > 0) {
+
+                    firstAuthorAndAl = authors[0].lastName
                 }
 
                 return firstAuthorAndAl;
+            },
+            _formatAuthorsAsUrls: function (authors) {
+
+                var len = authors.length;
+                var urls = [];
+                for (var i=0; i<len; ++i) {
+
+                    var author = authors[i];
+                    var href = "/publications/search?query=author:"+author.lastName+ " " + author.foreName;
+
+                    urls.push("<a href=\""+href +"\">" + author.lastName+ " " + this._formatInitials(author.initials)+ "</a>");
+                }
+                return urls;
             },
             _formatInitials: function (name) {
                 return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
@@ -169,28 +218,47 @@ Publication authors with journal demo
             _formatXrefLabel: function (name) {
                 return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
             },
-            _testType: function (type, test) {
+            _isType: function (type, test) {
                 return type === test;
             },
-            _formatAuthorsUrlList: function (authors) {
+            _collapseAuthorUrlList: function (authorUrlList) {
+
+                if (authorUrlList.length > this.authorsMax) {
+                    return this._concatAuthorUrlList(authorUrlList.slice(0, this.authorsMax-1));
+                }
+                return this._concatAuthorUrlList(authorUrlList);
+            },
+            _expandAuthorUrlListWithoutLast: function (authorUrlList) {
+                return this._concatAuthorUrlList(authorUrlList.slice(0, authorUrlList.length-1));
+            },
+            _concatAuthorUrlList: function (authorUrlList) {
                 var urls = "";
 
-                var len = authors.length;
-                for (i=0; i<len; ++i) {
+                var len = authorUrlList.length;
 
-                    var href = "/publications/search?query=author:"+authors[i].lastName+ " " + authors[i].foreName;
+                for (var i = 0; i < len; ++i) {
 
-                    urls += "<a href=\""+href +"\">" + authors[i].lastName+ " " + this._formatInitials(authors[i].initials)+ "</a>";
+                    urls += authorUrlList[i];
 
-                    if (i < len-1) {
-
+                    if (i < len - 1) {
                         urls += ", ";
                     }
                 }
                 return urls;
             },
-            _checkTooLongList: function (array) {
-                return array.length > 20;
+            _isAuthorUrlListBeyondMax: function (array) {
+                return array.length > this.authorsMax;
+            },
+            _isAuthorUrlListCollapsed: function (linkName) {
+                return linkName === "more";
+            },
+            _toggleDescription: function () {
+                if (this.linkMessage === "more") {
+                    this.linkMessage = "less";
+                }
+                else {
+                    this.linkMessage = "more";
+                }
             }
         });
     </script>
