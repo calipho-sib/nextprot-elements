@@ -56,8 +56,10 @@ Publication item demo
 
             <!-- Direct links -->
             <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope">
-                <span class="annotscope-bg">[[annotscope.database]]</span>
-                <span>[[annotscope.label]]</span>
+                <div>
+                    <span class="annotscope-bg">[[annotscope.database]]</span>
+                    <span>[[annotscope.label]]</span>
+                </div>
             </template>
         </template>
     </template>
