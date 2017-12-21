@@ -91,7 +91,7 @@ Publication authors with journal demo
 
                     <!-- Thesis -->
                     <template is="dom-if" if="[[_isType(publication.publicationType, 'THESIS')]]">
-                        Thesis ([[publication.textDate]]), [[publication.journalResourceLocator.institute]], [[publication.journalResourceLocator.country]]</span>
+                        Thesis ([[publication.textDate]]), [[publication.publicationResourceLocator.institute]], [[publication.publicationResourceLocator.country]]</span>
                     </template>
 
                     <!-- Unpublished observation -->
@@ -134,7 +134,7 @@ Publication authors with journal demo
 
                     <!-- Thesis -->
                     <template is="dom-if" if="[[_isType(publication.publicationType, 'THESIS')]]">
-                        <span class="np-grey-text">Thesis ([[publication.textDate]]), [[publication.journalResourceLocator.institute]], [[publication.journalResourceLocator.country]]</span>
+                        <span class="np-grey-text">Thesis ([[publication.textDate]]), [[publication.publicationResourceLocator.institute]], [[publication.publicationResourceLocator.country]]</span>
                     </template>
 
                     <!-- Unpublished observation -->
