@@ -59,7 +59,9 @@ Publication item demo
                 <div>
                     <span>
                         <span class="annotscope-bg">[[annotscope.database]]</span>
-                        [<a class='ext-link' href="[[annotscope.link]]">[[annotscope.accession]]</a>]
+                        <template is="dom-if" if="[[!_isUniprotKB(annotscope.database)]]">
+                            [<a class='ext-link' href="[[annotscope.link]]">[[annotscope.accession]]</a>]
+                        </template>
                         <span>[[annotscope.label]]</span>
                     </span>
                 </div>
@@ -80,6 +82,9 @@ Publication item demo
             },
             _toView: function (summary) {
                 return (summary) ? "summary" : "detailed";
+            },
+            _isUniprotKB: function (database) {
+                return database === "UniProtKB";
             }
         });
     </script>
