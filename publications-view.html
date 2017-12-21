@@ -132,6 +132,8 @@ Publications listing used in curated and additional publications pages.
             attached: function () {
 
                 this.pageSize = this._getPreferedPageSizeFromLocalStorage();
+
+                console.log("page size", this.pageSize);
                 this._initApiClient();
 
                 if (this.nxConfig.pubType in this.expectedPubTypes) {
@@ -174,7 +176,7 @@ Publications listing used in curated and additional publications pages.
                 return parseInt(localStorageSizeValue);
             },
             _changePageSize: function (evt) {
-                this.pageSize = parseInt(evt.srcElement[evt.srcElement.selectedIndex].value);
+                this.pageSize = parseInt(evt.target[evt.target.selectedIndex].value);
                 localStorage.setItem(this._preferedPageSizeName, this.pageSize);
             },
             _handleResponseData: function (data) {
