@@ -57,7 +57,7 @@ Publication authors with journal demo
                             <strong>[[publication.volume]],</strong>
                         </template>
                         <template is="dom-if" if="[[publication.firstPage]]">
-                            [[publication.firstPage]]-[[publication.lastPage]]
+                            [[pages]]
                         </template>
                         <template is="dom-if" if="[[publication.publicationYear]]">
                             ([[publication.publicationYear]])
@@ -121,7 +121,7 @@ Publication authors with journal demo
                     <!-- Article -->
                     <template is="dom-if" if="[[_isType(publication.publicationType, 'ARTICLE')]]"> [[publication.journalResourceLocator.medAbbrev]]
                         <template is="dom-if" if="[[publication.volume]]"><strong>[[publication.volume]],</strong></template>
-                        <template is="dom-if" if="[[publication.firstPage]]">[[publication.firstPage]]-[[publication.lastPage]]</template>
+                        <template is="dom-if" if="[[publication.firstPage]]">[[pages]]</template>
                         <template is="dom-if" if="[[publication.publicationYear]]">([[publication.publicationYear]])</template>
                     </template>
 
@@ -152,7 +152,7 @@ Publication authors with journal demo
             properties: {
                 publication: {
                     type: Object,
-                    observer: '_formatAuthors'
+                    observer: '_formatPublicationData'
                 },
                 journalYearOnly: {
                     type: Boolean,
@@ -175,11 +175,32 @@ Publication authors with journal demo
                     value: "more"
                 }
             },
-            _formatAuthors: function() {
+            _formatPublicationData: function() {
 
+                // authors
                 this.authorUrls = this._formatAuthorsAsUrls(this.publication.authors);
                 if (this.publication.authors.length > 0) {
                     this.lastAuthorUrl = this.authorUrls[this.publication.authors.length - 1];
+                }
+
+                // pages
+                if (this.publication.firstPage) {
+
+                    var firstPage = this.publication.firstPage;
+                    var lastPage = firstPage;
+
+                    if (this.publication.lastPage) {
+
+                        lastPage = this.publication.lastPage;
+                    }
+
+                    if (firstPage === lastPage) {
+
+                        this.pages = firstPage;
+                    }
+                    else {
+                        this.pages = firstPage + "-" + lastPage;
+                    }
                 }
             },
             _formatFirstAuthorAndAl: function(authors) {
