@@ -25,32 +25,44 @@ Publication item demo
                 <b>[[publication.publicationLocatorName]]</b>
                 <template is="dom-if" if="[[!_testView(view, 'summary')]]">
                     <p>
+                        <template is="dom-if" if="[[publication.title]]">
+                            [[publication.title]]
+                        </template>
                         <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
                             [[[_formatXrefLabel(xref.databaseName)]]:
                             <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
                         </template>
                     </p>
                 </template>
+                <template is="dom-if" if="[[_testView(view, 'summary')]]">
+                    <p>
+                        <template is="dom-if" if="[[publication.title]]">
+                            [[publication.title]]
+                        </template>
+                    </p>
+                </template>
             </template>
 
-            <!-- Title -->
-            <template is="dom-if" if="[[!_testView(view, 'standard')]]">
-                <publication-title title="[[publication.title]]"
-                                   link-id="[[publication.publicationId]]"></publication-title>
-            </template>
-            <template is="dom-if" if="[[_testView(view, 'standard')]]">
-                <publication-title title="[[publication.title]]"></publication-title>
-            </template>
+            <template is="dom-if" if="[[!_testType(publication.publicationType, 'ONLINE_PUBLICATION')]]">
+                <!-- Title -->
+                <template is="dom-if" if="[[!_testView(view, 'standard')]]">
+                    <publication-title title="[[publication.title]]"
+                                       link-id="[[publication.publicationId]]"></publication-title>
+                </template>
+                <template is="dom-if" if="[[_testView(view, 'standard')]]">
+                    <publication-title title="[[publication.title]]"></publication-title>
+                </template>
 
-            <!-- Authors -->
-            <publication-authors-and-journal publication="[[publication]]"
-                                      summary$="[[_testView(view, 'summary')]]"></publication-authors-and-journal>
+                <!-- Authors -->
+                <publication-authors-and-journal publication="[[publication]]"
+                                          summary$="[[_testView(view, 'summary')]]"></publication-authors-and-journal>
 
-            <!-- Abstract -->
-            <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]">
-                <template is="dom-if" if="[[!_testView(view, 'summary')]]">
-                    <publication-abstract abstract="[[publication.abstractText]]"
-                                      interactive$="[[_testView(view, 'detailed')]]"></publication-abstract>
+                <!-- Abstract -->
+                <template is="dom-if" if="[[_testType(publication.publicationType, 'ARTICLE')]]">
+                    <template is="dom-if" if="[[!_testView(view, 'summary')]]">
+                        <publication-abstract abstract="[[publication.abstractText]]"
+                                          interactive$="[[_testView(view, 'detailed')]]"></publication-abstract>
+                    </template>
                 </template>
             </template>
         </template>
