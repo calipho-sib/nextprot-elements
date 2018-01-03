@@ -18,14 +18,14 @@ Publication title item demo
             }
         </style>
         <template is="dom-if" if="[[title]]">
-            <p>
+            <div>
                 <template is="dom-if" if="[[linkId]]">
                     <a class="title-link" href="/publication/[[linkId]]" target='_parent'>[[title]]</a>
                 </template>
                 <template is="dom-if" if="[[!linkId]]">
                     <strong>[[title]]</strong>
                 </template>
-            </p>
+            </div>
         </template>
 
     </template>
