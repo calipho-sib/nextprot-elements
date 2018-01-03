@@ -57,9 +57,8 @@ Publication with linked entries view demo
                 padding-top: 5px;
             }
 
-            .yellow-button {
-                text-transform: none;
-                color: #eeff41;
+            .more-bottom-margin {
+                margin-bottom: 5px;
             }
 
         </style>
@@ -67,7 +66,7 @@ Publication with linked entries view demo
         <template is="dom-if" if="[[data]]">
             <div class="row padded-bottom">
                 <div class="col-md-12">
-                    <div class="title-header">
+                    <div class="title-header more-bottom-margin">
                         <publication-authors-and-journal publication="[[data.publication]]" summary
                                                          journal-year-only></publication-authors-and-journal>
                     </div>
