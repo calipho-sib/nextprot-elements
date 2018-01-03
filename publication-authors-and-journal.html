@@ -24,6 +24,10 @@ Publication authors with journal demo
             .np-grey-text {
                 color: #666;
             }
+
+            .journal {
+                margin-bottom: 5px;
+            }
         </style>
         <template is="dom-if" if="[[publication]]">
 
@@ -49,7 +53,7 @@ Publication authors with journal demo
                     </template>
                 </span>
 
-                <p>
+                <div class="journal">
                     <!-- Article -->
                     <template is="dom-if" if="[[_isType(publication.publicationType, 'ARTICLE')]]">
                         [[publication.journalResourceLocator.abbrev]]
@@ -98,7 +102,7 @@ Publication authors with journal demo
                     <template is="dom-if" if="[[_isType(publication.publicationType, 'UNPUBLISHED_OBSERVATION')]]">
                         Unpublished observations ([[publication.textDate]])</span>
                     </template>
-                </p>
+                </div>
             </template>
 
             <!-- Summary view -->
