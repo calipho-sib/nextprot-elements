@@ -16,6 +16,7 @@
     "paper-icon-button": "2.0.0",
     "paper-toggle-button": "^1.3.0",
     "paper-input": "2.0.1",
+    "paper-toast": "1.3.1",
     "neon-animation": "~1.2.4",
     "paper-spinner": "^1.2.1",
     "shibui-dropdown-menu": "https://github.com/ShibuiElements/shibui-dropdown-menu.git#^1.0.0",

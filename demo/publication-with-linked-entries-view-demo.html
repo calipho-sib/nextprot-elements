@@ -21,9 +21,16 @@
     <h3>Basic publication-with-linked-entries-view demo</h3>
 
     <demo-snippet>
+        <h3>Publication with less than 500 relevant entries</h3>
         <template>
             <publication-with-linked-entries-view nx-config='{"env": "dev", "publicationId": "28091658"}'></publication-with-linked-entries-view>
+        </template>
+    </demo-snippet>
 
+    <demo-snippet>
+        <h3>Publication with more than 500 relevant entries</h3>
+        <template>
+            <publication-with-linked-entries-view nx-config='{"env": "dev", "publicationId": "633392"}'></publication-with-linked-entries-view>
             <!--
             time wget --no-check-certificate https://dev-api.nextprot.org/entry-publications/pubid/{pubid}.json
 
@@ -34,7 +41,6 @@
             37497137	1016       3"         1.5
             39191461	499        1.3"       0.7
             -->
-
         </template>
     </demo-snippet>
 </div>

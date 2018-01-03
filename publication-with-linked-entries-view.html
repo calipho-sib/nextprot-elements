@@ -1,6 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
 
@@ -27,7 +29,7 @@ Publication with linked entries view demo
 
             .control-header {
                 margin: 10px 0;
-                padding-bottom: 25px;
+                padding-bottom: 10px;
                 display: flex;
                 border-bottom: 1px solid #E7EAEC;
             }
@@ -53,6 +55,11 @@ Publication with linked entries view demo
 
             .padded-top {
                 padding-top: 5px;
+            }
+
+            .yellow-button {
+                text-transform: none;
+                color: #eeff41;
             }
 
         </style>
@@ -83,6 +90,10 @@ Publication with linked entries view demo
                                 <template is="dom-if" if="[[data.entries]]">Proteins [[from]] to [[to]] of
                                     [[data.entries.length]]
                                 </template>
+                                <template is="dom-if" if="[[_beyondMaximumEntries(data.relatedEntryCount)]]">
+                                    <span class="text-warning" title="The first 500 most relevant entries were displayed below."><span class="glyphicon glyphicon-warning-sign"></span> over [[data.relatedEntryCount]]</span>
+                                    <!--<a class="text-warning" onclick="toast.toggle()" title="The first 500 most relevant entries were displayed below."><span class="glyphicon glyphicon-warning-sign"></span> over [[data.relatedEntryCount]]</a>-->
+                                </template>
                             </div>
                             <div class="col-lg-2">
                                 show&nbsp;
@@ -102,6 +113,13 @@ Publication with linked entries view demo
                                 </div>
                             </div>
                         </div>
+
+                        <!-- <template is="dom-if" if="[[_beyondMaximumEntries(data.relatedEntryCount)]]">
+                            <paper-toast id="toast" class="fit-bottom" duration="0" text="The 500 first relevant entries over [[data.relatedEntryCount]] were displayed above." opened>
+                                <paper-button onclick="toast.toggle()" class="text-info">Close</paper-button>
+                            </paper-toast>
+                        </template>
+                        -->
                         <paginator-element items="[[data.entries]]" layout="entry-item"
                                            page-size="[[pageSize]]" bind-attribute="summary" bind-value="[[summary]]"
                                            from="{{from}}" to="{{to}}"></paginator-element>
@@ -218,6 +236,9 @@ Publication with linked entries view demo
             },
             _toView: function (summary) {
                 return (summary) ? "summary" : "detailed";
+            },
+            _beyondMaximumEntries: function (count) {
+                return count > 500;
             }
         });
     </script>
