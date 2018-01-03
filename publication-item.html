@@ -32,10 +32,6 @@ Publication item demo
                 padding-bottom: var(--publication-item-margin-bottom);
             }
 
-            p {
-                margin: 0 0 5px;
-            }
-
             .annotscope-bg {
                 background-color: #dedede;
                 color: #7A7A7A;
@@ -49,21 +45,17 @@ Publication item demo
             <!-- view={"standard", "detailed", "summary"} -->
             <np-publication publication="[[data.publication]]" view="[[_toView(summary)]]"></np-publication>
 
-            <p></p>
-
             <!-- Cited For -->
             <entry-view-reference refs="[[data.citedInViews]]"></entry-view-reference>
 
             <!-- Direct links -->
             <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope">
                 <div>
-                    <span>
-                        <span class="annotscope-bg">[[annotscope.database]]</span>
-                        <template is="dom-if" if="[[!_isUniprotKB(annotscope.database)]]">
-                            [<a class='ext-link' href="[[annotscope.link]]">[[annotscope.accession]]</a>]
-                        </template>
-                        <span>[[annotscope.label]]</span>
-                    </span>
+                    <span class="annotscope-bg">[[annotscope.database]]</span>
+                    <template is="dom-if" if="[[!_isUniprotKB(annotscope.database)]]">
+                        [<a class='ext-link' href="[[annotscope.link]]">[[annotscope.accession]]</a>]
+                    </template>
+                    <span>[[annotscope.label]]</span>
                 </div>
             </template>
         </template>
