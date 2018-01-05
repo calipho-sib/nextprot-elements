@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="quality-label.html">
 <link rel="import" href="publication-item.html">
+<link rel="import" href="publication-item2.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
 <!--
@@ -92,7 +93,7 @@ Block element representing an evidence record.
                     </template>
                     <template is="dom-if" if="[[data.publication]]">
                         <div class="evidence-publication">
-                            <publication-item data="[[data.publication]]"></publication-item>
+                            <np-publication publication="[[data.publication]]" view="detailed"></np-publication>
                         </div>
                     </template>
                     <template is="dom-if" if="[[data.context.disease]]">
