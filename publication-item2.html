@@ -1,0 +1,86 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+
+<link rel="import" href="publication.html">
+<link rel="import" href="entry-view-reference.html">
+
+<!--
+`publication-item`
+Publication item demo
+
+##### Example of full publication
+
+      <publication-item></publication-item>
+
+##### Example of summary
+
+      <publication-item summary></publication-item>
+
+##### Example of only show abstract
+
+      <publication-item show-abstract></publication-item>
+
+@demo demo/publication-item-demo.html
+-->
+<dom-module id="publication-item">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                border-bottom: var(--publication-item-border-bottom);
+                margin-bottom: var(--publication-item-padding-bottom);
+                padding-bottom: var(--publication-item-margin-bottom);
+            }
+
+            .annotscope-bg {
+                background-color: #dedede;
+                color: #7A7A7A;
+                border-radius: 5px;
+                padding: 1px 3px;
+                font-size: 11px;
+            }
+        </style>
+        <template is="dom-if" if="[[data]]">
+
+            <!-- view={"standard", "detailed", "summary"} -->
+            <np-publication publication="[[data.publication]]" view="[[_toView(summary)]]"></np-publication>
+
+            <!-- Cited For -->
+            <entry-view-reference refs="[[data.citedInViews]]"></entry-view-reference>
+
+            <!-- Direct links -->
+            <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope">
+                <div>
+                    <span class="annotscope-bg">[[annotscope.database]]</span>
+                    <template is="dom-if" if="[[!_isUniprotKB(annotscope.database)]]">
+                        [<a class='ext-link' href="[[annotscope.link]]">[[annotscope.accession]]</a>]
+                    </template>
+                    <span>[[annotscope.label]]</span>
+                </div>
+            </template>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'publication-item',
+            properties: {
+                data: {
+                    type: Object
+                },
+                summary: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            ready: function () {
+                console.log("DATA", this.data)
+            },
+            _toView: function (summary) {
+                return (summary) ? "summary" : "detailed";
+            },
+            _isUniprotKB: function (database) {
+                return database === "UniProtKB";
+            }
+        });
+    </script>
+</dom-module>
