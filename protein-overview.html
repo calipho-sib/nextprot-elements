@@ -357,7 +357,7 @@ Protein overview
       </div>
     </div>
     </iron-collapse>
-    <p class="paragraph"><template is="dom-if" if="[[data.proteineEvidence]]">[[data.proteineEvidence]]. [[data.proteineEvidenceCaution]]</template></p>
+    <p class="paragraph"><template is="dom-if" if="[[data.proteinEvidence]]">[[data.proteinEvidence]]. [[data.proteinEvidenceCaution]]</template></p>
   </template>
   <script>
     Polymer({
@@ -499,8 +499,8 @@ Protein overview
           "families": overview.families.map(function (f) {
             return NXUtils.getFamily(f, {})
           }),
-          "proteineEvidence": NXUtils.getProteinExistence(overview.proteinExistence),
-          "proteineEvidenceCaution": overview.proteinExistenceInfo,
+            "proteinEvidence": this._updateProteinExistenceText(overview.proteinExistence.description),
+          "proteinEvidenceCaution": overview.proteinExistenceInfo,
           "integDate": overview.history.formattedNextprotIntegrationDate,
           "lastUpdate": overview.history.formattedNextprotUpdateDate,
           "UniprotIntegDate": overview.history.formattedUniprotIntegrationDate,
@@ -534,7 +534,19 @@ Protein overview
       },
       _pluralize: function(item){
         return item.length > 1 ? "s" : "";
-      }
+      },
+        _updateProteinExistenceText: function(term){
+            var existence = term.toLowerCase();
+            var mainSentence = "Entry whose protein(s) existence is ";
+            switch(existence) {
+                case "uncertain":
+                    return mainSentence + existence;
+                case "inferred from homology":
+                    return mainSentence + existence;
+                default:
+                    return mainSentence + "based on " + existence;
+            }
+        }
     });
   </script>
 </dom-module>
