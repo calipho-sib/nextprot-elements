@@ -523,18 +523,9 @@ Protein overview
                 // fetch data from overview
                 this._npClient.getProteinOverview(self.nxConfig.entry).then(function (overview) {
 
-                    // get protein existence information
-                    self._npClient.getJSON("/entry/" + self.nxConfig.entry + "/protein-existences.json")
-                        .then(function (proteinExistences) {
-                            var proteinEvidence = self._updateProteinExistenceText(proteinExistences.proteinExistenceInferred.proteinExistence.description)
-
-                            // load data
-                            self._loadData(overview, proteinEvidence);
-                            self.$.spinner.active = false;
-                        })
-                        .catch(function (error) {
-                            self._handleError(error);
-                        });
+                    // load data
+                    self._loadData(overview);
+                    self.$.spinner.active = false;
                 }, function (error) {
                     self._handleError(error);
                 });
@@ -548,7 +539,7 @@ Protein overview
                     this._npClient.updateEnvironment(this.nxConfig.env);
                 }
             },
-            _loadData: function (overview, proteinEvidence) {
+            _loadData: function (overview) {
                 var EC = [];
                 var short = [];
                 if (overview.recommendedProteinName.synonyms) {
@@ -597,7 +588,7 @@ Protein overview
                     "families": overview.families.map(function (f) {
                         return NXUtils.getFamily(f, {})
                     }),
-                    "proteinEvidence": proteinEvidence,
+                    "proteinEvidence": this._updateProteinExistenceText(overview.proteinExistences.proteinExistenceInferred.proteinExistence.description),
                     //"proteinEvidenceCaution": overview.proteinExistenceInfo,
                     "integDate": overview.history.formattedNextprotIntegrationDate,
                     "lastUpdate": overview.history.formattedNextprotUpdateDate,
