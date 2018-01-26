@@ -94,7 +94,6 @@ View listing identifiers annotations.
                 result = {};
                 var self = this;
                 identifiers.forEach(function(identifier){
-                    console.log(identifier);
                     var catKey = identifier.databaseCategory;
                     if (! result.hasOwnProperty(catKey)) result[catKey]={};
                     var catObj = result[catKey];
@@ -103,7 +102,6 @@ View listing identifiers annotations.
                     catObj[typKey].push({accession:identifier.name, link:identifier.link});
                 });
                 this.identifiers = result;
-                console.log(this.identifiers);
             },
             _checkAnnotations: function(){
                 if(this.annotationsCount===0) this.$.nxAnnotations.hidden=true;
