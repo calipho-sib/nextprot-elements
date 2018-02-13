@@ -1,0 +1,476 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="publication.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`experimental-context`
+Experimental context demo
+
+##### Example of full publication
+
+      <experimental-context></experimental-context>
+
+@demo demo/experimental-context-demo.html
+-->
+<dom-module id="experimental-context">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+            
+            .exp-context {
+                margin-bottom: 10px;
+                /*                padding-left:10px;*/
+            }
+            
+            .exp-title {
+                font-size: 12px;
+                font-weight: 900;
+                margin-bottom: 2px;
+            }
+            
+            .exp-description {
+                font-size: 11px;
+                font-weight: 300;
+                padding-left: 10px;
+            }
+            
+            span[pushed] .expContDisplayStatus:before {
+                content: "Hide";
+                display: inline-block;
+            }
+            
+            span .expContDisplayStatus:before {
+                content: "Show";
+            }
+            #expContButton{
+                font-size:12px;
+                line-height:14px;
+                text-shadow: 1px -1px 0px #fff;
+                font-weight:500;
+                padding:4px 8px;
+                background-color: #f7f7f7;
+                margin-bottom:5px;
+            }
+            .fa-flask{
+                margin-right:2px;
+                color :#18c166;
+                font-size:13px;
+                line-height: 1.3em;
+            }
+/*
+            #collapseAbstract{
+                margin-top:15px;
+            }
+*/
+            h2{
+                margin-bottom:20px;
+            }
+            #expContButtonState{
+                text-align: center;
+                width:41px;
+/*                margin-right:3px;*/
+                
+            }
+            np-publication{
+                font-size:12px;
+            }
+            
+        </style>
+        <template is="dom-if" if="[[data]]">
+<!--
+                <span id="collapseButton" class="colored-label expcont-button button-thin" on-tap="_toggleExpCont">
+                    <span class="pubDisplayStatus"> </span>experimental context
+                </span>
+-->
+                <paper-button id="expContButton" on-tap="_toggleExpCont" toggles raised active=[[showExpCont]]><span class="fa fa-flask" aria-hidden="true"></span> <span id="expContButtonState">Show </span> experimental context</paper-button>
+<!--            <iron-collapse id="collapseAbstract" opened$="[[showExpCont]]" no-animation>-->
+            <iron-collapse id="collapseAbstract" no-animation>
+                <template is="dom-repeat" items="[[_toArray(data.metadata)]]" as="expc">
+                    <div class="exp-context">
+                        <div class="exp-title">[[expc.1.label]]</div>
+                        <div class="exp-description">[[expc.1.content]]</div>
+                    </div>
+                </template>
+                <template is="dom-if" if="[[data.publications]]">
+                    <div class="exp-title">Publications</div>
+                </template>
+                <template is="dom-repeat" items="[[data.publications]]" as="expc_pub">
+<!--                    <p>[[expc_pub]]</p>-->
+                    <np-publication view="detailed"  publication="[[expc_pub]]"></np-publication>
+                </template>
+            </iron-collapse>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'experimental-context',
+            behaviors: [Polymer.NeonAnimationRunnerBehavior],
+            properties: {
+                data: {
+                    type: Object,
+//                    value: {
+//                        "metadata": {
+//                            "DM": {
+//                                "label": "Detection method",
+//                                "isVariable": "N",
+//                                "text": "Mass spectrometry Nano LC-MS/MS."
+//                            },
+//                            "CL": {
+//                                "label": "Cell line",
+//                                "isVariable": "N",
+//                                "text": "Jurkat E6.1 [CVCL_0367]."
+//                            },
+//                            "SP": {
+//                                "label": "Sample preparation",
+//                                "isVariable": "N",
+//                                "text": "Lysate denaturation and treatment with either proteasome inhibitor MG132 or deubiquitinase inhibitor PR-619. Lysate in-solution digestion with trypsin. Peptides desaltification and off-line basic RP fractionation. Enrichment of Lys ubiquitinated sites by immunoprecipitation with anti-Lys-epsilon-GlyGly antibody followed by desaltification."
+//                            },
+//                            "IP": {
+//                                "label": "Instrument/platform",
+//                                "isVariable": "N",
+//                                "text": "Nanoscale C18 HPLC coupled to Q Exactive mass spectrometer equipped with a nanoelectrospray source (Thermo Scientific)."
+//                            },
+//                            "DA": {
+//                                "label": "Data analysis procedure",
+//                                "isVariable": "N",
+//                                "text": "Protein database: UniProtKB/SwissProt (release number not available). Software: MaxQuant version 1.3.0.5. Maximum missed cleavages: 2. Mass tolerance for parent ion: 6 ppm. Mass tolerance for fragment ion: Not available. Fixed modification: Cys carbamidomethylation. Variable modifications: Met oxidation; Gly-Gly addition to Lys; N-terminal protein acetylation. Peptide FDR < 0.01. Protein FDR < 0.01. Minimum peptide length: 6. Ion mode: Positive. Spectra acquisition: 12 most intense precursor ions. Lys-epsilon-GlyGly sites localized to a peptide C-terminal Lys residue were removed. Spectra recalibration: Not available"
+//                            },
+//                            "DP": {
+//                                "label": "Data processing by neXtProt",
+//                                "text": "Exclusion of peptides of less than 7 amino acids. Alignment of peptides on the human proteome for exact matches. Peptides matching more than one entry are labeled 'found in other entries'. Exclusion of modifications found on non-proteotypic peptides. GLOBAL. Ubiquitination: a small fraction of ubiquitinated sites is likely to originate from modification by ISG15 or NEDD8 and is filtered according to neXtProt sequence annotation."
+//                            },
+//                            "DC": {
+//                                "label": "Data confidence documentation",
+//                                "isVariable": "N",
+//                                "text": "Peptide identification. GOLD: Andromeda score >= 100. LOCAL. Ubiquitination. GOLD: Andromeda score >= 100; PTM localization probability >= 0.99. SILVER: Andromeda score >= 100; PTM localization probability >= 0.95. N-terminal protein acetylation: GOLD."
+//                            }
+//                        },
+//                        "publications":[
+//                            {
+//                            "md5": "f19605d5fb429e867daae74f55efe87b",
+//                            "title": "Non-USH2A mutations in USH2 patients.",
+//                            "abstractText": "We have systematically analyzed the two known minor genes involved in Usher syndrome type 2, DFNB31 and GPR98, for mutations in a cohort of 31 patients not linked to USH2A. PDZD7, an Usher syndrome type 2 (USH2) related gene, was analyzed when indicated. We found that mutations in GPR98 contribute significantly to USH2. We report 17 mutations in 10 individuals, doubling the number of GPR98 mutations reported to date. In contrast to mutations in usherin, the mutational spectrum of GPR98 predominantly results in a truncated protein product. This is true even when the mutation affects splicing, and we have incorporated a splicing reporter minigene assay to show this, where appropriate. Only two mutations were found which we believe to be genuine missense changes. Discrepancy in the mutational spectrum between GPR98 and USH2A is discussed. Only two patients were found with mutations in DFNB31, showing that mutations of this gene contribute to only a very small extent to USH2. Close examination of the clinical details, where available, for patients in whom no mutation was found in USH2A, GPR98, or DFNB31, showed that most of them had atypical features. In effect, these three genes account for the vast majority of USH2 patients and their analysis provide a robust pathway for routine molecular diagnosis.",
+//                            "publicationType": "ARTICLE",
+//                            "publicationDate": 1330556400000,
+//                            "textDate": "2012-03",
+//                            "submission": null,
+//                            "authors": [{
+//                                "authorId": 31584695,
+//                                "lastName": "Besnard",
+//                                "foreName": "Thomas",
+//                                "initials": "T",
+//                                "suffix": "",
+//                                "rank": 0,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584696,
+//                                "lastName": "Vaché",
+//                                "foreName": "Christel",
+//                                "initials": "C",
+//                                "suffix": "",
+//                                "rank": 1,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584697,
+//                                "lastName": "Baux",
+//                                "foreName": "David",
+//                                "initials": "D",
+//                                "suffix": "",
+//                                "rank": 2,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584698,
+//                                "lastName": "Larrieu",
+//                                "foreName": "Lise",
+//                                "initials": "L",
+//                                "suffix": "",
+//                                "rank": 3,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584699,
+//                                "lastName": "Abadie",
+//                                "foreName": "Caroline",
+//                                "initials": "C",
+//                                "suffix": "",
+//                                "rank": 4,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584700,
+//                                "lastName": "Blanchet",
+//                                "foreName": "Catherine",
+//                                "initials": "C",
+//                                "suffix": "",
+//                                "rank": 5,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584701,
+//                                "lastName": "Odent",
+//                                "foreName": "Sylvie",
+//                                "initials": "S",
+//                                "suffix": "",
+//                                "rank": 6,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584702,
+//                                "lastName": "Blanchet",
+//                                "foreName": "Patricia",
+//                                "initials": "P",
+//                                "suffix": "",
+//                                "rank": 7,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584703,
+//                                "lastName": "Calvas",
+//                                "foreName": "Patrick",
+//                                "initials": "P",
+//                                "suffix": "",
+//                                "rank": 8,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584704,
+//                                "lastName": "Hamel",
+//                                "foreName": "Christian",
+//                                "initials": "C",
+//                                "suffix": "",
+//                                "rank": 9,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584705,
+//                                "lastName": "Dollfus",
+//                                "foreName": "Hélène",
+//                                "initials": "H",
+//                                "suffix": "",
+//                                "rank": 10,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584706,
+//                                "lastName": "Lina-Granade",
+//                                "foreName": "Geneviève",
+//                                "initials": "G",
+//                                "suffix": "",
+//                                "rank": 11,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584707,
+//                                "lastName": "Lespinasse",
+//                                "foreName": "James",
+//                                "initials": "J",
+//                                "suffix": "",
+//                                "rank": 12,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584708,
+//                                "lastName": "David",
+//                                "foreName": "Albert",
+//                                "initials": "A",
+//                                "suffix": "",
+//                                "rank": 13,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584709,
+//                                "lastName": "Isidor",
+//                                "foreName": "Bertrand",
+//                                "initials": "B",
+//                                "suffix": "",
+//                                "rank": 14,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584710,
+//                                "lastName": "Morin",
+//                                "foreName": "Gilles",
+//                                "initials": "G",
+//                                "suffix": "",
+//                                "rank": 15,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584711,
+//                                "lastName": "Malcolm",
+//                                "foreName": "Sue",
+//                                "initials": "S",
+//                                "suffix": "",
+//                                "rank": 16,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584712,
+//                                "lastName": "Tuffery-Giraud",
+//                                "foreName": "Sylvie",
+//                                "initials": "S",
+//                                "suffix": "",
+//                                "rank": 17,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584713,
+//                                "lastName": "Claustres",
+//                                "foreName": "Mireille",
+//                                "initials": "M",
+//                                "suffix": "",
+//                                "rank": 18,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }, {
+//                                "authorId": 31584714,
+//                                "lastName": "Roux",
+//                                "foreName": "Anne-Françoise",
+//                                "initials": "AF",
+//                                "suffix": "",
+//                                "rank": 19,
+//                                "person": true,
+//                                "publicationId": 16748393,
+//                                "editor": false
+//                    }],
+//                            "dbXrefs": [{
+//                                "dbXrefId": 16748392,
+//                                "accession": "10.1002/humu.22004",
+//                                "databaseName": "DOI",
+//                                "databaseCategory": "Publication databases",
+//                                "url": "http://dx.doi.org/",
+//                                "linkUrl": "http://dx.doi.org/%s",
+//                                "resolvedUrl": "http://dx.doi.org/10.1002/humu.22004",
+//                                "properties": [],
+//                                "publicationId": 16748393
+//                    }, {
+//                                "dbXrefId": 16748394,
+//                                "accession": "22147658",
+//                                "databaseName": "PubMed",
+//                                "databaseCategory": "Publication databases",
+//                                "url": "http://www.ncbi.nlm.nih.gov/sites/entrez?db=pubmed",
+//                                "linkUrl": "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=search&term=%s",
+//                                "resolvedUrl": "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=search&term=22147658",
+//                                "properties": [],
+//                                "publicationId": 16748393
+//                    }],
+//                            "publicationResourceLocator": {
+//                                "name": "Human mutation",
+//                                "firstPage": "504",
+//                                "lastPage": "510",
+//                                "volume": "33",
+//                                "issue": "3",
+//                                "publicationId": 16748393,
+//                                "abbrev": "Hum. Mutat.",
+//                                "medAbbrev": "Hum Mutat",
+//                                "nlmid": "9215429"
+//                            },
+//                            "publicationId": 16748393,
+//                            "editors": [],
+//                            "publicationYear": "2012",
+//                            "publicationLocatorName": "Human mutation",
+//                            "volume": "33",
+//                            "firstPage": "504",
+//                            "locatedInEditedVolumeBook": false,
+//                            "localizableInBookMedium": true,
+//                            "issue": "3",
+//                            "lastPage": "510",
+//                            "publisherName": "",
+//                            "publisherCity": "",
+//                            "journalResourceLocator": {
+//                                "name": "Human mutation",
+//                                "firstPage": "504",
+//                                "lastPage": "510",
+//                                "volume": "33",
+//                                "issue": "3",
+//                                "publicationId": 16748393,
+//                                "abbrev": "Hum. Mutat.",
+//                                "medAbbrev": "Hum Mutat",
+//                                "nlmid": "9215429"
+//                            },
+//                            "localizable": true,
+//                            "locatedInScientificJournal": true
+//                        }
+//                        ]
+//                    }
+                },
+                hasAbstract: {
+                    type: Boolean,
+                    value: false
+                },
+                showExpCont: {
+                    type: Boolean,
+                    value: false
+                },
+                animationConfig: {
+                    value: function () {
+                        return {
+                            "showExpCont": {
+                                name: "fade-in-animation",
+                                node: this.$.collapseAbstract,
+                                timing: {
+                                    duration: 1
+                                }
+                            },
+                            "hideExpCont": {
+                                name: "fade-out-animation",
+                                node: this.$.collapseAbstract,
+                                timing: {
+                                    duration: 1
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            _toArray: function (obj) {
+                console.log("calling to array");
+                var citedArr = Object.keys(obj).map(function (key, value) {
+                    return [key, obj[key]];
+                });
+                return citedArr;
+            },
+            _toggleExpCont: function () {
+//                var button = this.$.expContButton;
+                var button = this.$$('#expContButton');
+                var isActive = button.active;
+                this.$$('#expContButtonState').textContent = isActive ? "Hide " : "Show ";
+//                this.$$('#expContButtonState').set('items.'+ft_index+'.hide',false);
+//                this.showExpCont = isActive;
+//                this.$$("#collapseAbstract").opened ?
+//                    this.playAnimation("hideAbstract") : this.playAnimation("showAbstract");
+//                    this.showExpCont = true : this.showExpCont = false;
+                this.$$("#collapseAbstract").toggle();
+//                this._toggleButton();
+            },
+        });
+    </script>
+</dom-module>

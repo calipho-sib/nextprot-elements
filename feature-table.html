@@ -441,16 +441,23 @@ View list of chromosome names.
             transform: translate(-50%, 0);
             
         }
-            .groupLabel{
-                padding:0px 0px 0px 6px;
-                color:#999;
-                font-weight:700;
-                font-size:13px;
-                border-top:2px solid #eee;
-            }
-            #itemIndex_0 .groupLabel{
-                border-top:0px;
-            }
+        .groupLabel{
+            padding:0px 0px 0px 6px;
+            color:#999;
+            font-weight:700;
+            font-size:13px;
+            border-top:2px solid #eee;
+        }
+        #itemIndex_0 .groupLabel{
+            border-top:0px;
+        }
+        .peptide-unicity{
+            padding: 0px 2px;
+            background-color: #eee;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            color: #333;
+        }
         </style>
 
         <!--
@@ -518,8 +525,13 @@ View list of chromosome names.
                                 <template is="dom-repeat" items="[[feature.crossRef]]" as="crossRef">
                                     ; [[crossRef.value.dbName]]: <a class="ext-link" href="[[crossRef.value.url]]" target="_blank">[[crossRef.value.name]]</a>
                                 </template>
+<!--
                                 <template is="dom-if" if="[[!feature.proteotypicity]]">
                                     <span class="nonProteotypic">found in other entries</span>
+                                </template>
+-->
+                                <template is="dom-if" if="[[feature.unicity]]">
+                                    <span class="peptide-unicity">[[feature.unicity]]</span>
                                 </template>
                                 <quality-label quality="[[feature.quality]]"></quality-label>
                             </div>
