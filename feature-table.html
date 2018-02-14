@@ -541,7 +541,7 @@ View list of chromosome names.
                                 </div>
                                 <div class="inBlock" style="width:13%;text-align:left;padding-left:0px;">
                                     <div class="reference-label-container">
-                                        <template is="dom-repeat" items="[[feature.evidenceSources]]" as="source">
+                                        <template is="dom-repeat" items="[[_filterEvidenceSource(feature.evidenceSources)]]" as="source">
                                             <div class="reference-label">[[source]]</div>
                                         </template>
                                     </div>
@@ -778,6 +778,18 @@ View list of chromosome names.
                     evidence.url = evidence.crossRef.url;
                 }
                 return evidence;
+            },
+            _filterEvidenceSource: function(sources){
+                var peptideAtlasCount = 0;
+                var sourcesWithoutPeptideAtlas = sources.filter(function(src){
+                    if (src.indexOf("PeptideAtlas") !== -1){
+                        peptideAtlasCount += 1;
+                        return false;
+                    }
+                    else return true;
+                })
+                if (peptideAtlasCount) sourcesWithoutPeptideAtlas.push(peptideAtlasCount + " PeptideAtlas");
+                return sourcesWithoutPeptideAtlas;
             },
             _displayIndex: function(index){
                 return index + 1
