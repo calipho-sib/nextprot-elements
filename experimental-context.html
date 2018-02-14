@@ -97,13 +97,24 @@ Experimental context demo
                         <div class="exp-description">[[expc.1.content]]</div>
                     </div>
                 </template>
+                <template is="dom-if" if="[[data.mdataPubLink]]">
+                    <div class="exp-title">Publications</div>
+                </template>
+                <template is="dom-repeat" items="[[data.mdataPubLink]]" as="expc_pub">
+<!--                    <p>[[expc_pub]]</p>-->
+<!--                    <np-publication view="detailed"  publication="[[expc_pub]]"></np-publication>-->
+                        <div  class="exp-description">[[expc_pub.label]] : <a href="[[expc_pub.url]]">[[expc_pub.accession]]</a></div>
+                </template>
+                
+<!--
                 <template is="dom-if" if="[[data.publications]]">
                     <div class="exp-title">Publications</div>
                 </template>
                 <template is="dom-repeat" items="[[data.publications]]" as="expc_pub">
-<!--                    <p>[[expc_pub]]</p>-->
                     <np-publication view="detailed"  publication="[[expc_pub]]"></np-publication>
                 </template>
+-->
+                
             </iron-collapse>
         </template>
     </template>
@@ -453,10 +464,13 @@ Experimental context demo
             },
             _toArray: function (obj) {
                 console.log("calling to array");
-                var citedArr = Object.keys(obj).map(function (key, value) {
-                    return [key, obj[key]];
-                });
-                return citedArr;
+                if (obj){
+                    var citedArr = Object.keys(obj).map(function (key) {
+                        return [key, obj[key]];
+                    });
+                    return citedArr;
+                }
+                return [];
             },
             _toggleExpCont: function () {
 //                var button = this.$.expContButton;
