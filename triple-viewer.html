@@ -562,10 +562,15 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             },
             _renderSequenceViewer: function(sequenceObject){
                 this.seqView = new Sequence(this.currentSeq, this.isoName);
+                //TODO CHANGE BELOW API URL HARDOCODE
+                console.warn("CHANGE BELOW API URL WITH ENVIORNMENT");
+
                 this.seqView.render('#seqViewer', {
                     'showLineNumbers': true,
                     'wrapAminoAcids': true,
                     'charsPerLine': 50,
+                    'fasta' : true,
+                    'apiURL': "http://alpha-api.nextprot.org",
                     'search':true,
                     'toolbar':true,
                     'header':{
