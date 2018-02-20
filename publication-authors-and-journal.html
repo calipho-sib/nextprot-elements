@@ -182,28 +182,30 @@ Publication authors with journal demo
             _formatPublicationData: function() {
 
                 // authors
-                this.authorUrls = this._formatAuthorsAsUrls(this.publication.authors);
-                if (this.publication.authors.length > 0) {
-                    this.lastAuthorUrl = this.authorUrls[this.publication.authors.length - 1];
-                }
-
-                // pages
-                if (this.publication.firstPage) {
-
-                    var firstPage = this.publication.firstPage;
-                    var lastPage = firstPage;
-
-                    if (this.publication.lastPage) {
-
-                        lastPage = this.publication.lastPage;
+                if (this.publication){
+                    this.authorUrls = this._formatAuthorsAsUrls(this.publication.authors);
+                    if (this.publication.authors.length > 0) {
+                        this.lastAuthorUrl = this.authorUrls[this.publication.authors.length - 1];
                     }
 
-                    if (firstPage === lastPage) {
+                    // pages
+                    if (this.publication.firstPage) {
 
-                        this.pages = firstPage;
-                    }
-                    else {
-                        this.pages = firstPage + "-" + lastPage;
+                        var firstPage = this.publication.firstPage;
+                        var lastPage = firstPage;
+
+                        if (this.publication.lastPage) {
+
+                            lastPage = this.publication.lastPage;
+                        }
+
+                        if (firstPage === lastPage) {
+
+                            this.pages = firstPage;
+                        }
+                        else {
+                            this.pages = firstPage + "-" + lastPage;
+                        }
                     }
                 }
             },

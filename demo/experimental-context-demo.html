@@ -1,7 +1,8 @@
 <!doctype html>
 <html>
+
 <head>
-    <title>evidence-item demo</title>
+    <title>publication-item demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
@@ -9,7 +10,7 @@
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
 
-    <link rel="import" href="../evidence-item.html">
+    <link rel="import" href="../experimental-context.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
         .vertical-section-container {
@@ -17,224 +18,58 @@
         }
     </style>
 </head>
+
 <body>
-<button onclick="inverseHighlight()">Inverse highlight</button>
-<div class="vertical-section-container centered">
-    <h3>Basic evidence-item Demo</h3>
-    <demo-snippet>
-        <template>
-            <h4>Evidence with DB reference</h4>
-            <evidence-item id="evi1" data='{
-            "resourceId": 1076155,
-            "resourceType": "database",
-            "resourceAccession": "P52701",
-            "resourceDb": "UniProt",
-            "url": "http://www.uniprot.org/uniprot/P52701",
-            "experimentalContextId": 0,
-            "annotationId": 34842993,
-            "qualifierType": null,
-            "qualityQualifier": "GOLD",
-            "evidenceId": 84081471,
-            "assignedBy": "Uniprot",
-            "assignmentMethod": "curated",
-            "evidenceCodeAC": "ECO:0000269",
-            "evidenceCodeName": "experimental evidence used in manual assertion",
-            "evidenceCodeOntology": "EvidenceCodeOntologyCv",
-            "note": null,
-            "resourceAssociationType": "evidence",
-            "valid": true,
-            "resourceDescription": "UniProt web site",
-            "negativeEvidence": false,
-            "publicationMD5": null,
-            "isoformSpecificity": null,
-            "properties": {"numberOfExperiments": 1},
-            "propertiesNames": [],
-            "goQualifier": null,
-            "resourceAXref": true,
-            "resourceAPublication": false,
-            "negativeIsoformSpecificity": null,
-            "cl": null,
-            "referenceIdentifierAccession": null,
-            "sampleId": null,
-            "sp": null,
-            "expressionLevel": null,
-            "integrationLevel": null,
-            "antibodies": null,
-            "intensity": null,
-            "subjectProteinOrigin": null,
-            "sourceAccession_TODEBUG": null
-          }' index="1" highlighted="yes"></evidence-item>
-            <h4>Evidence with publication reference</h4>
-            <evidence-item data='{
-            "resourceId": 692691,
-            "resourceType": "publication",
-            "resourceAccession": null,
-            "resourceDb": null,
-            "experimentalContextId": 0,
-            "annotationId": 34842993,
-            "qualifierType": null,
-            "qualityQualifier": "GOLD",
-            "evidenceId": 84081472,
-            "assignedBy": "Uniprot",
-            "assignmentMethod": "curated",
-            "evidenceCodeAC": "ECO:0000269",
-            "evidenceCodeName": "experimental evidence used in manual assertion",
-            "evidenceCodeOntology": "EvidenceCodeOntologyCv",
-            "note": null,
-            "resourceAssociationType": "evidence",
-            "valid": true,
-            "resourceDescription": null,
-            "negativeEvidence": false,
-            "publicationMD5": "d49dd21a17aaa9f488ba3ad03650b4f4",
-            "publication": {
-                "md5": "d49dd21a17aaa9f488ba3ad03650b4f4",
-                "title": "DNA-dependent activation of the hMutSalpha ATPase.",
-                "abstractText": "ATP hydrolysis by MutS homologs is required for function of these proteins in mismatch repair. However, the function of ATP hydrolysis in the repair reaction is controversial. In this paper we describe a steady-state kinetic analysis of the DNA-activated ATPase of human MutSalpha. Comparison of salt concentration effects on mismatch repair and mismatch-provoked excision in HeLa nuclear extracts with salt effects on the DNA-activated ATPase suggests that ATP hydrolysis by MutSalpha is involved in the rate determining step in the repair pathway. While the ATPase is activated by homoduplex and heteroduplex DNA, the half-maximal concentration for activation by heteroduplex DNA is significantly lower under physiological salt concentrations. Furthermore, at optimal salt concentration, heteroduplex DNA increases the kcat for ATP hydrolysis to a greater extent than does homoduplex DNA. We also demonstrate that the degree of ATPase activation is dependent on DNA chain length, with the kcat for hydrolysis increasing significantly with chain length of the DNA cofactor. These results are discussed in terms of the translocation (Allen, D. J., Makhov, A., Grilley, M., Taylor, J., Thresher, R., Modrich, P., and Griffith, J. D. (1997) EMBO J. 16, 4467-4476) and the molecular switch (Gradia, S., Acharya, S., and Fishel, R. (1997) Cell 91, 995-1005) models that invoke distinct roles for ATP hydrolysis in MutS homolog function.",
-                "publicationType": "ARTICLE",
-                "publicationDate": "1998-11-27",
-                "textDate": "1998-11-27",
-                "submission": null,
-                "isLargeScale": false,
-                "isCurated": true,
-                "isComputed": false,
-                "authors": [
-                  {
-                    "authorId": 26672885,
-                    "lastName": "Blackwell",
-                    "foreName": "L J",
-                    "initials": "LJ",
-                    "suffix": "",
-                    "rank": 0,
-                    "person": true,
-                    "publicationId": 692691,
-                    "editor": false
-                  },
-                  {
-                    "authorId": 26672886,
-                    "lastName": "Bjornson",
-                    "foreName": "K P",
-                    "initials": "KP",
-                    "suffix": "",
-                    "rank": 1,
-                    "person": true,
-                    "publicationId": 692691,
-                    "editor": false
-                  },
-                  {
-                    "authorId": 26672887,
-                    "lastName": "Modrich",
-                    "foreName": "P",
-                    "initials": "P",
-                    "suffix": "",
-                    "rank": 2,
-                    "person": true,
-                    "publicationId": 692691,
-                    "editor": false
-                  }
-                ],
-                "dbXrefs": [
-                  {
-                    "dbXrefId": 692690,
-                    "accession": "9822679",
-                    "databaseName": "PubMed",
-                    "databaseCategory": "Publication databases",
-                    "url": "http://www.ncbi.nlm.nih.gov/sites/entrez?db=pubmed",
-                    "linkUrl": "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=search&term=%s",
-                    "resolvedUrl": "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=search&term=9822679",
-                    "properties": [],
-                    "publicationId": 692691
-                  }
-                ],
-                "publicationResourceLocator": {
-                  "name": "The Journal of biological chemistry",
-                  "firstPage": "32049",
-                  "lastPage": "32054",
-                  "volume": "273",
-                  "issue": "48",
-                  "publicationId": 692691,
-                  "journalId": 4409,
-                  "abbrev": "J. Biol. Chem.",
-                  "medAbbrev": "J Biol Chem",
-                  "nlmid": "2985121R"
-                },
-                "publicationId": 692691,
-                "editors": [],
-                "localizable": true,
-                "locatedInScientificJournal": true,
-                "locatedInEditedVolumeBook": false,
-                "localizableInBookMedium": true,
-                "publicationYear": "1998",
-                "volume": "273",
-                "issue": "48",
-                "firstPage": "32049",
-                "lastPage": "32054",
-                "publisherName": "",
-                "publisherCity": "",
-                "journalResourceLocator": {
-                  "name": "The Journal of biological chemistry",
-                  "firstPage": "32049",
-                  "lastPage": "32054",
-                  "volume": "273",
-                  "issue": "48",
-                  "publicationId": 692691,
-                  "journalId": 4409,
-                  "abbrev": "J. Biol. Chem.",
-                  "medAbbrev": "J Biol Chem",
-                  "nlmid": "2985121R"
-                },
-                "publicationLocatorName": "The Journal of biological chemistry"
-              },
-            "isoformSpecificity": null,
-            "propertiesNames": [],
-            "goQualifier": null,
-            "resourceAXref": false,
-            "resourceAPublication": true,
-            "negativeIsoformSpecificity": null,
-            "cl": null,
-            "referenceIdentifierAccession": null,
-            "sampleId": null,
-            "sp": null,
-            "expressionLevel": null,
-            "integrationLevel": null,
-            "antibodies": null,
-            "intensity": null,
-            "subjectProteinOrigin": null,
-            "sourceAccession_TODEBUG": null,
-            "experimentalContexts":{
+
+    <div class="vertical-section-container centered">
+        <h3>Basic publication-item demo</h3>
+        <demo-snippet>
+            <template>
+                <h4>Detailed mode (default)</h4>
+                <hr>
+                <experimental-context></experimental-context>
+            </template>
+        </demo-snippet>
+        <demo-snippet>
+            <template>
+                <h4>Data binding</h4>
+                <script>
+                    var elements = document.querySelectorAll("experimental-context");
+                    var data = {
                         "metadata": {
                             "DM": {
                                 "label": "Detection method",
                                 "isVariable": "N",
-                                "text": "Mass spectrometry Nano LC-MS/MS."
+                                "content": "Mass spectrometry Nano LC-MS/MS."
                             },
                             "CL": {
                                 "label": "Cell line",
                                 "isVariable": "N",
-                                "text": "Jurkat E6.1 [CVCL_0367]."
+                                "content": "Jurkat E6.1 [CVCL_0367]."
                             },
                             "SP": {
                                 "label": "Sample preparation",
                                 "isVariable": "N",
-                                "text": "Lysate denaturation and treatment with either proteasome inhibitor MG132 or deubiquitinase inhibitor PR-619. Lysate in-solution digestion with trypsin. Peptides desaltification and off-line basic RP fractionation. Enrichment of Lys ubiquitinated sites by immunoprecipitation with anti-Lys-epsilon-GlyGly antibody followed by desaltification."
+                                "content": "Lysate denaturation and treatment with either proteasome inhibitor MG132 or deubiquitinase inhibitor PR-619. Lysate in-solution digestion with trypsin. Peptides desaltification and off-line basic RP fractionation. Enrichment of Lys ubiquitinated sites by immunoprecipitation with anti-Lys-epsilon-GlyGly antibody followed by desaltification."
                             },
                             "IP": {
                                 "label": "Instrument/platform",
                                 "isVariable": "N",
-                                "text": "Nanoscale C18 HPLC coupled to Q Exactive mass spectrometer equipped with a nanoelectrospray source (Thermo Scientific)."
+                                "content": "Nanoscale C18 HPLC coupled to Q Exactive mass spectrometer equipped with a nanoelectrospray source (Thermo Scientific)."
                             },
                             "DA": {
                                 "label": "Data analysis procedure",
                                 "isVariable": "N",
-                                "text": "Protein database: UniProtKB/SwissProt (release number not available). Software: MaxQuant version 1.3.0.5. Maximum missed cleavages: 2. Mass tolerance for parent ion: 6 ppm. Mass tolerance for fragment ion: Not available. Fixed modification: Cys carbamidomethylation. Variable modifications: Met oxidation; Gly-Gly addition to Lys; N-terminal protein acetylation. Peptide FDR < 0.01. Protein FDR < 0.01. Minimum peptide length: 6. Ion mode: Positive. Spectra acquisition: 12 most intense precursor ions. Lys-epsilon-GlyGly sites localized to a peptide C-terminal Lys residue were removed. Spectra recalibration: Not available"
+                                "content": "Protein database: UniProtKB/SwissProt (release number not available). Software: MaxQuant version 1.3.0.5. Maximum missed cleavages: 2. Mass tolerance for parent ion: 6 ppm. Mass tolerance for fragment ion: Not available. Fixed modification: Cys carbamidomethylation. Variable modifications: Met oxidation; Gly-Gly addition to Lys; N-terminal protein acetylation. Peptide FDR < 0.01. Protein FDR < 0.01. Minimum peptide length: 6. Ion mode: Positive. Spectra acquisition: 12 most intense precursor ions. Lys-epsilon-GlyGly sites localized to a peptide C-terminal Lys residue were removed. Spectra recalibration: Not available"
                             },
                             "DP": {
                                 "label": "Data processing by neXtProt",
-                                "text": "Exclusion of peptides of less than 7 amino acids. Alignment of peptides on the human proteome for exact matches. Peptides matching more than one entry are labeled \"found in other entries\". Exclusion of modifications found on non-proteotypic peptides. GLOBAL. Ubiquitination: a small fraction of ubiquitinated sites is likely to originate from modification by ISG15 or NEDD8 and is filtered according to neXtProt sequence annotation."
+                                "content": "Exclusion of peptides of less than 7 amino acids. Alignment of peptides on the human proteome for exact matches. Peptides matching more than one entry are labeled 'found in other entries'. Exclusion of modifications found on non-proteotypic peptides. GLOBAL. Ubiquitination: a small fraction of ubiquitinated sites is likely to originate from modification by ISG15 or NEDD8 and is filtered according to neXtProt sequence annotation."
                             },
                             "DC": {
                                 "label": "Data confidence documentation",
                                 "isVariable": "N",
-                                "text": "Peptide identification. GOLD: Andromeda score >= 100. LOCAL. Ubiquitination. GOLD: Andromeda score >= 100; PTM localization probability >= 0.99. SILVER: Andromeda score >= 100; PTM localization probability >= 0.95. N-terminal protein acetylation: GOLD."
+                                "content": "Peptide identification. GOLD: Andromeda score >= 100. LOCAL. Ubiquitination. GOLD: Andromeda score >= 100; PTM localization probability >= 0.99. SILVER: Andromeda score >= 100; PTM localization probability >= 0.95. N-terminal protein acetylation: GOLD."
                             }
                         },
                         "publications":[
@@ -507,24 +342,16 @@
                         }
                         ]
                     }
-          }' index="2" highlighted="no"></evidence-item>
-        </template>
-    </demo-snippet>
-</div>
-<script>
+                    for (var i in elements) {
+                        elements[i].data = data;
+                    }
+                    console.log("elements");
+                    console.log(elements);
+                </script>
+            </template>
+        </demo-snippet>
+    </div>
 
-    function inverseHighlight() {
-        var eviElems = document.querySelectorAll("evidence-item");
-        console.log("evidence items:", eviElems);
-        for (var i = 0; i < eviElems.length; i++) {
-            console.log("hilit:",i,eviElems[i].highlighted);
-            if (eviElems[i].highlighted === 'yes') {
-                eviElems[i].highlighted = 'no'
-            } else {
-                eviElems[i].highlighted = 'yes'
-            }
-        }
-    }
-</script>
 </body>
+
 </html>
