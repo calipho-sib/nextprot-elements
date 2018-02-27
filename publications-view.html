@@ -41,6 +41,20 @@ Publications listing used in curated and additional publications pages.
             .toggle-label {
                 padding: 5px 10px 5px 3px;
             }
+
+            a.disabled {
+                pointer-events: none;
+                color: black;
+                font-weight: bold;
+            }
+
+            .bg-grey {
+                background: #F3F3F3;
+                border-radius: 5px;
+                margin-right: 5px;
+                padding: 2px;
+            }
+
         </style>
 
         <div class="row">
@@ -62,21 +76,23 @@ Publications listing used in curated and additional publications pages.
                             <template is="dom-if" if="[[items]]">Publications [[from]] to [[to]] of [[items.length]]
                             </template>
                         </div>
-                        <div class="col-lg-2">
-                            show&nbsp;
-                            <select on-change="_changePageSize">
-                                <template is="dom-repeat" items="{{pageSizeOptions}}" as="pageSizeOption">
-                                    <option value="{{pageSizeOption}}"
-                                            selected$="{{_isPageSizeOptionSelected(pageSizeOption)}}">{{pageSizeOption}}
-                                    </option>
-                                </template>
-                            </select>
+                        <div class="col-lg-10 ">
+                            <span class="bg-grey">
+                                show&nbsp;
+                                <select on-change="_changePageSize">
+                                    <template is="dom-repeat" items="{{pageSizeOptions}}" as="pageSizeOption">
+                                        <option value="{{pageSizeOption}}"
+                                                selected$="{{_isPageSizeOptionSelected(pageSizeOption)}}">{{pageSizeOption}}
+                                        </option>
+                                    </template>
+                                </select>
+                            </span>
+                            <span class="bg-grey">
+                                <a id="summary-link" class$="[[_summaryLinkClass]]" role="button" on-click="_updateLinks">summary</a> |
+                                <a id="details-link" class$="[[_detailsLinkClass]]" role="button" on-click="_updateLinks">details</a>
+                            </span>
                         </div>
-                        <div class="col-lg-5">
-                            <div class="mode-toggle"><span class="toggle-label">summary</span>
-                                <paper-toggle-button checked="{{!summary}}"></paper-toggle-button>
-                                <span class="toggle-label">details</span></div>
-                        </div>
+
                     </div>
                     <paginator-element items="[[items]]" layout="publication-item" page-size="[[pageSize]]"
                                        bind-attribute="summary" bind-value="[[summary]]" from="{{from}}"
@@ -127,6 +143,14 @@ Publications listing used in curated and additional publications pages.
                     type: String,
                     value: "publications-view.prefered-size",
                     readOnly: true
+                },
+                _summaryLinkClass: {
+                    type: String,
+                    value: ""
+                },
+                _detailsLinkClass: {
+                    type: String,
+                    value: "disabled"
                 }
             },
             attached: function () {
@@ -192,6 +216,18 @@ Publications listing used in curated and additional publications pages.
                 console.error("Error: ", error);
                 this.$.spinner.active = false;
                 this.count = 0;
+            },
+            _updateLinks: function (evt) {
+                this.summary = (evt.srcElement.id === "summary-link");
+
+                if (this.summary) {
+                    this._detailsLinkClass = "";
+                    this._summaryLinkClass = "disabled";
+                }
+                else {
+                    this._detailsLinkClass = "disabled";
+                    this._summaryLinkClass = "";
+                }
             }
         });
     </script>
