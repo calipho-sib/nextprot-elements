@@ -105,7 +105,6 @@ Publication with linked entries view demo
                                 </template>
                                 <template is="dom-if" if="[[_beyondMaximumEntries(data.relatedEntryCount)]]">
                                     <span class="text-warning" title="The first 500 most relevant entries were displayed below."><span class="glyphicon glyphicon-warning-sign"></span> over [[data.relatedEntryCount]]</span>
-                                    <!--<a class="text-warning" onclick="toast.toggle()" title="The first 500 most relevant entries were displayed below."><span class="glyphicon glyphicon-warning-sign"></span> over [[data.relatedEntryCount]]</a>-->
                                 </template>
                             </div>
                             <div class="col-lg-10 ">
@@ -126,12 +125,6 @@ Publication with linked entries view demo
                             </div>
                         </div>
 
-                        <!-- <template is="dom-if" if="[[_beyondMaximumEntries(data.relatedEntryCount)]]">
-                            <paper-toast id="toast" class="fit-bottom" duration="0" text="The 500 first relevant entries over [[data.relatedEntryCount]] were displayed above." opened>
-                                <paper-button onclick="toast.toggle()" class="text-info">Close</paper-button>
-                            </paper-toast>
-                        </template>
-                        -->
                         <paginator-element items="[[data.entries]]" layout="entry-item"
                                            page-size="[[pageSize]]" bind-attribute="summary" bind-value="[[summary]]"
                                            from="{{from}}" to="{{to}}"></paginator-element>
@@ -228,7 +221,6 @@ Publication with linked entries view demo
             },
             _handleResponseData: function (data) {
 
-                console.log("DATA", data)
                 var entries = [];
 
                 Object.values(data.entryPublicationMap).forEach(function (entryPublication) {
@@ -262,7 +254,7 @@ Publication with linked entries view demo
                 return count > 500;
             },
             _updateLinks: function (evt) {
-                this.summary = (evt.srcElement.id === "summary-link");
+                this.summary = (evt.target.id === "summary-link");
 
                 if (this.summary) {
                     this._detailsLinkClass = "";
