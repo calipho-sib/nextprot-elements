@@ -219,7 +219,9 @@ Publications listing used in curated and additional publications pages.
                 this.count = 0;
             },
             _updateLinks: function (evt) {
-                this.summary = (evt.srcElement.id === "summary-link");
+                // WARNING: do not use srcElement - srcElement is a proprietary property originally coming from IE.
+                // The standardized property is target
+                this.summary = (evt.target.id === "summary-link");
 
                 if (this.summary) {
                     this._detailsLinkClass = "";
