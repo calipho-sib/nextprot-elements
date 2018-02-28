@@ -123,11 +123,13 @@ Protein entry item demo
                 else {
                     this.desc = this.shortDesc = this.displayedDesc = "No description";
                 }
-                this.isDisease = data.filters.indexOf("filterdisease") !== -1;
-                this.isExpression = data.filters.indexOf("filterexpressionprofile") !== -1;
-                this.isMutagenesis = data.filters.indexOf("filtermutagenesis") !== -1;
-                this.isProteomics = data.filters.indexOf("filterproteomics") !== -1;
-                this.isStructure = data.filters.indexOf("filterstructure") !== -1;
+                if (data.filters) {
+                    this.isDisease = data.filters.indexOf("filterdisease") !== -1;
+                    this.isExpression = data.filters.indexOf("filterexpressionprofile") !== -1;
+                    this.isMutagenesis = data.filters.indexOf("filtermutagenesis") !== -1;
+                    this.isProteomics = data.filters.indexOf("filterproteomics") !== -1;
+                    this.isStructure = data.filters.indexOf("filterstructure") !== -1;
+                }
                 this.protExistence = data.protein_existence.split("_").join(" ");
             },
             _computeATagClass: function (boolean) {
