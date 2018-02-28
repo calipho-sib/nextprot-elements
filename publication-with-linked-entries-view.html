@@ -61,6 +61,19 @@ Publication with linked entries view demo
                 margin-bottom: 5px;
             }
 
+            a.disabled {
+                pointer-events: none;
+                color: black;
+                font-weight: bolder;
+            }
+
+            .bg-grey {
+                background: #F3F3F3;
+                border-radius: 5px;
+                margin-right: 5px;
+                padding: 2px;
+            }
+
         </style>
 
         <template is="dom-if" if="[[data]]">
@@ -83,33 +96,33 @@ Publication with linked entries view demo
                     <paper-spinner-lite id="spinner" active></paper-spinner-lite>
                 </div>
                 <template is="dom-if" if="[[data]]">
+
                     <template is="dom-if" if="[[data.entries.length]]">
                         <div class="control-header">
                             <div class="no-padding col-lg-5">
-                                <template is="dom-if" if="[[data.entries]]">Proteins [[from]] to [[to]] of
-                                    [[data.entries.length]]
+                                <template is="dom-if" if="[[data.entries]]">
+                                    Proteins [[from]] to [[to]] of [[data.entries.length]]
                                 </template>
                                 <template is="dom-if" if="[[_beyondMaximumEntries(data.relatedEntryCount)]]">
                                     <span class="text-warning" title="The first 500 most relevant entries were displayed below."><span class="glyphicon glyphicon-warning-sign"></span> over [[data.relatedEntryCount]]</span>
                                     <!--<a class="text-warning" onclick="toast.toggle()" title="The first 500 most relevant entries were displayed below."><span class="glyphicon glyphicon-warning-sign"></span> over [[data.relatedEntryCount]]</a>-->
                                 </template>
                             </div>
-                            <div class="col-lg-2">
-                                show&nbsp;
-                                <select on-change="_changePageSize">
-                                    <template is="dom-repeat" items="{{pageSizeOptions}}" as="pageSizeOption">
-                                        <option value="{{pageSizeOption}}"
-                                                selected$="{{_isPageSizeOptionSelected(pageSizeOption)}}">
-                                            {{pageSizeOption}}
-                                        </option>
-                                    </template>
-                                </select>
-                            </div>
-                            <div class="col-lg-5">
-                                <div class="mode-toggle"><span class="toggle-label">summary</span>
-                                    <paper-toggle-button checked="{{!summary}}"></paper-toggle-button>
-                                    <span class="toggle-label">details</span>
-                                </div>
+                            <div class="col-lg-10 ">
+                                <span class="col-lg-2">
+                                    show&nbsp;
+                                    <select on-change="_changePageSize">
+                                        <template is="dom-repeat" items="{{pageSizeOptions}}" as="pageSizeOption">
+                                            <option value="{{pageSizeOption}}"
+                                                    selected$="{{_isPageSizeOptionSelected(pageSizeOption)}}">{{pageSizeOption}}
+                                            </option>
+                                        </template>
+                                    </select>
+                                </span>
+                                <span class="bg-grey">
+                                    <a id="summary-link" class$="[[_summaryLinkClass]]" role="button" on-click="_updateLinks">summary</a> |
+                                    <a id="details-link" class$="[[_detailsLinkClass]]" role="button" on-click="_updateLinks">details</a>
+                                </span>
                             </div>
                         </div>
 
@@ -159,6 +172,14 @@ Publication with linked entries view demo
                     type: String,
                     value: "publications-with-linked-entries-view.prefered-size",
                     readOnly: true
+                },
+                _summaryLinkClass: {
+                    type: String,
+                    value: ""
+                },
+                _detailsLinkClass: {
+                    type: String,
+                    value: "disabled"
                 }
             },
             attached: function () {
@@ -207,6 +228,7 @@ Publication with linked entries view demo
             },
             _handleResponseData: function (data) {
 
+                console.log("DATA", data)
                 var entries = [];
 
                 Object.values(data.entryPublicationMap).forEach(function (entryPublication) {
@@ -238,6 +260,18 @@ Publication with linked entries view demo
             },
             _beyondMaximumEntries: function (count) {
                 return count > 500;
+            },
+            _updateLinks: function (evt) {
+                this.summary = (evt.srcElement.id === "summary-link");
+
+                if (this.summary) {
+                    this._detailsLinkClass = "";
+                    this._summaryLinkClass = "disabled";
+                }
+                else {
+                    this._detailsLinkClass = "disabled";
+                    this._summaryLinkClass = "";
+                }
             }
         });
     </script>
