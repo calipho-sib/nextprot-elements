@@ -132,6 +132,7 @@ Element to allow pagination on a page when given an array of JSON object.
                     this.$.container.appendChild(node);
                 }
                 this._setupPageNumbers();
+                $(document).scrollTop(0);
             },
             /**
              * Display the &lt;select&gt; to allow for quick selection of the pages
