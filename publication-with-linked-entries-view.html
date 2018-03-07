@@ -74,6 +74,13 @@ Publication with linked entries view demo
                 padding: 2px;
             }
 
+            .over-threshold-warning {
+                color: #906013;
+                font-size: 12px;
+                font-weight: 900;
+                margin-left: 5px;
+            }
+
         </style>
 
         <template is="dom-if" if="[[data]]">
@@ -104,7 +111,7 @@ Publication with linked entries view demo
                                     Proteins [[from]] to [[to]] of [[data.entries.length]]
                                 </template>
                                 <template is="dom-if" if="[[_beyondMaximumEntries(data.relatedEntryCount)]]">
-                                    <span class="text-warning" title="The first 500 most relevant entries were displayed below."><span class="glyphicon glyphicon-warning-sign"></span> over [[data.relatedEntryCount]]</span>
+                                    <span class="over-threshold-warning" title="The first 500 most relevant entries were displayed below."><span class="fa fa-exclamation-circle"></span> over [[data.relatedEntryCount]]</span>
                                 </template>
                             </div>
                             <div class="col-lg-10 ">
