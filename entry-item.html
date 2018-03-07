@@ -53,12 +53,12 @@ Protein entry item demo
                     Sequence length: <a href="entry/[[data.accession]]/sequence">[[data.aa_length]]</a>
                     Variants: <a href="entry/[[data.accession]]/sequence">[[data.var_num]]</a>
                     <br>
-                    Disease: <a class$="[[_computeATagClass(isDisease)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isDisease)]]</a>
-                    Expression: <a class$="[[_computeATagClass(isExpression)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isExpression)]]</a>
-                    Mutagenesis: <a class$="[[_computeATagClass(isMutagenesis)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isMutagenesis)]]</a>
-                    Proteomics: <a class$="[[_computeATagClass(isProteomics)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isProteomics)]]</a>
-                    Structure: <a class$="[[_computeATagClass(isStructure)]]" href="entry/[[ac]]/medical">[[_convertBooleanToYesOrNo(isStructure)]]</a>
-                    Proteins existence: <a href="entry/[[ac]]/function">[[protExistence]]</a>
+                    Disease: <a class$="[[_computeATagClass(isDisease)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isDisease)]]</a>
+                    Expression: <a class$="[[_computeATagClass(isExpression)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isExpression)]]</a>
+                    Mutagenesis: <a class$="[[_computeATagClass(isMutagenesis)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isMutagenesis)]]</a>
+                    Proteomics: <a class$="[[_computeATagClass(isProteomics)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isProteomics)]]</a>
+                    Structure: <a class$="[[_computeATagClass(isStructure)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isStructure)]]</a>
+                    Proteins existence: <a href="entry/[[data.accession]]/function">[[protExistence]]</a>
                 </div>
             </template>
 
