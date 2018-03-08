@@ -1,0 +1,899 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="evidence-item.html">
+<link rel="import" href="quality-label.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="feature-table.html">
+<!--
+<script src="../jquery/dist/jquery.js"></script>
+<script src="../bootstrap/dist/js/bootstrap.js"></script>
+-->
+<!--
+`exon-view`
+Complex element joining nextprot feature viewer, feature table and sequence viewer
+@demo demo/exon-view-demo.html
+-->
+<dom-module id="exon-view">
+    <link rel="stylesheet" type="text/css" href="../feature-viewer/dist/feature-viewer.min.css">
+    <template>
+        <style is="custom-style" include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+            evidence-item {
+                padding: 8px 0 0 0;
+                margin: 5px 40px;
+            }
+            td[hidden] {
+                display: none;
+            }
+            .filter-block>div{
+                box-shadow: 0px 2px 3px -1px rgba(0,0,0,0.15);
+                margin-top:15px;
+                display: inline-block;
+            }
+            .filter-heading{
+                display:inline-block;
+                background:#F8F8F8;
+                padding:0px 15px;
+                height:100%;
+                border-color:#F8F8F8;
+                border:1px #ddd solid;
+                vertical-align: middle;
+                border-top-left-radius: 2px;
+                border-bottom-left-radius: 2px;
+            }
+            .filter-heading .fa{
+                margin-right:3px;
+            }
+            .filter-heading h5{
+                display: inline-block;
+                color: #777;
+                padding: 0px;
+                height: 30px;
+                margin: 0px;
+                line-height: 30px;
+            }
+            .filter-body{
+                display:inline-block;
+                background:#F8F8F8;
+                padding:0px 15px 0px 0px;
+                height:32px;
+                border-color:#F8F8F8;
+                border:1px #ddd solid;
+                margin-left:-1px;
+                vertical-align: middle;
+                border-top-right-radius: 2px;
+                border-bottom-right-radius: 2px;
+            }
+            #filtering{
+                margin-right:10px;
+                font-size:12px;
+            }
+            #allFilters{
+                border:0px;
+                height:30px;
+                border-right:1px solid #ddd;
+                border-radius:0px;
+                color: #337ab7;
+                text-decoration: underline;
+            }
+            .filter-box{
+                position: relative;
+                display: inline-block;
+                padding-left: 10px;
+                margin-bottom: 0;
+                font-weight: 400;
+                vertical-align: middle;
+                cursor: pointer;
+            }
+            .filter-box input{
+                margin-right:5px;
+            }
+            .header-help:hover{
+                text-decoration: none;
+                cursor:pointer;
+            }
+            span.label-info {
+                background: #5bc0de;
+            }
+            #featuresTable {
+                font-size:11px;
+                background:#fff;
+                padding:0px;
+                height:525px;
+/*                border: 1px solid #cfd9db;*/
+                border-radius:4px;
+                margin:10px 0px;
+            }
+            #featuresTable .variant-description{
+                color:#00C500;
+            }
+            table#featTable>tbody>tr>th {
+                padding: 0 8px;
+            }
+            table#featTable>tbody>tr:first-of-type + tr {
+                border-top: none;
+            }
+            table#featTable>tbody>tr {
+                border-top: 1px solid #ddd;
+                border-bottom: none;
+            }
+            table#featTable>tbody>tr>td {
+                border: none;
+            }
+            table#featTable>tbody>tr .table-row-evidence {
+                padding: 0 16px 0 8px;
+            }
+            #seqViewer ::content > .seqHeader {
+                width: 100%;
+            }
+            #seqViewer ::content > .seqHeader > div {
+                display: inline-block;
+                vertical-align: top;
+                text-align: center;
+                width: 25%;
+            }
+            #seqViewer {
+                background:#fff;
+                padding:5px 15px;
+                height:525px;
+/*
+                border: 1px solid #cfd9db;
+                border-radius:4px;
+*/
+            }
+            .seqHeader{
+                margin-bottom:5px;
+                border-bottom:1px solid #E7EAEC;
+                height:45px;
+            }
+            .seqHeader>div{
+                display: inline-block;
+                margin:10px;
+            }
+            #seqViewer .seqInfos{
+                display: inline-block;
+                vertical-align: middle;
+                font-size:11px;
+                text-align: center;
+                float:right;
+                margin: 10px 5px 0px;
+            }
+            #seqViewer .seqInfos>.seqLabel{
+                font-weight: 900;
+                color:#777;
+            }
+            #seqViewer .seqInfos>.seqValue{
+                color:white;
+                padding:3px 5px;
+                text-align: center;
+                border-radius:3px;
+                float:right;
+            }
+            #seqViewer .seqIso>.seqValue{
+                background-color:#23c6c8;
+            }
+            #seqViewer .seqAALength>.seqValue{
+                background-color:#33C59E;
+                font-weight:700;
+            }
+            #seqViewer .seqMass>.seqValue{
+                background-color:#f8ac59;
+            }
+            #seqViewer .seqpI>.seqValue{
+                background-color:#92896F;
+            }
+            #evidence-row {
+                display: table-row;
+            }
+            .evidenceNumber {
+                background: #7CBA0F;
+                padding: 4px 8px;
+                border-radius: 2px;
+                color: white;
+                vertical-align: top;
+                cursor: pointer;
+            }
+            .filter-block {
+                margin:0px 20px;
+                float:left;
+            }
+            .tableHighlight {
+                background-color:rgba(197, 0, 99, 0.1) !important;
+            }
+            .tableHighlight td{
+                background-color:rgba(197, 0, 99, 0.1) !important;
+            }
+            .right-block {
+                margin:10px 0px;
+                padding-right:0px;
+            }
+            .sequenceRangeSpan {
+                line-height: 0.8;
+                vertical-align:top;
+            }
+            .center {
+                position: absolute;
+                margin: 45px 40%;
+            }
+            paper-spinner-lite {
+                --paper-spinner-stroke-width: 3px;
+            }
+            #featTableSpinner {
+                height: 45px;
+                width: 45px;
+            }
+            #featViewerSpinner {
+                position: absolute;
+                margin-left: 320px;
+                margin-top: 16px;
+                height: 32px;
+                width: 32px;
+            }
+        </style>
+        <div class="row">
+            <div id="featureViewer">
+                <template is="dom-if" if="[[_ifActiveFiltering(activeFiltering)]]">
+                    <div class="filter-block row">
+                        <div class="filter-heading">
+                            <span class="fa fa-filter"></span>
+                            <h5>FILTER</h5>
+                        </div>
+                        <div class="filter-body">
+                            <div id="filtering" class="all-filters">
+                                <button class="btn btn-default btn-sm" id="allFilters" on-tap="_filterAll">All/None</button>
+                                <template is="dom-repeat" items="[[_toArray(activeFiltering)]]" as="filter">
+                                    <label class="filter-box" on-mouseover="_highlightCategories" on-mouseout="_dimCategories">
+                                        <input type="checkbox" id=[[filter.name]] value="option1" on-change="_toggleFiltering" checked>[[filter.value]]
+                                    </label>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <paper-spinner-lite id="featViewerSpinner" class="size" active></paper-spinner-lite>
+            </div>
+        </div>
+        <div class="row">
+            <div id="featuresTable">
+<!--
+                <div id="featTableScroller" class="section-scroller">
+                    <table id="featTable" class="table table-striped table-fixed">
+                        <thead>
+                        <tr>
+                            <th class="featName" class="col-md-2 col-lg-1">Name</th>
+                            <th class="col-md-2 col-lg-1 text-align-right">Position</th>
+                            <th class="col-md-1 col-lg-1 text-align-right">Length</th>
+                            <th class="col-md-5 col-lg-7">Description</th>
+                            <th colspan="2" class="col-md-2 text-align-left">Evidence</th>
+                        </tr>
+                        </thead>
+                        <tbody><tr colspan="5">
+                                <div class="center"><paper-spinner-lite id="featTableSpinner" class="size" active></paper-spinner-lite></div>
+                        </tr></tbody>
+                        <template is="dom-repeat" items="[[_toArray(groupedFeatures)]]" as="featureGroup">
+                            <tbody>
+                            <tr class$="[[_formatClassName(featureGroup.name, featureGroup.name)]]">
+                                <th colspan="6" class="general-info table-section-header"><div class="grey-x">[[featureGroup.name]]</div></th>
+                            </tr>
+                            <template is="dom-repeat" id="featureTableTemplate" items="[[featureGroup.value]]" as="feature" filter="_filterGold">
+                                <tr id=[[feature.id]] class$="[[_formatClassName(feature.category, feature.group)]] general-info">
+                                    <td>[[feature.category]]</td>
+                                    <td class="text-align-right"><a class="featPosition" on-tap="tvSelection">
+                                        <span inner-h-t-m-l="[[feature.range]]"></span>
+                                    </a></td>
+                                    <td class="text-align-right">[[feature.length]]</td>
+                                    <td><span inner-h-t-m-l="[[feature.link]]"></span>
+                                        <template is="dom-repeat" items="[[feature.crossRef]]" as="crossRef">
+                                            ; [[crossRef.value.dbName]]: <a class="ext-link" href="[[crossRef.value.url]]" target="_blank">[[crossRef.value.name]]</a>
+                                        </template>
+                                        <template is="dom-if" if="[[!feature.proteotypicity]]">
+                                            <span class="nonProteotypic">found in other entries</span>
+                                        </template>
+                                        <quality-label quality="[[feature.quality]]"></quality-label>
+                                    </td>
+                                    <template is="dom-if" if="[[feature.source]]">
+                                        <td class="text-align-right">
+                                            <span id="evidences-button-[[feature.id]]" class="evidenceNumber" data-args$="[[feature]]" on-tap="_showEvidences">[[feature.evidenceLength]]</span>
+                                        </td>
+                                        <td>
+                                            <div class="reference-label-container">
+                                                <template is="dom-repeat" items="[[feature.evidenceSources]]" as="source">
+                                                    <div class="reference-label">[[source]]</div>
+                                                </template>
+                                            </div>
+                                        </td>
+                                    </template>
+                                    <template is="dom-if" if="[[!feature.source]]">
+                                        <td></td>
+                                        <td></td>
+                                    </template>
+                                </tr>
+                                <tr id="evidence-row" class$="[[_formatClassName(feature.category, feature.group)]] detailed-info">
+                                    <td colspan="6" id="[[feature.id]]-evidence-container" class="table-row-evidence"></td>
+                                </tr>
+                            </template>
+                            </tbody>
+                        </template>
+                    </table>
+                </div>
+-->
+<!--
+                <feature-table feat-by-iso="[[featuresForTable]]">
+                </feature-table>
+-->
+                <feature-table id="featTable" all-features="[[featuresForTable]]">
+                </feature-table>
+            </div>
+            <template is="dom-if" if="[[!hideSequenceViewer]]">
+                <div class="col-md-6 right-block">
+                    <div id="seqViewer"></div>
+                </div>
+            </template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'exon-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {},
+                    observer: "reload"
+                },
+                isoName: {
+                    type: String,
+                    notify: true,
+                    observer: "isoformChange"
+                },
+                selection: {
+                  type: Object,
+                  notify: true
+                },
+                featuresByIsoform: {
+                    type: Array,
+                    value: [],
+                    notify: true
+                },
+                featureList: {
+                    type: Array,
+                    value: [
+                        {
+                            "APIRef": "sequence",
+                            "metadata": {"name": "Sequence"}
+                        }]
+                },
+                featuresForViewer: {
+                    type: Array,
+                    value: []
+                },
+                featuresByGroup:{
+                    type: Object,
+                    value:{}
+                },
+                featuresForTable: {
+                    type:Array,
+                    value:[],
+                    notify:true
+                },
+                filterOptions: {
+                    type: Array,
+                    value: {
+                        "none": true
+                    }
+                },
+                activeFiltering: {
+                    type: Array,
+                    value: {}
+                },
+                hideSequenceViewer: {
+                    type: Boolean,
+                    value: false
+                },
+                count: {
+                    type: Number,
+                    notify: true
+                }
+            },
+            attached: function() {
+                this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
+                this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
+                if(!this.isoName) this.isoName = this.nxEntry+"-1";
+                var self=this;
+                Promise.all(self._getFeaturesByView())
+                    .then(function (rawData) {
+                    self.rawData = rawData;
+                    self.sequences = rawData[0];
+                    self._getMetadataByView();
+                    self._getFeaturesByIsoform();
+                    var count = 0;
+                    for (var i in self.rawData){
+                        if (self.rawData[i].annot) count += self.rawData[i].annot.length;
+                    }
+                    
+                    self.count = count;
+                    
+                    if(self.count){
+                        self.reloadSVG();
+                        self._addFiltering();
+                        self.$.featViewerSpinner.active = false;
+//                        self.$.featTableSpinner.active = false;
+                    }
+                    if (self.hideSequenceViewer) self.$$("#featuresTable").classList.add("col-md-12");
+                    else self.$$("#featuresTable").classList.add("col-md-6")
+                });
+            },
+            isoformChange: function(){
+                this.featuresByGroup = {};
+                this.reloadSVG();
+            },
+            reloadSVG: function(){
+                var self = this;
+                Polymer.RenderStatus.afterNextRender(this.$.featureViewer, function() {
+//                    self.$.featTableSpinner.active = true;
+                    $("#featureViewer svg").remove();
+                    if(self.featuresByIsoform.length) {
+                        self._fillTable();
+                        self.hidden=false;
+                        self._renderFeatureViewer();
+                        self._addFeatures();
+                        if ($(".zoomUnit").length) $(".zoomUnit").text("1");
+                        d3.selectAll('div.selectedRect').remove();
+                        self.eventTV();
+                    }else{
+                        self.hidden=true;
+                    }
+//                    self.$.featTableSpinner.active = false;
+                });
+            },
+            reload: function(){
+                if (this.rawData) {
+                    this._getFeaturesByIsoform();
+                    this.reloadSVG();
+                }
+            },
+            _getFeaturesByIsoform: function(){
+                this.featuresForViewer = [];
+//                this.featuresByIsoform = [];
+                var featsByIso = [];
+                this.isoforms = this.rawData[0];
+                var isoLengths = {};
+                this.isoforms.forEach(function(i){
+                    isoLengths[i.uniqueName] = i.sequenceLength;
+                })
+                for (var i=1; i<this.rawData.length-1;i++) {
+                    var feat = NXUtils.convertMappingsToIsoformMap(this.rawData[i],this.metaData[i].name,this.metaData[i].filter, "");
+                    console.log(JSON.stringify(feat))
+                    var feat = {"NX_P01308-1":[{"start":103082,"end":105626,"length":2545,"id":"ENSE00003531987","description":"ENSE00003531987","quality":"gold","proteotypicity":true,"unicity":"","category":"Variant","group":"Variant","link":"ENSE00003531987","evidenceLength":1,"source":[{"evidenceCodeName":"curator inference used in manual assertion","assignedBy":"UniprotKB","resourceDb":"UniProt","externalDb":false,"qualityQualifier":"gold","publication":null,"dbXrefs":[],"crossRef":{"dbName":"UniProt","name":"P01308","url":"http://www.uniprot.org/uniprot/P01308"},"context":false,"mdata":null}],"variant":false,"context":{}},{"start":107891,"end":108156,"length":266,"id":"ENSE00003606429","description":"ENSE00003606429","quality":"gold","proteotypicity":true,"unicity":"","category":"Variant","group":"Variant","link":"ENSE00003606429","evidenceLength":1,"source":[{"evidenceCodeName":"curator inference used in manual assertion","assignedBy":"UniprotKB","resourceDb":"UniProt","externalDb":false,"qualityQualifier":"gold","publication":null,"dbXrefs":[],"crossRef":{"dbName":"UniProt","name":"P01308","url":"http://www.uniprot.org/uniprot/P01308"},"context":false,"mdata":null}],"variant":false,"context":{}}]}
+                    if (this.nxConfig.goldOnly) feat = this._filterGoldForViewer(feat);
+                    featForViewer = NXViewerUtils.convertNXAnnotations(feat,this.metaData[i],isoLengths);
+                    this.featuresForViewer.push(featForViewer);
+                    featsByIso.push(feat);
+                }
+                this.notifyPath("featuresByIsoform", featsByIso);
+            },
+            _getFeaturesByView: function() {
+                var featuresForViewer = [];
+                for (var feat in this.featureList) {
+                    switch (this.featureList[feat].APIRef) {
+                        case "sequence":
+                            featuresForViewer.push(this.nx.getProteinSequence(this.nxEntry));
+                            break;
+                        case "antibody":
+                            featuresForViewer.push(this.nx.getAntibody(this.nxEntry));
+                            break;
+                        case "isoform-mapping":
+                            featuresForViewer.push(this.nx.getIsoformMapping(this.nxEntry));
+                            break;
+                        case "variant-medical":
+                            featuresForViewer.push(this.nx.getAnnotationsWithProperty(this.nxEntry, "variant", "disease-related", true));
+                            break;
+                        case "miscellaneous-region-interactions":
+                            featuresForViewer.push(this.nx.getAnnotationsWithProperty(this.nxEntry, "miscellaneous-region", "interaction-related", true));
+                            break;
+                        default:
+                            featuresForViewer.push(this.nx.getAnnotationsByCategory(this.nxEntry, this.featureList[feat].APIRef));
+                            break;
+                    }
+                }
+                return featuresForViewer;
+            },
+            _getMetadataByView: function() {
+                this.metaData = [];
+                for (var i = 0; i < this.featureList.length - 1; i++) {
+                    this.metaData.push(this.featureList[i].metadata);
+                }
+            },
+            _addFiltering: function() {
+                var activeFiltering = {};
+                for (var i=0;i<this.featuresForViewer.length;i++) {
+                    if (Object.keys(this.featuresForViewer[i]).length !== 0) {
+                        var filter = this.featuresForViewer[i][Object.keys(this.featuresForViewer[i])[0]].filter;
+                        if (filter !== "none" && (!activeFiltering[filter.split(" ").join("_")])) {
+                            var filterMin = filter.split(" ").join("_");
+                            activeFiltering[filterMin]=filter;
+                            this.filterOptions[filterMin]=true;
+                        }
+                    }
+                }
+                if (this._toArray(activeFiltering).length>1) this.activeFiltering = activeFiltering;
+            },
+            _filterGoldForViewer: function(features){
+                var categories = Object.keys(features);
+                var filteredFeatures = {};
+                for (var i in categories) {
+                    for (var j in features[categories[i]]) {
+                        if(features[categories[i]][j].quality==="gold") {
+                            if(Object.keys(filteredFeatures).indexOf(categories[i])===-1) filteredFeatures[categories[i]] = [];
+                            filteredFeatures[categories[i]].push(features[categories[i]][j]);
+                        }
+                    }
+                }
+                return filteredFeatures;
+            },
+            _renderFeatureViewer: function(){
+                var self=this;
+//                console.log(this.sequences);
+//                var seqs = $.map(this.sequences.isoforms, function(s){return s})
+//                seqs.forEach(function (o) {
+                this.sequences.forEach(function (o) {
+                    if (o.uniqueName === self.isoName) {
+                        self.currentSeq = o.sequence;
+                        self.ft = new FeatureViewer(114572, "#featureViewer", {
+                            showAxis: true,
+                            showSequence: false,
+                            brushActive: true,
+                            toolbar:true,
+                            bubbleHelp:true,
+                            unit:"aa",
+                            zoomMax:10,
+                            toolbarTemplate: 2,
+                            positionWithoutLetter:true,
+                            tooltipColor:"black"
+                        });
+                        $(".header-help").hover(function(){
+                            $(this).css("text-decoration","none");
+                            $(this).css("cursor","pointer");
+                        })
+                            
+                        if (!self.hideSequenceViewer) self._renderSequenceViewer(o);
+                    }
+                });
+            },
+            _renderSequenceViewer: function(sequenceObject){
+                this.seqView = new Sequence(this.currentSeq, this.isoName);
+                //TODO CHANGE BELOW API URL HARDOCODE
+                console.warn("CHANGE BELOW API URL WITH ENVIORNMENT");
+
+                this.seqView.render('#seqViewer', {
+                    'showLineNumbers': true,
+                    'wrapAminoAcids': true,
+                    'charsPerLine': 50,
+                    'search':true,
+                    'toolbar':true,
+                    'fasta': true,
+                    'apiURL': (this.nx) ? this.nx.getApiBaseUrl():"https://api.nextprot.org",
+                    'header':{
+                        'display':false,
+                        'searchInTitle': false,
+                        'showCpl':false,
+                        'badgeWithUnit':true
+                    }
+                });
+                //Customize Sequence viewer - raw version
+                var seqHeader = document.createElement("div");
+                seqHeader.setAttribute("class", "seqHeader");
+                this.$$("#seqViewer").insertBefore(seqHeader, this.$$(".sequenceBody"));
+                var isoformContainer = document.createElement("div");
+                var seqLenContainer = document.createElement("div");
+                var massContainer = document.createElement("div");
+                var isoElectricPointContainer = document.createElement("div");
+                isoformContainer.innerHTML = "<strong>Isoform :</strong> " + sequenceObject.mainEntityName.name;
+                seqLenContainer.innerHTML = sequenceObject.sequence.length + " aa";
+                massContainer.innerHTML = "<strong>Mass :</strong> " + sequenceObject.massAsString + " Da";
+                isoElectricPointContainer.innerHTML = "<strong>pI :</strong> " + sequenceObject.isoelectricPointAsString;
+                this.$$(".seqHeader").appendChild(isoformContainer);
+                this.$$(".seqHeader").appendChild(seqLenContainer);
+                this.$$(".seqHeader").appendChild(massContainer);
+                this.$$(".seqHeader").appendChild(isoElectricPointContainer);
+                document.querySelector("#seqViewer .inputSearchSeq").setAttribute("placeholder","Search in sequence...");
+                document.querySelector(".inputSearchSeq").setAttribute("data-toggle","tooltip");
+                document.querySelector("#seqViewer .inputSearchSeq").setAttribute("data-placement","top");
+                document.querySelector("#seqViewer .inputSearchSeq").setAttribute("title","Regex supported");
+                $('#seqViewer [data-toggle="tooltip"]').tooltip();
+            },
+            _addFeatures: function() {
+                for (var i=0;i<this.featuresForViewer.length;i++) {
+                    if (Object.keys(this.featuresForViewer[i]).length !== 0 && this.featuresForViewer[i].hasOwnProperty(this.isoName) && this.filterOptions[this.featuresForViewer[i][this.isoName].filter.split(" ").join("_")] === true) {
+                        var feature = jQuery.extend({}, this.featuresForViewer[i][this.isoName]);
+                        this.ft.addFeature(feature);
+                    }
+                }
+            },
+            _sortGroup: function(a,b){
+                    if (a["start"] === "?") return true;
+                    return a["start"] - b["start"];
+//                })
+            },
+            _toFlat: function (obj) {
+                var self = this;
+                //                var newArr = [];
+                return Object.keys(obj).map(function (key) {
+                    if (!self.filterOptions[key.split(" ").join("_")]){
+                        return [];
+                    }
+                    var newObj = obj[key].sort(self._sortGroup);
+                    newObj[0]["first"]=true;
+                    return newObj;
+                }).reduce(function (a, b) {
+                    return a.concat(b);
+                }, []);
+            },
+            _fillTable: function() {
+//                if ($("#featuresTable").length > 0) {
+                if (!Object.keys(this.featuresByGroup).length){
+                    var number = 0;
+                    var features = {};
+                    var self=this;
+                    for (feat in this.featuresByIsoform) if(this.featuresByIsoform[feat].hasOwnProperty(this.isoName)) {
+                        var group = this.featuresByIsoform[feat][self.isoName][0].group;
+                        var featureList = this.featuresByIsoform[feat][self.isoName];
+                        for (var i in featureList){
+                            var feature = featureList[i];
+                            if (!feature.start){
+                                feature.start = "?";
+                            }
+                            if (!feature.end){
+                                feature.end = "?";
+                            }
+                            if (!feature.length){
+                                feature.length = "?";
+                            }
+                            if(feature.variant){
+                                var crossRef = {};
+                                for (var j in feature.source){
+                                    if(feature.source[j].externalDb) {
+                                        if(feature.source[j].crossRef){
+                                            if (feature.source[j].crossRef.dbName==="Cosmic") feature.source[j].crossRef.dbName = "COSMIC";
+                                            crossRef[feature.source[j].crossRef.name] = feature.source[j].crossRef;
+                                        }
+                                    }
+                                }
+                                feature.crossRef = this._toArray(crossRef).sort(this._sortCrossRef);
+                            }
+                            
+                            if(this._isDisulfideBondFeature(feature.category)){
+                                feature.length = "";
+                                if (feature.description && feature.description.toLowerCase().startsWith("interchain")){
+                                    feature.range = feature.start;
+                                } else {
+                                    feature.range = feature.start+"&#x256d;&#x256e;"+feature.end;
+                                }
+                            }else if(this._isSingleResidueFeature(feature.length)){
+                                feature.range = feature.start;
+                            }else{
+                                feature.range = feature.start+"-"+feature.end;
+                            }
+                            if (this._isCrossLinkFeature(feature.category)){
+                                feature.length = "";
+                            }
+                        }
+                        if(Object.keys(features).indexOf(group)<0) {
+                            features[group] = featureList;
+                        } else {
+                            features[group] = features[group].concat(featureList);
+                        }
+                        number += feature.length;
+                        for (var i=0;i<this.featuresByIsoform[feat][this.isoName].length;i++) if(this.featuresByIsoform[feat][this.isoName][i].source) {
+                            this.featuresByIsoform[feat][this.isoName][i].evidenceSources = this._getUniqueListOfEvidenceSources(this.featuresByIsoform[feat][this.isoName][i].source);
+                        }
+                    }
+                    this.featuresByGroup = features;
+//                    this.notifyPath("groupedFeatures", features);
+                    
+//                    this.featuresLength = number;
+                }
+//                Polymer.RenderStatus.afterNextRender(self.$.featTable, function(){
+                this.featuresForTable = this._toFlat(this.featuresByGroup);
+                document.querySelector('iron-list').fire('iron-resize');
+//                });
+//                else {
+//                    document.querySelector('iron-list').fire('iron-resize');
+//                }
+//                };
+            },
+            _reloadFeatureTable: function(){
+                this._fillTable();
+//                if(this.$$("#featureTableTemplate")) this.$$("#featureTableTemplate").render();
+            },
+            _highlightCategories: function(mouseEvent){
+                srcElement = mouseEvent.target || mouseEvent.srcElement || mouseEvent.srcElement.childNodes[1];
+                srcElementId = srcElement.tagName === "LABEL" ? srcElement.firstChild.id : srcElement.id;
+                this.ft.showFilteredFeature(srcElementId, "#795B42", document.location.href);
+            },
+            _dimCategories: function(mouseEvent){
+                srcElement = mouseEvent.target || mouseEvent.srcElement || mouseEvent.srcElement.childNodes[1];
+                srcElementId = srcElement.tagName === "LABEL" ? srcElement.firstChild.id : srcElement.id;
+                this.ft.hideFilteredFeature(srcElementId, "#795B42", document.location.href);
+            },
+            _filterAll: function() {
+                if ($("#filtering").hasClass("all-filters")){
+                    $("#filtering input[type=checkbox]").prop("checked", false);
+                    for(var key in this.filterOptions) {
+                        this.filterOptions[key] = false;
+                    }
+                    $("#filtering").removeClass("all-filters");
+                } else {
+                    $("#filtering input[type=checkbox]").prop("checked", true);
+                    for(var key in this.filterOptions) {
+                        this.filterOptions[key] = true;
+                    }
+                    $("#filtering").addClass("all-filters");
+                }
+                this._applyFiltering();
+                this.reloadSVG();
+            },
+            _filterGold: function(item){
+                if (this.nxConfig.goldOnly) return item.quality==="gold";
+                return true;
+            },
+            _toggleFiltering: function() {
+                if (!$("#filtering input:checkbox:not(:checked)").length) {
+                    $("#filtering").addClass("all-filters");
+                } else {
+                    $("#filtering").removeClass("all-filters");
+                }
+                this._applyFiltering();
+                this.reloadSVG();
+            },
+            _applyFiltering: function() {
+                for (var filter in this.activeFiltering) {
+                    if ($("#"+filter).prop("checked")) {
+//                        $("."+filter).show();
+                        this.filterOptions[filter] = true;
+                    } else {
+//                        $("."+filter).hide();
+                        this.filterOptions[filter] = false;
+                    }
+                }
+            },
+            //Interaction if click on the feature Table
+            tvSelection: function(event) {
+//                var highlightedRows = document.getElementsByClassName("tableHighlight");
+//                if (highlightedRows[0]) highlightedRows[0].classList.remove("tableHighlight");
+//                var srcElement = event.target || event.srcElement;
+//                srcElement.parentElement.parentElement.parentElement.classList.add("tableHighlight");
+//                var currentId = srcElement.parentElement.parentElement.parentElement.id;
+                var currentId = event;
+                if (currentId) {
+                    var position = currentId.split("_").slice(1,3).map(Number);
+                    if (position.length === 1) position.push(position[0]);
+                    var svgId = "#" + "f" + currentId;
+                    position[0] -= 1;
+                    if (!position[0]) position[0] = 0;
+                    if (!position[1]) position[1] = this.currentSeq.length;
+                    if (!this.hideSequenceViewer) {
+                        this.seqView.selection(position[0], position[1], "#C50063");
+                        this._scrollAuto(".stringSelected", ".scroller", 200);
+                    }
+                    this.selection = {'start': position[0], 'end': position[1]};
+                    this.ft.addRectSelection(svgId);
+
+                }
+            },
+            //Listen if click on the feature Table & feature Viewer
+            eventTV: function() {
+                var self=this;
+                this.ft.onFeatureSelected(function(d){
+                    self.selection = d.detail;
+                    // update isoform selector
+                    console.log("feature selected");
+                    console.log(d);
+                    self.fvSelection(d.detail);
+                });
+                
+                this.ft.onFeatureDeselected(function(d){
+                    self.selection = {};
+                    self.$.featTable.rowSelection = -1;
+                    self.seqView.selection(0,0,"#C50063");
+                })
+//                console.log("LOOKING FOR THE DOM ELEMENT FEATTABLE");
+//                console.log(this.$.featTable);
+//                console.log(document.querySelector('feature-table'));
+                this.$.featTable.addEventListener('tv-feature-selected', function (e) {
+//                    console.log("EVENT LISTENER WORKED!!");
+//                    console.log(e);
+                    self.tvSelection(e.detail.id);
+                });
+            },
+            //Listen if click on the feature Viewer
+            fvSelection: function(d) {
+                if (!this.hideSequenceViewer) {
+                    this.seqView.selection(d.start - 1,d.end,"#C50063");
+                    this._scrollAuto(".stringSelected", ".scroller",200);
+                }
+//                console.log(d.id);
+                for (var i=0; i < this.featuresForTable.length;i++){
+                    if (this.featuresForTable[i].id === d.id){
+                        this.$.featTable.highlightFeature(i);
+                        break;
+                    }
+                }
+//                var featSelectedID = "#" + d.id;
+//                $(".tableHighlight").removeClass("tableHighlight");
+//                $(featSelectedID).addClass("tableHighlight");
+//                this._scrollAuto(featSelectedID, "#featTableScroller",70);
+            },
+            _scrollAuto: function(elem, container, shiftTop) {
+                var ElementTop = $(elem).position().top-shiftTop;
+                var scrollPosition = $(container).scrollTop();
+                var scrollingLength = ElementTop + scrollPosition;
+                $(container).animate({scrollTop: scrollingLength}, 1000);
+            },
+            _getUniqueListOfEvidenceSources: function(evidenceList) {
+                var evidenceSourceList = [];
+                evidenceList.forEach(function(evidence){
+                    if (evidence.assignedBy.toLowerCase()=="uniprotkb") evidence.assignedBy="UniProtKB";
+                    if (evidence.assignedBy.toLowerCase()=="nextprot") evidence.assignedBy="neXtProt";
+                    if (evidence.assignedBy.toLowerCase()=="cosmic") evidence.assignedBy="COSMIC";
+                    if (evidence.assignedBy.toLowerCase()=="kegg_ptw") evidence.assignedBy="KEGG";
+                    if(evidenceSourceList.indexOf(evidence.assignedBy) < 0) evidenceSourceList.push(evidence.assignedBy);
+                });
+                return evidenceSourceList.sort(NXUtils.sortByAlphabet);
+            },
+            _toArray: function(obj) {
+                if (typeof obj === 'object') {
+                    return Object.keys(obj).map(function(key) {
+                        return {
+                            name: key,
+                            value: obj[key]
+                        };
+                    });
+                }
+                return null;
+            },
+            _sortCrossRef: function(a,b){
+                return b.value.dbName==="dbSNP"?1:-1;
+            },
+            _ifActiveFiltering: function(){
+                return this._toArray(this.activeFiltering).length;
+            },
+            _isDisulfideBondFeature: function(featureCategory) {
+                return featureCategory === "Disulfide bond";
+            },
+            _isCrossLinkFeature: function(featureCategory) {
+                return featureCategory === "Cross-link";
+            },
+            _isSingleResidueFeature: function(residueLength) {
+                return residueLength === 1;
+            },
+            _formatClassName: function(name, group) {
+                return name.replace(' ','')+" "+group.split(" ").join("_");
+            },
+            _showEvidences: function(e){
+                var feature = JSON.parse(e.target.dataset.args);
+                var container = this.$$("#"+feature.id+"-evidence-container");
+                if(container.childElementCount===0){
+                    for (i in feature.source){
+                        var evidence = feature.source[i];
+                        if(evidence.crossRef) {
+                            evidence.resourceAccession = evidence.crossRef.name;
+                            evidence.url = evidence.crossRef.url;
+                        }
+                        var evidenceItem = document.createElement("evidence-item");
+                        evidenceItem.setAttribute("index", new Number(i)+1);
+                        evidenceItem.data=evidence;
+                        container.appendChild(evidenceItem);
+                        this.updateStyles();
+                    }
+                } else if (container.hidden) {
+                    container.hidden = false;
+                } else {
+                    container.hidden = true;
+                }
+            }
+        });
+    </script>
+</dom-module>
