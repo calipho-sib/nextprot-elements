@@ -1,0 +1,159 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="nextprot-elements-shared-styles.html">
+
+<link rel="import" href="entry-view-reference.html">
+
+<!--
+`entry-item`
+Protein entry item demo
+
+@demo demo/entry-item-demo.html
+-->
+<dom-module id="entry-item">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                border-bottom: var(--publication-item-border-bottom);
+                margin-bottom: var(--publication-item-padding-bottom);
+                padding-bottom: var(--publication-item-margin-bottom);
+            }
+            .gray {
+                color: #888;
+            }
+            .grayLink {
+                color: grey;
+            }
+        </style>
+        <template is="dom-if" if="[[data]]">
+
+            <!-- Entry view -->
+            <a href="/entry/[[data.accession]]">[[data.recommended_name]] <em>([[data.recommended_gene_names]])</em> [[[data.accession]]]</a>
+
+            <template is="dom-if" if="[[!summary]]">
+                <div class="small">
+                    <template is="dom-if" if="[[desc]]">
+                        <template is="dom-if" if="[[!_isSame(desc, shortDesc)]]">
+                            <span>[[displayedDesc]]</span>
+                            <span><a class="grayLink" on-click="_toggleDescription">[[[linkMessage]]]</a></span>
+                        </template>
+                        <template is="dom-if" if="[[_isSame(desc, shortDesc)]]">
+                            <span>[[desc]]</span>
+                        </template>
+                    </template>
+                    <template is="dom-if" if="[[!desc]]">
+                        <span> No functional information for this protein. </span>&nbsp;
+                    </template>
+                </div>
+                <div class="gray small">
+                    Chromosomal location: <a href="entry/[[data.accession]]/exons">[[data.chr_loc]]</a>
+                    Isoforms: <a href="entry/[[data.accession]]/sequence">[[data.isoform_num]]</a>
+                    PTMs: <a href="entry/[[data.accession]]/sequence">[[data.ptm_num]]</a>
+                    Sequence length: <a href="entry/[[data.accession]]/sequence">[[data.aa_length]]</a>
+                    Variants: <a href="entry/[[data.accession]]/sequence">[[data.var_num]]</a>
+                    <br>
+                    Disease: <a class$="[[_computeATagClass(isDisease)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isDisease)]]</a>
+                    Expression: <a class$="[[_computeATagClass(isExpression)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isExpression)]]</a>
+                    Mutagenesis: <a class$="[[_computeATagClass(isMutagenesis)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isMutagenesis)]]</a>
+                    Proteomics: <a class$="[[_computeATagClass(isProteomics)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isProteomics)]]</a>
+                    Structure: <a class$="[[_computeATagClass(isStructure)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isStructure)]]</a>
+                    Proteins existence: <a href="entry/[[data.accession]]/function">[[protExistence]]</a>
+                </div>
+            </template>
+
+            <!-- Cited For -->
+            <template is="dom-if" if="[[data.citedInViews]]">
+                <entry-view-reference refs="[[data.citedInViews]]"></entry-view-reference>
+            </template>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'entry-item',
+            properties: {
+                data: {
+                    type: Object,
+                    observer: "_handleData"
+                },
+                linkMessage: {
+                    type: String,
+                    value: "more"
+                },
+                desc: {
+                    type: String
+                },
+                shortDesc: {
+                    type: String
+                },
+                displayedDesc: {
+                    type: String,
+                    value: ""
+                },
+                isDisease: {
+                    type: Boolean
+                },
+                isExpression: {
+                    type: Boolean
+                },
+                isMutagenesis: {
+                    type: Boolean
+                },
+                isProteomics: {
+                    type: Boolean
+                },
+                isStructure: {
+                    type: Boolean
+                },
+                protExistence: {
+                    type: String
+                },
+                summary: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            _handleData: function (data) {
+
+                if (data.function_desc) {
+                    this.desc = data.function_desc[0];
+                    this.shortDesc = this._shorten(this.desc);
+                    this.displayedDesc = this.shortDesc;
+                }
+                else {
+                    this.desc = this.shortDesc = this.displayedDesc = "No description";
+                }
+                if (data.filters) {
+                    this.isDisease = data.filters.indexOf("filterdisease") !== -1;
+                    this.isExpression = data.filters.indexOf("filterexpressionprofile") !== -1;
+                    this.isMutagenesis = data.filters.indexOf("filtermutagenesis") !== -1;
+                    this.isProteomics = data.filters.indexOf("filterproteomics") !== -1;
+                    this.isStructure = data.filters.indexOf("filterstructure") !== -1;
+                }
+                this.protExistence = data.protein_existence.split("_").join(" ");
+            },
+            _computeATagClass: function (boolean) {
+                return (boolean) ? '' : 'inactive';
+            },
+            _convertBooleanToYesOrNo: function (boolean) {
+                return (boolean) ? 'yes' : 'no';
+            },
+            _shorten: function (str) {
+                return (str.length > 300) ? str.substr(0, 300) : str;
+            },
+            _isSame: function (str1, str2) {
+                return str1 === str2;
+            },
+            _toggleDescription: function () {
+                if (this.linkMessage === "more") {
+                    this.linkMessage = "less";
+                    this.displayedDesc = this.desc;
+                }
+                else {
+                    this.linkMessage = "more";
+                    this.displayedDesc = this.shortDesc;
+                }
+            }
+        });
+    </script>
+</dom-module>

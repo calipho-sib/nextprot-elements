@@ -1,0 +1,182 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="publication.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`experimental-context`
+Experimental context demo
+
+##### Example of full publication
+
+      <experimental-context></experimental-context>
+
+@demo demo/experimental-context-demo.html
+-->
+<dom-module id="experimental-context">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+            
+            .exp-context {
+                margin-bottom: 10px;
+                /*                padding-left:10px;*/
+            }
+            
+            .exp-title {
+                font-size: 12px;
+                font-weight: 900;
+                margin-bottom: 2px;
+            }
+            
+            .exp-description {
+                font-size: 11px;
+                font-weight: 300;
+                padding-left: 10px;
+            }
+            
+            span[pushed] .expContDisplayStatus:before {
+                content: "Hide";
+                display: inline-block;
+            }
+            
+            span .expContDisplayStatus:before {
+                content: "Show";
+            }
+            #expContButton{
+                font-size:12px;
+                line-height:14px;
+                text-shadow: 1px -1px 0px #fff;
+                font-weight:500;
+                padding:4px 8px;
+                background-color: #f7f7f7;
+                margin-bottom:5px;
+            }
+            .fa-flask{
+                margin-right:2px;
+                color :#18c166;
+                font-size:13px;
+                line-height: 1.3em;
+            }
+/*
+            #collapseAbstract{
+                margin-top:15px;
+            }
+*/
+            h2{
+                margin-bottom:20px;
+            }
+            #expContButtonState{
+                text-align: center;
+                width:41px;
+/*                margin-right:3px;*/
+                
+            }
+            np-publication{
+                font-size:12px;
+            }
+            
+        </style>
+        <template is="dom-if" if="[[data]]">
+<!--
+                <span id="collapseButton" class="colored-label expcont-button button-thin" on-tap="_toggleExpCont">
+                    <span class="pubDisplayStatus"> </span>experimental context
+                </span>
+-->
+                <paper-button id="expContButton" on-tap="_toggleExpCont" toggles raised active=[[showExpCont]]><span class="fa fa-flask" aria-hidden="true"></span> <span id="expContButtonState">Show </span> experimental context</paper-button>
+<!--            <iron-collapse id="collapseAbstract" opened$="[[showExpCont]]" no-animation>-->
+            <iron-collapse id="collapseAbstract" no-animation>
+                <template is="dom-repeat" items="[[_toArray(data.metadata)]]" as="expc">
+                    <div class="exp-context">
+                        <div class="exp-title">[[expc.1.label]]</div>
+                        <div class="exp-description">[[expc.1.content]]</div>
+                    </div>
+                </template>
+                <template is="dom-if" if="[[data.mdataPubLink]]">
+                    <div class="exp-title">Publications</div>
+                </template>
+                <template is="dom-repeat" items="[[data.mdataPubLink]]" as="expc_pub">
+<!--                    <p>[[expc_pub]]</p>-->
+<!--                    <np-publication view="detailed"  publication="[[expc_pub]]"></np-publication>-->
+                        <div  class="exp-description">[[expc_pub.label]] : <a target="_blank" href="[[expc_pub.url]]">[[expc_pub.accession]]</a></div>
+                </template>
+                
+<!--
+                <template is="dom-if" if="[[data.publications]]">
+                    <div class="exp-title">Publications</div>
+                </template>
+                <template is="dom-repeat" items="[[data.publications]]" as="expc_pub">
+                    <np-publication view="detailed"  publication="[[expc_pub]]"></np-publication>
+                </template>
+-->
+                
+            </iron-collapse>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'experimental-context',
+            behaviors: [Polymer.NeonAnimationRunnerBehavior],
+            properties: {
+                data: {
+                    type: Object
+                },
+                hasAbstract: {
+                    type: Boolean,
+                    value: false
+                },
+                showExpCont: {
+                    type: Boolean,
+                    value: false
+                },
+                animationConfig: {
+                    value: function () {
+                        return {
+                            "showExpCont": {
+                                name: "fade-in-animation",
+                                node: this.$.collapseAbstract,
+                                timing: {
+                                    duration: 1
+                                }
+                            },
+                            "hideExpCont": {
+                                name: "fade-out-animation",
+                                node: this.$.collapseAbstract,
+                                timing: {
+                                    duration: 1
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            _toArray: function (obj) {
+                if (obj){
+                    var citedArr = Object.keys(obj).map(function (key) {
+                        return [key, obj[key]];
+                    });
+                    return citedArr;
+                }
+                return [];
+            },
+            _toggleExpCont: function () {
+//                var button = this.$.expContButton;
+                var button = this.$$('#expContButton');
+                var isActive = button.active;
+                this.$$('#expContButtonState').textContent = isActive ? "Hide " : "Show ";
+//                this.$$('#expContButtonState').set('items.'+ft_index+'.hide',false);
+//                this.showExpCont = isActive;
+//                this.$$("#collapseAbstract").opened ?
+//                    this.playAnimation("hideAbstract") : this.playAnimation("showAbstract");
+//                    this.showExpCont = true : this.showExpCont = false;
+                this.$$("#collapseAbstract").toggle();
+//                this._toggleButton();
+            },
+        });
+    </script>
+</dom-module>

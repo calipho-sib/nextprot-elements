@@ -1,0 +1,123 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`publication-abstract`
+Publication abstract demo
+
+@demo demo/publication-abstract-demo.html
+-->
+<dom-module id="publication-abstract">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+
+            iron-collapse {
+                margin-top: 2px;
+            }
+
+            span[pushed] .pubDisplayStatus:before {
+                content: "Hide";
+                display: inline-block;
+            }
+
+            span .pubDisplayStatus:before {
+                content: "Show";
+            }
+
+            .abstractHeader {
+                color: #666;
+                padding: 2px 0;
+            }
+
+            .abstract-button {
+                background-color: #337ab7;
+                color: white;
+                border-radius: 2px;
+                cursor: pointer;
+            }
+
+            #collapseAbstract {
+                text-align: justify;
+            }
+        </style>
+
+        <template is="dom-if" if="[[abstract]]">
+            <template is="dom-if" if="[[!interactive]]">
+                <div class="abstractHeader">Abstract</div>
+                [[abstract]]
+            </template>
+            <template is="dom-if" if="[[interactive]]">
+                <span id="collapseButton" class="colored-label abstract-button button-thin" on-tap="_toggleAbstract">
+                    <span class="pubDisplayStatus"> </span>abstract
+                </span>
+                <iron-collapse id="collapseAbstract" opened="[[showAbstract]]">
+                    <template is="dom-if" if="[[abstract]]">
+                        <div id="abstractHeader" hidden>Abstract</div>
+                    </template>
+                    [[abstract]]
+                </iron-collapse>
+            </template>
+        </template>
+
+        <template is="dom-if" if="[[!abstract]]">
+            No Abstract available
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'publication-abstract',
+            behaviors: [Polymer.NeonAnimationRunnerBehavior],
+            properties: {
+                abstract: {
+                    type: String,
+                    value: ""
+                },
+                interactive: {
+                    type: Boolean,
+                    value: false
+                },
+                showAbstract: {
+                    type: Boolean,
+                    value: false
+                },
+                animationConfig: {
+                    value: function () {
+                        return {
+                            "showAbstract": {
+                                name: "fade-in-animation",
+                                node: this.$.collapseAbstract,
+                                timing: {
+                                    duration: 1200
+                                }
+                            },
+                            "hideAbstract": {
+                                name: "fade-out-animation",
+                                node: this.$.collapseAbstract,
+                                timing: {
+                                    duration: 200
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            _toggleAbstract: function () {
+                this.$$("#collapseAbstract").opened ?
+                    this.playAnimation("hideAbstract") : this.playAnimation("showAbstract");
+                this.$$("#collapseAbstract").toggle();
+                this._toggleButton();
+            },
+            _toggleButton: function () {
+                this.$$("#collapseAbstract").opened ?
+                    this.$$("#collapseButton").setAttribute("pushed", null) :
+                    this.$$("#collapseButton").removeAttribute("pushed");
+            }
+        });
+    </script>
+</dom-module>

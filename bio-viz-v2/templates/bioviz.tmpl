@@ -1,0 +1,58 @@
+<div class="row" style="margin: 0px 10px">
+    <div class="col-md-6" style="padding:0px;">
+        <div id="bioviz"></div>
+    </div>
+    <div class="col-md-6 right-block" style="padding-right:0px;">
+        <div class="panel panel-default params">
+            <div class="panel-heading">
+                <div style="display:inline-block;">
+                    <span id="structureCount" class="badge"></span>
+                </div>
+                <h4>3D Structures</h4>
+            </div>
+            <div class="panel-body">
+                <div id="pdbForm">
+                    <h4>OPTIONS</h4>
+                    <div>
+                        <label for="#pdbList">Choose PDB ID : </label>
+                        <select id="pdbList" class="form-control input-sm"></select>
+                    </div>
+                    <div>
+                        <label for="#molList">Choose chain : </label>
+                        <select id="molList" class="form-control input-sm"></select>
+                        <div class="checkbox-inline">
+                            <label>
+                                <input id="showContext" type="checkbox"> SHOW CONTEXT (ALL)
+                            </label>
+                        </div>
+
+                    </div>
+                    <div class="alert alert-info bioviz-menu-info" role="alert">
+                        <span class="fa fa-info-circle"></span>
+                        <span>Click on the 3D viewer then press <kbd>i</kbd> to display help.</span>
+                    </div>
+                </div>
+                <div class="clickLog">
+                    <h4>3D STRUCTURES</h4>
+                    <!--                        <ul id="eventTriggered"></ul>-->
+                    <div>
+                        <div class="pdbTableContainer">
+                            <table id="pdbTable" class="table-striped" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th class="pdbName">PDB</th>
+                                        <th>Method</th>
+                                        <th>Resolution (&#8491;)</th>
+                                        <th>Chain(s)</th>
+                                        <th>Positions</th>
+                                        <th class="pdbLinks">Further links</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,5 +2,5 @@ bower_components
 node_modules
 .idea
 build/
-.DS_Store
-.gitignore
+variant.json
+variant.json.1

@@ -12,8 +12,8 @@ module.exports = function (grunt) {
                     'vendor/datatables.min.js',
                     'js/compiled_infos_templates.js',
                     'biovizJS/library/jquery.ui-contextmenu.min.js',
-                    'js/bio-viz.js',
-                    'biovizJS/BiovizJS.js'
+                    'biovizJS/BiovizJS.js',
+                    'js/bio-viz.js'
                 ],
                 dest: 'dist/bio-viz.min.js'
             },

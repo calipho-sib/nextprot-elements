@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>heatmap-table</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../heatmap-table-item.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .vertical-section-container {
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+<div class="vertical-section-container centered">
+    <h3>Basic heatmap-table-item demo</h3>
+    <demo-snippet>
+        <template>
+            <heatmap-table-item 
+                  nx-config='{"entry":"NX_P04637"}' 
+
+                  options='{ "valuesSetting": [
+                        { "value": "NotDetected", "color": "lightgray" },
+                        { "value": "Positive", "color": "FFA10A" },
+                        { "value": "High", "color": "red" } ],
+                    "columnWidth": "120px" }' 
+
+                    data='[{
+                        "rowLabel": "Human anatomical entity",
+                        "values": ["NotDetected", "High", "Positive"],
+                        "children": [{
+                                "rowLabel": "Fluid and secretion",
+                                "values": ["NotDetected", "High", "Positive"],
+                                "children": []},
+                                {
+                                "rowLabel": "Other Things",
+                                "values": ["NotDetected", "High", "Positive"],
+                                "children": []}
+                        ]}]'>
+            </heatmap-table-item>
+        </template>
+    </demo-snippet>
+</div>
+
+</body>
+</html>

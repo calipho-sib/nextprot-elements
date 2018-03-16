@@ -72,23 +72,33 @@ Exteranl links section present in function, medical, expression, interactions, s
         categories: {
           type: Array
         },
+        view: {
+          type: String
+        },
         count: {
           type: Number,
           notify: true
         }
       },
+        _status : {
+            ALT_TERM: 'Different termination',
+            ALT_INIT: 'Different initiation',
+            NOT_ANNOTATED_CDS:'No translation available',
+            ALT_SEQ:'Sequence problems',
+            ALT_FRAME:'Frameshift'
+        },
       ready: function(){
         var nx = new Nextprot.Client("xref-section", "ndu");
         if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
         var self=this;
-        nx.getAnnotationsByCategory(self.nxConfig.entry, "xref")
+        nx.getEntryXrefInPageView(self.nxConfig.entry, self.view)
                 .then(function (data) {
+                    
                   self.getXrefByView(Object.keys(data.xrefs).map(function(k) { return data.xrefs[k] }));
                   self.$.spinner.active = false;
                 }).catch(function (err) {
+                    console.error("Error when querying API for entry "+self.nxConfig.entry, err);
                   // catch any error that happened so far
-                  console.log("Argh, broken: " + err.message);
-                  console.log("Error at line : " + err.stack);
                   self.$.spinner.active = false;
                   self.count = 0;
                 });
@@ -113,6 +123,7 @@ Exteranl links section present in function, medical, expression, interactions, s
           t[Object.keys(t)[0]] = self._filterExceptions(t[Object.keys(t)[0]]);
           return t;
         });
+
         for (var i in data) {
           var cat = data[i][Object.keys(data[i])[0]];
           if (cat.length===0) data.splice(i, 1);
@@ -133,6 +144,7 @@ Exteranl links section present in function, medical, expression, interactions, s
             else return 0;
           })
         }
+//        console.log("DATA XREFS", data)
         this.data = data;
       },
       _filterExceptions: function(typeList) {
@@ -198,7 +210,10 @@ Exteranl links section present in function, medical, expression, interactions, s
                     });
                   }
                 })
-                newTypeList.push(ensembl);
+
+                  if ($.grep(ensembl.xrefs, function(e){ return e.prefix == "Protein"; }).length == 1) {
+                      newTypeList.push(ensembl);
+                  }
               }
             }
           }
@@ -206,7 +221,8 @@ Exteranl links section present in function, medical, expression, interactions, s
             if (typeList[elem].properties.length > 0) {
               var molType = $.grep(typeList[elem].properties, function(e){ return e.name === "molecule type"; })[0];
               var addInfos = $.grep(typeList[elem].properties, function(e){ return e.name === "status"})[0];
-              var suffix = addInfos ? status[addInfos.value] : "";
+              var suffix = addInfos ? this._status[addInfos.value]+"." : "";
+
               var embl = {
                 name: typeList[elem].databaseName,
                 xrefs : []
@@ -218,14 +234,21 @@ Exteranl links section present in function, medical, expression, interactions, s
                   prefix : "mRNA",
                   suffix : ""
                 })
-                var translationID = $.grep(typeList[elem].properties, function(e){ return e.name === "protein sequence ID"; })[0].value;
-                var translation = $.grep(typeList, function(e){ return e.accession == translationID; })[0];
-                embl.xrefs.push({
-                  accession: translation.accession,
-                  url : translation.resolvedUrl,
-                  prefix : "Translation",
-                  suffix : suffix
-                })
+
+                var protSeqIdArray = $.grep(typeList[elem].properties, function(e){ return e.name === "protein sequence ID"; });
+
+                if (protSeqIdArray.length === 1) {
+                    var translationID = protSeqIdArray[0].value;
+                    var translation = $.grep(typeList, function (e) {
+                        return e.accession == translationID;
+                    })[0];
+                    embl.xrefs.push({
+                        accession: translation.accession,
+                        url: translation.resolvedUrl,
+                        prefix: "Translation",
+                        suffix: suffix
+                    })
+                }
               }
               else if (molType.value === "protein") {
                 var geneIDs = $.grep(typeList[elem].properties, function(e){ return e.name === "genomic sequence ID"; });
@@ -254,6 +277,17 @@ Exteranl links section present in function, medical, expression, interactions, s
                   suffix : suffix
                 })
               }
+              else if (molType.value === "Unassigned_DNA" && addInfos.value) {
+                var geneIDs = $.grep(typeList[elem].properties, function(e){ return e.name === "genomic sequence ID"; });
+                embl.xrefs.push({
+                  accession: typeList[elem].accession,
+                  url : typeList[elem].resolvedUrl,
+                  prefix : "Unassigned DNA",
+                  suffix : suffix
+                })
+              }
+
+
               newTypeList.push(embl);
             }
           }

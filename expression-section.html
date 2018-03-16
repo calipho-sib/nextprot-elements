@@ -1,0 +1,612 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="evidence-item.html">
+<link rel="import" href="quality-label.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="heatmap-table-item.html">
+
+<!--
+`expression-section`
+Annotation section used in function, medical, and expression views.
+
+#### Example
+    <generic-annotation-section section="function" categories='[ "GENERAL-ANNOTATION" ]'></generic-annotation-section>
+@demo demo/expression-section-demo.html
+-->
+<dom-module id="expression-section">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                min-width: 700px;
+                margin: 20px;
+                margin-right: 0px;
+                margin-left: 0px;
+            }
+
+            #nxOntologicalBrowser {
+                margin-left:0px;
+                margin-right:0px;
+                margin-bottom:0px;
+                border-bottom: 1px solid #E7EAEC;
+            }
+
+            #nxOntologicalBrowser .term-wrapper {
+                padding: 0px
+            }
+
+
+            .ontological-term {
+                width:235px;
+                overflow:hidden;
+                padding: 0px;
+                padding-left:2px;
+                margin: -1px;
+                cursor: pointer;
+                background-color: #f8f8f8;
+                /* box-shadow: 1px 1px 2px rgba(0,0,0,0.12); */
+                display: inline-block;
+            }
+            .xontological-term .fa{
+                margin-right: 2px;
+                margin-left: 2px;
+                font-size:16px;
+                vertical-align: text-bottom; 
+            }
+
+            #expression-tabs {
+                margin-bottom: 20px;
+            }
+
+        </style>
+
+        <div>
+            <a style="color:black" href$="{{_buildExportUri(nxConfig.env, nxConfig.entry)}}">
+            <button id="expressionEvidenceButton" class="btn btn-default pull-right">
+                &nbsp;Export data in TSV&nbsp;
+            </button>
+            </a>
+
+        </div>
+
+        <ul id="expression-tabs" class="nav nav-tabs" role="tablist">
+            <li id="ontologyTab" on-tap="_showOntologicalView">
+                <a href="javascript:void(0)">Ontological view</a>
+            </li>
+            <li id="flatTab" on-tap="_showTabularView">
+                <a href="javascript:void(0)">Tabular view</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="ontologyContent">
+                <div id="nxOntologicalBrowser">
+                    <template is="dom-repeat" items="[[hierarchyRoot]]" as="term">
+                        <div class="ontological-term"><a on-tap="_scrollToRow" data-args$="[[term.accession]]">[[term.name]]</a></div>
+                    </template>
+                </div>
+                <heatmap-table-item id="HTI_ontology" hm-type='{"flat": false}' data=[[heatmapData]] ></heatmap-table-item>
+            </div>
+            <div id="flatContent" hidden>
+                <heatmap-table-item id="HTI_flat" hm-type='{"flat": true}' data=[[heatmapFlatData]] ></heatmap-table-item>
+            </div>
+        </div>
+
+    </template>
+
+                            <!-- Palettes: https://material.io/guidelines/style/color.html#color-color-palette-->
+
+    <script>
+        Polymer({
+            is: 'expression-section',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                evidencesShown: {
+                    type: Boolean,
+                    value: false
+                },
+                expressionProfileData: {
+                    type: Object,
+                    value: {}
+                },
+                flatDataMap: {
+                    type: Object,
+                    value: {}
+                },
+                heatmapFlatData: {
+                    type: Array,
+                    value: [],
+                    notify: true
+                },
+                heatmapData: {
+                    type: Array,
+                    value: [],
+                    notify: true
+                },
+                heatmapOptions: {
+                    type: Object,
+                    value: { "methods" : [ 
+                        {
+                        methodName : "Microarray", methodEvidenceCodeName: "microarray RNA expression level evidence", ecoCode: "ECO:0000104",
+                        possibleValues : [{expressionLevel : "positive", tooltip: "positive", color: "#ffa10a"},
+                            {expressionLevel : "negative", tooltip: "negative", color : "#969e96"}]
+                        },
+                        {
+                            methodName : "RNA-Seq", methodEvidenceCodeName: "RNA-seq evidence",ecoCode: "ECO:0000295",
+                            possibleValues : [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
+                                {expressionLevel: "medium", tooltip: "positive (medium)", color: "#ffc870"},
+                                {expressionLevel: "low", tooltip: "positive (low)", color: "#ffe6bd"},
+                                {expressionLevel: "not detected", tooltip: "negative", color: "#969e96"}]
+                            
+                        },
+                        {
+                            methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",ecoCode: "ECO:0000009",
+                            possibleValues : [{expressionLevel: "positive", tooltip: "positive", color: "#ffa10a"}]
+                        },
+                        {   methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence",ecoCode: "ECO:0000087",
+                            possibleValues : [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
+                                {expressionLevel: "medium", tooltip: "positive (medium)", color: "#ffc870"},
+                                {expressionLevel: "low", tooltip: "positive (low)", color: "#ffe6bd"},
+                                {expressionLevel: "not detected", tooltip: "negative", color: "#969e96"}]
+
+                        }]
+
+                    }
+                },
+                hierarchyMap: {
+                    type: Object,
+                    value: {}
+                },
+                hierarchyRoot: {
+                    type: Object,
+                    value: [{name:"Alimentary system", code: "alimentary-system", accession: "TS-1293"},
+                        {name:"Cardiovascular system", code: "cardiovascular-system", accession : "TS-1297"},
+                        {name:"Dermal system", code: "dermal-system", accession: "TS-1299"},
+                        {name:"Endocrine system", code: "endocrine-system", accession: "TS-1301"},
+                        {name:"Exocrine system", code: "exocrine-system", accession: "TS-2057"},
+                        {name:"Hemolymphoid and immune system", code: "hemolymphoid-and-immune-system", accession: "TS-2018"},
+                        {name:"Musculoskeletal system", code: "musculoskeletal-system", accession: "TS-1311"},
+                        {name:"Nervous system", code: "nervous-system", accession: "TS-1313"},
+                        {name:"Reproductive system", code: "reproductive-system", accession: "TS-1318"},
+                        {name:"Respiratory system", code: "respiratory-system", accession: "TS-1319"},
+                        {name:"Urinary system", code: "urinary-system", accession: "TS-1323"},
+                        {name:"Sense organ", code: "sense-organ", accession: "TS-2043"},
+                        {name:"Body part", code: "body-part", accession: "TS-2084"},
+                        {name:"Tissue", code: "tissue", accession: "TS-2090"},
+                        {name:"Cell type", code: "cell-type", accession: "TS-2035"},
+                        {name:"Fluid and secretion", code: "fluid-and-secretion", accession: "TS-2101"},
+                        {name:"Gestational structure", code: "gestational-structure", accession: "TS-2092"}   ]
+                },
+                section: {
+                    type: String
+                },
+                scrollOffset: {
+                    type: Number,
+                    value: 50  // default value equals height of nextprot page header (nav menu top page)
+                },
+                count: {
+                    type: Number,
+                    notify: true
+                },
+                isoform: {
+                    type: String,
+                    observer: "_reloadIsoform"
+                },
+                nxClient: {
+                    type: Object,
+                    observer: {}
+                },
+                _showTabViewPropertyName: {
+                    type: String,
+                    value: "view.expression.show-tabular-view",
+                    readOnly: true
+                }
+            },
+            observers: [
+                '_getDataFromAPI(nxConfig.goldOnly)'
+            ],
+            _getDataFromAPI: function (newGoldOnlyValue) {
+
+                Polymer.RenderStatus.afterNextRender(this, function () {
+                    this._updateView();
+
+                    var nx = new Nextprot.Client("neXtprot expression section", "Calipho Group");
+                    if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
+
+                    var apiCall = [];
+                    apiCall.push(nx.getTerminologyByName("nextprot-anatomy-cv"));
+                    apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, "expression-profile"));
+
+                    var self = this;
+                    Promise.all(apiCall).then(function (result) {
+                        var nxAnatomy = result[0]["cvTermList"];
+                        self.expressionProfileData = result[1];
+
+                        // reset data structures at each api calls (whenever silver/gold status of nxConfig.goldOnly changed)
+                        self.hierarchyMap = {};
+                        self.flatDataMap = {};
+
+                        nxAnatomy.forEach(function (t){
+                            self.hierarchyMap[t.accession] = t
+                        });
+
+                        self._computeData();
+                    }).catch(function (err) {
+                        // catch any error that happened so far
+                        console.log("Argh, broken: " + err.message);
+                        console.log("Error at line : " + err.stack);
+                        self.$.spinner.removeAttribute('active');
+                        self.count = 0;
+                    });
+                });
+            },
+            _computeData: function (){
+
+                var self = this;
+                if(self.expressionProfileData && self.expressionProfileData.annot){
+
+                    self.heatmapFlatData = self._convertNextProtDataIntoHeatMapTableFlatFormat(self.expressionProfileData);
+                    self.count = self.heatmapFlatData.length;
+
+                    if( self.count > 0){
+                        // Deep copy (useless ass )
+                        //var flatDataCopy = jQuery.extend(true, [], self.heatmapFlatData);
+                        self.heatmapData = self._propagateFlatDataToTree(self.heatmapFlatData);
+
+                    }
+                }
+            },
+            _toggleAllEvidences: function (){
+                
+                this.evidencesShown = !this.evidencesShown;
+                var evidenceContainers = Polymer.dom(this.root).querySelectorAll(".evidences-container");
+
+                for (var e in evidenceContainers) {
+                    if (this.showEvidences == true) {
+                    evidenceContainers[e].parentNode.opened = true;
+                    } else {
+                    evidenceContainers[e].parentNode.opened = false;
+                    }
+                }
+                
+            },
+            _buildExportUri: function(env, entry){
+                //TODO "Internal note for dev team: Dev environment hardcoded here. Don't forget to change this before deploying to production..."
+                var apiBaseUrl = "https://api.nextprot.org";
+                if (this.nxConfig.env === "dev"){
+                    apiBaseUrl = "https://dev-api.nextprot.org";
+                }
+                else if (this.nxConfig.env === "alpha"){
+                    apiBaseUrl = "http://alpha-api.nextprot.org";
+                }
+                return apiBaseUrl + "/entry/" + entry  + "/expression-profile.tsv";
+            },
+            _showTabularView: function () {
+
+                var showTabularViewValue = localStorage.getItem(this._showTabViewPropertyName);
+                return showTabularViewValue && showTabularViewValue === "true";
+            },
+            _updateView: function () {
+                var showTabularViewValue = localStorage.getItem(this._showTabViewPropertyName);
+                var showTabularView = showTabularViewValue && showTabularViewValue === "true";
+
+                this.$.ontologyContent.hidden = showTabularView;
+                this.$.flatContent.hidden = !showTabularView;
+                (showTabularView) ? this.$.ontologyTab.classList.remove("active"):this.$.ontologyTab.classList.add("active");
+                (showTabularView) ? this.$.flatTab.classList.add("active"):this.$.flatTab.classList.remove("active");
+            },
+            _showOntologicalView: function () {
+
+                localStorage.setItem(this._showTabViewPropertyName, "false");
+                this._updateView();
+            },
+            _showTabularView: function () {
+
+                localStorage.setItem(this._showTabViewPropertyName, "true");
+                this._updateView();
+            },
+            _computeStyle: function (value) {
+                return "margin: 5px; background-color: " + value
+            },
+            _generateGroupedValuesForHeatMap: function(annotation, evidences) {
+
+                var groups = []
+                var atLeastOneEvidenceValid = false;
+                this.heatmapOptions.methods.forEach(function (method) {
+                    var methodPossibleValues = method.possibleValues;
+                    var groupObject = {name: method.methodName, values: [], ecoCode:method.ecoCode}
+                    groups.push(groupObject)
+                    methodPossibleValues.forEach(function (methodPossibleValue) {
+
+                        var evidenceMatchCount = 0;
+                        for(var e=0; e<evidences.length; e++){
+                            var evidence = evidences[e]
+                            if (evidence.evidenceCodeName === method.methodEvidenceCodeName) {
+                                if (evidence.expressionLevel === methodPossibleValue.expressionLevel) {
+                                    evidenceMatchCount++;
+                                    atLeastOneEvidenceValid = true;
+                                }
+                            }
+                        }
+                        groupObject.values.push({currentNodeEvidenceCount : evidenceMatchCount, color : methodPossibleValue.color, tooltip: methodPossibleValue.tooltip, expressionLevel : methodPossibleValue.expressionLevel})
+
+                    })
+
+                });
+
+                if(!atLeastOneEvidenceValid){
+                    console.log("Missing a valid value for annotation" , annotation.cvTermAccessionCode ,  "with evidences: " , evidences.length /*, "current values are ", values*/);
+                    //alert("Missing a valid value for annotation " + annotation.cvTermAccessionCode + " with evidences: " + evidences.length /*, "current values are ", values*/)
+                }
+                return groups;
+
+            },
+            _enrichEvidenceWithResourceUrl: function(heatmapData, xrefs) {
+                heatmapData.forEach(function(data){
+                    data.annotation.evidences.forEach(function(evidence){
+                        var resource = xrefs[evidence.resourceId]
+                        evidence.url = resource.resolvedUrl.replace(/amp;/g, "")
+
+                        //Define the URL label
+                        if(evidence.resourceDb == "HPA"){
+
+                            if(evidence.evidenceCodeAC == "ECO:0000087"){
+                                evidence.urlLabel = evidence.properties["antibodies acc"]
+                            }else {
+                                evidence.urlLabel = evidence.resourceAccession;
+                            }
+
+                        } else if(evidence.resourceDb == "Bgee"){
+                            var geneId = evidence.resourceAccession.slice(evidence.resourceAccession.indexOf("gene_id=") + 8);
+
+                            if(geneId.indexOf("&") != -1){
+                                geneId = geneId.substring(0, geneId.indexOf("&"));
+                            }
+                            evidence.urlLabel = geneId
+                        }
+                    })
+                })
+
+            },
+            _enrichEvidenceObjectWithExperimentalContext: function(heatmapData, experimentalContext) {
+                heatmapData.forEach(function(data){
+                    data.annotation.evidences.forEach(function(evidence){
+
+                        var context = experimentalContext[evidence.experimentalContextId]
+
+                        var levelAndStageLabel = "";
+
+                        if(evidence.negativeEvidence) {
+                            levelAndStageLabel = "No expression detected"
+                        } else {
+                            if(evidence.expressionLevel === "low") {
+                                levelAndStageLabel = "Low expression detected"
+                            }else if(evidence.expressionLevel === "medium") {
+                                levelAndStageLabel = "Medium expression detected"
+                            }else if(evidence.expressionLevel === "high") {
+                                levelAndStageLabel = "High expression detected"
+                            }else { //Case of microarray for example
+                                levelAndStageLabel = "Expression detected"
+                            }
+                        }
+
+                        if(context.developmentalStage) {
+                            var label = context.developmentalStage.name
+                            levelAndStageLabel = levelAndStageLabel  + " at " + ((label === "unknown" || label === "late adulthood") ? (label + " stage") : label) + "."
+                        }else {
+                            levelAndStageLabel += "."
+                        }
+                        evidence.levelAndStageLabel = levelAndStageLabel;
+
+                    })
+                })
+            },
+            _getTermByAccession: function (accession) {
+                return this.hierarchyMap[accession]
+            },
+            __buildChildrenRecursively: function (currentTerm, level, parentNode) {
+
+                var polymerElm = this;
+                var currentNode = {
+                    nodeId: (parentNode.nodeId ? parentNode.nodeId : "") + "_" + currentTerm.accession,
+                    rowLabel : currentTerm.name,
+                    linkLabel: currentTerm.accession,
+                    name: currentTerm.accession,
+                    level: level,
+                    parentNode: parentNode,
+                    linkURL :  "http://www.nextprot.org/db/term/" + currentTerm.accession
+                };
+
+                if(this.flatDataMap[currentTerm.accession]){
+                    currentNode.annotation = this.flatDataMap[currentTerm.accession].annotation;
+                    currentNode.evidences = this.flatDataMap[currentTerm.accession].evidences;
+                    currentNode.groupValues = this.flatDataMap[currentTerm.accession].groupValues;
+                    this.__propagateFlatDataToAncestorsRecursively(this.flatDataMap[currentTerm.accession], parentNode)
+                }
+
+                if(!currentTerm.childAccession || currentTerm.childAccession === []){
+                    return currentNode;
+                }else {
+                    var children = []
+                    currentTerm.childAccession.forEach(function(cAcc){
+                        var childTerm = polymerElm._getTermByAccession(cAcc)
+                        children.push(polymerElm.__buildChildrenRecursively(childTerm, level + 1, currentNode));
+                    });
+                    currentNode.children = children;
+                    return currentNode;
+                }
+
+            },
+            ___traverseTreeAndTagValuesWithPropagationProperties: function (data) {
+
+                var self = this;
+                if(data){
+
+                    //If groupValues is not defined for this entry, simply start an empty array that will be populated
+                    if(!data.groupValues){
+                        data.groupValues = [];
+                    }
+
+                    if(data.propagatedValuesFromChildren && data.propagatedValuesFromChildren.length > 0){
+
+                        var firstGroupedValues = data.propagatedValuesFromChildren[0];
+                        for(var g=0; g< firstGroupedValues.length; g++){
+
+                            var group = firstGroupedValues[g];
+
+                            //Create group if group is not present
+                            if(!data.groupValues[g]){
+                                data.groupValues.push({name: group.name, values:[], ecoCode: group.ecoCode})
+                            }
+
+                            for(var v=0; v< group.values.length; v++){
+
+                                //Searching for children values
+                                var firstChildFound = null;
+                                data.propagatedValuesFromChildren.forEach(function (child){
+                                    if(child[g].values[v].currentNodeEvidenceCount > 0){
+                                        firstChildFound = child[g].values[v];
+                                        return
+                                    }
+                                })
+
+                                var valuePresentForCurrentMethodAndLevel = (data.groupValues[g].values[v]) ? true : false;
+
+                                if(firstChildFound){
+
+                                    //Case of Pancreas (TS-0736) in the Insulin (NX_P01308), there are experimental evidences for Pancreas (TS-0736)
+                                    // but also for the children (Pancreatic islet TS-0741) so just add a tag for childrenFound
+                                    if(valuePresentForCurrentMethodAndLevel){
+                                        data.groupValues[g].values[v].childrenFound = true;
+
+                                    }else { //No values present so create one new
+
+                                        data.groupValues[g].values[v] = {
+                                            currentNodeEvidenceCount: 0,
+                                            color: firstChildFound.color,
+                                            expressionLevel : firstChildFound.expressionLevel,
+                                            tooltip: firstChildFound.tooltip,
+                                            childrenFound: true,
+                                        }
+                                    }
+
+                                } else { //Case where there are children on other groups, because propagatedValuesFromChildren = true
+                                        // but not directly on this group
+
+                                    //Can also be the case where data has directly (TS-0700) on NX_P06733 values but no children found
+                                    if(valuePresentForCurrentMethodAndLevel){
+                                        data.groupValues[g].values[v].childrenFound = false;
+                                    }else {
+
+                                        data.groupValues[g].values[v] = {
+                                            childrenFound: false,
+                                            currentNodeEvidenceCount: 0
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
+
+                    }
+
+                    if(data.children && data.children.length > 0){
+                        data.children.forEach(function (d){
+                            self.___traverseTreeAndTagValuesWithPropagationProperties(d)
+                        })
+                    }
+                }
+
+            },
+            __propagateFlatDataToAncestorsRecursively: function (data, node) {
+
+                if(node){
+                    if(!node.propagatedValuesFromChildren){
+                        node.propagatedValuesFromChildren = []
+                    }
+                    node.propagatedValuesFromChildren.push(data.groupValues);
+
+                    this.__propagateFlatDataToAncestorsRecursively(data, node.parentNode)
+                }
+
+            },
+            _propagateFlatDataToTree: function (flatData) {
+
+                var self = this;
+
+                flatData.forEach(function (data){
+                    self.flatDataMap[data.name]=data;
+                });
+
+                var polymerElm = this;
+                //For each root build children tree
+                var result = this.hierarchyRoot.map(function(root) {
+                    var rootTerm = polymerElm._getTermByAccession(root.accession);
+                    var root = polymerElm.__buildChildrenRecursively(rootTerm, 0, 0, {})
+                    self.___traverseTreeAndTagValuesWithPropagationProperties(root)
+                    return root;
+                });
+
+                return result;
+
+            },
+            _convertNextProtDataIntoHeatMapTableFlatFormat: function (data) {
+
+                var self = this;
+                //According to specs the eco name is too long
+                //this._renameMicroArrayEvidenceCode(data);
+
+                //Filter by gold only if present
+                console.log("Config is ", this.nxConfig);
+                console.log("Data elements ", data.annot.length);
+
+                if(this.nxConfig.goldOnly){
+                    console.log("Filtering annotations on GOLD");
+                    data.annot = data.annot.filter(function (a){ return a.qualityQualifier === "GOLD"})
+                    console.log("Data elements (after filtering):", data.annot.length);
+                }
+                else {
+                    console.log("Do not filter annotations");
+                }
+
+                var heatmapFlatData = data.annot.map(function(a) {return {rowLabel : a.cvTermName,
+                    name: a.cvTermAccessionCode,
+                    linkLabel: a.cvTermAccessionCode,
+                    linkURL :  "http://www.nextprot.org/db/term/" + a.cvTermAccessionCode,
+                    annotation : a,
+                    groupValues: self._generateGroupedValuesForHeatMap(a, a.evidences),
+                    evidences: a.evidences}})
+
+
+                this._enrichEvidenceObjectWithExperimentalContext(heatmapFlatData, data["contexts"])
+                this._enrichEvidenceWithResourceUrl(heatmapFlatData, data['xrefs'])
+
+                // Sort alphabetically
+                heatmapFlatData = heatmapFlatData.sort(function (a, b) {
+                    if(a.rowLabel < b.rowLabel) return -1;
+                    if(a.rowLabel > b.rowLabel) return 1;
+                    return 0;
+                })
+
+                return heatmapFlatData;
+            },
+
+            _scrollToRow: function(e){
+                var targetId = "#row_" + e.target.dataset.args;
+                var target = this.$.HTI_ontology.querySelector(targetId);
+                var trgTop = target.offsetTop;
+                var cntTop = target.offsetParent.offsetTop;
+                //console.log("scrollOffset", this.scrollOffset, "trgTop",trgTop, "cntTop", cntTop);
+                $("html,body").animate({scrollTop: trgTop + cntTop + this.scrollOffset}, 500);
+            }
+        });
+    </script>
+</dom-module>

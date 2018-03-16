@@ -339,7 +339,7 @@ View presenting blast search results annotations.
                 return this.params.filter === "F" ? "false" : "true";
             },
             _changePageSize: function(evt){
-                this.pageSize = new Number(evt.srcElement[evt.srcElement.selectedIndex].value);
+                this.pageSize = new Number(evt.target[evt.target.selectedIndex].value);
             },
             pointIdentity: function(identity){
                 this.colorbarObject.pointTo(identity)

@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <title>expression-section demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../expression-section.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .vertical-section-container {
+        max-width: 80%;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="vertical-section-container centered">
+      <h3>Expression-section Demo</h3>
+      <h4>
+        <span><label>Gold only</label><input type="checkbox" onchange="toggleGoldOnly()" style="margin-left: 10px;" checked></span>
+      </h4>
+      <demo-snippet>
+        <template>
+          <expression-section scroll-offset="0" nx-config='{"env": "dev", "entry": "NX_Q9Y6N5", "goldOnly" : true}' ></expression-section>
+        </template>
+      </demo-snippet>
+    </div>
+    <script>
+      function toggleGoldOnly(){
+
+          var element = document.querySelector("expression-section");
+
+          if (element && element.hasAttribute("nx-config")) {
+
+              var nxConfig = JSON.parse(element.getAttribute("nx-config"));
+              nxConfig.goldOnly = nxConfig.goldOnly !== true;
+              element.setAttribute("nx-config", JSON.stringify(nxConfig));
+          }
+      }
+    </script>
+  </body>
+</html>

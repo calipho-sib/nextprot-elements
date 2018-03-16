@@ -1,0 +1,380 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`publication-authors-and-journal`
+Publication authors with journal demo
+
+@demo demo/publication-authors-and-journal-demo.html
+-->
+<dom-module id="publication-authors-and-journal">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+
+            .authors a {
+                color: #5496cf;
+            }
+
+            .np-grey-text {
+                color: #666;
+            }
+
+            .journal {
+                margin-bottom: 2px;
+            }
+        </style>
+        <template is="dom-if" if="[[publication]]">
+
+            <!-- Detailed view -->
+            <template is="dom-if" if="[[!summary]]">
+                <span class="authors">
+                    <template is="dom-if" if="[[authorUrls]]">
+                        <!-- beyond max number of authors-->
+                        <template is="dom-if" if="[[_isAuthorUrlListBeyondMax(authorUrls)]]">
+                            <template is="dom-if" if="[[_isAuthorUrlListCollapsed(accordionText)]]">
+                                <span inner-h-t-m-l="[[_collapseAuthorUrlList(authorUrls)]]"></span>
+                            </template>
+                            <template is="dom-if" if="[[!_isAuthorUrlListCollapsed(accordionText)]]">
+                                <span inner-h-t-m-l="[[_expandAuthorUrlListWithoutLast(authorUrls)]]"></span>
+                            </template>
+                            <span><a style="color:grey;" on-click="_toggleDescription">[[[accordionText]]]</a>,</span>
+                            <span inner-h-t-m-l="[[lastAuthorUrl]]"></span>
+                        </template>
+                        <!-- acceptable number of authors -->
+                        <template is="dom-if" if="[[!_isAuthorUrlListBeyondMax(authorUrls)]]">
+                            <span inner-h-t-m-l="[[_concatAuthorUrlList(authorUrls)]]"></span>
+                        </template>
+                    </template>
+                </span>
+
+                <div class="journal">
+                    <!-- Article -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'ARTICLE')]]">
+                        [[publication.journalResourceLocator.abbrev]]
+                        <template is="dom-if" if="[[publication.volume]]">
+                            <strong>[[publication.volume]],</strong>
+                        </template>
+                        <template is="dom-if" if="[[publication.firstPage]]">
+                            [[pages]]
+                        </template>
+                        <template is="dom-if" if="[[publication.publicationYear]]">
+                            ([[publication.publicationYear]])
+                        </template>
+                        <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
+                            [[[_formatXrefLabel(xref.databaseName)]]:
+                            <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                        </template>
+                    </template>
+
+                    <!-- Submission -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'SUBMISSION')]]">
+                        [[publication.submission]]
+                        ([[publication.textDate]])
+                    </template>
+
+                    <!-- Patent -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'PATENT')]]">
+                        Patent number [[publication.dbXrefs.0.accession]] ([[publication.textDate]])
+                        <template is="dom-repeat" items="[[publication.dbXrefs]]" as="xref">
+                            [Full text: <a href="[[xref.resolvedUrl]]" class="ext-link" target='_blank'>[[xref.accession]]</a>]
+                        </template>
+                    </template>
+
+                    <!-- Book -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'BOOK')]]">
+                        <eds-and-in locator="[[publication.publicationResourceLocator]]"
+                                    first-page="[[publication.firstPage]]" last-page="[[publication.lastPage]]"
+                                    publication-year="[[publication.publicationYear]]"></eds-and-in>
+                    </template>
+
+                    <!-- Thesis -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'THESIS')]]">
+                        Thesis ([[publication.textDate]]), [[publication.publicationResourceLocator.institute]], [[publication.publicationResourceLocator.country]]</span>
+                    </template>
+
+                    <!-- Unpublished observation -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'UNPUBLISHED_OBSERVATION')]]">
+                        Unpublished observations ([[publication.textDate]])</span>
+                    </template>
+                </div>
+            </template>
+
+            <!-- Summary view -->
+            <template is="dom-if" if="[[summary]]">
+                <!-- First author et al. -->
+                <span inner-h-t-m-l="[[_formatFirstAuthorAndAl(publication.authors)]]"></span>
+
+                <template is="dom-if" if="[[!journalYearOnly]]">
+
+                    <!-- Submission -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'SUBMISSION')]]">
+                        <span class="np-grey-text">[[publication.submission]] ([[publication.textDate]])</span>
+                    </template>
+
+                    <!-- Patent -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'PATENT')]]">
+                        <span class="np-grey-text">Patent number [[publication.dbXrefs.0.accession]] ([[publication.textDate]])</span>
+                    </template>
+
+                    <!-- Article -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'ARTICLE')]]"> [[publication.journalResourceLocator.medAbbrev]]
+                        <template is="dom-if" if="[[publication.volume]]"><strong>[[publication.volume]],</strong></template>
+                        <template is="dom-if" if="[[publication.firstPage]]">[[pages]]</template>
+                        <template is="dom-if" if="[[publication.publicationYear]]">([[publication.publicationYear]])</template>
+                    </template>
+
+                    <!-- Book -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'BOOK')]]">
+                        <eds-and-in locator="[[publication.publicationResourceLocator]]"
+                                    first-page="[[publication.firstPage]]" last-page="[[publication.lastPage]]"
+                                    publication-year="[[publication.publicationYear]]" summary></eds-and-in>
+                    </template>
+
+                    <!-- Thesis -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'THESIS')]]">
+                        <span class="np-grey-text">Thesis ([[publication.textDate]]), [[publication.publicationResourceLocator.institute]], [[publication.publicationResourceLocator.country]]</span>
+                    </template>
+
+                    <!-- Unpublished observation -->
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'UNPUBLISHED_OBSERVATION')]]">
+                        <span class="np-grey-text">Unpublished observations ([[publication.textDate]])</span>
+                    </template>
+                </template>
+            </template>
+
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'publication-authors-and-journal',
+            properties: {
+                publication: {
+                    type: Object,
+                    observer: '_formatPublicationData'
+                },
+                journalYearOnly: {
+                    type: Boolean,
+                    value: false
+                },
+                authorUrls: {
+                    type: Array,
+                    value: []
+                },
+                summary: {
+                    type: Boolean,
+                    value: false
+                },
+                authorsMax: {
+                    type: Number,
+                    value: 20
+                },
+                accordionText: {
+                    type: String,
+                    value: "more"
+                }
+            },
+            _formatPublicationData: function() {
+
+                // authors
+                if (this.publication){
+                    this.authorUrls = this._formatAuthorsAsUrls(this.publication.authors);
+                    if (this.publication.authors.length > 0) {
+                        this.lastAuthorUrl = this.authorUrls[this.publication.authors.length - 1];
+                    }
+
+                    // pages
+                    if (this.publication.firstPage) {
+
+                        var firstPage = this.publication.firstPage;
+                        var lastPage = firstPage;
+
+                        if (this.publication.lastPage) {
+
+                            lastPage = this.publication.lastPage;
+                        }
+
+                        if (firstPage === lastPage) {
+
+                            this.pages = firstPage;
+                        }
+                        else {
+                            this.pages = firstPage + "-" + lastPage;
+                        }
+                    }
+                }
+            },
+            _formatFirstAuthorAndAl: function(authors) {
+
+                var firstAuthorAndAl = "";
+
+                if (authors.length > 0) {
+                    firstAuthorAndAl = authors[0].lastName + " " + this._formatInitials(authors[0].initials);
+
+                    if (authors.length === 2) {
+
+                        firstAuthorAndAl += " and "
+                            + authors[1].lastName + " " + this._formatInitials(authors[1].initials);
+                    }
+                    else if (authors.length > 2) {
+                        firstAuthorAndAl += " <i>et al.</i>";
+                    }
+
+                    if (this.journalYearOnly) {
+                        firstAuthorAndAl += " (" + this.publication.publicationYear + ")";
+                    }
+                    else {
+                        firstAuthorAndAl += ", ";
+                    }
+                }
+
+                return firstAuthorAndAl;
+            },
+            _formatAuthorsAsUrls: function (authors) {
+
+                var len = authors.length;
+                var urls = [];
+                for (var i=0; i<len; ++i) {
+
+                    var author = authors[i];
+                    var href = "/publications/search?query=author:"+author.lastName+ " " + author.foreName;
+
+                    urls.push("<a href=\""+href +"\">" + author.lastName+ " " + this._formatInitials(author.initials)+ "</a>");
+                }
+                return urls;
+            },
+            _formatInitials: function (name) {
+                return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
+            },
+            _checkIfLast: function (array, index) {
+                return (array.length - 1 === index);
+            },
+            _formatXrefLabel: function (name) {
+                return name.replace("DOI", "Full text").replace("WEBINFO", "View web page");
+            },
+            _isType: function (type, test) {
+                return type === test;
+            },
+            _collapseAuthorUrlList: function (authorUrlList) {
+
+                if (authorUrlList.length > this.authorsMax) {
+                    return this._concatAuthorUrlList(authorUrlList.slice(0, this.authorsMax-1))+ ",";
+                }
+                return this._concatAuthorUrlList(authorUrlList)
+            },
+            _expandAuthorUrlListWithoutLast: function (authorUrlList) {
+                return this._concatAuthorUrlList(authorUrlList.slice(0, authorUrlList.length-1))+ ",";
+            },
+            _concatAuthorUrlList: function (authorUrlList) {
+                var urls = "";
+
+                var len = authorUrlList.length;
+
+                for (var i = 0; i < len; ++i) {
+
+                    urls += authorUrlList[i];
+
+                    if (i < len - 1) {
+                        urls += ", ";
+                    }
+                }
+                return urls;
+            },
+            _isAuthorUrlListBeyondMax: function (array) {
+                return array.length > this.authorsMax;
+            },
+            _isAuthorUrlListCollapsed: function (linkName) {
+                return linkName === "more";
+            },
+            _toggleDescription: function () {
+                if (this.accordionText === "more") {
+                    this.accordionText = "less";
+                }
+                else {
+                    this.accordionText = "more";
+                }
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="eds-and-in">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            .inline-grey {
+                color: #666;
+                display: inline-block;
+            }
+        </style>
+        <template is="dom-if" if="[[locator]]">
+            <div class$="[[divClass]]">
+                <template is="dom-if" if="[[locator.editors]]">
+                    <!-- TODO: add a comma before Eds in summary mode-->
+                    (Eds)
+                    <template is="dom-repeat" items="[[locator.editors]]" as="editor">
+                        <template is="dom-if" if="[[!_checkIfLast(locator.editors,index)]]">
+                            [[editor.lastName]] [[_formatInitials(editor.initials)]],
+                        </template>
+                        <template is="dom-if" if="[[_checkIfLast(locator.editors,index)]]">
+                            [[editor.lastName]] [[_formatInitials(editor.initials)]]
+                        </template>
+                    </template>
+                </template>
+            </div>
+            <template is="dom-if" if="[[summary]]">
+                <br>
+            </template>
+            <div class$="[[divClass]]">
+                    <template is="dom-if" if="[[locator.name]]">(In) [[locator.name]],</template>
+                    <template is="dom-if" if="[[firstPage]]">pp.[[firstPage]]-[[lastPage]],</template>
+                    <template is="dom-if" if="[[locator.publisher]]">[[locator.publisher]],</template>
+                    <template is="dom-if" if="[[locator.city]]">[[locator.city]]</template>
+                    <template is="dom-if" if="[[publicationYear]]">([[publicationYear]])</template>
+            </div>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'eds-and-in',
+            properties: {
+                summary: {
+                    type: Boolean,
+                    value: false
+                },
+                editors: {
+                    type: Object
+                },
+                locator: {
+                    type: Object
+                },
+                firstPage: {
+                    type: String
+                },
+                lastPage: {
+                    type: String
+                },
+                publicationYear: {
+                    type: String
+                },
+                divClass: {
+                    type: String
+                }
+            },
+            attached: function() {
+
+                this.divClass = (this.summary) ? "inline-grey" : "";
+            },
+            _formatInitials: function (name) {
+                return (name.replace(new RegExp(/\./, 'g'), "").split('').join('.') + '.').replace("-.", "");
+            },
+            _checkIfLast: function (array, index) {
+                return (array.length - 1 === index);
+            }
+        });
+    </script>
+</dom-module>
