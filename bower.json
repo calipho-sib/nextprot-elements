@@ -22,7 +22,9 @@
     "shibui-dropdown-menu": "https://github.com/ShibuiElements/shibui-dropdown-menu.git#^1.0.0",
     "feature-viewer": "x.x.x",
     "sequence-viewer": "^0.2.35",
-    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "viz.js": "^1.8.1",
+    "iron-demo-helpers": "^2.1.0"
   },
   "keywords": [
     "web-component",
@@ -44,6 +46,8 @@
     "paper-button": "2.0.0",
     "paper-icon-button": "2.0.0",
     "webcomponentsjs": "^0.7.24",
-    "iron-flex-layout": "^1.0.0"
+    "iron-flex-layout": "^1.0.0",
+    "iron-demo-helpers": "^1.0.0",
+    "iron-location": "^0.8.0"
   }
 }
