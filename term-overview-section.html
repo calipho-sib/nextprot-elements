@@ -29,62 +29,118 @@ Term overview section
             :host {
                 display: block;
             }
-            div {
-                line-height: 1.9;
-            }
+
             iron-collapse {
                 --iron-collapse-transition-duration: 500ms;
             }
+
             h3 {
                 text-align: left;
-                font-size: 24px;
-                margin-bottom: 10px;
-                margin-top: 20px;
             }
-            dd{
-                margin-left:15px;
+
+            dd {<
+                margin-left: 15px;
             }
+
+            dt {
+                font-weight: inherit;
+            }
+
             .term-link {
                 display: inline;
             }
+
             .paragraph {
                 margin: 10px;
             }
+
             .ec-link {
                 display: inline;
             }
+
             #extender {
-                float:right;
-                padding: 1px 3px;
-                margin-top:-5px;
+                float: right;
+                padding: 1px 6px 1px 0px;
+                margin-top: -5px;
             }
         </style>
-        <iron-ajax
-                id ="termAPIcall"
-                url="https://dev-api.nextprot.org/term/[[accessionInput]].json"
-                params='{"type":"all"}'
-                handle-as="json"
-                on-response="termResponse" ></iron-ajax>
-        <!--<iron-ajax-->
-                <!--id ="termAPIcall"-->
-                <!--url="term.json"-->
-                <!--params='{"type":"all"}'-->
-                <!--handle-as="json"-->
-                <!--on-response="termResponse" ></iron-ajax>-->
-        <div id="proteinTitle" >
+        <div id="termOverview">
             <h3>
-                <!-- check protein-overview.html template for more templating examples -->
-                [[accessionInput]] → [[accessionName]]
+                <template is="dom-if" if="[[term.name]]">
+                    [[term.accession]] → [[term.name]]
+                </template>
+                [[data.entryName]]
+                <template is="dom-if" if="[[data.recommendedProteinName]]">
+                    <template is="dom-if" if="[[data.recommendedProteinName.EC.0]]">
+                        [
+                        <template is="dom-repeat" items="[[data.recommendedProteinName.EC]]" as="ec">
+                            <div class="ec-link"><a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a></div>
+                            <template is="dom-if" if="[[!_checkIfLast(data.recommendedProteinName.EC,index)]]">,
+                            </template>
+                        </template>
+                        ]
+                    </template>
+                    <template is="dom-if" if="[[data.recommendedProteinName.mainShortName]]">
+                        ([[data.recommendedProteinName.mainShortName]])
+                    </template>
+                </template>
+                <paper-spinner-lite id="spinner" active></paper-spinner-lite>
             </h3>
-            <div class="col-md-3 col-xs-3 grey-x text-align-right style-scope protein-overview">Ontology :</div>
-            <div class="col-md-9 col-xs-9 style-scope protein-overview">[[accessionOntology]]</div>
-            <div class="col-md-3 col-xs-3 grey-x text-align-right style-scope protein-overview">Definition :</div>
-            <div class="col-md-9 col-xs-9 style-scope protein-overview">[[accessionDefinition]]</div>
-            <div class="col-md-3 col-xs-3 grey-x text-align-right style-scope protein-overview">Synonyms :</div>
-            <div class="col-md-9 col-xs-9 style-scope protein-overview">[[accessionSynonym]]</div>
-
         </div>
-
+        <div id="collapseInfosLess">
+            <div id="term-info">
+                <template is="dom-if" if="[[term.name]]">
+                    <div id="term-ontology" class="row">
+                        <div class="col-md-3 col-xs-3 grey-x text-align-right">ONTOLOGY :</div>
+                        <div class="col-md-9 col-xs-9"> [[term.ontologyAltname]] <span style="color: red"> (wrong name)</span> → [[term.accession]] </div>
+                    </div>
+                </template>
+                <template is="dom-if" if="[[term.description]]">
+                    <div id="term-definition" class="row">
+                        <div class="col-md-3 col-xs-3 grey-x text-align-right">DEFINITION :</div>
+                        <div class="col-md-9 col-xs-9"> [[term.description]]  </div>
+                    </div>
+                </template>
+                <template is="dom-if" if="[[term.synonyms]]">
+                    <template is="dom-if" if="[[term.synonyms.0]]">
+                        <div id="term-synonyms" class="row">
+                            <div class="col-md-3 col-xs-3 grey-x text-align-right">SYNONYMS :</div>
+                            <div class="col-md-9 col-xs-9">
+                                <dl>
+                                    <template is="dom-repeat" items="[[term.synonyms]]" as="synonym" sort="_sort">
+                                        <dt>[[synonym]]</dt>
+                                    </template>
+                                </dl>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template is="dom-if" if="[[term.synonyms]]">
+                    <template is="dom-if" if="[[term.synonyms.0]]">
+                        <div id="related-terms" class="row">
+                            <div class="col-md-3 col-xs-3 grey-x text-align-right">RELATED TERMS :</div>
+                            <div class="col-md-9 col-xs-9">
+                                <span style="color:red"> What is the difference with External References, which one too choose?</span>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template is="dom-if" if="[[term.synonyms]]">
+                    <template is="dom-if" if="[[term.synonyms.0]]">
+                        <div id="external-references" class="row">
+                            <div class="col-md-3 col-xs-3 grey-x text-align-right">EXTERNAL REFERENCES :</div>
+                            <div class="col-md-9 col-xs-9">
+                                <dl>
+                                    <template is="dom-repeat" items="[[term.xrefs]]" as="xref">
+                                        <dt>[[xref.databaseName]]: <a href="[[xref.linkUrl]]">[[xref.accession]]</a></dt>
+                                    </template>
+                                </dl>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </div>
     </template>
     <script>
         Polymer({
@@ -94,39 +150,123 @@ Term overview section
                     type: Object,
                     value: {}
                 },
-                accessionInput: {
-                    type: String,
-                    observer: "termAPIcaller"
-                },
-                accessionName: {
-                    type: String
-                },
-                accessionOntology: {
-                    type: String
-                },
-                accessionDefinition: {
-                    type: String
-                },
-                accessionSynonym: {
-                    type: String
-                },
+                term: {
+                    type: Object,
+                    value: {}
+                }
+
             },
 
-            termAPIcaller: function () {
-                this.$.termAPIcall.generateRequest();
+            ready: function () {
+                this._initApiClient();
+                var self = this;
+                // fetch data from overview
+                this._npClient.getTermByAccession(self.nxConfig.termAccession).then(function (term) {
+
+                    console.log(JSON.stringify(term));
+
+                    self.term = term["cvTerm"];
+                    // load data
+                    //self._loadData(overview);
+                    self.$.spinner.active = false;
+
+                }, function (error) {
+                    self._handleError(error);
+                });
+
             },
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtOrit term overview", "Calipho Group");
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
 
-            termResponse: function (APIdata) {
-                console.log(APIdata.detail.response);
-                this.accessionName = APIdata.detail.response["cvTerm"]["name"];
-                this.accessionOntology = APIdata.detail.response["cvTerm"]["ontology"];
-                this.accessionDefinition = APIdata.detail.response["cvTerm"]["description"];
-                this.accessionSynonym = APIdata.detail.response["cvTerm"]["synonyms"]
-
-
+            },
+            _sort: function (a, b) {
+                return a < b ? -1 : 1;
             }
-
-
-        });
+        })
     </script>
 </dom-module>
+
+<!--
+{
+  "cvTerm": {
+    "id": 38286,
+    "accession": "TS-0079",
+    "name": "Blood",
+    "description": "The body fluid that circulates in the cardiovascular system (blood vessels and blood capillaries) including plasma and blood cells.",
+    "ontology": "NextprotAnatomyCv",
+    "ontologyAltname": "NextProt tissues",
+    "childAccession": [
+      "TS-0771",
+      "TS-0800"
+    ],
+    "xrefs": [
+      {
+        "dbXrefId": 3145881,
+        "accession": "BTO:0000553",
+        "databaseName": "BRENDA",
+        "databaseCategory": "Enzyme and pathway databases",
+        "url": "http://www.brenda-enzymes.org",
+        "linkUrl": "http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u",
+        "resolvedUrl": "http://purl.obolibrary.org/obo/BTO_0000553",
+        "properties": [
+
+        ]
+      },
+      {
+        "dbXrefId": 3145512,
+        "accession": "BTO:0000089",
+        "databaseName": "BRENDA",
+        "databaseCategory": "Enzyme and pathway databases",
+        "url": "http://www.brenda-enzymes.org",
+        "linkUrl": "http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u",
+        "resolvedUrl": "http://purl.obolibrary.org/obo/BTO_0000089",
+        "properties": [
+
+        ]
+      },
+      {
+        "dbXrefId": 28088013,
+        "accession": "UBERON:0000178",
+        "databaseName": "Uberon",
+        "databaseCategory": "Ontologies",
+        "url": "http://uberon.org",
+        "linkUrl": "http://purl.obolibrary.org/obo/%s",
+        "resolvedUrl": "http://purl.obolibrary.org/obo/UBERON_0000178",
+        "properties": [
+
+        ]
+      },
+      {
+        "dbXrefId": 7198024,
+        "accession": "D001769",
+        "databaseName": "MeSH",
+        "databaseCategory": "Ontologies",
+        "url": "http://www.nlm.nih.gov/mesh/MBrowser.html",
+        "linkUrl": "http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?field=uid&term=%s",
+        "resolvedUrl": "http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?field=uid&term=D001769",
+        "properties": [
+
+        ]
+      }
+    ],
+    "synonyms": [
+      "Circulating blood ",
+      " Peripheral blood ",
+      " Bloodstream"
+    ],
+    "properties": null,
+    "ancestorAccession": [
+      "TS-0449",
+      "TS-1297",
+      "TS-2101"
+    ],
+    "sameAs": [
+      "UBERON:0000178",
+      "D001769"
+    ]
+  }
+}
+-->
