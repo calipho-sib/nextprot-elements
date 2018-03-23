@@ -17,6 +17,10 @@
 `term-overview-section`
 Term overview section
 
+Specifications can be found in here:
+https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
+
+
 ##### Example
     <term-overview-section nx-config='{"term": "TS-0079"}'></term-overview-section>
 @demo demo/term-overview-section-demo.html
@@ -58,6 +62,10 @@ Term overview section
                 display: inline;
             }
 
+            .multiple-prop {
+                padding: 0px;
+            }
+
             #extender {
                 float: right;
                 padding: 1px 6px 1px 0px;
@@ -67,7 +75,7 @@ Term overview section
         <div id="termOverview">
             <h3>
                 <template is="dom-if" if="[[term.name]]">
-                    [[term.accession]] → [[term.name]]
+                    [[term.accession]] → [[term.name]] <span style="font-size: 12px"><a target="_blank" href="http://old.nextprot.org/db/term/[[term.accession]]">(NP1 version)</a></span>
                 </template>
                 [[data.entryName]]
                 <template is="dom-if" if="[[data.recommendedProteinName]]">
@@ -89,16 +97,16 @@ Term overview section
         </div>
         <div id="collapseInfosLess">
             <div id="term-info">
-                <template is="dom-if" if="[[term.name]]">
+                <template is="dom-if" if="[[term.ontologyDisplayName]]">
                     <div id="term-ontology" class="row">
                         <div class="col-md-3 col-xs-3 grey-x text-align-right">ONTOLOGY :</div>
-                        <div class="col-md-9 col-xs-9"> [[term.ontologyAltname]] <span style="color: red"> (wrong name)</span> → [[term.accession]] </div>
+                        <div class="col-md-9 col-xs-9"> [[term.ontologyDisplayName]] → [[term.accession]] </div>
                     </div>
                 </template>
-                <template is="dom-if" if="[[term.description]]">
+                <template is="dom-if" if="[[term.definition]]">
                     <div id="term-definition" class="row">
                         <div class="col-md-3 col-xs-3 grey-x text-align-right">DEFINITION :</div>
-                        <div class="col-md-9 col-xs-9"> [[term.description]]  </div>
+                        <div class="col-md-9 col-xs-9"> [[term.definition]]  </div>
                     </div>
                 </template>
                 <template is="dom-if" if="[[term.synonyms]]">
@@ -107,8 +115,22 @@ Term overview section
                             <div class="col-md-3 col-xs-3 grey-x text-align-right">SYNONYMS :</div>
                             <div class="col-md-9 col-xs-9">
                                 <dl>
-                                    <template is="dom-repeat" items="[[term.synonyms]]" as="synonym" sort="_sort">
+                                    <template is="dom-repeat" items="[[term.synonyms]]" as="synonym">
                                         <dt>[[synonym]]</dt>
+                                    </template>
+                                </dl>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template is="dom-repeat" items="[[termprops]]" as="prop">
+                    <template is="dom-if" if="[[_getValueProperties(term, prop.key)]]">
+                        <div id="term-[[pro.key]]" class="row">
+                            <div class="col-md-3 col-xs-3 grey-x text-align-right">[[prop.label]] :</div>
+                            <div class="col-md-9 col-xs-9">
+                                <dl>
+                                    <template is="dom-repeat" items="[[_getValueProperties(term, prop.key)]]" as="property">
+                                        <dt class="col-md-9 col-xs-9 multiple-prop"> [[property.propertyValue]] </dt>
                                     </template>
                                 </dl>
                             </div>
@@ -120,19 +142,19 @@ Term overview section
                         <div id="related-terms" class="row">
                             <div class="col-md-3 col-xs-3 grey-x text-align-right">RELATED TERMS :</div>
                             <div class="col-md-9 col-xs-9">
-                                <span style="color:red"> What is the difference with External References, which one too choose?</span>
+                                <span style="color:red"> What is the difference with External References, which one too choose always MESH anatomy? Could it be more than one?</span>
                             </div>
                         </div>
                     </template>
                 </template>
-                <template is="dom-if" if="[[term.synonyms]]">
-                    <template is="dom-if" if="[[term.synonyms.0]]">
+                <template is="dom-if" if="[[term.externalReferences]]">
+                    <template is="dom-if" if="[[term.externalReferences.0]]">
                         <div id="external-references" class="row">
                             <div class="col-md-3 col-xs-3 grey-x text-align-right">EXTERNAL REFERENCES :</div>
                             <div class="col-md-9 col-xs-9">
                                 <dl>
-                                    <template is="dom-repeat" items="[[term.xrefs]]" as="xref">
-                                        <dt>[[xref.databaseName]]: <a href="[[xref.linkUrl]]">[[xref.accession]]</a></dt>
+                                    <template is="dom-repeat" items="[[term.externalReferences]]" as="xref">
+                                        <dt>[[xref.databaseName]]: <a target="_blank" href="[[xref.resolvedUrl]]">[[xref.accession]]</a></dt>
                                     </template>
                                 </dl>
                             </div>
@@ -153,19 +175,33 @@ Term overview section
                 term: {
                     type: Object,
                     value: {}
+                },
+                termprops: {
+                    type: Array,
+                    value: [
+                            {key: "Category", label: "CATEGORY"},
+                            {key: "Catalyst", label: "CATALYST"},
+                            {key: "Reaction", label: "REACTION"},
+                            {key: "Sex of cell", label: "SEX OF CELL"},
+                            {key: "Comment", label: "COMMENT"},
+                            {key: "Target", label: "TARGETED AMINO ACID"},
+                            {key: "Position of the modification", label: "POSITION OF THE MODIFICATION"},
+                            {key: "Cellular location", label: "CELLULAR LOCATION"},
+                            {key: "Taxonomic range", label: "TAXONOMIC RANGE"}, //When there are multiple synonyms, these should be displayed in alphanumerical order on separate lines. Example: PTM-0312
+                            {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA"},
+                            {key: "Average mass difference", label: "AVERAGE MASS DIFFERENCE"},
+                            {key: "Monoisotopic mass difference", label: "MONOISOTONIC MASS DIFFERENCE"}
+
+                    ]
                 }
-
             },
-
             ready: function () {
                 this._initApiClient();
                 var self = this;
                 // fetch data from overview
                 this._npClient.getTermByAccession(self.nxConfig.termAccession).then(function (term) {
 
-                    console.log(JSON.stringify(term));
-
-                    self.term = term["cvTerm"];
+                    self.term = self._convertForTemplate(term["cvTerm"]);
                     // load data
                     //self._loadData(overview);
                     self.$.spinner.active = false;
@@ -173,17 +209,68 @@ Term overview section
                 }, function (error) {
                     self._handleError(error);
                 });
+            },
+            _getValueProperties : function (term, propertyKey){
+                if(term[propertyKey]){
+                    console.log(propertyKey)
+                    console.log(term[propertyKey])
+                    return term[propertyKey];
+                }
+            },
+            _getProperty: function (propertyName, properties){
+                var result = []
+                if(properties && (properties.length > 0)) {
+                    properties.forEach(function(prop){
+                        var ploop = prop.propertyName.replace(/ /g,'').toLowerCase();
+                        var parg = propertyName.replace(/ /g,'').toLowerCase();
+                        if(ploop === parg){
+                            result.push(prop);
+                        }
+                    })
+                }
+                return result;
+            },
+            _convertForTemplate: function (cvTerm) {
+                self = this;
+                var term = JSON.parse(JSON.stringify(cvTerm));
+                term.definition = term.description;
+                if(term.synonyms && (term.synonyms.length > 0)){
+                    term.synonyms = term.synonyms.sort(this._sort);
+                }
+                if(term.xrefs && (term.xrefs.length > 0 )){
+                    term.externalReferences = term.xrefs.sort(this._sort);
+                }
+                if(term.xrefs && (term.xrefs.length > 0 )){
+                    term.externalReferences = term.xrefs.sort(this._sort);
+                }
+                this.termprops.forEach(function (tp){
+                    self._addPropertyToTermIfPresent(tp.key, term);
+                })
+
+                return term;
+
+            },
+            _addPropertyToTermIfPresent: function (propertyName, term){
+
+                var properties = this._getProperty(propertyName, term.properties);
+                if(properties && (properties.length > 0)){
+                    term[propertyName] = properties;
+                }
 
             },
             _initApiClient: function () {
-                this._npClient = new Nextprot.Client("neXtOrit term overview", "Calipho Group");
+                this._npClient = new Nextprot.Client("neXtProt term overview", "Calipho Group");
                 if (this.nxConfig.env) {
                     this._npClient.updateEnvironment(this.nxConfig.env);
                 }
 
             },
             _sort: function (a, b) {
-                return a < b ? -1 : 1;
+                if(a.databaseName) {
+                    return a.databaseName.toLocaleLowerCase() < b.databaseName.toLocaleLowerCase() ? -1 : 1;
+                }else {
+                    return a.toLocaleLowerCase() < b.toLocaleLowerCase() ? -1 : 1;
+                }
             }
         })
     </script>

@@ -21,9 +21,19 @@
 
     <div class="vertical-section-container centered">
       <h3>Basic term-overview-section Demo</h3>
+      <p>Specifications can be found in <a href="https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs">here.</a></p>
       <demo-snippet>
         <template>
-          <term-overview-section nx-config='{"env": "dev", "termAccession": "TS-0079"}'></term-overview-section>
+          <!--<term-overview-section nx-config='{"env": "dev", "termAccession": "TS-1318"}'></term-overview-section>-->
+          <!--<term-overview-section nx-config='{"env": "dev", "termAccession": "CVCL_0238"}'></term-overview-section>-->
+          <!--<term-overview-section nx-config='{"env": "dev", "termAccession": "GO:0003824"}'></term-overview-section>-->
+          <!--<h3>label CATEGORY : "propertyName": "Category" but can be different for different CVs (display only if found for term) Example: CVCL_0238 DO-00474 AB+LL:Should Feature key be displayed as Category?</h3>-->
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "CVCL_0238"}'></term-overview-section>
+          <!--<term-overview-section nx-config='{"env": "dev", "termAccession": "DO-00474"}'></term-overview-section>-->
+          <!--<h3>label CATALYST : "propertyName": "Catalyst" (display only if found for term) Example: 1.1.1.1</h3>-->
+          <!--<term-overview-section nx-config='{"env": "dev", "termAccession": "1.1.1.1"}'></term-overview-section>-->
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "PTM-0312"}'></term-overview-section>
+
         </template>
       </demo-snippet>
     </div>
