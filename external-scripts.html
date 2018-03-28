@@ -6,9 +6,27 @@
     <script src="../sequence-viewer/dist/sequence-viewer.min.js"></script>
 
     <!--    // HAVE TO BE COMMENTED FOR PROD !!-->
-    <!--
-        <script src="../jquery/dist/jquery.js"></script>
-        <script src="../bootstrap/dist/js/bootstrap.js"></script>
-    -->
+    <script src="../jquery/dist/jquery.js"></script>
+    <script src="../bootstrap/dist/js/bootstrap.js"></script>
+
+    <script type="text/javascript">
+
+        // Commons methods
+        function getNXClient(config){
+
+            if(!window.nxclient) { //If not defined
+                window.nxclient = new Nextprot.Client("neXtProt elements", "Calipho team");
+                console.log("Init neXtProt client")
+            }
+
+            if (config.env) {
+                console.log("Setting environment " + config.env)
+                window.nxclient.updateEnvironment(config.env);
+            }
+
+            return window.nxclient;
+        }
+
+    </script>
 
 </dom-module>

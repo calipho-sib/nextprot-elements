@@ -134,6 +134,11 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                                     </template>
                                 </dl>
                             </div>
+                            <template is="dom-if" if="[[prop.ERROR_COMMENT]]">
+                                <div class="col-xs-offset-3 col-md-offset-3 col-md-9 col-xs-9">
+                                    <p style="color:red">[[prop.ERROR_COMMENT]]</p>
+                                </div>
+                        </template>
                         </div>
                     </template>
                 </template>
@@ -142,7 +147,7 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                         <div id="related-terms" class="row">
                             <div class="col-md-3 col-xs-3 grey-x text-align-right">RELATED TERMS :</div>
                             <div class="col-md-9 col-xs-9">
-                                <span style="color:red"> What is the difference with External References, which one too choose always MESH anatomy? Could it be more than one?</span>
+                                <span style="color:red"> Choose synonym = true to see here!</span>
                             </div>
                         </div>
                     </template>
@@ -187,7 +192,7 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                             {key: "Target", label: "TARGETED AMINO ACID"},
                             {key: "Position of the modification", label: "POSITION OF THE MODIFICATION"},
                             {key: "Cellular location", label: "CELLULAR LOCATION"},
-                            {key: "Taxonomic range", label: "TAXONOMIC RANGE"}, //When there are multiple synonyms, these should be displayed in alphanumerical order on separate lines. Example: PTM-0312
+                            {key: "Taxonomic range", label: "TAXONOMIC RANGE", "ERROR_COMMENT" : "Missing external links"},
                             {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA"},
                             {key: "Average mass difference", label: "AVERAGE MASS DIFFERENCE"},
                             {key: "Monoisotopic mass difference", label: "MONOISOTONIC MASS DIFFERENCE"}
@@ -196,7 +201,7 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                 }
             },
             ready: function () {
-                this._initApiClient();
+                this._npClient = getNXClient(this.nxConfig);
                 var self = this;
                 // fetch data from overview
                 this._npClient.getTermByAccession(self.nxConfig.termAccession).then(function (term) {
@@ -255,13 +260,6 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                 var properties = this._getProperty(propertyName, term.properties);
                 if(properties && (properties.length > 0)){
                     term[propertyName] = properties;
-                }
-
-            },
-            _initApiClient: function () {
-                this._npClient = new Nextprot.Client("neXtProt term overview", "Calipho Group");
-                if (this.nxConfig.env) {
-                    this._npClient.updateEnvironment(this.nxConfig.env);
                 }
 
             },
