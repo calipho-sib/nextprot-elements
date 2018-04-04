@@ -1,0 +1,36 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="exon-graphic.html">
+<link rel="import" href="coding-exon-text.html">
+<link rel="import" href="external-scripts.html">
+
+<!--
+`exon-item`
+Exon item demo
+
+@demo demo/exon-item-demo.html
+-->
+<dom-module id="exon-item">
+    <template>
+        <style>
+            :host {
+                background:#ECF0F1;
+            }
+        </style>
+
+        <template is="dom-if" if="[[data]]">
+            <exon-graphic data="[[data]]"></exon-graphic>
+            <coding-exon-text data="[[data]]"></coding-exon-text>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'exon-item',
+            properties: {
+                data: {
+                    type: Object
+                }
+            }
+        });
+    </script>
+</dom-module>
