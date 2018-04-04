@@ -1,0 +1,262 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="external-scripts.html">
+<!--
+`exon-item`
+Exon item demo
+
+@demo demo/exon-item-demo.html
+-->
+<dom-module id="exon-item">
+    <template>
+        <style>
+            :host {
+                background:#ECF0F1;
+            }
+
+            svg {
+                margin: auto;
+                display: block;
+            }
+        </style>
+        <div>
+            <svg id="svgTag"></svg>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'exon-item',
+            properties: {
+                data: {
+                    type: Object
+                },
+                exonGraphicLength: {
+                    type: Number,
+                    value: 100
+                },
+                codingExonGraphicColor: {
+                    type: String,
+                    value: "Green"
+                }
+            },
+            attached: function() {
+                this._init();
+                this._drawExon();
+            },
+            // https://stackoverflow.com/questions/12485818/can-a-svg-embedded-in-an-html-table-cell-overflow-that-cell
+            _init: function() {
+
+                this.exonGraphicHeight = this.exonGraphicLength / 3;
+                this.nonCodingExonGraphicHeight = this.exonGraphicHeight / 6;
+                this.exonY = this.exonGraphicHeight/2;
+            },
+            _drawExon: function() {
+                var svg = d3.select(this).select("#svgTag");
+
+                var codingRegionCoordinates;
+
+                switch(this.data.exonCategory) {
+
+                    case 'NOT_CODING':
+                        codingRegionCoordinates = this._calcNonCodingExonGraphicParams();
+                        break;
+                    case 'START':
+                        codingRegionCoordinates = this._calcStartExonGraphicParams();
+                        break;
+                    case 'MONO':
+                        codingRegionCoordinates = this._calcMonoExonGraphicParams();
+                        break;
+                    case 'CODING':
+                        codingRegionCoordinates = this._calcCodingExonGraphicParams();
+                        break;
+                    case 'STOP':
+                        codingRegionCoordinates = this._calcStopExonGraphicParams();
+                        break;
+                }
+
+                this._drawGraphic(svg, codingRegionCoordinates);
+            },
+            _calcNonCodingExonGraphicParams: function() {
+
+                // non-coding part only (grey line)
+                return {
+                    "codingRegionStart" : 0,
+                    "codingRegionLength" : 0
+                }
+            },
+            _calcStartExonGraphicParams: function() {
+
+                var nonCodingPartLen = this.data.startPosition - this.data.geneRegion.firstPosition + 1;
+                var codingRegionLen = this.data.geneRegion.lastPosition - this.data.startPosition + 1;
+
+                return {
+                    "codingRegionStart" : this._scale(nonCodingPartLen),
+                    "codingRegionLength" : this._scale(codingRegionLen)
+                }
+            },
+            _calcMonoExonGraphicParams: function() {
+
+                var nonCodingPartLen1 = this.data.startPosition - this.data.geneRegion.firstPosition + 1;
+                var codingPartLen = this.data.stopPosition - this.data.startPosition + 1;
+
+                return {
+                    "codingRegionStart" : this._scale(nonCodingPartLen1),
+                    "codingRegionLength" : this._scale(codingPartLen)
+                }
+            },
+            _calcCodingExonGraphicParams: function() {
+
+                console.log("CODING", this.data.geneRegion.firstPosition, this.data.geneRegion.lastPosition);
+
+                // draw coding part only (box green)
+                /*svg
+                    .append('rect')
+                    .attr({
+                        width:this.exonLength,
+                        height:this.exonHeight,
+                        y:10,
+                        fill: 'green'
+                    })
+                ;*/
+
+                return {
+                    "codingRegionStart" : 0,
+                    "codingRegionLength" : this._scale(this._calcGeneRegionLength())
+                }
+            },
+            _calcStopExonGraphicParams: function() {
+
+                var codingPartLen = this.data.stopPosition - this.data.geneRegion.firstPosition + 1;
+
+                return {
+                    "codingRegionStart" : 0,
+                    "codingRegionLength" : this._scale(codingPartLen)
+                }
+            },
+            _scale: function(subRegionLen) {
+
+                return subRegionLen * this.exonGraphicLength / this._calcGeneRegionLength();
+            },
+            _calcGeneRegionLength: function() {
+
+                return this.data.geneRegion.lastPosition - this.data.geneRegion.firstPosition + 1;
+            },
+            _drawGraphic: function(svg, codingRegionCoord) {
+
+                //         ---------------
+                svg
+                    .append('line')
+                    .style('stroke-width', this.nonCodingExonGraphicHeight)
+                    .style('stroke', 'black')
+                    .style('position', 'absolute')
+                    .attr("x1", 0)
+                    .attr("y1", this.exonY)
+                    .attr("x2", this.exonGraphicLength)
+                    .attr("y2", this.exonY)
+                ;
+
+                if (codingRegionCoord.codingRegionLength > 0) {
+
+                    switch(this.data.exonCategory) {
+
+                        //      _________
+                        // ----|_________|
+                        case 'START':
+                            this._rectLeftRounded(svg, codingRegionCoord, codingRegionCoord.codingRegionLength/5);
+                            break;
+                        //      _____
+                        // ----|_____|----
+                        case 'MONO':
+                            this._rectRounded(svg, codingRegionCoord, codingRegionCoord.codingRegionLength/15);
+                            break;
+                        //  _____________
+                        // |_____________|
+                        case 'CODING':
+                            this._rect(svg, codingRegionCoord);
+                            break;
+                        //  _________
+                        // |_________|----
+                        case 'STOP':
+                            this._rectRightRounded(svg, codingRegionCoord, codingRegionCoord.codingRegionLength/5);
+                            break;
+                    }
+                }
+            },
+            _rect: function(svg, codingRegionCoord) {
+
+                svg
+                    .append('rect')
+                    .style('stroke-width', 1)
+                    .style('stroke', 'black')
+                    .attr({
+                        x: codingRegionCoord.codingRegionStart,
+                        y: this.exonY - this.exonGraphicHeight/2,
+                        width: codingRegionCoord.codingRegionLength,
+                        height: this.exonGraphicHeight,
+                        fill: this.codingExonGraphicColor
+                    })
+                ;
+            },
+            _rectLeftRounded: function(svg, codingRegionCoord, radius) {
+
+                svg.append("path")
+                    .style('stroke-width', 1)
+                    .style('stroke', 'black')
+                    .attr("d", this._leftRoundedPath(codingRegionCoord.codingRegionStart, this.exonY - this.exonGraphicHeight/2, codingRegionCoord.codingRegionLength, this.exonGraphicHeight, radius))
+                    .attr("fill", this.codingExonGraphicColor)
+                ;
+            },
+            _rectRightRounded: function(svg, codingRegionCoord, radius) {
+
+                svg.append("path")
+                    .style('stroke-width', 1)
+                    .style('stroke', 'black')
+                    .attr("d", this._rightRoundedPath(0, this.exonY - this.exonGraphicHeight/2, codingRegionCoord.codingRegionLength, this.exonGraphicHeight, radius))
+                    .attr("fill", this.codingExonGraphicColor)
+                ;
+            },
+            _rectRounded: function(svg, codingRegionCoord, radius) {
+
+                svg
+                    .append('rect')
+                    .style('stroke-width', 1)
+                    .style('stroke', 'black')
+                    .attr({
+                        class: "coding_exon_rect",
+                        x: codingRegionCoord.codingRegionStart,
+                        y: this.exonY - this.exonGraphicHeight/2,
+                        rx: radius,
+                        ry: radius,
+                        width: codingRegionCoord.codingRegionLength,
+                        height: this.exonGraphicHeight,
+                        fill: this.codingExonGraphicColor
+                    })
+                ;
+            },
+            // https://css-tricks.com/svg-path-syntax-illustrated-guide/
+            // http://tutorials.jenkov.com/svg/path-element.html
+            _rightRoundedPath: function(x, y, width, height, radius) {
+
+                return "M" + x + "," + y
+                    + "h" + (width - radius)
+                    + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
+                    + "v" + (height - 2 * radius)
+                    + "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + radius
+                    + "h" + (radius - width)
+                    + "z";
+            },
+            _leftRoundedPath: function(x, y, width, height, radius) {
+
+                return "M" + x + "," + y
+                    + "m" + radius + ", 0"
+                    + "h" + (width - radius)
+                    + "v" + height
+                    + "h" + (radius - width)
+                    + "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + -radius
+                    + "v" + (2 * radius - height)
+                    + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + -radius
+                    + "y";
+            }
+        });
+    </script>
+</dom-module>
