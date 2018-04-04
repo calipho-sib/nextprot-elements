@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>exon-item demo</title>
+    <title>exon-graphic demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
@@ -9,7 +9,7 @@
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
 
-    <link rel="import" href="../exon-item.html">
+    <link rel="import" href="../exon-graphic.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
         .vertical-section-container {
@@ -21,10 +21,10 @@
 <div class="vertical-section-container centered">
     <!-- https://dev-api.nextprot.org/entry/NX_Q8NHL6/genomic-mapping.json -->
 
-    <h3>non coding exon-item demo</h3>
+    <h3>non coding exon-graphic demo</h3>
     <demo-snippet>
         <template>
-            <exon-item data='
+            <exon-graphic data='
                   {
                     "name" : "NX_ENSE00002518881",
                     "accession" : "ENSE00002518881",
@@ -38,14 +38,14 @@
                     "rank" : 1,
                     "firstAminoAcid" : null,
                     "lastAminoAcid" : null
-                  }' exon-length="100"></exon-item>
+                  }' exon-length="100"></exon-graphic>
         </template>
     </demo-snippet>
 
-    <h3>start exon-item demo</h3>
+    <h3>start exon-graphic demo</h3>
     <demo-snippet>
         <template>
-            <exon-item data='
+            <exon-graphic data='
                   {
                     "name" : "NX_ENSE00002515980",
                     "accession" : "ENSE00002515980",
@@ -68,14 +68,14 @@
                         "phase" : 1
                     },
                     "startPosition" : 13917
-                  }'></exon-item>
+                  }'></exon-graphic>
         </template>
     </demo-snippet>
 
-    <h3>coding exon-item demo</h3>
+    <h3>coding exon-graphic demo</h3>
     <demo-snippet>
         <template>
-            <exon-item data='
+            <exon-graphic data='
                   {
                     "name" : "NX_ENSE00002496690",
                     "accession" : "ENSE00002496690",
@@ -97,14 +97,14 @@
                         "position" : 24,
                         "phase" : 1
                     }
-                  }'></exon-item>
+                  }'></exon-graphic>
         </template>
     </demo-snippet>
 
-    <h3>stop exon-item demo</h3>
+    <h3>stop exon-graphic demo</h3>
     <demo-snippet>
         <template>
-            <exon-item data='
+            <exon-graphic data='
                   {
                     "name" : "NX_ENSE00003619461",
                     "accession" : "ENSE00003619461",
@@ -127,14 +127,14 @@
                         "phase" : 0
                     },
                     "stopPosition" : 19718
-                  }'></exon-item>
+                  }'></exon-graphic>
         </template>
     </demo-snippet>
 
-    <h3>mono exon-item demo</h3>
+    <h3>mono exon-graphic demo</h3>
     <demo-snippet>
         <template>
-            <exon-item data='
+            <exon-graphic data='
                   {
                     "exonCategory" : "MONO",
                     "startPosition" : 215,
@@ -160,7 +160,7 @@
                     },
                     "lastPositionOnGene" : 1353,
                     "name" : "NX_ENSE00001455235"
-                  }'></exon-item>
+                  }'></exon-graphic>
         </template>
     </demo-snippet>
 </div>
