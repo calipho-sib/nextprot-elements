@@ -106,19 +106,6 @@ Exon graphic demo
             },
             _calcCodingExonGraphicParams: function() {
 
-                console.log("CODING", this.data.geneRegion.firstPosition, this.data.geneRegion.lastPosition);
-
-                // draw coding part only (box green)
-                /*svg
-                    .append('rect')
-                    .attr({
-                        width:this.exonLength,
-                        height:this.exonHeight,
-                        y:10,
-                        fill: 'green'
-                    })
-                ;*/
-
                 return {
                     "codingRegionStart" : 0,
                     "codingRegionLength" : this._scale(this._calcGeneRegionLength())
