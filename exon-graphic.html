@@ -10,18 +10,9 @@ Exon graphic demo
 <dom-module id="exon-graphic">
     <template>
         <style>
-            :host {
-                background:#ECF0F1;
-            }
 
-            svg {
-                margin: auto;
-                display: block;
-            }
         </style>
-        <div>
-            <svg id="svgTag"></svg>
-        </div>
+        <svg id="svgTag" height="30" width="50"></svg>
     </template>
     <script>
         Polymer({
@@ -30,9 +21,9 @@ Exon graphic demo
                 data: {
                     type: Object
                 },
-                width: {
+                exonWidth: {
                     type: Number,
-                    value: 100
+                    value: 30
                 },
                 codingExonGraphicColor: {
                     type: String,
@@ -46,7 +37,7 @@ Exon graphic demo
             // https://stackoverflow.com/questions/12485818/can-a-svg-embedded-in-an-html-table-cell-overflow-that-cell
             _init: function() {
 
-                this.exonGraphicHeight = this.width / 3;
+                this.exonGraphicHeight = this.exonWidth / 3;
                 this.nonCodingExonGraphicHeight = this.exonGraphicHeight / 6;
                 this.exonY = this.exonGraphicHeight/2;
             },
@@ -122,7 +113,7 @@ Exon graphic demo
             },
             _scale: function(subRegionLen) {
 
-                return subRegionLen * this.width / this._calcGeneRegionLength();
+                return subRegionLen * this.exonWidth / this._calcGeneRegionLength();
             },
             _calcGeneRegionLength: function() {
 
@@ -138,7 +129,7 @@ Exon graphic demo
                     .style('position', 'absolute')
                     .attr("x1", 0)
                     .attr("y1", this.exonY)
-                    .attr("x2", this.width)
+                    .attr("x2", this.exonWidth)
                     .attr("y2", this.exonY)
                 ;
 
