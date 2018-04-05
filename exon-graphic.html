@@ -12,7 +12,7 @@ Exon graphic demo
         <style>
 
         </style>
-        <svg id="svgTag" height="30" width="50"></svg>
+        <svg id="svgTag"></svg>
     </template>
     <script>
         Polymer({
@@ -23,9 +23,9 @@ Exon graphic demo
                 },
                 exonWidth: {
                     type: Number,
-                    value: 30
+                    value: 50
                 },
-                codingExonGraphicColor: {
+                codingExonColor: {
                     type: String,
                     value: "Green"
                 }
@@ -39,10 +39,16 @@ Exon graphic demo
 
                 this.exonGraphicHeight = this.exonWidth / 3;
                 this.nonCodingExonGraphicHeight = this.exonGraphicHeight / 6;
-                this.exonY = this.exonGraphicHeight/2;
+
+                this.svgWidth = this.exonWidth;
+                this.svgHeight = this.exonGraphicHeight;
+
+                this.exonY = this.svgHeight/2;
             },
             _drawExon: function() {
-                var svg = d3.select(this).select("#svgTag");
+                var svg = d3.select(this).select("#svgTag")
+                    .style("width", this.svgWidth)
+                    .style("height", this.svgHeight);
 
                 var codingRegionCoordinates;
 
@@ -171,7 +177,7 @@ Exon graphic demo
                         y: this.exonY - this.exonGraphicHeight/2,
                         width: codingRegionCoord.codingRegionLength,
                         height: this.exonGraphicHeight,
-                        fill: this.codingExonGraphicColor
+                        fill: this.codingExonColor
                     })
                 ;
             },
@@ -181,7 +187,7 @@ Exon graphic demo
                     .style('stroke-width', 1)
                     .style('stroke', 'black')
                     .attr("d", this._leftRoundedPath(codingRegionCoord.codingRegionStart, this.exonY - this.exonGraphicHeight/2, codingRegionCoord.codingRegionLength, this.exonGraphicHeight, radius))
-                    .attr("fill", this.codingExonGraphicColor)
+                    .attr("fill", this.codingExonColor)
                 ;
             },
             _rectRightRounded: function(svg, codingRegionCoord, radius) {
@@ -190,7 +196,7 @@ Exon graphic demo
                     .style('stroke-width', 1)
                     .style('stroke', 'black')
                     .attr("d", this._rightRoundedPath(0, this.exonY - this.exonGraphicHeight/2, codingRegionCoord.codingRegionLength, this.exonGraphicHeight, radius))
-                    .attr("fill", this.codingExonGraphicColor)
+                    .attr("fill", this.codingExonColor)
                 ;
             },
             _rectRounded: function(svg, codingRegionCoord, radius) {
@@ -207,7 +213,7 @@ Exon graphic demo
                         ry: radius,
                         width: codingRegionCoord.codingRegionLength,
                         height: this.exonGraphicHeight,
-                        fill: this.codingExonGraphicColor
+                        fill: this.codingExonColor
                     })
                 ;
             },
