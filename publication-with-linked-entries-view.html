@@ -96,11 +96,10 @@ Publication with linked entries view demo
             </div>
         </template>
 
-        <template is="dom-if" if="[[data]]">
-            <template is="dom-if" if="[[data.entries]]">
-                 <relevant-entries-section entries="[[data.entries]]"></relevant-entries-section>
-            </template>
+        <template is="dom-if" if="[[_entries]]">
+             <relevant-entries-section entries="[[_entries]]"></relevant-entries-section>
         </template>
+
         <paper-spinner-lite id="spinner" active></paper-spinner-lite>
 
     </template>
@@ -130,6 +129,10 @@ Publication with linked entries view demo
                 pageSizeOptions: {
                     type: Array,
                     value: [10, 20, 50, 100]
+                },
+                //This is for relevant for
+                _entries: {
+                    type: Object
                 },
                 _preferedPageSizeName: {
                     type: String,
@@ -206,7 +209,7 @@ Publication with linked entries view demo
                 });
 
                 this.data = data;
-                this.data.entries = entries;
+                this._entries = entries;
 
                 this.$.spinner.active = false;
                 this.$.spinner.hidden = true;
