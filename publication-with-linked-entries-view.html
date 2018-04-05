@@ -97,7 +97,7 @@ Publication with linked entries view demo
         </template>
 
         <template is="dom-if" if="[[_entries]]">
-             <relevant-entries-section entries="[[_entries]]"></relevant-entries-section>
+             <relevant-entries-section related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
         </template>
 
         <paper-spinner-lite id="spinner" active></paper-spinner-lite>
@@ -123,13 +123,6 @@ Publication with linked entries view demo
                     type: Number,
                     notify: true
                 },
-                pageSize: {
-                    type: Number
-                },
-                pageSizeOptions: {
-                    type: Array,
-                    value: [10, 20, 50, 100]
-                },
                 //This is for relevant for
                 _entries: {
                     type: Object
@@ -150,7 +143,6 @@ Publication with linked entries view demo
             },
             attached: function () {
 
-                this.pageSize = this._getPreferedPageSizeFromLocalStorage();
                 this._initApiClient();
 
                 if (this.nxConfig.publicationId) {
@@ -172,27 +164,6 @@ Publication with linked entries view demo
                     this._npClient.updateEnvironment(this.nxConfig.env);
                 }
             },
-            _isPageSizeOptionSelected: function (pageSizeValue) {
-
-                return this._getPreferedPageSizeFromLocalStorage() == pageSizeValue;
-            },
-            _getPreferedPageSizeFromLocalStorage: function () {
-
-                var localStorageSizeValue = localStorage.getItem(this._preferedPageSizeName);
-
-                // does not exist
-                if (localStorageSizeValue === null) {
-                    localStorageSizeValue = 10;
-                    localStorage.setItem(this._preferedPageSizeName, localStorageSizeValue);
-                }
-
-                return parseInt(localStorageSizeValue);
-            },
-            _changePageSize: function (evt) {
-                console.log(evt)
-                this.pageSize = parseInt(evt.target[evt.target.selectedIndex].value);
-                localStorage.setItem(this._preferedPageSizeName, this.pageSize);
-            },
             _handleResponseData: function (data) {
 
                 var entries = [];
@@ -210,6 +181,7 @@ Publication with linked entries view demo
 
                 this.data = data;
                 this._entries = entries;
+                this.relatedEntryCount = data.relatedEntryCount;
 
                 this.$.spinner.active = false;
                 this.$.spinner.hidden = true;
@@ -223,9 +195,6 @@ Publication with linked entries view demo
             },
             _toView: function (summary) {
                 return (summary) ? "summary" : "detailed";
-            },
-            _beyondMaximumEntries: function (count) {
-                return count > 500;
             },
             _updateLinks: function (evt) {
                 this.summary = (evt.target.id === "summary-link");
