@@ -15,7 +15,7 @@ Exon item demo
         <template is="dom-if" if="[[data]]">
             <exon-graphic data="[[data]]" exon-width="[[exonWidth]]"></exon-graphic>
             <template is="dom-if" if="[[data.firstAminoAcid]]">
-                <coding-exon-text data="[[data]]" exon-width="[[exonWidth]]"></coding-exon-text>
+                <coding-exon-text data="[[data]]" exon-font-size="[[exonFontSize]]"></coding-exon-text>
             </template>
         </template>
     </template>
@@ -30,6 +30,9 @@ Exon item demo
                     type: Number,
                     value: 50
                 }
+            },
+            attached: function () {
+                this.exonFontSize = this.exonWidth / 4;
             }
         });
     </script>

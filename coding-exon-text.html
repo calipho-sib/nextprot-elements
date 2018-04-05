@@ -15,11 +15,11 @@ Coding exon text demo
             }
         </style>
         <span id="text">
-        <template is="dom-if" if="[[data.firstAminoAcid]]">
+            <template is="dom-if" if="[[data.firstAminoAcid]]">
                 <span>[[_firstTranslatedAminoAcid.codonNucsPreviousExon]]</span><span class="translated-from-exon"><b>[[_firstTranslatedAminoAcid.codonNucsCurrentExon]]</b></span><span class="small">[[data.firstAminoAcid.position]]</span>
                 <span>-</span>
                 <span class="translated-from-exon"><b>[[_lastTranslatedAminoAcid.codonNucsCurrentExon]]</b></span><span>[[_lastTranslatedAminoAcid.codonNucsNextExon]]</span><span class="small">[[data.lastAminoAcid.position]]</span>
-        </template>
+            </template>
         </span>
     </template>
     <script>
@@ -29,9 +29,9 @@ Coding exon text demo
                 data: {
                     type: Object
                 },
-                exonWidth: {
+                exonFontSize: {
                     type: Number,
-                    value: 50
+                    value: 12
                 },
                 _firstTranslatedAminoAcid: {
                     type: Object
@@ -60,10 +60,11 @@ Coding exon text demo
                         "codonNucsNextExon": (lastPhase === 0) ? "" : this.data.lastAminoAcid.code.substring(lastPhase)
                     };
 
-                    console.log("exonWidth", (this.exonWidth/2));
+                    // see automatic node finding in https://www.polymer-project.org/1.0/docs/devguide/local-dom
+                    var span = this.$$("#text");
 
                     // TODO: hack, solve this overall problem with css
-                    $("#text").get(0).style.fontSize = (this.exonWidth/2)+"px";
+                    span.style.fontSize = this.exonFontSize+"px";
                 }
             }
         });
