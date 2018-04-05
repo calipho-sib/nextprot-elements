@@ -12,10 +12,16 @@ Exon item demo
 -->
 <dom-module id="exon-item">
     <template>
+        <style>
+            .aligned {
+                position: absolute;
+                transform: translate(10%, -0.1em);
+            }
+        </style>
         <template is="dom-if" if="[[data]]">
             <exon-graphic data="[[data]]" exon-width="[[exonWidth]]"></exon-graphic>
             <template is="dom-if" if="[[data.firstAminoAcid]]">
-                <coding-exon-text data="[[data]]" exon-font-size="[[exonFontSize]]"></coding-exon-text>
+                <coding-exon-text class="aligned" data="[[data]]" exon-font-size="[[exonFontSize]]"></coding-exon-text>
             </template>
         </template>
     </template>
