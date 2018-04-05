@@ -13,14 +13,13 @@ Exon item demo
 <dom-module id="exon-item">
     <template>
         <style>
-            :host {
-                background:#ECF0F1;
-            }
         </style>
 
         <template is="dom-if" if="[[data]]">
             <exon-graphic data="[[data]]"></exon-graphic>
-            <coding-exon-text data="[[data]]"></coding-exon-text>
+            <template is="dom-if" if="[[data.firstAminoAcid]]">
+                <coding-exon-text class="center" data="[[data]]"></coding-exon-text>
+            </template>
         </template>
     </template>
     <script>
