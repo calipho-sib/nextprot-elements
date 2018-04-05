@@ -291,10 +291,14 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
             },
             _addPropertyToTermIfPresent: function (propertyName, term){
 
-                var properties = this._getProperty(propertyName, term.properties);
-                if(properties && (properties.length > 0)){
-                    term[propertyName] = properties;
+                //DO NOT ADD Cellosaurus comments
+                if(!(term.ontology === "NextprotCellosaurusCv" && propertyName === "Comment")){
+                    var properties = this._getProperty(propertyName, term.properties);
+                    if(properties && (properties.length > 0)){
+                            term[propertyName] = properties;
+                    }
                 }
+
 
             },
             _sort: function (a, b) {
