@@ -146,12 +146,12 @@ Exon graphic demo
                         //      _________
                         // ----|_________|
                         case 'START':
-                            this._rectLeftRounded(svg, codingRegionCoord, codingRegionCoord.codingRegionLength/5);
+                            this._rectLeftRounded(svg, codingRegionCoord, this.exonWidth/12);
                             break;
                         //      _____
                         // ----|_____|----
                         case 'MONO':
-                            this._rectRounded(svg, codingRegionCoord, codingRegionCoord.codingRegionLength/15);
+                            this._rectRounded(svg, codingRegionCoord, this.exonWidth/15);
                             break;
                         //  _____________
                         // |_____________|
@@ -161,7 +161,7 @@ Exon graphic demo
                         //  _________
                         // |_________|----
                         case 'STOP':
-                            this._rectRightRounded(svg, codingRegionCoord, codingRegionCoord.codingRegionLength/5);
+                            this._rectRightRounded(svg, codingRegionCoord, this.exonWidth/12);
                             break;
                     }
                 }
