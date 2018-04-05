@@ -10,24 +10,14 @@ Coding exon text demo
 <dom-module id="coding-exon-text">
     <template>
         <style>
-            :host {
-                background:#ECF0F1;
-            }
-
             .translated-from-exon {
                 color: red;
             }
-
         </style>
         <template is="dom-if" if="[[data.firstAminoAcid]]">
-            [[firstTranslatedAminoAcid.codonNucsPreviousExon]]
-            <span class="translated-from-exon"><b>[[firstTranslatedAminoAcid.codonNucsCurrentExon]]</b></span>
-            <span class="small">[[data.firstAminoAcid.position]]</span>
-            -
-            <span class="translated-from-exon"><b>[[lastTranslatedAminoAcid.codonNucsCurrentExon]]</b></span>
-            [[lastTranslatedAminoAcid.codonNucsNextExon]]
-            <span class="small">[[data.lastAminoAcid.position]]</span>
-            </span>
+            <span>[[firstTranslatedAminoAcid.codonNucsPreviousExon]]</span><span class="translated-from-exon"><b>[[firstTranslatedAminoAcid.codonNucsCurrentExon]]</b></span><span class="small">[[data.firstAminoAcid.position]]</span>
+            <span>-</span>
+            <span class="translated-from-exon"><b>[[lastTranslatedAminoAcid.codonNucsCurrentExon]]</b></span><span>[[lastTranslatedAminoAcid.codonNucsNextExon]]</span><span class="small">[[data.lastAminoAcid.position]]</span>
         </template>
     </template>
     <script>
