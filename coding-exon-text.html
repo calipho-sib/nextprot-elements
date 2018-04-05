@@ -14,11 +14,13 @@ Coding exon text demo
                 color: red;
             }
         </style>
+        <span id="text">
         <template is="dom-if" if="[[data.firstAminoAcid]]">
-            <span>[[firstTranslatedAminoAcid.codonNucsPreviousExon]]</span><span class="translated-from-exon"><b>[[firstTranslatedAminoAcid.codonNucsCurrentExon]]</b></span><span class="small">[[data.firstAminoAcid.position]]</span>
-            <span>-</span>
-            <span class="translated-from-exon"><b>[[lastTranslatedAminoAcid.codonNucsCurrentExon]]</b></span><span>[[lastTranslatedAminoAcid.codonNucsNextExon]]</span><span class="small">[[data.lastAminoAcid.position]]</span>
+                <span>[[_firstTranslatedAminoAcid.codonNucsPreviousExon]]</span><span class="translated-from-exon"><b>[[_firstTranslatedAminoAcid.codonNucsCurrentExon]]</b></span><span class="small">[[data.firstAminoAcid.position]]</span>
+                <span>-</span>
+                <span class="translated-from-exon"><b>[[_lastTranslatedAminoAcid.codonNucsCurrentExon]]</b></span><span>[[_lastTranslatedAminoAcid.codonNucsNextExon]]</span><span class="small">[[data.lastAminoAcid.position]]</span>
         </template>
+        </span>
     </template>
     <script>
         Polymer({
@@ -27,10 +29,14 @@ Coding exon text demo
                 data: {
                     type: Object
                 },
-                firstTranslatedAminoAcid: {
+                exonWidth: {
+                    type: Number,
+                    value: 50
+                },
+                _firstTranslatedAminoAcid: {
                     type: Object
                 },
-                lastTranslatedAminoAcid: {
+                _lastTranslatedAminoAcid: {
                     type: Object
                 }
             },
@@ -44,15 +50,20 @@ Coding exon text demo
                     var firstPhase = this.data.firstAminoAcid.phase;
                     var lastPhase = this.data.lastAminoAcid.phase;
 
-                    this.firstTranslatedAminoAcid = {
+                    this._firstTranslatedAminoAcid = {
                         "codonNucsCurrentExon":  this.data.firstAminoAcid.code.substring(firstPhase),
                         "codonNucsPreviousExon": this.data.firstAminoAcid.code.substring(0, firstPhase)
-                    }
+                    };
 
-                    this.lastTranslatedAminoAcid = {
+                    this._lastTranslatedAminoAcid = {
                         "codonNucsCurrentExon":  (lastPhase === 0) ? this.data.lastAminoAcid.code : this.data.lastAminoAcid.code.substring(0, lastPhase),
                         "codonNucsNextExon": (lastPhase === 0) ? "" : this.data.lastAminoAcid.code.substring(lastPhase)
-                    }
+                    };
+
+                    console.log("exonWidth", (this.exonWidth/2));
+
+                    // TODO: hack, solve this overall problem with css
+                    $("#text").get(0).style.fontSize = (this.exonWidth/2)+"px";
                 }
             }
         });

@@ -12,13 +12,10 @@ Exon item demo
 -->
 <dom-module id="exon-item">
     <template>
-        <style>
-        </style>
-
         <template is="dom-if" if="[[data]]">
-            <exon-graphic data="[[data]]"></exon-graphic>
+            <exon-graphic data="[[data]]" exon-width="[[exonWidth]]"></exon-graphic>
             <template is="dom-if" if="[[data.firstAminoAcid]]">
-                <coding-exon-text class="center" data="[[data]]"></coding-exon-text>
+                <coding-exon-text data="[[data]]" exon-width="[[exonWidth]]"></coding-exon-text>
             </template>
         </template>
     </template>
@@ -28,6 +25,10 @@ Exon item demo
             properties: {
                 data: {
                     type: Object
+                },
+                exonWidth: {
+                    type: Number,
+                    value: 50
                 }
             }
         });
