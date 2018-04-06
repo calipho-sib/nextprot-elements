@@ -158,11 +158,7 @@ Publication with linked entries view demo
                 }
             },
             _initApiClient: function () {
-                this._npClient = new Nextprot.Client("neXtProt publication with linked entries", "Calipho Group");
-
-                if (this.nxConfig.env) {
-                    this._npClient.updateEnvironment(this.nxConfig.env);
-                }
+                this._npClient = getNXClient(this.nxConfig);
             },
             _handleResponseData: function (data) {
 

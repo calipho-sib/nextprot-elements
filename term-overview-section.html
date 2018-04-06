@@ -66,6 +66,11 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                 padding: 0px;
             }
 
+            .errorcomment {
+                font-size: 9px;
+                color: orange;
+            }
+
             #extender {
                 float: right;
                 padding: 1px 6px 1px 0px;
@@ -107,6 +112,9 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                     <div id="term-definition" class="row">
                         <div class="col-md-3 col-xs-3 grey-x text-align-right">DEFINITION :</div>
                         <div class="col-md-9 col-xs-9"> [[term.definition]]  </div>
+                        <div class="col-xs-offset-3 col-md-offset-3 col-md-9 col-xs-9">
+                            <p class="errorcomment">Sometimes definition should not be present but not clear when, check DO-00903 for example</p>
+                        </div>
                     </div>
                 </template>
                 <template is="dom-if" if="[[term.synonyms]]">
@@ -136,7 +144,7 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                             </div>
                             <template is="dom-if" if="[[prop.ERROR_COMMENT]]">
                                 <div class="col-xs-offset-3 col-md-offset-3 col-md-9 col-xs-9">
-                                    <p style="color:red">[[prop.ERROR_COMMENT]]</p>
+                                    <p class="errorcomment">[[prop.ERROR_COMMENT]]</p>
                                 </div>
                         </template>
                         </div>
@@ -197,9 +205,20 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                             {key: "Position of the modification", label: "POSITION OF THE MODIFICATION"},
                             {key: "Cellular location", label: "CELLULAR LOCATION"},
                             {key: "Taxonomic range", label: "TAXONOMIC RANGE", "ERROR_COMMENT" : "Missing external links"},
-                            {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA"},
+                            {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA", "ERROR_COMMENT" : "Format formula. check if code already exists somewhere else"},
                             {key: "Average mass difference", label: "AVERAGE MASS DIFFERENCE"},
                             {key: "Monoisotopic mass difference", label: "MONOISOTONIC MASS DIFFERENCE"}
+
+
+                        //FIXME    Others from DB
+                        /*
+                        category				32961
+                        Category				103155
+                        Cellular location			589
+                        Feature category			930
+                        Feature key				632
+                        Uniprot status			35
+                        */
 
                     ]
                 }
