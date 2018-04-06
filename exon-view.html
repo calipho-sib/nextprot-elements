@@ -1,0 +1,75 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="exon-item.html">
+<link rel="import" href="external-scripts.html">
+
+<link rel="import" href="protein-overview.html">
+
+<!--
+`exon-view`
+Exon view demo
+
+@demo demo/exon-view-demo.html
+-->
+<dom-module id="exon-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background:#f8f8f8;
+                overflow-y: auto;
+            }
+        </style>
+        <div class="row">
+            <div id="nxOverview" class="col-md-12">
+                <protein-overview nx-config="[[nxConfig]]"></protein-overview>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'exon-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                data: {
+                    type: Object
+                },
+                exonWidth: {
+                    type: Number,
+                    value: 50
+                }
+            },
+            attached: function () {
+
+                this._initApiClient();
+
+                var self = this;
+
+                this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/genomic-mapping.json")
+                    .then(function (response) {
+                        self._handleResponseData(response);
+                    })
+                    .catch(function (error) {
+                        self._handleError(error);
+                    });
+
+            },
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtProt publications", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+            },
+            _handleResponseData: function (data) {
+                console.log(data);
+            },
+            _handleError: function (error) {
+                console.error("Error: ", error);
+            }
+        });
+    </script>
+</dom-module>
