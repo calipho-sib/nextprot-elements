@@ -1,0 +1,71 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="graph-section.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="term-overview-section.html">
+
+<!--
+`tree-browser-view`
+View for tree browser view:
+
+@demo demo/tree-browser-view-demo.html
+-->
+<dom-module id="tree-browser-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+            .title-header {
+                border-bottom: 1px solid rgb(170, 170, 170);
+                font-weight: 500;
+                font-size: 1.8em;
+            }
+        </style>
+        <iron-ajax
+                id ="APIcall"
+                url="https://api.nextprot.org/term/[[accessionInput]]/ancestor-graph.json"
+                params='{"type":"all"}'
+                handle-as="json"
+                on-response="ancestorBuild" ></iron-ajax>
+        <term-overview-section nx-config='{"env": "dev", "termAccession": "PTM-0312"}'></term-overview-section>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-header">
+                    Tree browser
+                </div>
+                <span style="color:orange; font-size: 10px">Number of proteins and hierarchy missing</span>
+                <template is="dom-repeat" items="[[ancestors]]" as="acs">
+                    <p>[[acs.name]]</p>
+                </template>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'tree-browser-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                accessionInput: {
+                    type: String,
+                    observer: "APIcaller"
+                }
+            },
+            //API call when the DOM is initialized:
+            APIcaller: function () {
+                this.$.APIcall.generateRequest();
+            },
+            //Retrieves the data from the Ajax call and places them in APIdata:
+            ancestorBuild: function (data) {
+                var ag = data.detail.response["ancestor-graph"];
+                this.ancestors = ag.nodes;
+            }
+        });
+    </script>
+</dom-module>
