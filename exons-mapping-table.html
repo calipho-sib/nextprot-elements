@@ -15,10 +15,17 @@ exons mapping table demo
             table, th, td {
                 border: 1px solid black;
                 border-collapse: collapse;
-                padding: 2px;
+                padding: 4px;
+            }
+
+            ul {
+                list-style-type: none;
             }
         </style>
         <template is="dom-if" if="[[data]]">
+            <div>
+                <h1>Exons</h1>
+            </div>
             <div>
             <table>
                 <thead>
@@ -27,10 +34,16 @@ exons mapping table demo
                     <th>Position on gene</th>
                     <th>Length</th>
                     <template is="dom-repeat" items="[[data.isoformInfos]]" as="iso">
-                        <th>Coding for [[iso.name]]:
+                        <th>Coding for <br>
+                            [[iso.name]]:
+                            <div>
                         <a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" class="ext-link" target='_blank'>[[iso.main-transcript]]</a>
+                            </div>
                             <template is="dom-if" if="[[iso.other-transcripts]]">
-                                <ul class="bullet-none nomargin" style="display: block;">
+                                <span class="additional small fright padding-right margin-right-x link orange-bottom-arrow" show="&nbsp;hide transcripts&nbsp;" hide="&nbsp;show transcripts ([[iso.other-transcripts.length]])">
+                                &nbsp;show transcripts ([[iso.other-transcripts.length]])</span>
+
+                                <ul>
                                     <template is="dom-repeat" items="[[iso.other-transcripts]]" as="other">
                                         <li><a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" rel="nofollow">[[other]]</a></li>
                                     </template>
@@ -85,13 +98,12 @@ exons mapping table demo
 
                     this._rows.push(this._newRow(this.data.sortedKeys[i], isoAccessions));
                 }
-                console.log(this._rows)
             },
             _newRow: function(pos, isoAccessions) {
 
                 var exonByIsoform = this.data.exons[pos];
 
-                var row = ["ENSE?", pos, this._calcLength(pos)];
+                var row = [this._findENSE(isoAccessions, exonByIsoform), pos, this._calcLength(pos)];
                 var i;
                 for (i = 0; i < isoAccessions.length; i++) {
 
@@ -111,6 +123,24 @@ exons mapping table demo
             },
             _exonCell: function(index) {
                 return index > 2;
+            },
+            _findENSE: function(isoAccessions, exonByIsoform) {
+
+                var i;
+                var accessions = [];
+                for (i = 0; i < isoAccessions.length; i++) {
+
+                    if (isoAccessions[i] in exonByIsoform) {
+                        if (exonByIsoform[isoAccessions[i]].accession) {
+                            accessions.push(exonByIsoform[isoAccessions[i]].accession);
+                        }
+                    }
+                }
+
+                if (accessions.length> 0) {
+                    return accessions[0];
+                }
+                return null;
             }
         });
     </script>
