@@ -1,0 +1,117 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="exon-item.html">
+<link rel="import" href="external-scripts.html">
+
+<!--
+`exons-mapping-table`
+exons mapping table demo
+
+@demo demo/exons-mapping-table-demo.html
+-->
+<dom-module id="exons-mapping-table">
+    <template>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+                padding: 2px;
+            }
+        </style>
+        <template is="dom-if" if="[[data]]">
+            <div>
+            <table>
+                <thead>
+                <tr>
+                    <th>Identifier</th>
+                    <th>Position on gene</th>
+                    <th>Length</th>
+                    <template is="dom-repeat" items="[[data.isoformInfos]]" as="iso">
+                        <th>Coding for [[iso.name]]:
+                        <a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" class="ext-link" target='_blank'>[[iso.main-transcript]]</a>
+                            <template is="dom-if" if="[[iso.other-transcripts]]">
+                                <ul class="bullet-none nomargin" style="display: block;">
+                                    <template is="dom-repeat" items="[[iso.other-transcripts]]" as="other">
+                                        <li><a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" rel="nofollow">[[other]]</a></li>
+                                    </template>
+                                </ul>
+                            </template>
+                    </template>
+                </tr>
+                </thead>
+                <tbody>
+                    <template is="dom-repeat" items="[[_rows]]" as="row">
+                        <tr>
+                            <template is="dom-repeat" items="[[row]]" as="cell">
+                                <template is="dom-if" if="[[!_exonCell(index)]]">
+                                    <td>[[cell]]</td>
+                                </template>
+                                <template is="dom-if" if="[[_exonCell(index)]]">
+                                    <td><exon-item data="[[cell]]" exon-width="[[exonWidth]]"></exon-item></td>
+                                </template>
+                            </template>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+            </div>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'exons-mapping-table',
+            properties: {
+                data: {
+                    type: Object,
+                    observer: "_prepareData"
+                },
+                exonWidth: {
+                    type: Number,
+                    value: 50
+                },
+                _rows: {
+                    type: Array,
+                    value: []
+                }
+            },
+            _prepareData: function() {
+
+                var isoAccessions = this.data.isoformInfos.map(function(info) {
+                    return info.accession;
+                });
+
+                var i;
+                for (i = 0; i < this.data.sortedKeys.length; i++) {
+
+                    this._rows.push(this._newRow(this.data.sortedKeys[i], isoAccessions));
+                }
+                console.log(this._rows)
+            },
+            _newRow: function(pos, isoAccessions) {
+
+                var exonByIsoform = this.data.exons[pos];
+
+                var row = ["ENSE?", pos, this._calcLength(pos)];
+                var i;
+                for (i = 0; i < isoAccessions.length; i++) {
+
+                    if (isoAccessions[i] in exonByIsoform) {
+                        row.push(exonByIsoform[isoAccessions[i]]);
+                    }
+                    else {
+                        row.push(null);
+                    }
+                }
+                return row;
+            },
+            _calcLength: function(pos) {
+
+                var fromAndTo = pos.split("-");
+                return fromAndTo[1]-fromAndTo[0]+1;
+            },
+            _exonCell: function(index) {
+                return index > 2;
+            }
+        });
+    </script>
+</dom-module>
