@@ -19,6 +19,7 @@ Term overview section
 
 Specifications can be found in here:
 https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
+https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/edit
 
 
 ##### Example
@@ -138,7 +139,12 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                             <div class="col-md-9 col-xs-9">
                                 <dl>
                                     <template is="dom-repeat" items="[[_getValueProperties(term, prop.key)]]" as="property">
-                                        <dt class="col-md-9 col-xs-9 multiple-prop"> [[property.propertyValue]] </dt>
+                                        <template is="dom-if" if="[[prop.templateUrl]]">
+                                            <dt class="col-md-9 col-xs-9 multiple-prop"> [[_getTemplateUrl(term, property, 'label')]] <a href="[[_getTemplateUrl(term, property, 'url')]]" class="ext-link">[[_getTemplateUrl(term, property, 'urlLabel')]]</a> </dt>
+                                        </template>
+                                        <template is="dom-if" if="[[!prop.templateUrl]]">
+                                                <dt class="col-md-9 col-xs-9 multiple-prop"> [[property.propertyValue]] </dt>
+                                        </template>
                                     </template>
                                 </dl>
                             </div>
@@ -204,7 +210,7 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                             {key: "Target", label: "TARGETED AMINO ACID"},
                             {key: "Position of the modification", label: "POSITION OF THE MODIFICATION"},
                             {key: "Cellular location", label: "CELLULAR LOCATION"},
-                            {key: "Taxonomic range", label: "TAXONOMIC RANGE", "ERROR_COMMENT" : "Missing external links"},
+                            {key: "Taxonomic range", label: "TAXONOMIC RANGE", templateUrl: "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?lvl=0&id="},
                             {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA", "ERROR_COMMENT" : "Format formula. check if code already exists somewhere else"},
                             {key: "Average mass difference", label: "AVERAGE MASS DIFFERENCE"},
                             {key: "Monoisotopic mass difference", label: "MONOISOTONIC MASS DIFFERENCE"}
@@ -237,6 +243,18 @@ https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
                 }, function (error) {
                     self._handleError(error);
                 });
+            },
+            _getTemplateUrl: function(term, prop, label){
+                if(prop.propertyName === "Taxonomic range"){
+                    if(label === "label"){
+                        return prop.propertyValue.split(" ")[0].slice(0, -1);
+                    }else if(label === "urlLabel"){
+                        return prop.propertyValue.split(" ")[1]
+                    }else if(label === "url"){
+                        var trid = prop.propertyValue.split(" ")[1].split(":")[1]
+                        return ("https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?lvl=0&id=" + trid)
+                    }
+                }
             },
             _getValueProperties : function (term, propertyKey){
                 if(term[propertyKey]){
