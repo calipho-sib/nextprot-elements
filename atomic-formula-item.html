@@ -1,0 +1,61 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="graph-section.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="term-overview-section.html">
+
+<!--
+`atomic-formula-item-demo`
+@demo demo/atomic-formula-item-demo.html
+-->
+<dom-module id="atomic-formula-item">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            .atomic-number {
+                vertical-align: sub;
+                font-size: smaller;
+                margin-left: -3px;
+            }
+            .atomic-letter {
+                margin-left: -1px;
+            }
+
+        </style>
+        <template class="formula-container" is="dom-repeat" items="[[resultElements]]" as="re">
+            <template is="dom-if" if="[[re.isNumber]]">
+                    <span class="atomic-number">[[re.label]]</span>
+            </template>
+            <template is="dom-if" if="[[!re.isNumber]]">
+                    <span class="atomic-letter">[[re.label]]</span>
+            </template>
+        </template>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'atomic-formula-item',
+            properties: {
+                formula: {
+                    type: String
+                },
+                resultElements: {
+                    type: Array
+                }
+            },
+            ready: function (){
+                var result = [];
+                var elements = this.formula.split("")
+                elements.forEach(function (e){
+                    if(e == " ") {}
+                    if(e == "-") {}
+                    else if ('0123456789'.indexOf(e) !== -1) { //Check if number
+                        console.log(e)
+                        result.push({isNumber: true, label: e, class: "atomic-number"})
+                    }else result.push({isNumber: false, label: e})
+                })
+                this.resultElements = result; 
+            }
+
+        }); 
+    </script>
+</dom-module>

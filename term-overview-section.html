@@ -12,6 +12,7 @@
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="external-scripts.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="atomic-formula-item.html">
 
 <!--
 `term-overview-section`
@@ -143,7 +144,12 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                                             <dt class="col-md-9 col-xs-9 multiple-prop"> [[_getTemplateUrl(term, property, 'label')]] <a href="[[_getTemplateUrl(term, property, 'url')]]" class="ext-link">[[_getTemplateUrl(term, property, 'urlLabel')]]</a> </dt>
                                         </template>
                                         <template is="dom-if" if="[[!prop.templateUrl]]">
-                                                <dt class="col-md-9 col-xs-9 multiple-prop"> [[property.propertyValue]] </dt>
+                                                <template is="dom-if" if="[[prop.atomicFormula]]">
+                                                        <dt class="col-md-9 col-xs-9 multiple-prop"><atomic-formula-item formula=[[property.propertyValue]]></atomic-formula-item></dt>
+                                                </template>
+                                                <template is="dom-if" if="[[!prop.atomicFormula]]">
+                                                        <dt class="col-md-9 col-xs-9 multiple-prop">[[property.propertyValue]]</dt>
+                                                </template>
                                         </template>
                                     </template>
                                 </dl>
@@ -211,7 +217,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                             {key: "Position of the modification", label: "POSITION OF THE MODIFICATION"},
                             {key: "Cellular location", label: "CELLULAR LOCATION"},
                             {key: "Taxonomic range", label: "TAXONOMIC RANGE", templateUrl: "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?lvl=0&id="},
-                            {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA", "ERROR_COMMENT" : "Format formula. check if code already exists somewhere else"},
+                            {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA", "ERROR_COMMENT" : "Format formula. check if code already exists somewhere else", atomicFormula: true},
                             {key: "Average mass difference", label: "AVERAGE MASS DIFFERENCE"},
                             {key: "Monoisotopic mass difference", label: "MONOISOTONIC MASS DIFFERENCE"}
 
