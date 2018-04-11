@@ -2,6 +2,7 @@
 <link rel="import" href="term-overview-section.html">
 <link rel="import" href="graph-section.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="term-overview-section.html">
 
 <!--
 `ancestor-graph-view`
@@ -20,8 +21,16 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
         <style include="nextprot-elements-shared-styles">
             :host {
                 display: block;
-                background:#f8f8f8;
-                /*overflow-y: auto;*/
+                --paper-toggle-button-checked-button-color: #428bca;
+                --paper-toggle-button-checked-bar-color: #428bca;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+
+            .title-header {
+                border-bottom: 1px solid rgb(170, 170, 170);
+                font-weight: 500;
+                font-size: 1.8em;
             }
         </style>
         <iron-ajax
@@ -30,9 +39,17 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 params='{"type":"all"}'
                 handle-as="json"
                 on-response="ancestorBuild" ></iron-ajax>
+        <term-overview-section nx-config='{"env": "dev", "termAccession": "PTM-0312"}'></term-overview-section>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-header">
+                    Ancestors graph
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div id="graph-item" class="col-md-12">
-                <graph-section style="overflow: auto;"dotdata="[[dotGraph]]"></graph-section>
+                <graph-section style="overflow: auto;" dotdata="[[dotGraph]]"></graph-section>
             </div>
         </div>
     </template>
@@ -243,9 +260,11 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     + '", splines=' + this.splineInput + '];' 
                     + subgraphs 
                     +'labelfontname="Helvetica";' 
+                    +'bgcolor="#f8f8f8";' 
                     + dotFormatNodes 
                     + dotFormatEdges 
                     + '}';
+
             }
 
 

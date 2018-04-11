@@ -52,10 +52,11 @@ Graph view section
                     observer: "graphBuilder"
                 }
             },
-
             graphBuilder: function () {
+
                 this.$.ancestorDiv.innerHTML = Viz(this.dotdata);
 
+                /*
                 var zoomableGraph = svgPanZoom('svg', {
                     zoomEnabled: true,
                     controlIconsEnabled: true,
@@ -63,6 +64,7 @@ Graph view section
                     center: true,
                     mouseWheelZoomEnabled: false
                 });
+                */
 
             }
 
