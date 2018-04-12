@@ -93,11 +93,11 @@ Exon graphic demo
             },
             _calcMonoExonGraphicParams: function() {
 
-                var nonCodingPartLen1 = this.data.startPosition - this.data.geneRegion.firstPosition + 1;
+                var nonCodingPartLen = this.data.startPosition - this.data.geneRegion.firstPosition + 1;
                 var codingPartLen = this.data.stopPosition - this.data.startPosition + 1;
 
                 return {
-                    "codingRegionStart" : this._scale(nonCodingPartLen1),
+                    "codingRegionStart" : this._scale(nonCodingPartLen),
                     "codingRegionLength" : this._scale(codingPartLen)
                 }
             },
@@ -141,17 +141,19 @@ Exon graphic demo
 
                 if (codingRegionCoord.codingRegionLength > 0) {
 
+                    this._rect(svg, codingRegionCoord);
+                    /*
                     switch(this.data.exonCategory) {
 
                         //      _________
                         // ----|_________|
                         case 'START':
-                            this._rectLeftRounded(svg, codingRegionCoord, this.exonWidth/12);
+                            this._rectLeftRounded(svg, codingRegionCoord, this.exonWidth/8);
                             break;
                         //      _____
                         // ----|_____|----
                         case 'MONO':
-                            this._rectRounded(svg, codingRegionCoord, this.exonWidth/15);
+                            this._rectRounded(svg, codingRegionCoord, this.exonWidth/10);
                             break;
                         //  _____________
                         // |_____________|
@@ -161,17 +163,18 @@ Exon graphic demo
                         //  _________
                         // |_________|----
                         case 'STOP':
-                            this._rectRightRounded(svg, codingRegionCoord, this.exonWidth/12);
+                            this._rectRightRounded(svg, codingRegionCoord, this.exonWidth/8);
                             break;
                     }
+                    */
                 }
             },
             _rect: function(svg, codingRegionCoord) {
 
                 svg
                     .append('rect')
-                    .style('stroke-width', 1)
-                    .style('stroke', 'black')
+                    //.style('stroke-width', 1)
+                    //.style('stroke', 'black')
                     .attr({
                         x: codingRegionCoord.codingRegionStart,
                         y: this.exonY - this.exonGraphicHeight/2,
