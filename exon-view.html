@@ -3,6 +3,7 @@
 
 <link rel="import" href="exon-item.html">
 <link rel="import" href="exons-mapping-table.html">
+<link rel="import" href="gene-information-section.html">
 
 <link rel="import" href="external-scripts.html">
 
@@ -19,12 +20,16 @@ Exon view demo
         <style include="nextprot-elements-shared-styles">
             :host {
                 display: block;
+                background: white;
                 overflow-y: auto;
             }
         </style>
         <div class="row">
             <div id="nxOverview" class="col-md-12">
                 <protein-overview nx-config="[[nxConfig]]"></protein-overview>
+            </div>
+            <div>
+                <gene-information-section nx-config="[[nxConfig]]" non-aligned-isoforms="[[data.nonAlignedIsoforms]]"></gene-information-section>
             </div>
             <div>
                 <exons-mapping-table data="[[data]]" exon-witdh="[[exonWidth]]"></exons-mapping-table>
@@ -40,7 +45,8 @@ Exon view demo
                     value: {}
                 },
                 data: {
-                    type: Object
+                    type: Object,
+                    notify: true
                 },
                 exonWidth: {
                     type: Number,
@@ -53,23 +59,13 @@ Exon view demo
 
                 var self = this;
 
-                this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/ensgs.json")
+                this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/exon-mapping.json")
                     .then(function (response) {
-                        var ensg = self._getENSG(response);
-
-                        self._npClient.getJSON("/entry/" + self.nxConfig.entry + "/exon-mapping/"+
-                            ensg+".json")
-                            .then(function (response) {
-                                self._handleResponseData(response);
-                            })
-                            .catch(function (error) {
-                                self._handleError(error);
-                            });
+                        self._handleResponseData(response);
                     })
                     .catch(function (error) {
                         self._handleError(error);
                     });
-
             },
             _initApiClient: function () {
                 this._npClient = new Nextprot.Client("neXtProt publications", "Calipho Group");
@@ -77,9 +73,6 @@ Exon view demo
                 if (this.nxConfig.env) {
                     this._npClient.updateEnvironment(this.nxConfig.env);
                 }
-            },
-            _getENSG: function (ensgs) {
-                return ensgs[0]
             },
             _handleResponseData: function (data) {
                 this.data = data;
