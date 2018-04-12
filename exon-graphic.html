@@ -27,7 +27,7 @@ Exon graphic demo
                 },
                 codingExonColor: {
                     type: String,
-                    value: "#7cba0f"
+                    value: "#0F8292"
                 }
             },
             attached: function() {
@@ -37,7 +37,8 @@ Exon graphic demo
             // https://stackoverflow.com/questions/12485818/can-a-svg-embedded-in-an-html-table-cell-overflow-that-cell
             _init: function() {
 
-                this.exonGraphicHeight = this.exonWidth / 3;
+                //this.exonGraphicHeight = this.exonWidth / 3;
+                this.exonGraphicHeight = 18;
                 this.nonCodingExonGraphicHeight = this.exonGraphicHeight / 10;
 
                 this.svgWidth = this.exonWidth;
@@ -177,7 +178,7 @@ Exon graphic demo
                     //.style('stroke', 'black')
                     .attr({
                         x: codingRegionCoord.codingRegionStart,
-                        y: this.exonY - this.exonGraphicHeight/2,
+                        y:0,
                         width: codingRegionCoord.codingRegionLength,
                         height: this.exonGraphicHeight,
                         fill: this.codingExonColor

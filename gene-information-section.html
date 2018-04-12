@@ -11,22 +11,66 @@ gene information section demo
 <dom-module id="gene-information-section">
     <template>
         <style include="nextprot-elements-shared-styles">
-            .annotscope-bg {
-                background-color: #dedede;
-                color: #7A7A7A;
-                border-radius: 5px;
-                padding: 1px 3px;
-                font-size: 11px;
+            :host{
+                white-space: nowrap;
+            }
+
+            .gray-x {
+                color: #999;
+                padding-right: 20px;
+                text-transform: uppercase;
+            }
+
+            table {
+                border-collapse:unset;
+                border: solid #eee 1px;
+            }
+            thead {
+                background-color: #eee;
+                border-bottom:0px;
+
+                border-top:1px solid #ddd;
+                border-left:1px solid #ddd;
+                border-right:1px solid #ddd;
+            }
+
+            thead th {
+                text-align: center;
+                vertical-align: top;
+
+                border-right:1px solid #ddd;
+                border-left:1px solid #f4f4f4;
+                border-bottom:0px;
+            }
+
+            thead th:first-child{
+                border-left:none;
+            }
+
+            thead th:last-child{
+                border-right:none;
+            }
+
+            .no-border {
+                border:0;
+            }
+
+            .bg-blue-light-xx {
+                background-color: #F3F5FC;
+                color: #444;
+                border: #ebeffa 1px solid;
+                -webkit-border-radius: 5px;
+                margin: 10px 5px;
+                padding: 5px;
             }
         </style>
-        <div>
-            <template is="dom-if" if="[[_locations]]">
+        <template is="dom-if" if="[[_locations]]">
             <div>
-                <h1>Gene information</h1>
+                <h3>Gene information</h3>
             </div>
 
             <div>
-                <table class="table table-condensed">
+                <table class="table">
                     <thead>
                     <tr>
                         <th style="text-align:center">Chromosomal location</th>
@@ -52,32 +96,38 @@ gene information section demo
 
             <div>
                 <template is="dom-if" if="[[_chosenLocation]]">
-                    <div class="column span-22 last margin-top">
-                        <span class="annotscope-bg">Mapping</span>This protein has [[_locations.length]] Ensembl mappings.
-                    </div>
-                    <div class="column span-22 last margin-top">
-                        <span class="annotscope-bg">Alignment</span>
-                        The isoform is aligned on <a class='ext-link' href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.
-                    </div>
-                    <div class="column span-22 last margin-top">
-                        <span class="annotscope-bg">Coding positions</span> From [[_chosenLocation.firstPosition]] to [[_chosenLocation.lastPosition]]
-                        [length: [[_calcLength(_chosenLocation)]] bp]
-                    </div>
-                </template>
-
-                <!-- non aligned isoforms -->
-                <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
-                    <div class="column span-13 last margin-top">
-                        <p class="bg-blue-light-xx border-all-x padding-x nomargin round-border margin-right-xx">
-                            Isoform
-                            <a class='ext-link' href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
-
-                            is
-                            not aligned on gene.
-                        </p>
-                    </div>
+                    <table class="no-border">
+                        <tbody>
+                        <tr>
+                            <td class="gray-x">Mapping</td>
+                            <td>This protein has [[_locations.length]] Ensembl mappings.</td>
+                        </tr>
+                        <tr>
+                            <td class="gray-x">Alignment</td>
+                            <td>The isoform is aligned on <a class='ext-link' href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.</td>
+                        </tr>
+                        <tr>
+                            <td class="gray-x">Coding positions</td>
+                            <td>From [[_chosenLocation.firstPosition]] to [[_chosenLocation.lastPosition]]
+                                [length: [[_calcLength(_chosenLocation)]] bp]</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </template>
             </div>
+
+            <!-- non aligned isoforms -->
+            <template is="dom-if" if="[[nonAlignedIsoforms]]">
+                <div class="bg-blue-light-xx">
+                <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
+                    <div>
+                        <span>Isoform
+                        <a class='ext-link' href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
+                        is not aligned on gene.</span>
+                    </div>
+                </template>
+                </div>
+            </template>
         </template>
         </div>
     </template>
@@ -100,10 +150,8 @@ gene information section demo
                     type: Object
                 }
             },
-            ready: function () {
+            attached: function () {
                 this._initApiClient();
-
-                console.log("isoforms non aligned", this.nonAlignedIsoforms)
 
                 var self = this;
 

@@ -25,11 +25,11 @@ Exon view demo
             }
         </style>
         <div class="row">
-            <div id="nxOverview" class="col-md-12">
+            <div>
                 <protein-overview nx-config="[[nxConfig]]"></protein-overview>
             </div>
             <div>
-                <gene-information-section nx-config="[[nxConfig]]" non-aligned-isoforms="[[data.nonAlignedIsoforms]]"></gene-information-section>
+                <gene-information-section nx-config="[[nxConfig]]" non-aligned-isoforms="[[_nonAlignedIsoforms]]"></gene-information-section>
             </div>
             <div>
                 <exons-mapping-table data="[[data]]" exon-witdh="[[exonWidth]]"></exons-mapping-table>
@@ -45,8 +45,11 @@ Exon view demo
                     value: {}
                 },
                 data: {
-                    type: Object,
-                    notify: true
+                    type: Object
+                },
+                _nonAlignedIsoforms: {
+                    type: Array,
+                    value: []
                 },
                 exonWidth: {
                     type: Number,
@@ -76,6 +79,15 @@ Exon view demo
             },
             _handleResponseData: function (data) {
                 this.data = data;
+
+                console.log(data.nonAlignedIsoforms, data.isoformInfos)
+                this._nonAlignedIsoforms = data.sortedIsoformKeys.map(function (accession) {
+                    return {
+                        "name": data.isoformInfos[accession].name,
+                        "accession": data.isoformInfos[accession].accession
+                    }
+                });
+
             },
             _handleError: function (error) {
                 console.error("Error: ", error);
