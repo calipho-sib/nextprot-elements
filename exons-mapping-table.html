@@ -24,7 +24,6 @@ exons mapping table demo
             thead {
                 background-color: #eee;
                 border-bottom:0px;
-
                 border-top:1px solid #ddd;
                 border-left:1px solid #ddd;
                 border-right:1px solid #ddd;
@@ -33,7 +32,6 @@ exons mapping table demo
             thead th {
                 text-align: center;
                 vertical-align: top;
-
                 border-right:1px solid #ddd;
                 border-left:1px solid #f4f4f4;
                 border-bottom:0px;
@@ -77,11 +75,11 @@ exons mapping table demo
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Identifier</th>
-                    <th>Position <br>on gene</th>
-                    <th>Length</th>
+                    <th style="text-align:left; width: 30px;">Identifier</th>
+                    <th style="text-align:center; width: 30px;">Position <br>on gene</th>
+                    <th style="text-align:right; width: 20px;">Length</th>
                     <template is="dom-repeat" items="[[_getIsoformInfos(data)]]" as="iso">
-                        <th>Coding for <br>
+                        <th style="text-align:left">Coding for <br>
                             [[iso.name]]:
                             <div>
                         <a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" class="ext-link" target='_blank'>[[iso.main-transcript]]</a>
