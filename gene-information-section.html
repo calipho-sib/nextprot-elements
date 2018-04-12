@@ -73,9 +73,9 @@ gene information section demo
                 <table class="table">
                     <thead>
                     <tr>
-                        <th style="text-align:center">Chromosomal location</th>
-                        <th style="text-align:center">Orientation</th>
-                        <th style="text-align:right">Position on chromosome</th>
+                        <th style="text-align:left">Chromosomal location</th>
+                        <th style="text-align:left">Orientation</th>
+                        <th style="text-align:center">Position on chromosome</th>
                         <th style="text-align:right">Length</th>
                         <th style="text-align:left">Ensembl</th>
                     </tr>
@@ -83,11 +83,11 @@ gene information section demo
                     <tbody>
                     <template is="dom-repeat" items="[[_locations]]" as="location">
                         <tr>
-                            <td style="text-align:center">[[location.prettyLocation]]</td>
-                            <td style="text-align:right">[[_formatOrientation(location)]]</td>
-                            <td style="text-align:right">[[location.firstPosition]] - [[location.lastPosition]]</td>
+                            <td style="text-align:left">[[location.prettyLocation]]</td>
+                            <td style="text-align:left">[[_formatOrientation(location)]]</td>
+                            <td style="text-align:center">[[location.firstPosition]] - [[location.lastPosition]]</td>
                             <td style="text-align:right">[[_calcLength(location)]]</td>
-                            <td style="text-align:right">[[location.accession]]</td>
+                            <td style="text-align:left">[[location.accession]]</td>
                         </tr>
                     </template>
                     </tbody>
