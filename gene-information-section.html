@@ -73,19 +73,19 @@ gene information section demo
                 <table class="table">
                     <thead>
                     <tr>
-                        <th style="text-align:left">Chromosomal location</th>
-                        <th style="text-align:left">Orientation</th>
-                        <th style="text-align:center">Position on chromosome</th>
-                        <th style="text-align:right">Length</th>
-                        <th style="text-align:left">Ensembl</th>
+                        <th style="text-align:left; width: 30px;">Chromosomal location</th>
+                        <th style="text-align:left; width: 30px;">Orientation</th>
+                        <th style="text-align:center; width: 30px;">Position on chromosome</th>
+                        <th style="text-align:right; width: 20px;">Length</th>
+                        <th style="text-align:left;">Ensembl</th>
                     </tr>
                     </thead>
                     <tbody>
                     <template is="dom-repeat" items="[[_locations]]" as="location">
                         <tr>
-                            <td style="text-align:left">[[location.prettyLocation]]</td>
-                            <td style="text-align:left">[[_formatOrientation(location)]]</td>
-                            <td style="text-align:center">[[location.firstPosition]] - [[location.lastPosition]]</td>
+                            <td style="text-align:left; width: 30px;">[[location.prettyLocation]]</td>
+                            <td style="text-align:left; width: 30px;">[[_formatOrientation(location)]]</td>
+                            <td style="text-align:center">[[_numberWithCommas(location.firstPosition)]] - [[_numberWithCommas(location.lastPosition)]]</td>
                             <td style="text-align:right">[[_calcLength(location)]]</td>
                             <td style="text-align:left">[[location.accession]]</td>
                         </tr>
@@ -108,7 +108,7 @@ gene information section demo
                         </tr>
                         <tr>
                             <td class="gray-x">Coding positions</td>
-                            <td>From [[_chosenLocation.firstPosition]] to [[_chosenLocation.lastPosition]]
+                            <td>From [[_numberWithCommas(_chosenLocation.firstPosition)]] to [[_numberWithCommas(_chosenLocation.lastPosition)]]
                                 [length: [[_calcLength(_chosenLocation)]] bp]</td>
                         </tr>
                         </tbody>
@@ -188,7 +188,10 @@ gene information section demo
                 return (location.strand === 1) ? "plus strand" : "minus strand";
             },
             _calcLength: function (location) {
-                return location.lastPosition - location.firstPosition + 1;
+                return this._numberWithCommas(location.lastPosition - location.firstPosition + 1);
+            },
+            _numberWithCommas: function (x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             }
         });
     </script>
