@@ -52,6 +52,10 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 font-weight: inherit;
             }
 
+            dl {
+                margin: 0px;
+            }
+
             .term-link {
                 display: inline;
             }
@@ -82,8 +86,14 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
         <div id="termOverview">
             <h3>
                 <template is="dom-if" if="[[term.name]]">
-                    [[term.accession]] → [[term.name]] <span style="font-size: 12px"><a target="_blank" href="http://old.nextprot.org/db/term/[[term.accession]]">(NP1 version)</a></span>
+                    <template is="dom-if" if="[[_isEnzyme(term)]]">
+                        [[term.name]] → [[term.description]]
+                    </template>
+                    <template is="dom-if" if="[[!_isEnzyme(term)]]">
+                        [[term.accession]] → [[term.name]]
+                    </template>
                 </template>
+                <span style="font-size: 12px"><a target="_blank" href="http://old.nextprot.org/db/term/[[term.accession]]">(NP1 version)</a></span>
                 [[data.entryName]]
                 <template is="dom-if" if="[[data.recommendedProteinName]]">
                     <template is="dom-if" if="[[data.recommendedProteinName.EC.0]]">
@@ -107,16 +117,13 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 <template is="dom-if" if="[[term.ontologyDisplayName]]">
                     <div id="term-ontology" class="row">
                         <div class="col-md-3 col-xs-3 grey-x text-align-right">ONTOLOGY :</div>
-                        <div class="col-md-9 col-xs-9"> [[term.ontologyDisplayName]] → [[term.accession]] </div>
+                        <div class="col-md-9 col-xs-9"> [[term.ontologyDisplayName]] → [[term.accession]] <span class="errorcomment">missing link</span></div>
                     </div>
                 </template>
                 <template is="dom-if" if="[[term.definition]]">
                     <div id="term-definition" class="row">
                         <div class="col-md-3 col-xs-3 grey-x text-align-right">DEFINITION :</div>
                         <div class="col-md-9 col-xs-9"> [[term.definition]]  </div>
-                        <div class="col-xs-offset-3 col-md-offset-3 col-md-9 col-xs-9">
-                            <p class="errorcomment">Sometimes definition should not be present but not clear when, check DO-00903 for example</p>
-                        </div>
                     </div>
                 </template>
                 <template is="dom-if" if="[[term.synonyms]]">
@@ -208,7 +215,10 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 termprops: {
                     type: Array,
                     value: [
+
+                            {key: "Feature category", label: "CATEGORY"},
                             {key: "Category", label: "CATEGORY"},
+
                             {key: "Catalyst", label: "CATALYST"},
                             {key: "Reaction", label: "REACTION"},
                             {key: "Sex of cell", label: "SEX OF CELL"},
@@ -217,17 +227,15 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                             {key: "Position of the modification", label: "POSITION OF THE MODIFICATION"},
                             {key: "Cellular location", label: "CELLULAR LOCATION"},
                             {key: "Taxonomic range", label: "TAXONOMIC RANGE", templateUrl: "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?lvl=0&id="},
-                            {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA", "ERROR_COMMENT" : "Format formula. check if code already exists somewhere else", atomicFormula: true},
+                            {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA", atomicFormula: true},
                             {key: "Average mass difference", label: "AVERAGE MASS DIFFERENCE"},
                             {key: "Monoisotopic mass difference", label: "MONOISOTONIC MASS DIFFERENCE"}
 
 
                         //FIXME    Others from DB
                         /*
-                        category				32961
-                        Category				103155
                         Cellular location			589
-                        Feature category			930
+                        			930
                         Feature key				632
                         Uniprot status			35
                         */
@@ -249,6 +257,9 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 }, function (error) {
                     self._handleError(error);
                 });
+            },
+            _isEnzyme: function(term){
+                return (term.ontology == "EnzymeClassificationCv")
             },
             _getTemplateUrl: function(term, prop, label){
                 if(prop.propertyName === "Taxonomic range"){
@@ -274,6 +285,8 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                         var ploop = prop.propertyName.replace(/ /g,'').toLowerCase();
                         var parg = propertyName.replace(/ /g,'').toLowerCase();
                         if(ploop === parg){
+                            var pv = prop.propertyValue;
+                            prop.propertyValue = pv[0].toUpperCase()+pv.substr(1);
                             result.push(prop);
                         }
                     })
@@ -283,10 +296,21 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
             _convertForTemplate: function (cvTerm) {
                 var self = this;
                 var term = JSON.parse(JSON.stringify(cvTerm));
-                term.definition = term.description;
+
+                if(term.name !== term.description && term.ontology != "EnzymeClassificationCv"){
+                    term.definition = term.description;
+                }
+
                 if(term.synonyms && (term.synonyms.length > 0)){
                     term.synonyms = term.synonyms.sort(this._sort);
                 }
+
+                //remove synonym if equals to name or description
+                if(term.synonyms && term.synonyms.length > 0){
+                    term.synonyms = term.synonyms.filter(function(s){return s.trim().toLowerCase() !== term.name.trim().toLowerCase()})
+                    term.synonyms = term.synonyms.filter(function(s){return s.trim().toLowerCase() !== term.description.trim().toLowerCase()})
+                }
+
                 this.termprops.forEach(function (tp){
                     self._addPropertyToTermIfPresent(tp.key, term);
                 })
@@ -333,12 +357,16 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
 
             },
             _addPropertyToTermIfPresent: function (propertyName, term){
-
-                //DO NOT ADD Cellosaurus comments
+                //DO NOT ADD Cellosaurus comments (part of specifications)
                 if(!(term.ontology === "NextprotCellosaurusCv" && propertyName === "Comment")){
                     var properties = this._getProperty(propertyName, term.properties);
                     if(properties && (properties.length > 0)){
-                            term[propertyName] = properties.sort(this._sort);
+                            if(!(propertyName in term)){
+                                term[propertyName] = []
+                            }
+                            Array.prototype.push.apply(term[propertyName], properties)
+                            var propsOrdered = term[propertyName].sort(this._sort);
+                            term[propertyName] = propsOrdered;
                     }
                 }
 
@@ -346,99 +374,17 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
             },
             _sort: function (a, b) {
                 if(a.databaseName) {
-                    return a.databaseName.toLocaleLowerCase() < b.databaseName.toLocaleLowerCase() ? -1 : 1;
+                    return a.databaseName.trim().toLowerCase() < b.databaseName.trim().toLowerCase() ? -1 : 1;
                 }
                 else if(a["propertyValue"]) {
-                    return a["propertyValue"].toLocaleLowerCase() < b["propertyValue"].toLocaleLowerCase() ? -1 : 1;
+                    return a["propertyValue"].trim().toLowerCase() < b["propertyValue"].trim().toLowerCase() ? -1 : 1;
                 }
                 else if(a["name"]) {
-                    return a["name"].toLocaleLowerCase() < b["name"].toLocaleLowerCase() ? -1 : 1;
+                    return a["name"].trim().toLowerCase() < b["name"].trim().toLowerCase() ? -1 : 1;
                 }else {
-                    return a.toLocaleLowerCase() < b.toLocaleLowerCase() ? -1 : 1;
+                    return a.trim().toLowerCase() < b.trim().toLowerCase() ? -1 : 1;
                 }
             }
         })
     </script>
 </dom-module>
-
-<!--
-{
-  "cvTerm": {
-    "id": 38286,
-    "accession": "TS-0079",
-    "name": "Blood",
-    "description": "The body fluid that circulates in the cardiovascular system (blood vessels and blood capillaries) including plasma and blood cells.",
-    "ontology": "NextprotAnatomyCv",
-    "ontologyAltname": "NextProt tissues",
-    "childAccession": [
-      "TS-0771",
-      "TS-0800"
-    ],
-    "xrefs": [
-      {
-        "dbXrefId": 3145881,
-        "accession": "BTO:0000553",
-        "databaseName": "BRENDA",
-        "databaseCategory": "Enzyme and pathway databases",
-        "url": "http://www.brenda-enzymes.org",
-        "linkUrl": "http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u",
-        "resolvedUrl": "http://purl.obolibrary.org/obo/BTO_0000553",
-        "properties": [
-
-        ]
-      },
-      {
-        "dbXrefId": 3145512,
-        "accession": "BTO:0000089",
-        "databaseName": "BRENDA",
-        "databaseCategory": "Enzyme and pathway databases",
-        "url": "http://www.brenda-enzymes.org",
-        "linkUrl": "http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u",
-        "resolvedUrl": "http://purl.obolibrary.org/obo/BTO_0000089",
-        "properties": [
-
-        ]
-      },
-      {
-        "dbXrefId": 28088013,
-        "accession": "UBERON:0000178",
-        "databaseName": "Uberon",
-        "databaseCategory": "Ontologies",
-        "url": "http://uberon.org",
-        "linkUrl": "http://purl.obolibrary.org/obo/%s",
-        "resolvedUrl": "http://purl.obolibrary.org/obo/UBERON_0000178",
-        "properties": [
-
-        ]
-      },
-      {
-        "dbXrefId": 7198024,
-        "accession": "D001769",
-        "databaseName": "MeSH",
-        "databaseCategory": "Ontologies",
-        "url": "http://www.nlm.nih.gov/mesh/MBrowser.html",
-        "linkUrl": "http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?field=uid&term=%s",
-        "resolvedUrl": "http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?field=uid&term=D001769",
-        "properties": [
-
-        ]
-      }
-    ],
-    "synonyms": [
-      "Circulating blood ",
-      " Peripheral blood ",
-      " Bloodstream"
-    ],
-    "properties": null,
-    "ancestorAccession": [
-      "TS-0449",
-      "TS-1297",
-      "TS-2101"
-    ],
-    "sameAs": [
-      "UBERON:0000178",
-      "D001769"
-    ]
-  }
-}
--->
