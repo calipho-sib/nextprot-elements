@@ -12,25 +12,58 @@ exons mapping table demo
 <dom-module id="exons-mapping-table">
     <template>
         <style include="nextprot-elements-shared-styles">
-            table, th, td {
-                border: 1px solid black;
-                border-collapse: collapse;
-                padding: 4px;
+
+            table{
+                border-collapse:unset;
+                border: solid #eee 1px;
+            }
+            thead {
+                background-color: #eee;
+                border-bottom:0px;
+
+                border-top:1px solid #ddd;
+                border-left:1px solid #ddd;
+                border-right:1px solid #ddd;
             }
 
+            thead th {
+                text-align: center;
+                vertical-align: top;
+
+                border-right:1px solid #ddd;
+                border-left:1px solid #f4f4f4;
+                border-bottom:0px;
+            }
+            thead th:first-child{
+                border-left:none;
+            }
+            thead th:last-child{
+                border-right:none;
+            }
+
+            td {
+                text-align: left;
+            }
+            .lengthCell{
+                text-align: right;
+            }
+            .posCell{
+                text-align: center;
+            }
             ul {
                 list-style-type: none;
             }
+
         </style>
         <template is="dom-if" if="[[data]]">
             <div>
                 <h1>Exons</h1>
             </div>
             <div>
-            <table class="table table-condensed">
+            <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th style="text-align:center">Identifier</th>
+                    <th>Identifier</th>
                     <th>Position on gene</th>
                     <th>Length</th>
                     <template is="dom-repeat" items="[[_getIsoformInfos(data)]]" as="iso">
@@ -57,7 +90,7 @@ exons mapping table demo
                         <tr>
                             <template is="dom-repeat" items="[[row]]" as="cell">
                                 <template is="dom-if" if="[[!_exonCell(index)]]">
-                                    <td>[[cell]]</td>
+                                    <td class$="[[_getCellClass(index)]]">[[cell]]</td>
                                 </template>
                                 <template is="dom-if" if="[[_exonCell(index)]]">
                                     <td><exon-item data="[[cell]]" exon-width="[[exonWidth]]"></exon-item></td>
@@ -99,7 +132,7 @@ exons mapping table demo
 
                 var exonByIsoform = this.data.exons[pos];
 
-                var row = [this._findENSE(exonByIsoform), pos, this._calcLength(pos)];
+                var row = [this._findENSE(exonByIsoform), this._formatPos(pos), this._calcLength(pos)];
                 var i;
                 for (i = 0; i < this.data.sortedIsoformKeys.length; i++) {
 
@@ -111,6 +144,11 @@ exons mapping table demo
                     }
                 }
                 return row;
+            },
+            _formatPos: function(pos) {
+
+                var fromAndTo = pos.split("-");
+                return fromAndTo[0] + " - " + fromAndTo[1];
             },
             _calcLength: function(pos) {
 
@@ -148,6 +186,15 @@ exons mapping table demo
                 }
 
                 return infos;
+            },
+            _getCellClass: function(index) {
+                if (index === 1) {
+                    return "posCell"
+                }
+                else if (index === 2){
+                    return "lengthCell"
+                }
+                else return ""
             }
         });
     </script>
