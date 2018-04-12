@@ -11,7 +11,7 @@ exons mapping table demo
 -->
 <dom-module id="exons-mapping-table">
     <template>
-        <style>
+        <style include="nextprot-elements-shared-styles">
             table, th, td {
                 border: 1px solid black;
                 border-collapse: collapse;
@@ -27,13 +27,13 @@ exons mapping table demo
                 <h1>Exons</h1>
             </div>
             <div>
-            <table>
+            <table class="table table-condensed">
                 <thead>
                 <tr>
-                    <th>Identifier</th>
+                    <th style="text-align:center">Identifier</th>
                     <th>Position on gene</th>
                     <th>Length</th>
-                    <template is="dom-repeat" items="[[data.isoformInfos]]" as="iso">
+                    <template is="dom-repeat" items="[[_getIsoformInfos(data)]]" as="iso">
                         <th>Coding for <br>
                             [[iso.name]]:
                             <div>
@@ -89,26 +89,22 @@ exons mapping table demo
             },
             _prepareData: function() {
 
-                var isoAccessions = this.data.isoformInfos.map(function(info) {
-                    return info.accession;
-                });
-
                 var i;
-                for (i = 0; i < this.data.sortedKeys.length; i++) {
+                for (i = 0; i < this.data.sortedExonKeys.length; i++) {
 
-                    this._rows.push(this._newRow(this.data.sortedKeys[i], isoAccessions));
+                    this._rows.push(this._newRow(this.data.sortedExonKeys[i]));
                 }
             },
-            _newRow: function(pos, isoAccessions) {
+            _newRow: function(pos) {
 
                 var exonByIsoform = this.data.exons[pos];
 
-                var row = [this._findENSE(isoAccessions, exonByIsoform), pos, this._calcLength(pos)];
+                var row = [this._findENSE(exonByIsoform), pos, this._calcLength(pos)];
                 var i;
-                for (i = 0; i < isoAccessions.length; i++) {
+                for (i = 0; i < this.data.sortedIsoformKeys.length; i++) {
 
-                    if (isoAccessions[i] in exonByIsoform) {
-                        row.push(exonByIsoform[isoAccessions[i]]);
+                    if (this.data.sortedIsoformKeys[i] in exonByIsoform) {
+                        row.push(exonByIsoform[this.data.sortedIsoformKeys[i]]);
                     }
                     else {
                         row.push(null);
@@ -124,15 +120,15 @@ exons mapping table demo
             _exonCell: function(index) {
                 return index > 2;
             },
-            _findENSE: function(isoAccessions, exonByIsoform) {
+            _findENSE: function(exonByIsoform) {
 
                 var i;
                 var accessions = [];
-                for (i = 0; i < isoAccessions.length; i++) {
+                for (i = 0; i < this.data.sortedIsoformKeys.length; i++) {
 
-                    if (isoAccessions[i] in exonByIsoform) {
-                        if (exonByIsoform[isoAccessions[i]].accession) {
-                            accessions.push(exonByIsoform[isoAccessions[i]].accession);
+                    if (this.data.sortedIsoformKeys[i] in exonByIsoform) {
+                        if (exonByIsoform[this.data.sortedIsoformKeys[i]].accession) {
+                            accessions.push(exonByIsoform[this.data.sortedIsoformKeys[i]].accession);
                         }
                     }
                 }
@@ -141,6 +137,17 @@ exons mapping table demo
                     return accessions[0];
                 }
                 return null;
+            },
+            _getIsoformInfos: function(data) {
+
+                var i;
+                var infos = [];
+                for (i=0 ; i<data.sortedIsoformKeys.length ; i++) {
+
+                    infos.push(data.isoformInfos[data.sortedIsoformKeys[i]]);
+                }
+
+                return infos;
             }
         });
     </script>
