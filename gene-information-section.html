@@ -1,0 +1,147 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="external-scripts.html">
+
+<!--
+`gene-information-section`
+gene information section demo
+
+@demo demo/gene-information-section-demo.html
+-->
+<dom-module id="gene-information-section">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            .annotscope-bg {
+                background-color: #dedede;
+                color: #7A7A7A;
+                border-radius: 5px;
+                padding: 1px 3px;
+                font-size: 11px;
+            }
+        </style>
+        <div>
+            <template is="dom-if" if="[[_locations]]">
+            <div>
+                <h1>Gene information</h1>
+            </div>
+
+            <div>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th style="text-align:center">Chromosomal location</th>
+                        <th style="text-align:center">Orientation</th>
+                        <th style="text-align:right">Position on chromosome</th>
+                        <th style="text-align:right">Length</th>
+                        <th style="text-align:left">Ensembl</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template is="dom-repeat" items="[[_locations]]" as="location">
+                        <tr>
+                            <td style="text-align:center">[[location.prettyLocation]]</td>
+                            <td style="text-align:right">[[_formatOrientation(location)]]</td>
+                            <td style="text-align:right">[[location.firstPosition]] - [[location.lastPosition]]</td>
+                            <td style="text-align:right">[[_calcLength(location)]]</td>
+                            <td style="text-align:right">[[location.accession]]</td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <template is="dom-if" if="[[_chosenLocation]]">
+                    <div class="column span-22 last margin-top">
+                        <span class="annotscope-bg">Mapping</span>This protein has [[_locations.length]] Ensembl mappings.
+                    </div>
+                    <div class="column span-22 last margin-top">
+                        <span class="annotscope-bg">Alignment</span>
+                        The isoform is aligned on <a class='ext-link' href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.
+                    </div>
+                    <div class="column span-22 last margin-top">
+                        <span class="annotscope-bg">Coding positions</span> From [[_chosenLocation.firstPosition]] to [[_chosenLocation.lastPosition]]
+                        [length: [[_calcLength(_chosenLocation)]] bp]
+                    </div>
+                </template>
+
+                <!-- non aligned isoforms -->
+                <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
+                    <div class="column span-13 last margin-top">
+                        <p class="bg-blue-light-xx border-all-x padding-x nomargin round-border margin-right-xx">
+                            Isoform
+                            <a class='ext-link' href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
+
+                            is
+                            not aligned on gene.
+                        </p>
+                    </div>
+                </template>
+            </div>
+        </template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'gene-information-section',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                nonAlignedIsoforms: {
+                    type: Array,
+                    value: []
+                },
+                _locations: {
+                    type: Array
+                },
+                _chosenLocation: {
+                    type: Object
+                }
+            },
+            ready: function () {
+                this._initApiClient();
+
+                console.log("isoforms non aligned", this.nonAlignedIsoforms)
+
+                var self = this;
+
+                this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/chromosomal-location.json")
+                    .then(function (response) {
+                        self._handleResponseData(response);
+                    })
+                    .catch(function (error) {
+                        self._handleError(error);
+                    });
+            },
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtProt protein overview", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+            },
+            _handleResponseData: function (data) {
+
+                this._locations = data.entry.chromosomalLocations;
+                this._chosenLocation = this._locations
+                    .filter(function(location) {
+                        return location.bestGeneLocation;
+                    })
+                    .reduce(function(locations) {
+                        return (locations.length > 0) ? locations[0] : null;
+                    });
+            },
+            _handleError: function (error) {
+                console.error("Error: ", error);
+            },
+            _formatOrientation: function (location) {
+                return (location.strand === 1) ? "plus strand" : "minus strand";
+            },
+            _calcLength: function (location) {
+                return location.lastPosition - location.firstPosition + 1;
+            }
+        });
+    </script>
+</dom-module>
