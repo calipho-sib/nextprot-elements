@@ -43,16 +43,26 @@
                 }
             },
             ready: function (){
+
+                function isNum(n){
+                    return ('0123456789'.indexOf(n) !== -1)
+                };
+
                 var result = [];
                 var elements = this.formula.split("")
-                elements.forEach(function (e){
-                    if(e == " ") {}
-                    if(e == "-") {}
-                    else if ('0123456789'.indexOf(e) !== -1) { //Check if number
-                        console.log(e)
-                        result.push({isNumber: true, label: e, class: "atomic-number"})
-                    }else result.push({isNumber: false, label: e})
-                })
+                var elements = elements.filter(function(a){return a !== '-' && a !== ' '})
+                for(var i=0; i<elements.length; i++){
+                    var e = elements[i];
+                    var isNumber = isNum(e);
+                    var isNextNumber = false;
+                    if(i+1 < elements.length){
+                        var ne = elements[i + 1]
+                        isNextNumber = isNum(ne)
+                    }
+                    if(!(e == 1 && !isNextNumber)){ //Don't add in the element is one and there is no next number
+                        result.push({isNumber: isNumber, label: e})
+                    }
+                }
                 this.resultElements = result; 
             }
 
