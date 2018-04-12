@@ -373,8 +373,11 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
 
             },
             _sort: function (a, b) {
+                console.log(a , "   ", b)
                 if(a.databaseName) {
-                    return a.databaseName.trim().toLowerCase() < b.databaseName.trim().toLowerCase() ? -1 : 1;
+                    if(a.databaseName === b.databaseName){
+                        return a.accession.trim().toLowerCase() < b.accession.trim().toLowerCase() ? -1 : 1;
+                    }else return a.databaseName.trim().toLowerCase() < b.databaseName.trim().toLowerCase() ? -1 : 1;
                 }
                 else if(a["propertyValue"]) {
                     return a["propertyValue"].trim().toLowerCase() < b["propertyValue"].trim().toLowerCase() ? -1 : 1;
