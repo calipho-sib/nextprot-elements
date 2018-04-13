@@ -65,6 +65,14 @@ Exon view demo
                 this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/exon-mapping.json")
                     .then(function (response) {
                         self._handleResponseData(response);
+
+                        self._npClient.getJSON("/entry/" + self.nxConfig.entry + "/isoform.json")
+                            .then(function (response) {
+                                self._handleNonAlignedIsoforms(response);
+                            })
+                            .catch(function (error) {
+                                self._handleError(error);
+                            });
                     })
                     .catch(function (error) {
                         self._handleError(error);
@@ -79,12 +87,19 @@ Exon view demo
             },
             _handleResponseData: function (data) {
                 this.data = data;
+            },
+            _handleNonAlignedIsoforms: function (data) {
+                var self = this;
 
-                console.log(data.nonAlignedIsoforms, data.isoformInfos)
-                this._nonAlignedIsoforms = data.sortedIsoformKeys.map(function (accession) {
+                var isoforms = data.entry.isoforms.filter(function(iso) {
+
+                    return self.data.nonAlignedIsoforms.indexOf(iso.isoformAccession) !== -1;
+                });
+
+                this._nonAlignedIsoforms = isoforms.map(function (iso) {
                     return {
-                        "name": data.isoformInfos[accession].name,
-                        "accession": data.isoformInfos[accession].accession
+                        "name": iso.mainEntityName.name,
+                        "accession": iso.isoformAccession
                     }
                 });
 
