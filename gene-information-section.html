@@ -13,26 +13,19 @@ gene information section demo
 <dom-module id="gene-information-section">
     <template>
         <style include="nextprot-elements-shared-styles">
+
             :host{
                 white-space: nowrap;
             }
 
-            .gray-x {
-                color: #999;
-                padding-right: 20px;
-                text-transform: uppercase;
-            }
-
             #infoTable {
-                border-collapse:unset;
-                border: solid #f8f8f8 1px;
+                border: solid lightgray 1px;
                 width:auto;
             }
             thead {
                 background-color: #f8f8f8;
-                border-bottom:0px;
-
-                border-top:1px solid #ddd;
+                border-bottom:0;
+                border-top:1px solid lightgray;
                 border-left:1px solid #ddd;
                 border-right:1px solid #ddd;
             }
@@ -40,18 +33,9 @@ gene information section demo
             thead th {
                 text-align: center;
                 vertical-align: top;
-
                 border-right:1px solid #ddd;
-                border-left:1px solid #f4f4f4;
-                border-bottom:0px;
-            }
-
-            thead th:first-child{
-                border-left:none;
-            }
-
-            thead th:last-child{
-                border-right:none;
+                border-left:1px solid #ddd;
+                border-bottom:0;
             }
 
             .no-border {
@@ -71,6 +55,12 @@ gene information section demo
 
             h3 {
                 text-align: left;
+            }
+
+            .gray-x {
+                color: #999;
+                padding-right: 20px;
+                text-transform: uppercase;
             }
         </style>
         <template is="dom-if" if="[[_locations]]">
