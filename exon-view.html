@@ -20,18 +20,22 @@ Exon view demo
         <style include="nextprot-elements-shared-styles">
             :host {
                 display: block;
-                background: white;
+                background:#f8f8f8;
                 overflow-y: auto;
             }
         </style>
         <div class="row">
-            <div>
+            <div id="nxOverview" class="col-md-12">
                 <protein-overview nx-config="[[nxConfig]]"></protein-overview>
             </div>
-            <div>
+        </div>
+        <div class="row">
+            <div class="nxSection" class="col-md-12">
                 <gene-information-section nx-config="[[nxConfig]]" non-aligned-isoforms="[[_nonAlignedIsoforms]]"></gene-information-section>
             </div>
-            <div>
+        </div>
+        <div class="row">
+            <div class="nxSection" class="col-md-12">
                 <exons-mapping-table data="[[data]]" exon-witdh="[[exonWidth]]"></exons-mapping-table>
             </div>
         </div>
