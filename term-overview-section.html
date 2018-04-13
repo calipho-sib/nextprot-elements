@@ -305,10 +305,14 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     term.synonyms = term.synonyms.sort(this._sort);
                 }
 
-                //remove synonym if equals to name or description
+                //remove synonym if equals to name or description, but CAREFUL WITH CASE SENSITVE! Chang Liver is not the same as Chang liver accoring to Amos and we need to keep both!
+                //Non, il n'y a jamais de diplication entre un nom et un synonyme ds le Cellosaurus (c'est vérifié par le Celloparser d'Alain).
+                //Il s'agit de differences de "casse" qui sont importante pour les cell lines, donc "Chang Liver" est différent de "Chang liver".
+                //Il ne faut en général pas essayer de faire une règle de ce genre. Si par hasard dans un CV ou une ontologie il y a une vrai
+                //duplication entre le nom et le synonyme: tant pis, on avertira les personnes qui le développed.
                 if(term.synonyms && term.synonyms.length > 0){
-                    term.synonyms = term.synonyms.filter(function(s){return s.trim().toLowerCase() !== term.name.trim().toLowerCase()})
-                    term.synonyms = term.synonyms.filter(function(s){return s.trim().toLowerCase() !== term.description.trim().toLowerCase()})
+                    term.synonyms = term.synonyms.filter(function(s){return s.trim() !== term.name.trim()})
+                    term.synonyms = term.synonyms.filter(function(s){return s.trim() !== term.description.trim()})
                 }
 
                 this.termprops.forEach(function (tp){
