@@ -95,14 +95,14 @@ exons mapping table demo
                         <a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" class="ext-link" target='_blank'>[[iso.main-transcript]]</a>
                             </div>
                             <template is="dom-if" if="[[iso.other-transcripts]]">
-                                <span class="additional small fright padding-right margin-right-x link orange-bottom-arrow" show="&nbsp;hide transcripts&nbsp;" hide="&nbsp;show transcripts ([[iso.other-transcripts.length]])">
-                                &nbsp;show transcripts ([[iso.other-transcripts.length]])</span>
-
-                                <ul>
-                                    <template is="dom-repeat" items="[[iso.other-transcripts]]" as="other">
-                                        <li><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" rel="nofollow">[[other]]</a></li>
-                                    </template>
-                                </ul>
+                                <span id="transcripts_[[index]]" class="fa fa-chevron-right" on-tap="_toggle">&nbsp;show transcripts ([[iso.other-transcripts.length]])</span>
+                                <iron-collapse id="collapse_[[index]]">
+                                    <ul>
+                                        <template is="dom-repeat" items="[[iso.other-transcripts]]" as="other">
+                                            <li><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" rel="nofollow">[[other]]</a></li>
+                                        </template>
+                                    </ul>
+                                </iron-collapse>
                             </template>
                     </template>
                 </tr>
@@ -217,6 +217,14 @@ exons mapping table demo
                     return "lengthCell"
                 }
                 else return ""
+            },
+            _toggle: function(event) {
+                var index = event.model.index;
+                this.$$("#collapse_"+index).toggle();
+
+                console.log(this.$$("#transcripts_"+index));
+                this.$$("#transcripts_"+index).classList.toggle("fa-chevron-down");
+
             }
         });
     </script>
