@@ -67,7 +67,7 @@ exons mapping table demo
 
 
             #exonTable ul {
-                padding-left:25px;
+                padding-left:0px;
             }
             ul {
                 list-style-type: none;
@@ -75,6 +75,9 @@ exons mapping table demo
 
             h3 {
                 text-align: left;
+            }
+            iron-collapse{
+                font-size: 13px;
             }
         </style>
         <template is="dom-if" if="[[data]]">
@@ -90,12 +93,15 @@ exons mapping table demo
                     <th style="text-align:right;">Length</th>
                     <template is="dom-repeat" items="[[_getIsoformInfos(data)]]" as="iso">
                         <th style="text-align:center;">Coding for <br>
-                            [[iso.name]]:
+                            [[iso.name]]
                             <div>
                         <a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" class="ext-link" target='_blank'>[[iso.main-transcript]]</a>
                             </div>
                             <template is="dom-if" if="[[iso.other-transcripts]]">
-                                <span id="transcripts_[[index]]" class="fa fa-chevron-right" on-tap="_toggle">&nbsp;show transcripts ([[iso.other-transcripts.length]])</span>
+                                <span style="font-size: 13px;" on-tap="_toggle">
+                                    <span id="transcripts_[[index]]" class="fa fa-chevron-right" style="display: inline-block;width:14px;"></span>
+                                    <span id="showHide_[[index]]" style="display: inline-block;width:36px;">&nbsp;show</span> <span>transcripts ([[iso.other-transcripts.length]])</span>
+                                </span>
                                 <iron-collapse id="collapse_[[index]]">
                                     <ul>
                                         <template is="dom-repeat" items="[[iso.other-transcripts]]" as="other">
@@ -221,9 +227,11 @@ exons mapping table demo
             _toggle: function(event) {
                 var index = event.model.index;
                 this.$$("#collapse_"+index).toggle();
+                var opened = this.$$("#collapse_"+index).opened;
 
                 console.log(this.$$("#transcripts_"+index));
                 this.$$("#transcripts_"+index).classList.toggle("fa-chevron-down");
+                this.$$("#showHide_"+index).innerText = opened ? "Hide" : "Show";
 
             }
         });
