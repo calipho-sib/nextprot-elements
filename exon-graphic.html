@@ -38,7 +38,7 @@ Exon graphic demo
             _init: function() {
 
                 //this.exonGraphicHeight = this.exonWidth / 3;
-                this.exonGraphicHeight = 18;
+                this.exonGraphicHeight = 16;
                 this.nonCodingExonGraphicHeight = this.exonGraphicHeight / 10;
 
                 this.svgWidth = this.exonWidth;
@@ -49,7 +49,8 @@ Exon graphic demo
             _drawExon: function() {
                 var svg = d3.select(this).select("#svgTag")
                     .style("width", this.svgWidth)
-                    .style("height", this.svgHeight);
+                    .style("height", this.svgHeight)
+                    .attr("transform","translate(0,2)");
 
                 var codingRegionCoordinates;
 

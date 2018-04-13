@@ -18,9 +18,10 @@ exons mapping table demo
                 white-space: nowrap;
             }
 
-            table{
+            #exonTable{
                 border-collapse:unset;
                 border: solid #eee 1px;
+                width:auto;
             }
             thead {
                 background-color: #eee;
@@ -30,12 +31,13 @@ exons mapping table demo
                 border-right:1px solid #ddd;
             }
 
-            thead th {
+            #exonTable th {
                 text-align: center;
                 vertical-align: top;
                 border-right:1px solid #ddd;
                 border-left:1px solid #f4f4f4;
                 border-bottom:0px;
+                padding:5px 10px 5px 2px;
             }
 
             thead th:first-child{
@@ -50,37 +52,44 @@ exons mapping table demo
                 text-align: left;
             }
 
-            .table > tbody > tr > td{
-                padding:5px;
+            #exonTable td {
+                padding:5px 10px 5px 2px;
                 border:0;
             }
 
-            .table > tbody > tr > td.lengthCell{
+            #exonTable .lengthCell{
                 text-align: right;
                 padding-right:15px;
             }
-            .posCell{
+            #exonTable .posCell{
                 text-align: center;
             }
 
+
+            #exonTable ul {
+                padding-left:25px;
+            }
             ul {
                 list-style-type: none;
             }
 
+            h3 {
+                text-align: left;
+            }
         </style>
         <template is="dom-if" if="[[data]]">
             <div>
                 <h3>Exons</h3>
             </div>
             <div>
-            <table class="table table-hover">
+            <table id="exonTable" class="table table-hover">
                 <thead>
                 <tr>
-                    <th style="text-align:left; width: 30px;">Identifier</th>
-                    <th style="text-align:center; width: 30px;">Position <br>on gene</th>
-                    <th style="text-align:right; width: 20px;">Length</th>
+                    <th>Identifier</th>
+                    <th style="text-align:center;">Position <br>on gene</th>
+                    <th style="text-align:right;">Length</th>
                     <template is="dom-repeat" items="[[_getIsoformInfos(data)]]" as="iso">
-                        <th style="text-align:left">Coding for <br>
+                        <th style="text-align:center;">Coding for <br>
                             [[iso.name]]:
                             <div>
                         <a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" class="ext-link" target='_blank'>[[iso.main-transcript]]</a>
