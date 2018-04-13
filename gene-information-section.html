@@ -2,6 +2,8 @@
 <link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="external-scripts.html">
 
+<link rel="import" href="nextprot-elements-shared-styles.html">
+
 <!--
 `gene-information-section`
 gene information section demo
@@ -87,7 +89,7 @@ gene information section demo
                             <td style="text-align:left; width: 30px;">[[_formatOrientation(location)]]</td>
                             <td style="text-align:center">[[_numberWithCommas(location.firstPosition)]] - [[_numberWithCommas(location.lastPosition)]]</td>
                             <td style="text-align:right">[[_calcLength(location)]]</td>
-                            <td style="text-align:left">[[location.accession]]</td>
+                            <td style="text-align:left"><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[location.accession]]" rel="nofollow">[[location.accession]]</a></td>
                         </tr>
                     </template>
                     </tbody>
@@ -98,16 +100,18 @@ gene information section demo
                 <template is="dom-if" if="[[_chosenLocation]]">
                     <table class="no-border">
                         <tbody>
+                        <template is="dom-if" if="[[_multipleLocations]]">
+                            <tr>
+                                <td class="gray-x">Mapping</td>
+                                <td>This protein has [[_locations.length]] Ensembl mappings.</td>
+                            </tr>
+                            <tr>
+                                <td class="gray-x">Alignment</td>
+                                <td>The isoform is aligned on <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.</td>
+                            </tr>
+                        </template>
                         <tr>
-                            <td class="gray-x">Mapping</td>
-                            <td>This protein has [[_locations.length]] Ensembl mappings.</td>
-                        </tr>
-                        <tr>
-                            <td class="gray-x">Alignment</td>
-                            <td>The isoform is aligned on <a class='ext-link' href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.</td>
-                        </tr>
-                        <tr>
-                            <td class="gray-x">Coding positions</td>
+                            <td class="gray-x">Coding positions (TO FIX)</td>
                             <td>From [[_numberWithCommas(_chosenLocation.firstPosition)]] to [[_numberWithCommas(_chosenLocation.lastPosition)]]
                                 [length: [[_calcLength(_chosenLocation)]] bp]</td>
                         </tr>
@@ -122,7 +126,7 @@ gene information section demo
                 <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
                     <div>
                         <span>Isoform
-                        <a class='ext-link' href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
+                        <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
                         is not aligned on gene.</span>
                     </div>
                 </template>
@@ -192,6 +196,9 @@ gene information section demo
             },
             _numberWithCommas: function (x) {
                 return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            },
+            _multipleLocations: function () {
+                return this._locations.length > 1;
             }
         });
     </script>

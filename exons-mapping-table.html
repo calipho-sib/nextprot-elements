@@ -2,6 +2,7 @@
 <link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="exon-item.html">
 <link rel="import" href="external-scripts.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
 
 <!--
 `exons-mapping-table`
@@ -90,7 +91,7 @@ exons mapping table demo
 
                                 <ul>
                                     <template is="dom-repeat" items="[[iso.other-transcripts]]" as="other">
-                                        <li><a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" rel="nofollow">[[other]]</a></li>
+                                        <li><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" rel="nofollow">[[other]]</a></li>
                                     </template>
                                 </ul>
                             </template>
