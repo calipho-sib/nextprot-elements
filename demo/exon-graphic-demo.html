@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+    <title>exon-graphic demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../exon-graphic.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .vertical-section-container {
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+<div class="vertical-section-container centered">
+    <!-- https://dev-api.nextprot.org/entry/NX_Q8NHL6/genomic-mapping.json -->
+
+    <h3>non coding exon-graphic demo</h3>
+    <demo-snippet>
+        <template>
+            <exon-graphic data='
+                  {
+                    "name" : "NX_ENSE00002518881",
+                    "accession" : "ENSE00002518881",
+                    "transcriptName" : "NX_ENST00000396332",
+                    "geneRegion" : {
+                        "geneName" : "NX_ENSG00000104972",
+                        "firstPosition" : 13355,
+                        "lastPosition" : 13476
+                    },
+                    "exonCategory" : "NOT_CODING",
+                    "rank" : 1,
+                    "firstAminoAcid" : null,
+                    "lastAminoAcid" : null
+                  }'></exon-graphic>
+        </template>
+    </demo-snippet>
+
+    <h3>start exon-graphic demo</h3>
+    <demo-snippet>
+        <template>
+            <exon-graphic data='
+                  {
+                    "name" : "NX_ENSE00002515980",
+                    "accession" : "ENSE00002515980",
+                    "transcriptName" : "NX_ENST00000396332",
+                    "geneRegion" : {
+                        "geneName" : "NX_ENSG00000104972",
+                        "firstPosition" : 13869,
+                        "lastPosition" : 13950
+                    },
+                    "exonCategory" : "START",
+                    "rank" : 2,
+                    "firstAminoAcid" : {
+                        "base" : "M",
+                        "position" : 1,
+                        "phase" : 0
+                    },
+                    "lastAminoAcid" : {
+                        "base" : "G",
+                        "position" : 12,
+                        "phase" : 1
+                    },
+                    "startPosition" : 13917
+                  }'></exon-graphic>
+        </template>
+    </demo-snippet>
+
+    <h3>coding exon-graphic demo</h3>
+    <demo-snippet>
+        <template>
+            <exon-graphic data='
+                  {
+                    "name" : "NX_ENSE00002496690",
+                    "accession" : "ENSE00002496690",
+                    "transcriptName" : "NX_ENST00000396332",
+                    "geneRegion" : {
+                        "geneName" : "NX_ENSG00000104972",
+                        "firstPosition" : 14114,
+                        "lastPosition" : 14149
+                    },
+                    "exonCategory" : "CODING",
+                    "rank" : 3,
+                    "firstAminoAcid" : {
+                        "base" : "G",
+                        "position" : 12,
+                        "phase" : 1
+                    },
+                    "lastAminoAcid" : {
+                        "base" : "G",
+                        "position" : 24,
+                        "phase" : 1
+                    }
+                  }'></exon-graphic>
+        </template>
+    </demo-snippet>
+
+    <h3>stop exon-graphic demo</h3>
+    <demo-snippet>
+        <template>
+            <exon-graphic data='
+                  {
+                    "name" : "NX_ENSE00003619461",
+                    "accession" : "ENSE00003619461",
+                    "transcriptName" : "NX_ENST00000396332",
+                    "geneRegion" : {
+                        "geneName" : "NX_ENSG00000104972",
+                        "firstPosition" : 19575,
+                        "lastPosition" : 20371
+                    },
+                    "exonCategory" : "STOP",
+                    "rank" : 16,
+                    "firstAminoAcid" : {
+                        "base" : "A",
+                        "position" : 603,
+                        "phase" : 0
+                    },
+                    "lastAminoAcid" : {
+                        "base" : "H",
+                        "position" : 650,
+                        "phase" : 0
+                    },
+                    "stopPosition" : 19718
+                  }' coding-exon-color="red"></exon-graphic>
+        </template>
+    </demo-snippet>
+
+    <h3>mono exon-graphic demo</h3>
+    <demo-snippet>
+        <template>
+            <exon-graphic data='
+                  {
+                    "exonCategory" : "MONO",
+                    "startPosition" : 215,
+                    "stopPosition" : 1243,
+                    "accession" : "ENSE00001455235",
+                    "rank" : 1,
+                    "transcriptName" : "NX_ENST00000371442",
+                    "geneRegion" : {
+                        "geneName" : "NX_ENSG00000125352",
+                        "firstPosition" : 1,
+                        "lastPosition" : 1353
+                    },
+                    "firstAminoAcid" : {
+                        "base" : "M",
+                        "position" : 1,
+                        "phase" : 0
+                    },
+                    "firstPositionOnGene" : 1,
+                    "lastAminoAcid" : {
+                    "base" : "T",
+                    "position" : 343,
+                    "phase" : 0
+                    },
+                    "lastPositionOnGene" : 1353,
+                    "name" : "NX_ENSE00001455235"
+                  }' exon-width="200"></exon-graphic>
+        </template>
+    </demo-snippet>
+</div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="external-scripts.html">
+<!--
+`coding-exon-text`
+Coding exon text demo
+
+@demo demo/coding-exon-text-demo.html
+-->
+<dom-module id="coding-exon-text">
+    <template>
+        <style>
+            /* imo it should be the same color as exon graphic (#7cba0f) */
+            :host {
+                margin-left:5px;
+                white-space: nowrap;
+            }
+            .translated-from-exon {
+                color: #C50064;
+            }
+            span {
+                font-size:14px;
+            }
+            .small {
+                margin-left:1px;
+            }
+        </style>
+        <span id="text">
+            <template is="dom-if" if="[[data.firstAminoAcid]]">
+                <span>[[_firstTranslatedAminoAcid.codonNucsPreviousExon]]</span><span class="translated-from-exon"><b>[[_firstTranslatedAminoAcid.codonNucsCurrentExon]]</b></span><span class="small">[[data.firstAminoAcid.position]]</span>
+                <span>-</span>
+                <span class="translated-from-exon"><b>[[_lastTranslatedAminoAcid.codonNucsCurrentExon]]</b></span><span>[[_lastTranslatedAminoAcid.codonNucsNextExon]]</span><span class="small">[[data.lastAminoAcid.position]]</span>
+            </template>
+        </span>
+    </template>
+    <script>
+        Polymer({
+            is: 'coding-exon-text',
+            properties: {
+                data: {
+                    type: Object
+                },
+                exonFontSize: {
+                    type: Number,
+                    value: 12
+                },
+                _firstTranslatedAminoAcid: {
+                    type: Object
+                },
+                _lastTranslatedAminoAcid: {
+                    type: Object
+                }
+            },
+            attached: function() {
+                this._init();
+            },
+            _init: function() {
+
+                if (this.data.firstAminoAcid) {
+
+                    var firstPhase = this.data.firstAminoAcid.phase;
+                    var lastPhase = this.data.lastAminoAcid.phase;
+
+                    this._firstTranslatedAminoAcid = {
+                        "codonNucsCurrentExon":  this.data.firstAminoAcid.code.substring(firstPhase),
+                        "codonNucsPreviousExon": this.data.firstAminoAcid.code.substring(0, firstPhase)
+                    };
+
+                    this._lastTranslatedAminoAcid = {
+                        "codonNucsCurrentExon":  (lastPhase === 0) ? this.data.lastAminoAcid.code : this.data.lastAminoAcid.code.substring(0, lastPhase),
+                        "codonNucsNextExon": (lastPhase === 0) ? "" : this.data.lastAminoAcid.code.substring(lastPhase)
+                    };
+
+                    // see automatic node finding in https://www.polymer-project.org/1.0/docs/devguide/local-dom
+                    var span = this.$$("#text");
+
+                    // TODO: hack, solve this overall problem with css
+                    span.style.fontSize = this.exonFontSize+"px";
+                }
+            }
+        });
+    </script>
+</dom-module>

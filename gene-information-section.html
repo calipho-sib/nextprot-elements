@@ -1,0 +1,212 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="external-scripts.html">
+
+<link rel="import" href="nextprot-elements-shared-styles.html">
+
+<!--
+`gene-information-section`
+gene information section demo
+
+@demo demo/gene-information-section-demo.html
+-->
+<dom-module id="gene-information-section">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host{
+                white-space: nowrap;
+            }
+
+            .gray-x {
+                color: #999;
+                padding-right: 20px;
+                text-transform: uppercase;
+            }
+
+            #infoTable {
+                border-collapse:unset;
+                border: solid #eee 1px;
+                width:auto;
+            }
+            thead {
+                background-color: #eee;
+                border-bottom:0px;
+
+                border-top:1px solid #ddd;
+                border-left:1px solid #ddd;
+                border-right:1px solid #ddd;
+            }
+
+            thead th {
+                text-align: center;
+                vertical-align: top;
+
+                border-right:1px solid #ddd;
+                border-left:1px solid #f4f4f4;
+                border-bottom:0px;
+            }
+
+            thead th:first-child{
+                border-left:none;
+            }
+
+            thead th:last-child{
+                border-right:none;
+            }
+
+            .no-border {
+                border:0;
+            }
+
+            .bg-blue-light-xx {
+                background-color: #F3F5FC;
+                color: #444;
+                border: #ebeffa 1px solid;
+                -webkit-border-radius: 5px;
+                margin: 10px 5px;
+                padding: 5px;
+                width: auto;
+                display: inline-block;
+            }
+
+            h3 {
+                text-align: left;
+            }
+        </style>
+        <template is="dom-if" if="[[_locations]]">
+            <div>
+                <h3>Gene information</h3>
+            </div>
+
+            <div>
+                <table id="infoTable" class="table">
+                    <thead>
+                    <tr>
+                        <th style="text-align:left;">Chromosomal location</th>
+                        <th style="text-align:left;">Orientation</th>
+                        <th style="text-align:center;">Position on chromosome</th>
+                        <th style="text-align:right;">Length</th>
+                        <th style="text-align:left;">Ensembl</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template is="dom-repeat" items="[[_locations]]" as="location">
+                        <tr>
+                            <td style="text-align:left;">[[location.prettyLocation]]</td>
+                            <td style="text-align:left;">[[_formatOrientation(location)]]</td>
+                            <td style="text-align:center">[[_numberWithCommas(location.firstPosition)]] - [[_numberWithCommas(location.lastPosition)]]</td>
+                            <td style="text-align:right">[[_calcLength(location)]]</td>
+                            <td style="text-align:left"><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[location.accession]]" rel="nofollow">[[location.accession]]</a></td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <template is="dom-if" if="[[_chosenLocation]]">
+                    <table class="no-border">
+                        <tbody>
+                        <template is="dom-if" if="[[_multipleLocations]]">
+                            <tr>
+                                <td class="gray-x">Mapping</td>
+                                <td>This protein has [[_locations.length]] Ensembl mappings.</td>
+                            </tr>
+                            <tr>
+                                <td class="gray-x">Alignment</td>
+                                <td>The isoform is aligned on <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.</td>
+                            </tr>
+                        </template>
+                        <tr>
+                            <td class="gray-x">Coding positions (TO FIX)</td>
+                            <td>From [[_numberWithCommas(_chosenLocation.firstPosition)]] to [[_numberWithCommas(_chosenLocation.lastPosition)]]
+                                [length: [[_calcLength(_chosenLocation)]] bp]</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </template>
+            </div>
+
+            <!-- non aligned isoforms -->
+            <template is="dom-if" if="[[nonAlignedIsoforms]]">
+                <div class="bg-blue-light-xx">
+                <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
+                    <div>
+                        <span>Isoform
+                        <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
+                        is not aligned on gene.</span>
+                    </div>
+                </template>
+                </div>
+            </template>
+        </template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'gene-information-section',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                nonAlignedIsoforms: {
+                    type: Array,
+                    value: []
+                },
+                _locations: {
+                    type: Array
+                },
+                _chosenLocation: {
+                    type: Object
+                }
+            },
+            attached: function () {
+                this._initApiClient();
+
+                var self = this;
+
+                this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/chromosomal-location.json")
+                    .then(function (response) {
+                        self._handleResponseData(response);
+                    })
+                    .catch(function (error) {
+                        self._handleError(error);
+                    });
+            },
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtProt protein overview", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+            },
+            _handleResponseData: function (data) {
+
+                this._locations = data.entry.chromosomalLocations;
+                this._chosenLocation = this._locations
+                    .filter(function(location) {
+                        return location.bestGeneLocation;
+                    })
+                    .reduce(function(locations) {
+                        return (locations.length > 0) ? locations[0] : null;
+                    });
+            },
+            _handleError: function (error) {
+                console.error("Error: ", error);
+            },
+            _formatOrientation: function (location) {
+                return (location.strand === 1) ? "plus strand" : "minus strand";
+            },
+            _calcLength: function (location) {
+                return this._numberWithCommas(location.lastPosition - location.firstPosition + 1);
+            },
+            _numberWithCommas: function (x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            },
+            _multipleLocations: function () {
+                return this._locations.length > 1;
+            }
+        });
+    </script>
+</dom-module>

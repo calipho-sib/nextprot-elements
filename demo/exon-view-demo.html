@@ -1,49 +1,31 @@
 <!doctype html>
-<html lang="en">
-<head>
+<html>
+  <head>
+    <title>function-view demo</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
-
-    <title>triple-viewer demo</title>
-
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
     <link rel="import" href="../exon-view.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
-        .vertical-section-container {
-            max-width: 80%;
-        }
+      .vertical-section-container {
+        max-width: 80%;
+      }
     </style>
-</head>
-<body>
-<div class="vertical-section-container centered">
-    <h3>Basic triple-viewer demo</h3>
-    <demo-snippet>
+  </head>
+  <body>
+
+    <div class="vertical-section-container centered">
+      <h3>exon-view Demo</h3>
+      <demo-snippet>
         <template>
-            <exon-view nx-config='{"entry":"NX_P01308"}' feature-list='
-          [{
-            "APIRef": "sequence",
-            "metadata": {"name": "Sequence"}
-          },
-          {
-          "APIRef": "mature-protein",
-          "metadata": {
-          "name": "ENST00000234420",
-          "className": "ENST00000234420",
-          "color": "gold",
-          "type": "rect",
-          "filter": "ENST00000234420"
-          }
-          },
-          {
-          "APIRef": "isoform-mapping",
-          "metadata": {}
-          }]'></exon-view>
+          <exon-view nx-config='{"env": "build", "entry": "NX_Q8NHL6"}'></exon-view>
         </template>
-    </demo-snippet>
-</div>
-</body>
+      </demo-snippet>
+    </div>
+  </body>
 </html>
