@@ -12,14 +12,14 @@ Coding exon text demo
         <style>
             /* imo it should be the same color as exon graphic (#7cba0f) */
             :host {
-                margin-left:5px;
+                margin-left:4px;
                 white-space: nowrap;
             }
             .translated-from-exon {
                 color: #C50064;
             }
             span {
-                font-size:14px;
+                font-size:12px;
             }
             .small {
                 margin-left:1px;
@@ -39,10 +39,6 @@ Coding exon text demo
             properties: {
                 data: {
                     type: Object
-                },
-                exonFontSize: {
-                    type: Number,
-                    value: 12
                 },
                 _firstTranslatedAminoAcid: {
                     type: Object
@@ -70,12 +66,6 @@ Coding exon text demo
                         "codonNucsCurrentExon":  (lastPhase === 0) ? this.data.lastAminoAcid.code : this.data.lastAminoAcid.code.substring(0, lastPhase),
                         "codonNucsNextExon": (lastPhase === 0) ? "" : this.data.lastAminoAcid.code.substring(lastPhase)
                     };
-
-                    // see automatic node finding in https://www.polymer-project.org/1.0/docs/devguide/local-dom
-                    var span = this.$$("#text");
-
-                    // TODO: hack, solve this overall problem with css
-                    span.style.fontSize = this.exonFontSize+"px";
                 }
             }
         });
