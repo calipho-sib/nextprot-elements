@@ -109,7 +109,9 @@ gene information section demo
                         </template>
                         <tr>
                             <template is="dom-if" if="[[!_isPositionDefined(_chosenLocation)]]">
+                                <div class="bg-blue-light-xx">
                                 Gene not mapped on the current assembly of the human genome.
+                                </div>
                             </template>
                             <template is="dom-if" if="[[_isPositionDefined(_chosenLocation)]]">
                                 <td class="gray-x">Coding positions (TO FIX)</td>
@@ -123,15 +125,15 @@ gene information section demo
             </div>
 
             <!-- non aligned isoforms -->
-            <template is="dom-if" if="[[nonAlignedIsoforms]]">
+            <template is="dom-if" if="[[_hasNonAlignedIso(nonAlignedIsoforms)]]">
                 <div class="bg-blue-light-xx">
-                <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
-                    <div>
-                        <span>Isoform
-                        <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
-                        is not aligned on gene.</span>
-                    </div>
-                </template>
+                    <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
+                        <div>
+                            <span>Isoform
+                            <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
+                            is not aligned on gene.</span>
+                        </div>
+                    </template>
                 </div>
             </template>
         </template>
@@ -231,6 +233,10 @@ gene information section demo
             _isPositionDefined: function (location) {
 
                 return location.firstPosition > 0 && location.lastPosition > 0;
+            },
+            _hasNonAlignedIso: function (nonAlignedIsoforms) {
+
+                return nonAlignedIsoforms && nonAlignedIsoforms.length > 0;
             }
         });
     </script>
