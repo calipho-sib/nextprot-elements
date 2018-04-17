@@ -21,9 +21,18 @@ exons mapping table demo
             #exonTable{
                 border: solid lightgray 1px;
                 width:auto;
-                font-size: 95%;
             }
-            thead {
+
+            /*#exonTable thead, #exonTable tbody {
+                float: left;
+                width: 100%;
+            }
+            #exonTable tbody {
+                overflow-y: scroll;
+                height: 400px;
+            }*/
+
+            #exonTable thead {
                 background-color: #f8f8f8;
                 border-bottom:0;
                 border-top:1px solid lightgray;
@@ -53,7 +62,7 @@ exons mapping table demo
             }
 
             #exonTable td {
-                padding:2px 10px 2px 4px;
+                padding:1px 10px 1px 4px;
                 border:0;
             }
 
@@ -78,12 +87,15 @@ exons mapping table demo
             iron-collapse{
                 font-size: 90%;
             }
+            #tableDiv {
+                overflow: auto;
+            }
         </style>
         <template is="dom-if" if="[[_hasData(data)]]">
             <div>
                 <h3>Exons</h3>
             </div>
-            <div style="overflow: auto;">
+            <div id="tableDiv">
             <table id="exonTable" class="table table-hover">
                 <thead>
                 <tr>

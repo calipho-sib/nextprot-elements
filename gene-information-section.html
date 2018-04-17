@@ -22,7 +22,7 @@ gene information section demo
                 border: solid lightgray 1px;
                 width:auto;
             }
-            thead {
+            #infoTable thead {
                 background-color: #f8f8f8;
                 border-bottom:0;
                 border-top:1px solid lightgray;
@@ -30,7 +30,7 @@ gene information section demo
                 border-right:1px solid #ddd;
             }
 
-            thead th {
+            #infoTable th {
                 text-align: center;
                 vertical-align: top;
                 border-right:1px solid #ddd;
@@ -62,12 +62,18 @@ gene information section demo
                 padding-right: 20px;
                 text-transform: uppercase;
             }
+
+            .tableDiv {
+                overflow: auto;
+            }
         </style>
         <template is="dom-if" if="[[_locations]]">
             <div>
                 <h3>Gene information</h3>
             </div>
 
+
+            <div class="tableDiv">
             <div>
                 <table id="infoTable" class="table">
                     <thead>
@@ -127,15 +133,28 @@ gene information section demo
             <!-- non aligned isoforms -->
             <template is="dom-if" if="[[_hasNonAlignedIso(nonAlignedIsoforms)]]">
                 <div class="bg-blue-light-xx">
-                    <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
-                        <div>
+                    <template is="dom-if" if="[[_hasSingleNonAlignedIso(nonAlignedIsoforms)]]">
+                        <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
+                            <div>
                             <span>Isoform
                             <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
                             is not aligned on gene.</span>
-                        </div>
+                            </div>
+                        </template>
+                    </template>
+
+                    <template is="dom-if" if="[[_hasMultipleNonAlignedIso(nonAlignedIsoforms)]]">
+                        <span>Isoforms
+                        <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
+                            <span>
+                                <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a><template style="white-space: nowrap;" is="dom-if" if="[[!_isLastIndex(nonAlignedIsoforms, index)]]">,</template>
+                            </span>
+                        </template>
+                            are not aligned on gene.</span>
                     </template>
                 </div>
             </template>
+            </div>
         </template>
         </div>
     </template>
@@ -237,6 +256,18 @@ gene information section demo
             _hasNonAlignedIso: function (nonAlignedIsoforms) {
 
                 return nonAlignedIsoforms && nonAlignedIsoforms.length > 0;
+            },
+            _hasSingleNonAlignedIso: function (nonAlignedIsoforms) {
+
+                return nonAlignedIsoforms && nonAlignedIsoforms.length === 1;
+            },
+            _hasMultipleNonAlignedIso: function (nonAlignedIsoforms) {
+
+                return nonAlignedIsoforms && nonAlignedIsoforms.length > 1;
+            },
+            _isLastIndex: function (nonAlignedIsoforms, index) {
+
+                return index === nonAlignedIsoforms.length-1;
             }
         });
     </script>
