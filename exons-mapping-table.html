@@ -71,9 +71,6 @@ exons mapping table demo
                 text-align: right;
                 padding-right:10px;
             }
-            #exonTable .posCell{
-                text-align: center;
-            }
 
             #exonTable ul {
                 padding-left:0px;
@@ -101,7 +98,7 @@ exons mapping table demo
                 <thead>
                 <tr>
                     <th>Identifier</th>
-                    <th style="text-align:center;">Position <br>on gene</th>
+                    <th>Position<br>on gene</th>
                     <th style="text-align:right;">Length</th>
                     <template is="dom-repeat" items="[[_getIsoformInfos(data)]]" as="iso">
                         <th style="text-align:center;">Coding for <br>
@@ -224,10 +221,7 @@ exons mapping table demo
                 return infos;
             },
             _getCellClass: function(index) {
-                if (index === 1) {
-                    return "posCell"
-                }
-                else if (index === 2){
+                if (index === 2) {
                     return "lengthCell"
                 }
                 else return ""
