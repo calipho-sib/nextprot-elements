@@ -108,9 +108,14 @@ gene information section demo
                             </tr>
                         </template>
                         <tr>
-                            <td class="gray-x">Coding positions (TO FIX)</td>
-                            <td>From [[_numberWithCommas(_chosenLocation.firstPosition)]] to [[_numberWithCommas(_chosenLocation.lastPosition)]]
-                                [length: [[_calcLength(_chosenLocation)]] bp]</td>
+                            <template is="dom-if" if="[[!_isPositionDefined(_chosenLocation)]]">
+                                Gene not mapped on the current assembly of the human genome.
+                            </template>
+                            <template is="dom-if" if="[[_isPositionDefined(_chosenLocation)]]">
+                                <td class="gray-x">Coding positions (TO FIX)</td>
+                                <td>From [[_numberWithCommas(_chosenLocation.firstPosition)]] to [[_numberWithCommas(_chosenLocation.lastPosition)]]
+                                    [length: [[_calcLength(_chosenLocation)]] bp]</td>
+                            </template>
                         </tr>
                         </tbody>
                     </table>
@@ -222,6 +227,10 @@ gene information section demo
                 }
 
                 return '<a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g='+location.accession+'">'+location.accession+'</a>';
+            },
+            _isPositionDefined: function (location) {
+
+                return location.firstPosition > 0 && location.lastPosition > 0;
             }
         });
     </script>
