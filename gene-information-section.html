@@ -84,9 +84,9 @@ gene information section demo
                         <tr>
                             <td style="text-align:left;">[[location.prettyLocation]]</td>
                             <td style="text-align:left;">[[_formatOrientation(location)]]</td>
-                            <td style="text-align:center">[[_numberWithCommas(location.firstPosition)]] - [[_numberWithCommas(location.lastPosition)]]</td>
+                            <td style="text-align:center">[[_formatLocation(location)]]</td>
                             <td style="text-align:right">[[_calcLength(location)]]</td>
-                            <td style="text-align:left"><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[location.accession]]" rel="nofollow">[[location.accession]]</a></td>
+                            <td style="text-align:left"><span inner-h-t-m-l=[[_createEnsemblHtmlLink(location)]]></span></td>
                         </tr>
                     </template>
                     </tbody>
@@ -186,9 +186,27 @@ gene information section demo
                 console.error("Error: ", error);
             },
             _formatOrientation: function (location) {
+
+                if (location.firstPosition === 0 && location.lastPosition === 0) {
+                    return "";
+                }
+
                 return (location.strand === 1) ? "plus strand" : "minus strand";
             },
+            _formatLocation: function (location) {
+
+                if (location.firstPosition === 0 && location.lastPosition === 0) {
+                    return "";
+                }
+
+                return this._numberWithCommas(location.firstPosition)+ " - " + this._numberWithCommas(location.lastPosition);
+            },
             _calcLength: function (location) {
+
+                if (location.firstPosition === 0 && location.lastPosition === 0) {
+                    return "";
+                }
+
                 return this._numberWithCommas(location.lastPosition - location.firstPosition + 1);
             },
             _numberWithCommas: function (x) {
@@ -196,6 +214,14 @@ gene information section demo
             },
             _multipleLocations: function () {
                 return this._locations.length > 1;
+            },
+            _createEnsemblHtmlLink: function (location) {
+
+                if (location.firstPosition === 0 && location.lastPosition === 0) {
+                    return "";
+                }
+
+                return '<a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g='+location.accession+'">'+location.accession+'</a>';
             }
         });
     </script>
