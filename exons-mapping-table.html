@@ -21,6 +21,7 @@ exons mapping table demo
             #exonTable{
                 border: solid lightgray 1px;
                 width:auto;
+                font-size: 95%;
             }
             thead {
                 background-color: #f8f8f8;
@@ -52,13 +53,13 @@ exons mapping table demo
             }
 
             #exonTable td {
-                padding:5px 10px 5px 2px;
+                padding:2px 10px 2px 4px;
                 border:0;
             }
 
             #exonTable .lengthCell{
                 text-align: right;
-                padding-right:15px;
+                padding-right:10px;
             }
             #exonTable .posCell{
                 text-align: center;
@@ -75,7 +76,7 @@ exons mapping table demo
                 text-align: left;
             }
             iron-collapse{
-                font-size: 13px;
+                font-size: 90%;
             }
         </style>
         <template is="dom-if" if="[[_hasData(data)]]">
@@ -96,7 +97,7 @@ exons mapping table demo
                         <a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" class="ext-link" target='_blank'>[[iso.main-transcript]]</a>
                             </div>
                             <template is="dom-if" if="[[iso.other-transcripts]]">
-                                <span style="font-size: 13px;" on-tap="_toggle">
+                                <span on-tap="_toggle">
                                     <span id="transcripts_[[index]]" class="fa fa-chevron-right" style="display: inline-block;width:14px;"></span>
                                     <span id="showHide_[[index]]" style="display: inline-block;width:36px;">&nbsp;show</span> <span>transcripts ([[iso.other-transcripts.length]])</span>
                                 </span>
@@ -119,7 +120,7 @@ exons mapping table demo
                                     <td class$="[[_getCellClass(index)]]">[[cell]]</td>
                                 </template>
                                 <template is="dom-if" if="[[_exonCell(index)]]">
-                                    <td><exon-item data="[[cell]]" exon-width="[[exonWidth]]"></exon-item></td>
+                                    <td><exon-item data="[[cell]]"></exon-item></td>
                                 </template>
                             </template>
                         </tr>
@@ -136,10 +137,6 @@ exons mapping table demo
                 data: {
                     type: Object,
                     observer: "_prepareData"
-                },
-                exonWidth: {
-                    type: Number,
-                    value: 50
                 },
                 _rows: {
                     type: Array,

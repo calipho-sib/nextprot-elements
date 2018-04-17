@@ -36,7 +36,7 @@ Exon view demo
         </div>
         <div class="row">
             <div class="nxSection" class="col-md-12">
-                <exons-mapping-table data="[[data]]" exon-witdh="[[exonWidth]]"></exons-mapping-table>
+                <exons-mapping-table data="[[data]]"></exons-mapping-table>
             </div>
         </div>
     </template>
@@ -54,10 +54,6 @@ Exon view demo
                 _nonAlignedIsoforms: {
                     type: Array,
                     value: []
-                },
-                exonWidth: {
-                    type: Number,
-                    value: 50
                 }
             },
             attached: function () {

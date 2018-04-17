@@ -21,13 +21,15 @@ Exon graphic demo
                 data: {
                     type: Object
                 },
-                exonWidth: {
+                _exonWidth: {
                     type: Number,
-                    value: 50
+                    value: 30,
+                    readOnly: true
                 },
-                codingExonColor: {
+                _codingExonColor: {
                     type: String,
-                    value: "#0F8292"
+                    value: "#0F8292",
+                    readOnly: true
                 }
             },
             attached: function() {
@@ -37,19 +39,16 @@ Exon graphic demo
             // https://stackoverflow.com/questions/12485818/can-a-svg-embedded-in-an-html-table-cell-overflow-that-cell
             _init: function() {
 
-                //this.exonGraphicHeight = this.exonWidth / 3;
-                this.exonGraphicHeight = 16;
-                this.nonCodingExonGraphicHeight = this.exonGraphicHeight / 10;
-
-                this.svgWidth = this.exonWidth;
-                this.svgHeight = this.exonGraphicHeight;
-
-                this.exonY = this.svgHeight/2;
+                this._exonGraphicHeight = 10;
+                this._nonCodingExonGraphicHeight = 1;
+                this._svgWidth = this._exonWidth;
+                this._svgHeight = this._exonGraphicHeight;
+                this._exonY = this._svgHeight/2;
             },
             _drawExon: function() {
                 var svg = d3.select(this).select("#svgTag")
-                    .style("width", this.svgWidth)
-                    .style("height", this.svgHeight)
+                    .style("width", this._svgWidth)
+                    .style("height", this._svgHeight)
                     .attr("transform","translate(0,2)");
 
                 var codingRegionCoordinates;
@@ -75,6 +74,7 @@ Exon graphic demo
 
                 this._drawGraphic(svg, codingRegionCoordinates);
             },
+            // ---------------
             _calcNonCodingExonGraphicParams: function() {
 
                 // non-coding part only (grey line)
@@ -83,6 +83,8 @@ Exon graphic demo
                     "codingRegionLength" : 0
                 }
             },
+            //      _________
+            // ----|_________|
             _calcStartExonGraphicParams: function() {
 
                 var nonCodingPartLen = this.data.startPosition - this.data.geneRegion.firstPosition + 1;
@@ -93,6 +95,8 @@ Exon graphic demo
                     "codingRegionLength" : this._scale(codingRegionLen)
                 }
             },
+            //      _____
+            // ----|_____|----
             _calcMonoExonGraphicParams: function() {
 
                 var nonCodingPartLen = this.data.startPosition - this.data.geneRegion.firstPosition + 1;
@@ -103,6 +107,8 @@ Exon graphic demo
                     "codingRegionLength" : this._scale(codingPartLen)
                 }
             },
+            //  _____________
+            // |_____________|
             _calcCodingExonGraphicParams: function() {
 
                 return {
@@ -110,6 +116,8 @@ Exon graphic demo
                     "codingRegionLength" : this._scale(this._calcGeneRegionLength())
                 }
             },
+            //  _________
+            // |_________|----
             _calcStopExonGraphicParams: function() {
 
                 var codingPartLen = this.data.stopPosition - this.data.geneRegion.firstPosition + 1;
@@ -121,7 +129,7 @@ Exon graphic demo
             },
             _scale: function(subRegionLen) {
 
-                return subRegionLen * this.exonWidth / this._calcGeneRegionLength();
+                return subRegionLen * this._exonWidth / this._calcGeneRegionLength();
             },
             _calcGeneRegionLength: function() {
 
@@ -129,122 +137,30 @@ Exon graphic demo
             },
             _drawGraphic: function(svg, codingRegionCoord) {
 
-                //         ---------------
                 svg
                     .append('line')
-                    .style('stroke-width', this.nonCodingExonGraphicHeight)
+                    .style('stroke-width', this._nonCodingExonGraphicHeight)
                     .style('stroke', 'black')
                     .style('position', 'absolute')
                     .attr("x1", 0)
-                    .attr("y1", this.exonY)
-                    .attr("x2", this.exonWidth)
-                    .attr("y2", this.exonY)
+                    .attr("y1", this._exonY)
+                    .attr("x2", this._exonWidth)
+                    .attr("y2", this._exonY)
                 ;
 
                 if (codingRegionCoord.codingRegionLength > 0) {
 
-                    this._rect(svg, codingRegionCoord);
-                    /*
-                    switch(this.data.exonCategory) {
-
-                        //      _________
-                        // ----|_________|
-                        case 'START':
-                            this._rectLeftRounded(svg, codingRegionCoord, this.exonWidth/8);
-                            break;
-                        //      _____
-                        // ----|_____|----
-                        case 'MONO':
-                            this._rectRounded(svg, codingRegionCoord, this.exonWidth/10);
-                            break;
-                        //  _____________
-                        // |_____________|
-                        case 'CODING':
-                            this._rect(svg, codingRegionCoord);
-                            break;
-                        //  _________
-                        // |_________|----
-                        case 'STOP':
-                            this._rectRightRounded(svg, codingRegionCoord, this.exonWidth/8);
-                            break;
-                    }
-                    */
+                    svg
+                        .append('rect')
+                        .attr({
+                            x: codingRegionCoord.codingRegionStart,
+                            y:0,
+                            width: codingRegionCoord.codingRegionLength,
+                            height: this._exonGraphicHeight,
+                            fill: this._codingExonColor
+                        })
+                    ;
                 }
-            },
-            _rect: function(svg, codingRegionCoord) {
-
-                svg
-                    .append('rect')
-                    //.style('stroke-width', 1)
-                    //.style('stroke', 'black')
-                    .attr({
-                        x: codingRegionCoord.codingRegionStart,
-                        y:0,
-                        width: codingRegionCoord.codingRegionLength,
-                        height: this.exonGraphicHeight,
-                        fill: this.codingExonColor
-                    })
-                ;
-            },
-            _rectLeftRounded: function(svg, codingRegionCoord, radius) {
-
-                svg.append("path")
-                    .style('stroke-width', 1)
-                    .style('stroke', 'black')
-                    .attr("d", this._leftRoundedPath(codingRegionCoord.codingRegionStart, this.exonY - this.exonGraphicHeight/2, codingRegionCoord.codingRegionLength, this.exonGraphicHeight, radius))
-                    .attr("fill", this.codingExonColor)
-                ;
-            },
-            _rectRightRounded: function(svg, codingRegionCoord, radius) {
-
-                svg.append("path")
-                    .style('stroke-width', 1)
-                    .style('stroke', 'black')
-                    .attr("d", this._rightRoundedPath(0, this.exonY - this.exonGraphicHeight/2, codingRegionCoord.codingRegionLength, this.exonGraphicHeight, radius))
-                    .attr("fill", this.codingExonColor)
-                ;
-            },
-            _rectRounded: function(svg, codingRegionCoord, radius) {
-
-                svg
-                    .append('rect')
-                    .style('stroke-width', 1)
-                    .style('stroke', 'black')
-                    .attr({
-                        class: "coding_exon_rect",
-                        x: codingRegionCoord.codingRegionStart,
-                        y: this.exonY - this.exonGraphicHeight/2,
-                        rx: radius,
-                        ry: radius,
-                        width: codingRegionCoord.codingRegionLength,
-                        height: this.exonGraphicHeight,
-                        fill: this.codingExonColor
-                    })
-                ;
-            },
-            // https://css-tricks.com/svg-path-syntax-illustrated-guide/
-            // http://tutorials.jenkov.com/svg/path-element.html
-            _rightRoundedPath: function(x, y, width, height, radius) {
-
-                return "M" + x + "," + y
-                    + "h" + (width - radius)
-                    + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
-                    + "v" + (height - 2 * radius)
-                    + "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + radius
-                    + "h" + (radius - width)
-                    + "z";
-            },
-            _leftRoundedPath: function(x, y, width, height, radius) {
-
-                return "M" + x + "," + y
-                    + "m" + radius + ", 0"
-                    + "h" + (width - radius)
-                    + "v" + height
-                    + "h" + (radius - width)
-                    + "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + -radius
-                    + "v" + (2 * radius - height)
-                    + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + -radius
-                    + "z";
             }
         });
     </script>
