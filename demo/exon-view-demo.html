@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <title>function-view demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
@@ -12,20 +12,26 @@
     <link rel="import" href="../exon-view.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
-      .vertical-section-container {
-        max-width: 80%;
-      }
+        .vertical-section-container {
+            max-width: 80%;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
 
-    <div class="vertical-section-container centered">
-      <h3>exon-view Demo</h3>
-      <demo-snippet>
+<div class="vertical-section-container centered">
+    <h3>exon-view Demo</h3>
+    <demo-snippet>
         <template>
-          <exon-view nx-config='{"env": "build", "entry": "NX_Q8NHL6"}'></exon-view>
+            <exon-view nx-config='{"env": "build", "entry": "NX_Q8NHL6"}'></exon-view>
         </template>
-      </demo-snippet>
-    </div>
-  </body>
+    </demo-snippet>
+    <h3>exon-view no exon Demo</h3>
+    <demo-snippet>
+        <template>
+            <exon-view nx-config='{"env": "build", "entry": "NX_Q96PT3"}'></exon-view>
+        </template>
+    </demo-snippet>
+</div>
+</body>
 </html>

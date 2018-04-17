@@ -78,7 +78,7 @@ exons mapping table demo
                 font-size: 13px;
             }
         </style>
-        <template is="dom-if" if="[[data]]">
+        <template is="dom-if" if="[[_hasData(data)]]">
             <div>
                 <h3>Exons</h3>
             </div>
@@ -227,10 +227,13 @@ exons mapping table demo
                 this.$$("#collapse_"+index).toggle();
                 var opened = this.$$("#collapse_"+index).opened;
 
-                console.log(this.$$("#transcripts_"+index));
                 this.$$("#transcripts_"+index).classList.toggle("fa-chevron-down");
                 this.$$("#showHide_"+index).innerText = opened ? "Hide" : "Show";
 
+            },
+            _hasData: function(data) {
+
+                return data && data.sortedExonKeys.length > 0;
             }
         });
     </script>
