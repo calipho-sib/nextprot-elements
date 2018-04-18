@@ -54,6 +54,8 @@ gene information section demo
                 text-align: left;
                 border-left:1px solid #ddd;
                 border-right:1px solid #ddd;
+                border-bottom:0;
+                border-top:0;
             }
 
             h3 {
@@ -68,6 +70,11 @@ gene information section demo
 
             .tableDiv {
                 overflow: auto;
+            }
+
+            #mappingTable {
+                margin-bottom: 10px;
+                font-size: 95%;
             }
         </style>
         <template is="dom-if" if="[[_locations]]">
@@ -103,11 +110,10 @@ gene information section demo
                 </table>
             </div>
 
-            <div>
-                <template is="dom-if" if="[[_chosenLocation]]">
-                    <table>
-                        <tbody>
-                        <template is="dom-if" if="[[_multipleLocations]]">
+            <template is="dom-if" if="[[_chosenLocation]]">
+                <table id="mappingTable">
+                    <tbody>
+                        <template is="dom-if" if="[[_multipleLocations(_locations)]]">
                             <tr>
                                 <td class="gray-x">Mapping</td>
                                 <td>This protein has [[_locations.length]] Ensembl mappings.</td>
@@ -126,13 +132,12 @@ gene information section demo
                             <template is="dom-if" if="[[_isPositionDefined(_chosenLocation)]]">
                                 <td class="gray-x">Coding positions (TO FIX)</td>
                                 <td>From [[_numberWithCommas(_chosenLocation.firstPosition)]] to [[_numberWithCommas(_chosenLocation.lastPosition)]]
-                                    [length: [[_calcLength(_chosenLocation)]] bp]</td>
+                                [length: [[_calcLength(_chosenLocation)]] bp]</td>
                             </template>
                         </tr>
-                        </tbody>
-                    </table>
-                </template>
-            </div>
+                    </tbody>
+                </table>
+            </template>
 
             <!-- non aligned isoforms -->
             <template is="dom-if" if="[[_hasNonAlignedIso(nonAlignedIsoforms)]]">
@@ -203,7 +208,6 @@ gene information section demo
             },
             _handleResponseData: function (data) {
 
-                console.log(data)
                 this._locations = data.entry.chromosomalLocations;
                 this._chosenLocation = this._locations
                     .filter(function(location) {
@@ -212,6 +216,8 @@ gene information section demo
                     .reduce(function(locations) {
                         return (locations.length > 0) ? locations[0] : null;
                     });
+
+                console.log("data", data, "chosen location",  this._chosenLocation);
             },
             _handleError: function (error) {
                 console.error("Error: ", error);
@@ -251,8 +257,8 @@ gene information section demo
             _numberWithCommas: function (x) {
                 return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             },
-            _multipleLocations: function () {
-                return this._locations.length > 1;
+            _multipleLocations: function (locations) {
+                return locations.length > 1;
             },
             _createEnsemblHtmlLink: function (location) {
 
