@@ -114,7 +114,6 @@ Exon view demo
             },
             _calcFirstCodingPositions: function (data) {
 
-                console.log(data.startExonPositions, data.stopExonPositions);
                 this._startCodingPosition = (data.startExonPositions && data.startExonPositions.length > 0) ? data.startExonPositions[0] : 0;
                 this._stopCodingPosition = (data.stopExonPositions && data.stopExonPositions.length > 0) ? data.stopExonPositions[0] : 0;
             },

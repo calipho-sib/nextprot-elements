@@ -331,10 +331,10 @@ gene information section demo
             },
             _calcCodingPositions: function (location) {
 
-                this._startCodingPosition = location.firstPosition + this.startExonPosition - 1;
-                this._stopCodingPosition = location.firstPosition + this.stopExonPosition - 1;
-
-                console.log("_calcCodingPositions", location, this.startExonPosition, this.stopExonPosition);
+                if (this.startExonPosition > 0 &&  this.stopExonPosition > 0) {
+                    this._startCodingPosition = location.firstPosition + this.startExonPosition - 1;
+                    this._stopCodingPosition = location.firstPosition + this.stopExonPosition - 1;
+                }
             }
         });
     </script>
