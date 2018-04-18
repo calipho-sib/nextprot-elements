@@ -247,7 +247,13 @@ gene information section demo
                     return "";
                 }
 
-                return (location.strand === 1) ? "plus strand" : "minus strand";
+                if (location.strand === 1) {
+                    return "plus strand"
+                }
+                else if (location.strand === -1) {
+                    return "minus strand";
+                }
+                return "";
             },
             _formatLocation: function (location) {
 
