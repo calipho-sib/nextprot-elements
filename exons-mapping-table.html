@@ -35,7 +35,6 @@ exons mapping table demo
 
             #exonTable thead {
                 background-color: #f8f8f8;
-                border-bottom:0;
                 border-top:1px solid lightgray;
                 border-left:1px solid #ddd;
                 border-right:1px solid #ddd;
@@ -46,25 +45,17 @@ exons mapping table demo
                 vertical-align: top;
                 border-right:1px solid #ddd;
                 border-left:1px solid #ddd;
-                border-bottom:0;
+                border-bottom:1px solid #ddd;
                 padding:5px 10px 5px 2px;
             }
 
-            thead th:first-child{
-                border-left:none;
-            }
-
-            thead th:last-child{
-                border-right:none;
-            }
-
-            td {
-                text-align: left;
-            }
-
             #exonTable td {
+                text-align: left;
                 padding:1px 10px 1px 4px;
-                border:0;
+                border-bottom:0;
+                border-top:0;
+                border-left:1px solid #ddd;
+                border-right:1px solid #ddd;
             }
 
             #exonTable .lengthCell{
@@ -73,7 +64,7 @@ exons mapping table demo
             }
 
             #exonTable ul {
-                padding-left:0px;
+                padding-left:0;
             }
             ul {
                 list-style-type: none;

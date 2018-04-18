@@ -39,10 +39,6 @@ gene information section demo
                 border-bottom:0;
             }
 
-            .no-border {
-                border:0;
-            }
-
             .bg-blue-light-xx {
                 background-color: #F3F5FC;
                 color: #444;
@@ -52,6 +48,12 @@ gene information section demo
                 padding: 5px;
                 width: auto;
                 display: inline-block;
+            }
+
+            #infoTable td {
+                text-align: left;
+                border-left:1px solid #ddd;
+                border-right:1px solid #ddd;
             }
 
             h3 {
@@ -104,7 +106,7 @@ gene information section demo
 
             <div>
                 <template is="dom-if" if="[[_chosenLocation]]">
-                    <table class="no-border">
+                    <table>
                         <tbody>
                         <template is="dom-if" if="[[_multipleLocations]]">
                             <tr>
