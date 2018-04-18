@@ -181,20 +181,17 @@ gene information section demo
                 },
                 startExonPosition: {
                     type: Number,
-                    value: 0,
-                    observer: "_calcCodingPositions"
+                    computed: 0
                 },
                 stopExonPosition: {
                     type: Number,
-                    value: 0,
-                    observer: "_calcCodingPositions"
+                    value: 0
                 },
                 _locations: {
                     type: Array
                 },
                 _chosenLocation: {
-                    type: Object,
-                    observer: "_calcCodingPositions"
+                    type: Object
                 },
                 _startCodingPosition: {
                     type: Number,
@@ -205,6 +202,9 @@ gene information section demo
                     value: 0
                 }
             },
+            observers: [
+                '_calcCodingPositions(startExonPosition, stopExonPosition, _chosenLocation)'
+            ],
             attached: function () {
                 this._initApiClient();
 
@@ -329,11 +329,14 @@ gene information section demo
                     return 0;
                 });
             },
-            _calcCodingPositions: function (location) {
+            _calcCodingPositions: function (startExonPosition, stopExonPosition, _chosenLocation) {
 
-                if (this.startExonPosition > 0 &&  this.stopExonPosition > 0) {
-                    this._startCodingPosition = location.firstPosition + this.startExonPosition - 1;
-                    this._stopCodingPosition = location.firstPosition + this.stopExonPosition - 1;
+                if (_chosenLocation && startExonPosition > 0 &&  stopExonPosition > 0) {
+
+                    console.log("_calcCodingPositions", startExonPosition, stopExonPosition, _chosenLocation);
+
+                    this._startCodingPosition = _chosenLocation.firstPosition + startExonPosition - 1;
+                    this._stopCodingPosition = _chosenLocation.firstPosition + stopExonPosition - 1;
                 }
             }
         });
