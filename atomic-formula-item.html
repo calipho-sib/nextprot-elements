@@ -14,28 +14,20 @@
             .atomic-number {
                 vertical-align: sub;
                 font-size: smaller;
-                margin-left: -3px;
+                letter-spacing:-3px;
             }
             .atomic-letter {
-               margin-left: -3px;
+                letter-spacing:-3px;
             }
-
-            .errorcomment {
-                font-size: 9px;
-                color: orange;
-            }
-
-
         </style>
         <template class="formula-container" is="dom-repeat" items="[[resultElements]]" as="re">
-            <template is="dom-if" if="[[re.isNumber]]">
+            <template is="dom-if" if="[[re.isSub]]">
                     <span class="atomic-number">[[re.label]]</span>
             </template>
-            <template is="dom-if" if="[[!re.isNumber]]">
+            <template is="dom-if" if="[[!re.isSub]]">
                     <span class="atomic-letter">[[re.label]]</span>
             </template>
         </template>
-        <span class="errorcomment">should we had + for positive numbers, since it is a correction... ?</span>
     </template>
 
     <script>
@@ -51,15 +43,31 @@
             },
             ready: function (){
                 function isNum(n){
-                    return ('0123456789-+'.indexOf(n) !== -1)
+                    return ('0123456789-'.indexOf(n) !== -1)
                 };
                 var result = [];
                 var elements = this.formula.split("")
                 var elements = elements.filter(function(a){return a !== ' '})
                 for(var i=0; i<elements.length; i++){
                     var e = elements[i];
+                    var prevIsNumber = false, nextIsNumber = false;
+                    if(i>0){ prevIsNumber = isNum(elements[i-1])}
+                    if((i+1)<elements.length){ nextIsNumber = isNum(elements[i+1])}
                     var isNumber = isNum(e);
-                    result.push({isNumber: isNumber, label: e})
+                    if(isNumber && !prevIsNumber){
+                        if(e === "-"){
+                            result.push({isSub: true, label: "("})
+                        }else {
+                            result.push({isSub: true, label: "("})
+                            result.push({isSub: true, label: "+"})
+
+                        }
+
+                    }
+                    result.push({isSub: isNumber, label: e})
+                    if(isNumber && !nextIsNumber){
+                        result.push({isSub: true, label: ")"})
+                    }
                 }
                 this.resultElements = result; 
             }
