@@ -181,17 +181,20 @@ gene information section demo
                 },
                 startExonPosition: {
                     type: Number,
-                    value: 0
+                    value: 0,
+                    observer: "_calcCodingPositions"
                 },
                 stopExonPosition: {
                     type: Number,
-                    value: 0
+                    value: 0,
+                    observer: "_calcCodingPositions"
                 },
                 _locations: {
                     type: Array
                 },
                 _chosenLocation: {
-                    type: Object
+                    type: Object,
+                    observer: "_calcCodingPositions"
                 },
                 _startCodingPosition: {
                     type: Number,
@@ -232,11 +235,6 @@ gene information section demo
                     .reduce(function(locations) {
                         return (locations.length > 0) ? locations[0] : null;
                     });
-
-                this._startCodingPosition = this._calcStartCodingPosition(this.startExonPosition);
-                this._stopCodingPosition = this._calcStopCodingPosition(this.stopExonPosition);
-
-                console.log(this._startCodingPosition, this._stopCodingPosition);
             },
             _handleError: function (error) {
                 console.error("Error: ", error);
@@ -331,13 +329,12 @@ gene information section demo
                     return 0;
                 });
             },
-            _calcStartCodingPosition: function (startPosition) {
+            _calcCodingPositions: function (location) {
 
-                return this._chosenLocation.firstPosition + startPosition -1;
-            },
-            _calcStopCodingPosition: function (stopPosition) {
+                this._startCodingPosition = location.firstPosition + this.startExonPosition - 1;
+                this._stopCodingPosition = location.firstPosition + this.stopExonPosition - 1;
 
-                return this._chosenLocation.firstPosition + stopPosition -1;
+                console.log("_calcCodingPositions", location, this.startExonPosition, this.stopExonPosition);
             }
         });
     </script>
