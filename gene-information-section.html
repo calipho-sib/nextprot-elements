@@ -102,7 +102,7 @@ gene information section demo
                             <td style="text-align:left;">[[location.prettyLocation]]</td>
                             <td style="text-align:left;">[[_formatOrientation(location)]]</td>
                             <td style="text-align:center">[[_formatLocation(location)]]</td>
-                            <td style="text-align:right">[[_calcLength(location)]]</td>
+                            <td style="text-align:right">[[_formatLength(location.firstPosition, location.lastPosition)]]</td>
                             <td style="text-align:left"><span inner-h-t-m-l=[[_createEnsemblHtmlLink(location)]]></span></td>
                         </tr>
                     </template>
@@ -130,9 +130,9 @@ gene information section demo
                                 </div>
                             </template>
                             <template is="dom-if" if="[[_isPositionDefined(_chosenLocation)]]">
-                                <td class="gray-x">Coding positions (TO FIX)</td>
-                                <td>From [[_numberWithCommas(_chosenLocation.firstPosition)]] to [[_numberWithCommas(_chosenLocation.lastPosition)]]
-                                [length: [[_calcLength(_chosenLocation)]] bp]</td>
+                                <td class="gray-x">Coding positions</td>
+                                <td>From [[_numberWithCommas(_startCodingPosition)]] to [[_numberWithCommas(_stopCodingPosition)]]
+                                [length: [[_formatLength(_startCodingPosition, _stopCodingPosition)]] bp]</td>
                             </template>
                         </tr>
                     </tbody>
@@ -179,11 +179,27 @@ gene information section demo
                     type: Array,
                     value: []
                 },
+                startExonPosition: {
+                    type: Number,
+                    value: 0
+                },
+                stopExonPosition: {
+                    type: Number,
+                    value: 0
+                },
                 _locations: {
                     type: Array
                 },
                 _chosenLocation: {
                     type: Object
+                },
+                _startCodingPosition: {
+                    type: Number,
+                    value: 0
+                },
+                _stopCodingPosition: {
+                    type: Number,
+                    value: 0
                 }
             },
             attached: function () {
@@ -216,6 +232,11 @@ gene information section demo
                     .reduce(function(locations) {
                         return (locations.length > 0) ? locations[0] : null;
                     });
+
+                this._startCodingPosition = this._calcStartCodingPosition(this.startExonPosition);
+                this._stopCodingPosition = this._calcStopCodingPosition(this.stopExonPosition);
+
+                console.log(this._startCodingPosition, this._stopCodingPosition);
             },
             _handleError: function (error) {
                 console.error("Error: ", error);
@@ -244,13 +265,13 @@ gene information section demo
 
                 return (location.recommendedName) ? location.recommendedName : "-";
             },
-            _calcLength: function (location) {
+            _formatLength: function (firstPos, lastPos) {
 
-                if (location.firstPosition === 0 && location.lastPosition === 0) {
+                if (firstPos === 0 && lastPos === 0) {
                     return "";
                 }
 
-                return this._numberWithCommas(location.lastPosition - location.firstPosition + 1);
+                return this._numberWithCommas(lastPos - firstPos + 1);
             },
             _numberWithCommas: function (x) {
                 return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -303,6 +324,14 @@ gene information section demo
                     }
                     return 0;
                 });
+            },
+            _calcStartCodingPosition: function (startPosition) {
+
+                return this._chosenLocation.firstPosition + startPosition -1;
+            },
+            _calcStopCodingPosition: function (stopPosition) {
+
+                return this._chosenLocation.firstPosition + stopPosition -1;
             }
         });
     </script>

@@ -30,7 +30,8 @@ Exon view demo
         </div>
         <div class="row">
             <div class="nxSection" class="col-md-12">
-                <gene-information-section nx-config="[[nxConfig]]" non-aligned-isoforms="[[_nonAlignedIsoforms]]"></gene-information-section>
+                <gene-information-section nx-config="[[nxConfig]]" non-aligned-isoforms="[[_nonAlignedIsoforms]]"
+                                          start-exon-position="[[_startCodingPosition]]" stop-exon-position="[[_stopCodingPosition]]"></gene-information-section>
             </div>
         </div>
         <div class="row">
@@ -48,11 +49,20 @@ Exon view demo
                     value: {}
                 },
                 data: {
-                    type: Object
+                    type: Object,
+                    observer: "_calcFirstCodingPositions"
                 },
                 _nonAlignedIsoforms: {
                     type: Array,
                     value: []
+                },
+                _startCodingPosition: {
+                    type: Number,
+                    value: 0
+                },
+                _stopCodingPosition: {
+                    type: Number,
+                    value: 0
                 }
             },
             attached: function () {
@@ -101,7 +111,12 @@ Exon view demo
                         "accession": iso.isoformAccession
                     }
                 });
+            },
+            _calcFirstCodingPositions: function (data) {
 
+                console.log(data.startExonPositions, data.stopExonPositions);
+                this._startCodingPosition = (data.startExonPositions && data.startExonPositions.length > 0) ? data.startExonPositions[0] : 0;
+                this._stopCodingPosition = (data.stopExonPositions && data.stopExonPositions.length > 0) ? data.stopExonPositions[0] : 0;
             },
             _handleError: function (error) {
                 console.error("Error: ", error);
