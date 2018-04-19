@@ -114,15 +114,10 @@ gene information section demo
                 </div>
 
                 <!--
-(4)
+TODO
 Single isoform NOT mapped on gene, then display: Isoform Iso 1 is not aligned on gene.
 https://www.nextprot.org/entry/NX_Q9UI25/exons
 More examples: NX_P10319, NX_Q9UI25, NX_P30453
-
-(5)
-Single / multiple isoform(s) ALL mapped on gene, then display: nothing special
-https://www.nextprot.org/entry/NX_Q13895/exons
-More examples: NX_Q13895, NX_P13929
                 -->
                 <template is="dom-if" if="[[_chosenLocation]]">
                     <table id="mappingTable">
@@ -244,6 +239,7 @@ More examples: NX_Q13895, NX_P13929
             },
             _handleResponseData: function (data) {
 
+                console.log(data);
                 var self = this;
 
                 this._locations = data.entry.chromosomalLocations;
@@ -290,7 +286,7 @@ More examples: NX_Q13895, NX_P13929
                     return "-";
                 }
 
-                return (location.recommendedName) ? location.recommendedName : "-";
+                return (location.recommendedName && location.recommendedName !== "unknown") ? location.recommendedName : "-";
             },
             _formatLength: function (firstPos, lastPos) {
 
@@ -307,8 +303,8 @@ More examples: NX_Q13895, NX_P13929
                 return locations.length > 1;
             },
             _createEnsemblHtmlLink: function (location) {
-
-                if (location.firstPosition === 0 && location.lastPosition === 0) {
+                if ((location.firstPosition === 0 && location.lastPosition === 0) ||
+                    location.accession.startsWith("VG_")) {
                     return "";
                 }
 
