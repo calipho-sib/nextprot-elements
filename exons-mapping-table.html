@@ -166,10 +166,10 @@ exons mapping table demo
 
                 var row = [this._findENSE(exonByIsoform), this._formatPos(pos), this._calcLength(pos)];
                 var i;
-                for (i = 0; i < this.data.sortedMappedIsoformKeys.length; i++) {
+                for (i = 0; i < this.data.sortedMappedIsoformInfoKeys.length; i++) {
 
-                    if (this.data.sortedMappedIsoformKeys[i] in exonByIsoform) {
-                        row.push(exonByIsoform[this.data.sortedMappedIsoformKeys[i]]);
+                    if (this.data.sortedMappedIsoformInfoKeys[i] in exonByIsoform) {
+                        row.push(exonByIsoform[this.data.sortedMappedIsoformInfoKeys[i]]);
                     }
                     else {
                         row.push(null);
@@ -194,11 +194,11 @@ exons mapping table demo
 
                 var i;
                 var accessions = [];
-                for (i = 0; i < this.data.sortedMappedIsoformKeys.length; i++) {
+                for (i = 0; i < this.data.sortedMappedIsoformInfoKeys.length; i++) {
 
-                    if (this.data.sortedMappedIsoformKeys[i] in exonByIsoform) {
-                        if (exonByIsoform[this.data.sortedMappedIsoformKeys[i]].accession) {
-                            accessions.push(exonByIsoform[this.data.sortedMappedIsoformKeys[i]].accession);
+                    if (this.data.sortedMappedIsoformInfoKeys[i] in exonByIsoform) {
+                        if (exonByIsoform[this.data.sortedMappedIsoformInfoKeys[i]].accession) {
+                            accessions.push(exonByIsoform[this.data.sortedMappedIsoformInfoKeys[i]].accession);
                         }
                     }
                 }
@@ -212,9 +212,9 @@ exons mapping table demo
 
                 var i;
                 var infos = [];
-                for (i=0 ; i<data.sortedMappedIsoformKeys.length ; i++) {
+                for (i=0 ; i<data.sortedMappedIsoformInfoKeys.length ; i++) {
 
-                    infos.push(data.mappedmappedIsoformInfos[data.sortedMappedIsoformKeys[i]]);
+                    infos.push(data.mappedmappedIsoformInfos[data.sortedMappedIsoformInfoKeys[i]]);
                 }
 
                 return infos;
