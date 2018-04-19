@@ -3,6 +3,7 @@
 <link rel="import" href="graph-section.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="term-overview-section.html">
+<link rel="import" href="ancestor-graph-section.html">
 
 <!--
 `ancestor-graph-view`
@@ -33,25 +34,8 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 font-size: 1.8em;
             }
         </style>
-        <iron-ajax
-                id ="APIcall"
-                url="https://api.nextprot.org/term/[[accessionInput]]/ancestor-graph.json"
-                params='{"type":"all"}'
-                handle-as="json"
-                on-response="ancestorBuild" ></iron-ajax>
-        <term-overview-section nx-config='{"env": "dev", "termAccession": "PTM-0312"}'></term-overview-section>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="title-header">
-                    Ancestors graph
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div id="graph-item" class="col-md-12">
-                <graph-section style="overflow: auto;" dotdata="[[dotGraph]]"></graph-section>
-            </div>
-        </div>
+        <term-overview-section nx-config=[[nxConfig]]></term-overview-section>
+        <ancestor-graph-section accession-input=[[nxConfig.termAccession]] subgraph-distance="0" regex="1" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-section>
     </template>
 
     <script>
@@ -61,213 +45,8 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 nxConfig: {
                     type: Object,
                     value: {}
-                },
-                accessionInput: {
-                    type: String,
-                    observer: "APIcaller"
-                },
-                arrowInput: {
-                    value: 0.5,
-                    type: Number,
-                    observer: "APIcaller"
-                },
-                fontInput: {
-                    value: 14,
-                    type: Number,
-                    observer: "APIcaller"
-                },
-                splineInput: {
-                    value: "spline",
-                    type: String,
-                    observer: "APIcaller"
-                },
-                maxWidth: {
-                    value: 11,
-                    type: Number,
-                    observer: "APIcaller"
-                },
-                dotGraph: {
-                    type: String
-                },
-                graphOrientation: {
-                    value: "TB",
-                    type: String,
-                    observer: "APIcaller"
-                },
-                nodeShape: {
-                    value: "square",
-                    type: String,
-                    observer: "APIcaller"
-                },
-                regex: {
-                    value: 1,
-                    type: Number,
-                    observer: "APIcaller"
-                },
-                subgraphDistance: {
-                    value: 0,
-                    type: Number,
-                    observer: "APIcaller"
                 }
-            },
-            //API call when the DOM is initialized:
-            APIcaller: function () {
-                this.$.APIcall.generateRequest();
-            },
-            
-            getNodeColor: function (nodeAccession) {
-                return (nodeAccession === this.accessionInput) ? "#BDE5B9" : "#FFFFFF"; //Node color either green or white
-            },
-
-            nodesDotBuild: function (APInodes) {
-                //Contains the names of the nodes and style in dot format
-                var dotNodesBuilt = "";
-
-//              Node loop: to add the nodes to the graph
-                for (var i = 0; i < APInodes.length; i++) {
-                    var regexNodeName = "";
-
-                    //Different regex expressions:
-                    if (parseInt(this.regex) === 1) {
-                        regexNodeName = APInodes[i]["name"].replace(/.{1}\S*\s+/g, "$&\n")
-                    } else if (parseInt(this.regex) === 15) {
-                        regexNodeName = APInodes[i]["name"].replace(/.{15}\S*\s+/g, "$&\n")
-                    } else if (parseInt(this.regex) === 20) {
-                        regexNodeName = APInodes[i]["name"].replace(/.{20}\S*\s+/g, "$&\n")
-                    } else if (parseInt(this.regex) === 100) {
-                        regexNodeName = APInodes[i]["name"].replace(/.{100}\S*\s+/g, "$&\n")
-                    }
-
-                    // Translates nodes into Dot Nodes
-                    dotNodesBuilt += APInodes[i]["id"];
-                    dotNodesBuilt += ' ['+'label='+'"'+ regexNodeName + '"'//Text in the nodes
-                                    +'style=filled;'
-                                    + 'fillcolor="'+ this.getNodeColor(APInodes[i]["accession"]) +'"'
-                                    + 'tooltip=' + '"' + APInodes[i]["name"] + '"'//Tooltip on hover
-                                    + 'href="https://www.nextprot.org/term/' + APInodes[i]["accession"] //URL in node
-                                    + '"' + ';] '
-                }
-
-                return dotNodesBuilt
-            },
-
-            edgesDotBuild: function (APIedges) {
-//                Where the edges data will be stored
-                var dotEdgesBuilt = "";
-
-//              Edge loop: to add each edge into the graph
-                for (var i = 0; i < APIedges.length; i++) {
-                    //variables which call object dictionary:
-                    var head = APIedges[i]["head"];
-                    var tail = APIedges[i]["tail"];
-
-                    dotEdgesBuilt += '"'+head+'"'
-                                    + " -> "
-                                    + '"'+tail+'"'
-                                    + " [arrowsize="+ this.arrowInput
-                                    + ", weight=2];";
-                }
-
-                return dotEdgesBuilt
-            },
-
-            getSubgraphs: function (distanceDictionary) {
-                //Stores the subgraphs in dot format
-                var dotSubgraphsBuilt = "";
-
-                //Subgraph loop: to add each level in a subgraph
-                for (var i = 0; i < Object.keys(distanceDictionary).length; i++) {
-
-                    dotSubgraphsBuilt += "subgraph cluster_" + i
-                                        + '{color=blue;' // Could be set to white
-                                        + distanceDictionary[i].toString() + '}'
-                }
-
-                return dotSubgraphsBuilt
-            },
-
-            nodeDistancer: function (APIresponse) {
-                //Creates a dictionary with levels
-                //I did not implement the attribute because it would do a lot of for loops in order to add it.
-                // It would be more efficient to get it from the API
-                // However, proof of concept: APIdata.detail.response["ancestor-graph"]["nodes"][0]["distance"] = 12;
-
-                var nodesDistance = [];
-
-                //Adding the root ID as distance 0
-                var nodesAdded = [];
-
-                nodesDistance[0] = APIresponse["nodes"][0]["id"];
-                nodesAdded.push(APIresponse["nodes"][0]["id"]);
-
-                //Counting the number of times the while loop is called. It is useful for the distance in the dict
-                var whileCount = 0;
-
-                //Edge loop to determine distance
-                while (nodesAdded.length < APIresponse["nodes"].length) { //While nodes added < nodes available
-                    for (var i = 0; i < APIresponse["edges"].length; i++) { //Loop through the edges
-
-                        if (nodesDistance[whileCount].toString().indexOf(APIresponse["edges"][i]["head"]) > -1) { //if the head in the edges, is the same as the head of the current distance
-
-                            //Create an array in NodeDistance if the level is undefined:
-                            if (nodesDistance[whileCount+1] === undefined) {
-                                nodesDistance[whileCount+1] = new Array();
-                            }
-
-                            nodesDistance[whileCount+1].push(APIresponse["edges"][i]["tail"]); //add the tail to the dictionary
-
-                            if (nodesAdded.toString().indexOf(APIresponse["edges"][i]["tail"]) > -1) {//if it exist in the list
-                                console.log("check if we have the lowest ");
-                                //To improve here we should check for the lowest level, maybe a for loop.
-                            }
-                            else {
-                                nodesAdded.push(APIresponse["edges"][i]["tail"]);
-                            }
-                            //Here if we want to add it as attribute to the node itself, we could call a function
-                            // to loop through the nodes and add it as an attribute (however it makes the page very slow)
-                        }
-
-                    }
-                    whileCount += 1; //Adding 1 to count to go to a higher level (maybe another name could be whileDistance or currentDistance
-                }
-                //Creating subgraphs
-                return this.getSubgraphs(nodesDistance)
-            },
-//        Retrieves the data from the Ajax call and places them in APIdata:
-            ancestorBuild: function (APIdata) {
-
-                //Defining nodes as the array of objects containing the nodes:
-                var nodes = APIdata.detail.response["ancestor-graph"]["nodes"];
-                var dotFormatNodes = this.nodesDotBuild(nodes);
-
-//              Defining edges as the array of objects containing the edge
-                var edges = APIdata.detail.response["ancestor-graph"]["edges"];
-                var dotFormatEdges = this.edgesDotBuild(edges);
-
-                //Creating the subgraphs from distance dictionary: (only if asked for it)
-                if (this.subgraphDistance === "1"){
-                    var subgraphs = this.nodeDistancer(APIdata.detail.response["ancestor-graph"]);
-                } else {
-                    var subgraphs = ""
-                }
-
-//              Variables kept for showcase, however may be useful for future changes in layout
-                this.dotGraph = 'digraph "" {node [shape=' +
-                    this.nodeShape //Full list of possible shapes http://www.graphviz.org/content/node-shapes#polygon
-                    + ', fontsize='+ this.fontInput +'];' 
-                    + 'graph [rankdir=' + this.graphOrientation
-                    +', autosize=false, size="90.2,' + this.maxWidth //Maximum size of the graph
-                    + '", splines=' + this.splineInput + '];' 
-                    + subgraphs 
-                    +'labelfontname="Helvetica";' 
-                    +'bgcolor="#f8f8f8";' 
-                    + dotFormatNodes 
-                    + dotFormatEdges 
-                    + '}';
-
             }
-
-
         }); //Polymer end
     </script>
 </dom-module>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+    <title>graph-item demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../ancestor-graph-section.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .vertical-section-container {
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="vertical-section-container centered">
+    <h3>Ancestor Graph Interactive Demo</h3>
+    <div>
+        Choose your options:
+        <br/>
+        <br/>
+        <b>Data:</b>
+        <br/>
+        - Data size: <select id="datasize" onchange="changeStyle(this.value, 'accessionInput')">
+        <option value="TS-0079">TS-0079 (Small case)</option>
+        <option value="GO:0007256">GO:0007256 (Big case)</option>
+    </select>
+        or input your Accession Number <input id="customaccession"><button onclick="changeStyle('getelement', 'accessionInput')">Add</button>
+
+        <br/>
+        <br/>
+        <b>Graph Style:</b>
+        <br/>
+        - Arrow size: <select id="arrowsize" onchange="changeStyle(this.value, 'arrowInput')">
+        <option value="0.5" >0.5</option>
+        <option value="1">1</option>
+        <option value="1.5">1.5</option>
+        <option value="2">2</option>
+    </select>
+
+        <br/>
+        - Font size: <select id="fontsize" onchange="changeStyle(this.value, 'fontInput')">
+        <option value="14" >14 (Default)</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+    </select>
+
+        <br/>
+        - Maximum Width (big data only): <select id="zoom" onchange="changeStyle(this.value, 'maxWidth')">
+        <option value="11">11</option>
+        <option value="15">15</option>
+        <option value="19">19</option>
+        <option value="23">23</option>
+    </select>
+
+        <br/>
+        - Nodes (vertices) shape: <select id="shape" onchange="changeStyle(this.value, 'nodeShape')">
+        <option value="square">Square</option>
+        <option value="rectangle">Rectangle</option>
+        <option value="ellipse">Ellipse</option>
+        <option value="circle">Circle</option>
+    </select>
+        <br/>
+        <br/>
+        <b>Graph Layout:</b>
+        <br/>
+        - Edges (links) layout: <select id="splinestyle" onchange="changeStyle(this.value, 'splineInput')">
+        <option value="spline" >Default</option>
+        <option value="curved">Curved</option>
+        <option value="polyline">Polyline</option>
+        <option value="ortho">Ortho</option>
+    </select>
+
+        <br/>
+        - Orientation: <select id="orientation" onchange="changeStyle(this.value, 'graphOrientation')">
+        <option value="TB">Vertical (Top -> Bottom)</option>
+        <option value="BT">Vertical (Bottom -> Top)</option>
+        <option value="LR">Horizontal (Left -> Right)</option>
+        <option value="RL">Horizontal (Right -> Left)</option>
+
+    </select>
+
+        <br/>
+        - Text newline for every space: <select id="newline" onchange="changeStyle(this.value, 'regex')">
+        <option value=1>Always</option>
+        <option value=15>After 15 characters</option>
+        <option value=20>After 20 characters</option>
+        <option value=100>Never</option>
+    </select>
+        <br/>
+
+        - Subgraph levels: <select id="subgraphs" onchange="changeStyle(this.value, 'subgraphDistance')">
+        <option value=0 >Disabled</option>
+        <option value=1>Enabled</option>
+    </select>
+        <br/>
+        <br/>
+
+    </div>
+
+    <demo-snippet>
+        <template>
+            <ancestor-graph-section accession-input="TS-0079" subgraph-distance="0" regex="1" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-section>
+        </template>
+    </demo-snippet>
+</div>
+<script>
+    function changeStyle(newStyle, feature) {
+
+        if (newStyle === "getelement") {
+            newStyle = document.getElementById("customaccession").value;
+        }
+
+        var graphSectionElement = document.querySelectorAll("ancestor-graph-section");
+
+        graphSectionElement[0][feature] = newStyle;
+    }
+</script>
+</body>
+</html>
