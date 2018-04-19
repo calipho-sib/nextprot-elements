@@ -274,7 +274,7 @@ gene information section demo
             _formatGeneName: function (location) {
 
                 if (location.firstPosition === 0 && location.lastPosition === 0) {
-                    return "";
+                    return "-";
                 }
 
                 return (location.recommendedName) ? location.recommendedName : "-";
@@ -324,10 +324,10 @@ gene information section demo
             _getSortedLocations: function(locations) {
                 return locations.sort(function(loc1, loc2) {
 
-                    if (!loc1) {
+                    if (!loc1 || loc1 === 0 || !loc1.recommendedName) {
                         return 1;
                     }
-                    else if (!loc2) {
+                    else if (!loc2 || loc2 === 0 || !loc2.recommendedName) {
                         return -1;
                     }
                     if (loc1.recommendedName < loc2.recommendedName) {
