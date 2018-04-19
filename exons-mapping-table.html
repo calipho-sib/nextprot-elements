@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="exon-item.html">
 <link rel="import" href="external-scripts.html">
@@ -75,6 +76,9 @@ exons mapping table demo
                 overflow: auto;
             }
         </style>
+
+        <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+
         <template is="dom-if" if="[[_hasData(data)]]">
             <div class="category-header">
                 <h4 class="category-title">Exons</h4>
@@ -137,6 +141,10 @@ exons mapping table demo
                 _rows: {
                     type: Array,
                     value: []
+                },
+                _dataLoaded: {
+                    type: Boolean,
+                    observer: '_updateSpinnerStatus'
                 }
             },
             _prepareData: function() {
@@ -146,6 +154,11 @@ exons mapping table demo
 
                     this._rows.push(this._newRow(this.data.sortedExonKeys[i]));
                 }
+
+                var self = this;
+                Polymer.RenderStatus.afterNextRender(self, function () {
+                    self._dataLoaded = true;
+                });
             },
             _newRow: function(pos) {
 
@@ -224,6 +237,14 @@ exons mapping table demo
             _hasData: function(data) {
 
                 return data && data.sortedExonKeys.length > 0;
+            },
+            _updateSpinnerStatus: function(dataLoaded) {
+
+                if (dataLoaded) {
+
+                    this.$.spinner.active = false;
+                    this.$.spinner.hidden = true;
+                }
             }
         });
     </script>
