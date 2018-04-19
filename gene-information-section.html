@@ -113,6 +113,17 @@ gene information section demo
                     </table>
                 </div>
 
+                <!--
+(4)
+Single isoform NOT mapped on gene, then display: Isoform Iso 1 is not aligned on gene.
+https://www.nextprot.org/entry/NX_Q9UI25/exons
+More examples: NX_P10319, NX_Q9UI25, NX_P30453
+
+(5)
+Single / multiple isoform(s) ALL mapped on gene, then display: nothing special
+https://www.nextprot.org/entry/NX_Q13895/exons
+More examples: NX_Q13895, NX_P13929
+                -->
                 <template is="dom-if" if="[[_chosenLocation]]">
                     <table id="mappingTable">
                         <tbody>
@@ -127,12 +138,14 @@ gene information section demo
                                 </tr>
                             </template>
                             <tr>
-                                <template is="dom-if" if="[[!_isPositionDefined(_chosenLocation)]]">
+                                <!-- If entry mapped on chromosome 'unknown', then display message: "Gene not mapped on the current assembly of the human genome."
+                                    Example: https://www.nextprot.org/entry/NX_O00370/exons -->
+                                <template is="dom-if" if="[[!_isChromosomeLocationDefined(_chosenLocation)]]">
                                     <div class="bg-blue-light-xx">
                                     Gene not mapped on the current assembly of the human genome.
                                     </div>
                                 </template>
-                                <template is="dom-if" if="[[_isPositionDefined(_chosenLocation)]]">
+                                <template is="dom-if" if="[[_startExonPosition]]">
                                     <td class="gray-x">Coding positions</td>
                                     <td>From [[_numberWithCommas(_startCodingPosition)]] to [[_numberWithCommas(_stopCodingPosition)]]
                                     [length: [[_formatLength(_startCodingPosition, _stopCodingPosition)]] bp]</td>
@@ -301,9 +314,13 @@ gene information section demo
 
                 return '<a class="ext-link" target="_blank" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g='+location.accession+'">'+location.accession+'</a>';
             },
-            _isPositionDefined: function (location) {
+            _isChromosomeLocationDefined: function (location) {
 
                 return location.firstPosition > 0 && location.lastPosition > 0;
+            },
+            _isCodingPositionDefined: function () {
+
+                return this.startExonPosition > 0 && this.lastExonPosition > 0;
             },
             _hasNonAlignedIso: function (nonAlignedIsoforms) {
 
