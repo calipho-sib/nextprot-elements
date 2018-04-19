@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="external-scripts.html">
-
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
 <!--
@@ -68,7 +68,7 @@ gene information section demo
                 text-transform: uppercase;
             }
 
-            .tableDiv {
+            #tableDiv {
                 overflow: auto;
             }
 
@@ -77,95 +77,97 @@ gene information section demo
                 font-size: 95%;
             }
         </style>
+
+        <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+
         <template is="dom-if" if="[[_locations]]">
             <div class="category-header">
                 <h4 class="category-title">Gene information</h4>
             </div>
 
-            <div class="tableDiv">
-            <div>
-                <table id="infoTable" class="table">
-                    <thead>
-                    <tr>
-                        <th style="text-align:left;">Gene</th>
-                        <th style="text-align:left;">Chromosomal location</th>
-                        <th style="text-align:left;">Orientation</th>
-                        <th>Position on chromosome</th>
-                        <th style="text-align:right;">Length</th>
-                        <th style="text-align:left;">Ensembl</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <template is="dom-repeat" items="[[_getSortedLocations(_locations)]]" as="location">
+            <div id="tableDiv">
+                <div>
+                    <table id="infoTable" class="table">
+                        <thead>
                         <tr>
-                            <td style="text-align:left;">[[_formatGeneName(location)]]</td>
-                            <td style="text-align:left;">[[location.prettyLocation]]</td>
-                            <td style="text-align:left;">[[_formatOrientation(location)]]</td>
-                            <td style="text-align:center">[[_formatLocation(location)]]</td>
-                            <td style="text-align:right">[[_formatLength(location.firstPosition, location.lastPosition)]]</td>
-                            <td style="text-align:left"><span inner-h-t-m-l=[[_createEnsemblHtmlLink(location)]]></span></td>
+                            <th style="text-align:left;">Gene</th>
+                            <th style="text-align:left;">Chromosomal location</th>
+                            <th style="text-align:left;">Orientation</th>
+                            <th>Position on chromosome</th>
+                            <th style="text-align:right;">Length</th>
+                            <th style="text-align:left;">Ensembl</th>
                         </tr>
-                    </template>
-                    </tbody>
-                </table>
-            </div>
-
-            <template is="dom-if" if="[[_chosenLocation]]">
-                <table id="mappingTable">
-                    <tbody>
-                        <template is="dom-if" if="[[_multipleLocations(_locations)]]">
+                        </thead>
+                        <tbody>
+                        <template is="dom-repeat" items="[[_getSortedLocations(_locations)]]" as="location">
                             <tr>
-                                <td class="gray-x">Mapping</td>
-                                <td>This protein has [[_locations.length]] Ensembl mappings.</td>
-                            </tr>
-                            <tr>
-                                <td class="gray-x">Alignment</td>
-                                <td>The isoform is aligned on <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.</td>
+                                <td style="text-align:left;">[[_formatGeneName(location)]]</td>
+                                <td style="text-align:left;">[[location.prettyLocation]]</td>
+                                <td style="text-align:left;">[[_formatOrientation(location)]]</td>
+                                <td style="text-align:center">[[_formatLocation(location)]]</td>
+                                <td style="text-align:right">[[_formatLength(location.firstPosition, location.lastPosition)]]</td>
+                                <td style="text-align:left"><span inner-h-t-m-l=[[_createEnsemblHtmlLink(location)]]></span></td>
                             </tr>
                         </template>
-                        <tr>
-                            <template is="dom-if" if="[[!_isPositionDefined(_chosenLocation)]]">
-                                <div class="bg-blue-light-xx">
-                                Gene not mapped on the current assembly of the human genome.
+                        </tbody>
+                    </table>
+                </div>
+
+                <template is="dom-if" if="[[_chosenLocation]]">
+                    <table id="mappingTable">
+                        <tbody>
+                            <template is="dom-if" if="[[_multipleLocations(_locations)]]">
+                                <tr>
+                                    <td class="gray-x">Mapping</td>
+                                    <td>This protein has [[_locations.length]] Ensembl mappings.</td>
+                                </tr>
+                                <tr>
+                                    <td class="gray-x">Alignment</td>
+                                    <td>The isoform is aligned on <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.</td>
+                                </tr>
+                            </template>
+                            <tr>
+                                <template is="dom-if" if="[[!_isPositionDefined(_chosenLocation)]]">
+                                    <div class="bg-blue-light-xx">
+                                    Gene not mapped on the current assembly of the human genome.
+                                    </div>
+                                </template>
+                                <template is="dom-if" if="[[_isPositionDefined(_chosenLocation)]]">
+                                    <td class="gray-x">Coding positions</td>
+                                    <td>From [[_numberWithCommas(_startCodingPosition)]] to [[_numberWithCommas(_stopCodingPosition)]]
+                                    [length: [[_formatLength(_startCodingPosition, _stopCodingPosition)]] bp]</td>
+                                </template>
+                            </tr>
+                        </tbody>
+                    </table>
+                </template>
+
+                <!-- non aligned isoforms -->
+                <template is="dom-if" if="[[_hasNonAlignedIso(nonAlignedIsoforms)]]">
+                    <div class="bg-blue-light-xx">
+                        <template is="dom-if" if="[[_hasSingleNonAlignedIso(nonAlignedIsoforms)]]">
+                            <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
+                                <div>
+                                <span>Isoform
+                                <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
+                                is not aligned on gene.</span>
                                 </div>
                             </template>
-                            <template is="dom-if" if="[[_isPositionDefined(_chosenLocation)]]">
-                                <td class="gray-x">Coding positions</td>
-                                <td>From [[_numberWithCommas(_startCodingPosition)]] to [[_numberWithCommas(_stopCodingPosition)]]
-                                [length: [[_formatLength(_startCodingPosition, _stopCodingPosition)]] bp]</td>
+                        </template>
+
+                        <template is="dom-if" if="[[_hasMultipleNonAlignedIso(nonAlignedIsoforms)]]">
+                            <span>Isoforms
+                            <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
+                                <span>
+                                    <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a><template style="white-space: nowrap;" is="dom-if" if="[[!_isLastIndex(nonAlignedIsoforms, index)]]">,</template>
+                                </span>
                             </template>
-                        </tr>
-                    </tbody>
-                </table>
-            </template>
-
-            <!-- non aligned isoforms -->
-            <template is="dom-if" if="[[_hasNonAlignedIso(nonAlignedIsoforms)]]">
-                <div class="bg-blue-light-xx">
-                    <template is="dom-if" if="[[_hasSingleNonAlignedIso(nonAlignedIsoforms)]]">
-                        <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
-                            <div>
-                            <span>Isoform
-                            <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
-                            is not aligned on gene.</span>
-                            </div>
+                                are not aligned on gene.</span>
                         </template>
-                    </template>
-
-                    <template is="dom-if" if="[[_hasMultipleNonAlignedIso(nonAlignedIsoforms)]]">
-                        <span>Isoforms
-                        <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
-                            <span>
-                                <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a><template style="white-space: nowrap;" is="dom-if" if="[[!_isLastIndex(nonAlignedIsoforms, index)]]">,</template>
-                            </span>
-                        </template>
-                            are not aligned on gene.</span>
-                    </template>
-                </div>
-            </template>
+                    </div>
+                </template>
             </div>
         </template>
-        </div>
     </template>
     <script>
         Polymer({
@@ -198,6 +200,10 @@ gene information section demo
                 _stopCodingPosition: {
                     type: Number,
                     value: 0
+                },
+                _dataLoaded: {
+                    type: Boolean,
+                    observer: '_updateSpinnerStatus'
                 }
             },
             observers: [
@@ -225,6 +231,8 @@ gene information section demo
             },
             _handleResponseData: function (data) {
 
+                var self = this;
+
                 this._locations = data.entry.chromosomalLocations;
                 this._chosenLocation = this._locations
                     .filter(function(location) {
@@ -233,6 +241,10 @@ gene information section demo
                     .reduce(function(locations) {
                         return (locations.length > 0) ? locations[0] : null;
                     });
+
+                Polymer.RenderStatus.afterNextRender(self, function () {
+                    self._dataLoaded = true;
+                });
             },
             _handleError: function (error) {
                 console.error("Error: ", error);
@@ -331,10 +343,16 @@ gene information section demo
 
                 if (_chosenLocation && startExonPosition > 0 &&  stopExonPosition > 0) {
 
-                    console.log("_calcCodingPositions", startExonPosition, stopExonPosition, _chosenLocation);
-
                     this._startCodingPosition = _chosenLocation.firstPosition + startExonPosition - 1;
                     this._stopCodingPosition = _chosenLocation.firstPosition + stopExonPosition - 1;
+                }
+            },
+            _updateSpinnerStatus: function(dataLoaded) {
+
+                if (dataLoaded) {
+
+                    this.$.spinner.active = false;
+                    this.$.spinner.hidden = true;
                 }
             }
         });
