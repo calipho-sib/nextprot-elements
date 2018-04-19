@@ -113,12 +113,6 @@ gene information section demo
                     </table>
                 </div>
 
-                <!--
-TODO
-Single isoform NOT mapped on gene, then display: Isoform Iso 1 is not aligned on gene.
-https://www.nextprot.org/entry/NX_Q9UI25/exons
-More examples: NX_P10319, NX_Q9UI25, NX_P30453
-                -->
                 <template is="dom-if" if="[[_chosenLocation]]">
                     <table id="mappingTable">
                         <tbody>
@@ -150,11 +144,11 @@ More examples: NX_P10319, NX_Q9UI25, NX_P30453
                     </table>
                 </template>
 
-                <!-- non aligned isoforms -->
-                <template is="dom-if" if="[[_hasNonAlignedIso(nonAlignedIsoforms)]]">
+                <!-- non mapped isoforms -->
+                <template is="dom-if" if="[[_hasNonMappedIso(nonMappedIsoforms)]]">
                     <div class="bg-blue-light-xx">
-                        <template is="dom-if" if="[[_hasSingleNonAlignedIso(nonAlignedIsoforms)]]">
-                            <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
+                        <template is="dom-if" if="[[_hasSingleNonAlignedIso(nonMappedIsoforms)]]">
+                            <template is="dom-repeat" items="[[nonMappedIsoforms]]" as="nonAlignedIso">
                                 <div>
                                 <span>Isoform
                                 <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
@@ -163,11 +157,11 @@ More examples: NX_P10319, NX_Q9UI25, NX_P30453
                             </template>
                         </template>
 
-                        <template is="dom-if" if="[[_hasMultipleNonAlignedIso(nonAlignedIsoforms)]]">
+                        <template is="dom-if" if="[[_hasMultipleNonAlignedIso(nonMappedIsoforms)]]">
                             <span>Isoforms
-                            <template is="dom-repeat" items="[[nonAlignedIsoforms]]" as="nonAlignedIso">
+                            <template is="dom-repeat" items="[[nonMappedIsoforms]]" as="nonAlignedIso">
                                 <span>
-                                    <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a><template style="white-space: nowrap;" is="dom-if" if="[[!_isLastIndex(nonAlignedIsoforms, index)]]">,</template>
+                                    <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a><template style="white-space: nowrap;" is="dom-if" if="[[!_isLastIndex(nonMappedIsoforms, index)]]">,</template>
                                 </span>
                             </template>
                                 are not aligned on gene.</span>
@@ -185,7 +179,7 @@ More examples: NX_P10319, NX_Q9UI25, NX_P30453
                     type: Object,
                     value: {}
                 },
-                nonAlignedIsoforms: {
+                nonMappedIsoforms: {
                     type: Array,
                     value: []
                 },
@@ -239,7 +233,6 @@ More examples: NX_P10319, NX_Q9UI25, NX_P30453
             },
             _handleResponseData: function (data) {
 
-                console.log(data);
                 var self = this;
 
                 this._locations = data.entry.chromosomalLocations;
@@ -318,21 +311,22 @@ More examples: NX_P10319, NX_Q9UI25, NX_P30453
 
                 return this.startExonPosition > 0 && this.lastExonPosition > 0;
             },
-            _hasNonAlignedIso: function (nonAlignedIsoforms) {
+            _hasNonMappedIso: function (nonMappedIsoforms) {
 
-                return nonAlignedIsoforms && nonAlignedIsoforms.length > 0;
+                return this._isChromosomeLocationDefined(this._chosenLocation) &&
+                    (nonMappedIsoforms && nonMappedIsoforms.length > 0 || this._createEnsemblHtmlLink(this._chosenLocation) === "");
             },
-            _hasSingleNonAlignedIso: function (nonAlignedIsoforms) {
+            _hasSingleNonAlignedIso: function (nonMappedIsoforms) {
 
-                return nonAlignedIsoforms && nonAlignedIsoforms.length === 1;
+                return nonMappedIsoforms && nonMappedIsoforms.length === 1;
             },
-            _hasMultipleNonAlignedIso: function (nonAlignedIsoforms) {
+            _hasMultipleNonAlignedIso: function (nonMappedIsoforms) {
 
-                return nonAlignedIsoforms && nonAlignedIsoforms.length > 1;
+                return nonMappedIsoforms && nonMappedIsoforms.length > 1;
             },
-            _isLastIndex: function (nonAlignedIsoforms, index) {
+            _isLastIndex: function (nonMappedIsoforms, index) {
 
-                return index === nonAlignedIsoforms.length-1;
+                return index === nonMappedIsoforms.length-1;
             },
             _getSortedLocations: function(locations) {
                 return locations.sort(function(loc1, loc2) {

@@ -30,7 +30,7 @@ Exon view demo
         </div>
         <div class="row">
             <div class="nxSection" class="col-md-12">
-                <gene-information-section nx-config="[[nxConfig]]" non-aligned-isoforms="[[_nonAlignedIsoforms]]"
+                <gene-information-section nx-config="[[nxConfig]]" non-mapped-isoforms="[[_nonMappedIsoforms]]"
                                           start-exon-position="[[_startCodingPosition]]" stop-exon-position="[[_stopCodingPosition]]"></gene-information-section>
             </div>
         </div>
@@ -52,7 +52,7 @@ Exon view demo
                     type: Object,
                     observer: "_calcFirstCodingPositions"
                 },
-                _nonAlignedIsoforms: {
+                _nonMappedIsoforms: {
                     type: Array,
                     value: []
                 },
@@ -77,7 +77,7 @@ Exon view demo
 
                         self._npClient.getJSON("/entry/" + self.nxConfig.entry + "/isoform.json")
                             .then(function (response) {
-                                self._handleNonAlignedIsoforms(response);
+                                self._handlenonMappedIsoforms(response);
                             })
                             .catch(function (error) {
                                 self._handleError(error);
@@ -97,15 +97,15 @@ Exon view demo
             _handleResponseData: function (data) {
                 this.data = data;
             },
-            _handleNonAlignedIsoforms: function (data) {
+            _handlenonMappedIsoforms: function (data) {
                 var self = this;
 
                 var isoforms = data.entry.isoforms.filter(function(iso) {
 
-                    return self.data.nonAlignedIsoforms.indexOf(iso.isoformAccession) !== -1;
+                    return self.data.nonMappedIsoforms.indexOf(iso.isoformAccession) !== -1;
                 });
 
-                this._nonAlignedIsoforms = isoforms.map(function (iso) {
+                this._nonMappedIsoforms = isoforms.map(function (iso) {
                     return {
                         "name": iso.mainEntityName.name,
                         "accession": iso.isoformAccession
