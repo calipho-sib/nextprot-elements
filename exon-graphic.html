@@ -47,8 +47,8 @@ Exon graphic demo
             },
             _drawExon: function() {
                 var svg = d3.select(this).select("#svgTag")
-                    .style("width", this._svgWidth)
-                    .style("height", this._svgHeight)
+                    .attr("width", this._svgWidth)
+                    .attr("height", this._svgHeight)
                     .attr("transform","translate(0,2)");
 
                 var codingRegionCoordinates;
