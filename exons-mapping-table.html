@@ -19,20 +19,17 @@ exons mapping table demo
                 white-space: nowrap;
             }
 
-            #exonTable{
-                border: solid lightgray 1px;
-                width:auto;
-                font-size: 95%;
-            }
-
-            /*#exonTable thead, #exonTable tbody {
-                float: left;
-                width: 100%;
-            }
-            #exonTable tbody {
-                overflow-y: scroll;
+            /*
+             https://uxdesign.cc/design-better-data-tables-4ecc99d23356
+             */
+            .fixed-header tbody {
+                display:block;
+                overflow: auto;
                 height: 400px;
-            }*/
+            }
+            .fixed-header thead {
+                display: block;
+            }
 
             #exonTable thead {
                 background-color: #f8f8f8;
