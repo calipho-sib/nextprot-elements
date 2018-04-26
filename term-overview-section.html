@@ -105,7 +105,12 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 <template is="dom-if" if="[[term.ontologyDisplayName]]">
                     <div id="term-ontology" class="row">
                         <div class="col-md-3 col-xs-3 grey-x text-align-right">ONTOLOGY :</div>
-                        <div class="col-md-9 col-xs-9"> [[term.ontologyDisplayName]] → [[term.accession]] <span class="errorcomment">missing link</span></div>
+                        <template is="dom-if" if="[[!term.selfResolvedUrl]]">
+                            <div class="col-md-9 col-xs-9"> [[term.ontologyDisplayName]] → [[term.accession]] </div>
+                        </template>
+                        <template is="dom-if" if="[[term.selfResolvedUrl]]">
+                            <div class="col-md-9 col-xs-9"> [[term.ontologyDisplayName]] → <a class="ext-link" target='_blank' href="[[term.selfResolvedUrl]]">[[term.accession]]</a> </div>
+                        </template>
                     </div>
                 </template>
                 <template is="dom-if" if="[[term.definition]]">
@@ -291,6 +296,10 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
 
                 if(term.synonyms && (term.synonyms.length > 0)){
                     term.synonyms = term.synonyms.sort(this._sort);
+                }
+
+                if(term.selfXref && term.selfXref.resolvedUrl !== "None"){
+                    term.selfResolvedUrl = term.selfXref.resolvedUrl;
                 }
 
                 //remove synonym if equals to name or description, but CAREFUL WITH CASE SENSITVE! Chang Liver is not the same as Chang liver accoring to Amos and we need to keep both!
