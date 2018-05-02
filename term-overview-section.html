@@ -298,7 +298,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     term.synonyms = term.synonyms.sort(this._sort);
                 }
 
-                if(term.selfXref && term.selfXref.resolvedUrl !== "None"){
+                if(term.selfXref && term.selfXref.resolvedUrl !== "None" && (term.selfXref.resolvedUrl.toLowerCase().indexOf("unipathway.org") === -1)){
                     term.selfResolvedUrl = term.selfXref.resolvedUrl;
                 }
 
