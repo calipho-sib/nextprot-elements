@@ -374,7 +374,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
 
             },
             _sort: function (a, b) {
-                console.log(a , "   ", b)
+
                 if(a.databaseName) {
                     if(a.databaseName === b.databaseName){
                         return a.accession.trim().toLowerCase() < b.accession.trim().toLowerCase() ? -1 : 1;
@@ -384,7 +384,15 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     return a["propertyValue"].trim().toLowerCase() < b["propertyValue"].trim().toLowerCase() ? -1 : 1;
                 }
                 else if(a["name"]) {
-                    return a["name"].trim().toLowerCase() < b["name"].trim().toLowerCase() ? -1 : 1;
+                    var result = a["name"].trim().toLowerCase() < b["name"].trim().toLowerCase() ? -1 : 1;
+                    if(a["name"].trim().toLowerCase() === b["name"].trim().toLowerCase() ){
+                        if(a["description"]) {
+                            return a["description"].trim().toLowerCase() < b["description"].trim().toLowerCase() ? -1 : 1;
+                        }else {
+                            return result;
+                        }
+                    }
+                    return result;
                 }else {
                     return a.trim().toLowerCase() < b.trim().toLowerCase() ? -1 : 1;
                 }
