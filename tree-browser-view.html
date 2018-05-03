@@ -30,7 +30,11 @@ View for tree browser view:
                 params='{"type":"all"}'
                 handle-as="json"
                 on-response="ancestorBuild" ></iron-ajax>
-        <term-overview-section nx-config=[[nxConfig]]></term-overview-section>
+        <div class="row padded-bottom">
+            <div class="col-md-12">
+                <term-overview-section nx-config=[[nxConfig]]></term-overview-section>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="title-header">

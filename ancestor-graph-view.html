@@ -27,14 +27,12 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 background: #f8f8f8;
                 overflow-y: auto;
             }
-
-            .title-header {
-                border-bottom: 1px solid rgb(170, 170, 170);
-                font-weight: 500;
-                font-size: 1.8em;
-            }
         </style>
-        <term-overview-section nx-config=[[nxConfig]]></term-overview-section>
+        <div class="row padded-bottom">
+            <div class="col-md-12">
+                <term-overview-section nx-config=[[nxConfig]]></term-overview-section>
+            </div>
+        </div>
         <ancestor-graph-section accession-input=[[nxConfig.termAccession]] subgraph-distance="0" regex="1" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-section>
     </template>
 

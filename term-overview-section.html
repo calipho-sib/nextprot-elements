@@ -298,7 +298,8 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     term.synonyms = term.synonyms.sort(this._sort);
                 }
 
-                if(term.selfXref && term.selfXref.resolvedUrl !== "None" && (term.selfXref.resolvedUrl.toLowerCase().indexOf("unipathway.org") === -1)){
+                //Don't add any reference when it is None or when it is UniPathWay and evocontology (not maintained anymore)
+                if(term.selfXref && term.selfXref.resolvedUrl !== "None" && (term.selfXref.resolvedUrl.toLowerCase().indexOf("unipathway.org") === -1) && (term.selfXref.resolvedUrl.toLowerCase().indexOf("evocontology.org") === -1) ){
                     term.selfResolvedUrl = term.selfXref.resolvedUrl;
                 }
 
