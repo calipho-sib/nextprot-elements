@@ -151,6 +151,18 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
             },
 
             edgesDotBuild: function (APIedges) {
+
+                var colors = {
+                    "part_of" : "brown",
+                    "negatively_regulates": "red",
+                    "is_a": "black",
+                    "positively_regulates": "green",
+                    "used_in": "blue",
+                    "regulates": "orange",
+                    "derives_from": "pink"
+                }
+
+
 //                Where the edges data will be stored
                 var dotEdgesBuilt = "";
 
@@ -159,11 +171,20 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     //variables which call object dictionary:
                     var head = APIedges[i]["head"];
                     var tail = APIedges[i]["tail"];
-
+                    var label = APIedges[i]["label"];
+                    var edgeColor = "black";
+                    if(label){
+                        edgeColor = colors[label];
+                    }else {
+                        label = ""
+                    }
                     dotEdgesBuilt += '"'+head+'"'
                                     + " -> "
                                     + '"'+tail+'"'
                                     + " [arrowsize="+ this.arrowInput
+                                    + ', color=" ' + edgeColor + ' "'
+                                    + ', fontsize="10"'
+                                    + ', label="' + label + '"'
                                     + ", weight=2];";
                 }
 
