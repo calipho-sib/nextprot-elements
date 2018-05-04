@@ -530,7 +530,7 @@ Protein overview
                     self._handleError(error);
                 });
 
-                this.nxEntry = this.nxConfig.entry || nx.getEntryName();
+                this.nxEntry = this.nxConfig.entry || this._npClient.getEntryName();
             },
             _initApiClient: function () {
                 this._npClient = new Nextprot.Client("neXtProt protein overview", "Calipho Group");

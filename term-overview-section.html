@@ -1,0 +1,403 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../neon-animation/animations/scale-down-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../neon-animation/animations/slide-left-animation.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="atomic-formula-item.html">
+
+<!--
+`term-overview-section`
+Term overview section
+
+Specifications can be found in here:
+https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs
+https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/edit
+
+
+##### Example
+    <term-overview-section nx-config='{"term": "TS-0079"}'></term-overview-section>
+@demo demo/term-overview-section-demo.html
+-->
+
+<dom-module id="term-overview-section" is="dom-if" if="[[accessionName]]">
+
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+
+            iron-collapse {
+                --iron-collapse-transition-duration: 500ms;
+            }
+
+            h3 {
+                text-align: left;
+            }
+
+            dd {<
+                margin-left: 15px;
+            }
+
+            dt {
+                font-weight: inherit;
+            }
+
+            dl {
+                margin: 0px;
+            }
+
+            .ec-link {
+                display: inline;
+            }
+
+            .multiple-prop {
+                padding: 0px;
+            }
+
+            .errorcomment {
+                font-size: 9px;
+                color: orange;
+            }
+        </style>
+        <div id="termOverview">
+            <h3>
+                <template is="dom-if" if="[[term.name]]">
+                    <template is="dom-if" if="[[_isEnzyme(term)]]">
+                        [[term.name]] → [[term.description]]
+                    </template>
+                    <template is="dom-if" if="[[!_isEnzyme(term)]]">
+                        [[term.accession]] → [[term.name]]
+                    </template>
+                </template>
+                <span style="font-size: 12px"><a target="_blank" href="http://old.nextprot.org/db/term/[[term.accession]]">(NP1 version)</a></span>
+                [[data.entryName]]
+                <template is="dom-if" if="[[data.recommendedProteinName]]">
+                    <template is="dom-if" if="[[data.recommendedProteinName.EC.0]]">
+                        [
+                        <template is="dom-repeat" items="[[data.recommendedProteinName.EC]]" as="ec">
+                            <div class="ec-link"><a href="[[nxUrl]]/term/[[ec]]">EC [[ec]]</a></div>
+                            <template is="dom-if" if="[[!_checkIfLast(data.recommendedProteinName.EC,index)]]">,
+                            </template>
+                        </template>
+                        ]
+                    </template>
+                    <template is="dom-if" if="[[data.recommendedProteinName.mainShortName]]">
+                        ([[data.recommendedProteinName.mainShortName]])
+                    </template>
+                </template>
+                <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+            </h3>
+        </div>
+        <div id="collapseInfosLess">
+            <div id="term-info">
+                <template is="dom-if" if="[[term.ontologyDisplayName]]">
+                    <div id="term-ontology" class="row">
+                        <div class="col-md-3 col-xs-3 grey-x text-align-right">ONTOLOGY :</div>
+                        <template is="dom-if" if="[[!term.selfResolvedUrl]]">
+                            <div class="col-md-9 col-xs-9"> [[term.ontologyDisplayName]] → [[term.accession]] </div>
+                        </template>
+                        <template is="dom-if" if="[[term.selfResolvedUrl]]">
+                            <div class="col-md-9 col-xs-9"> [[term.ontologyDisplayName]] → <a class="ext-link" target='_blank' href="[[term.selfResolvedUrl]]">[[term.accession]]</a> </div>
+                        </template>
+                    </div>
+                </template>
+                <template is="dom-if" if="[[term.definition]]">
+                    <div id="term-definition" class="row">
+                        <div class="col-md-3 col-xs-3 grey-x text-align-right">DEFINITION :</div>
+                        <div class="col-md-9 col-xs-9"> [[term.definition]]  </div>
+                    </div>
+                </template>
+                <template is="dom-if" if="[[term.synonyms]]">
+                    <template is="dom-if" if="[[term.synonyms.0]]">
+                        <div id="term-synonyms" class="row">
+                            <div class="col-md-3 col-xs-3 grey-x text-align-right">SYNONYMS :</div>
+                            <div class="col-md-9 col-xs-9">
+                                <dl>
+                                    <template is="dom-repeat" items="[[term.synonyms]]" as="synonym">
+                                        <dt>[[synonym]]</dt>
+                                    </template>
+                                </dl>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template is="dom-repeat" items="[[termprops]]" as="prop">
+                    <template is="dom-if" if="[[_getValueProperties(term, prop.key)]]">
+                        <div id="term-[[pro.key]]" class="row">
+                            <div class="col-md-3 col-xs-3 grey-x text-align-right">[[prop.label]] :</div>
+                            <div class="col-md-9 col-xs-9">
+                                <dl>
+                                    <template is="dom-repeat" items="[[_getValueProperties(term, prop.key)]]" as="property">
+                                        <template is="dom-if" if="[[prop.templateUrl]]">
+                                            <dt class="col-md-9 col-xs-9 multiple-prop"> [[_getTemplateUrl(term, property, 'label')]] <a href="[[_getTemplateUrl(term, property, 'url')]]" class="ext-link">[[_getTemplateUrl(term, property, 'urlLabel')]]</a> </dt>
+                                        </template>
+                                        <template is="dom-if" if="[[!prop.templateUrl]]">
+                                                <template is="dom-if" if="[[prop.atomicFormula]]">
+                                                        <dt class="col-md-9 col-xs-9 multiple-prop"><atomic-formula-item formula=[[property.propertyValue]]></atomic-formula-item></dt>
+                                                </template>
+                                                <template is="dom-if" if="[[!prop.atomicFormula]]">
+                                                        <dt class="col-md-9 col-xs-9 multiple-prop">[[property.propertyValue]]</dt>
+                                                </template>
+                                        </template>
+                                    </template>
+                                </dl>
+                            </div>
+                            <template is="dom-if" if="[[prop.ERROR_COMMENT]]">
+                                <div class="col-xs-offset-3 col-md-offset-3 col-md-9 col-xs-9">
+                                    <p class="errorcomment">[[prop.ERROR_COMMENT]]</p>
+                                </div>
+                        </template>
+                        </div>
+                    </template>
+                </template>
+                <template is="dom-if" if="[[term.relatedTerms]]">
+                    <template is="dom-if" if="[[term.relatedTerms.0]]">
+                        <div id="related-terms" class="row">
+                            <div class="col-md-3 col-xs-3 grey-x text-align-right">RELATED TERMS :</div>
+                            <div class="col-md-9 col-xs-9">
+                                <dl>
+                                    <template is="dom-repeat" items="[[term.relatedTerms]]" as="rto">
+                                        <dt>[[rto.name]] → [[rto.description]] <a target="_blank" href="[[rto.link]]">[[[rto.accession]]]</a></dt>
+                                    </template>
+                                </dl>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template is="dom-if" if="[[term.externalReferences]]">
+                    <template is="dom-if" if="[[term.externalReferences.0]]">
+                        <div id="external-references" class="row">
+                            <div class="col-md-3 col-xs-3 grey-x text-align-right">EXTERNAL REFERENCES :</div>
+                            <div class="col-md-9 col-xs-9">
+                                <dl>
+                                    <template is="dom-repeat" items="[[term.externalReferences]]" as="xref">
+                                        <dt>[[xref.databaseName]]: <a class="ext-link" target='_blank' href="[[xref.resolvedUrl]]">[[xref.accession]]</a></dt>
+                                    </template>
+                                </dl>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'term-overview-section',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                term: {
+                    type: Object,
+                    value: {}
+                },
+                termprops: {
+                    type: Array,
+                    value: [
+
+                            {key: "Feature category", label: "CATEGORY"},
+                            {key: "Category", label: "CATEGORY"},
+
+                            {key: "Catalyst", label: "CATALYST"},
+                            {key: "Reaction", label: "REACTION"},
+                            {key: "Sex of cell", label: "SEX OF CELL"},
+                            {key: "Comment", label: "COMMENT"},
+                            {key: "Target", label: "TARGETED AMINO ACID"},
+                            {key: "Position of the modification", label: "POSITION OF THE MODIFICATION"},
+                            {key: "Cellular location", label: "CELLULAR LOCATION"},
+                            {key: "Taxonomic range", label: "TAXONOMIC RANGE", templateUrl: "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?lvl=0&id="},
+                            {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA", atomicFormula: true},
+                            {key: "Average mass difference", label: "AVERAGE MASS DIFFERENCE"},
+                            {key: "Monoisotopic mass difference", label: "MONOISOTONIC MASS DIFFERENCE"}
+
+
+                        //FIXME    Others from DB
+                        /*
+                        Cellular location			589
+                        			930
+                        Feature key				632
+                        Uniprot status			35
+                        */
+
+                    ]
+                }
+            },
+            ready: function () {
+                this._npClient = getNXClient(this.nxConfig);
+                var self = this;
+                // fetch data from overview
+                this._npClient.getTermByAccession(self.nxConfig.termAccession).then(function (term) {
+
+                    self.term = self._convertForTemplate(term["cvTerm"]);
+                    // load data
+                    //self._loadData(overview);
+                    self.$.spinner.active = false;
+
+                }, function (error) {
+                    self._handleError(error);
+                });
+            },
+            _isEnzyme: function(term){
+                return (term.ontology == "EnzymeClassificationCv")
+            },
+            _getTemplateUrl: function(term, prop, label){
+                if(prop.propertyName === "Taxonomic range"){
+                    if(label === "label"){
+                        return prop.propertyValue.split(" ")[0].slice(0, -1);
+                    }else if(label === "urlLabel"){
+                        return prop.propertyValue.split(" ")[1]
+                    }else if(label === "url"){
+                        var trid = prop.propertyValue.split(" ")[1].split(":")[1]
+                        return ("https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?lvl=0&id=" + trid)
+                    }
+                }
+            },
+            _getValueProperties : function (term, propertyKey){
+                if(term[propertyKey]){
+                    return term[propertyKey];
+                }
+            },
+            _getProperty: function (propertyName, properties){
+                var result = []
+                if(properties && (properties.length > 0)) {
+                    properties.forEach(function(prop){
+                        var ploop = prop.propertyName.replace(/ /g,'').toLowerCase();
+                        var parg = propertyName.replace(/ /g,'').toLowerCase();
+                        if(ploop === parg){
+                            var pv = prop.propertyValue;
+                            prop.propertyValue = pv[0].toUpperCase()+pv.substr(1);
+                            result.push(prop);
+                        }
+                    })
+                }
+                return result;
+            },
+            _convertForTemplate: function (cvTerm) {
+                var self = this;
+                var term = JSON.parse(JSON.stringify(cvTerm));
+
+                if(term.name !== term.description && term.ontology != "EnzymeClassificationCv"){
+                    term.definition = term.description;
+                }
+
+                if(term.synonyms && (term.synonyms.length > 0)){
+                    term.synonyms = term.synonyms.sort(this._sort);
+                }
+
+                //Don't add any reference when it is None or when it is UniPathWay and evocontology (not maintained anymore)
+                if(term.selfXref && term.selfXref.resolvedUrl !== "None" && (term.selfXref.resolvedUrl.toLowerCase().indexOf("unipathway.org") === -1) && (term.selfXref.resolvedUrl.toLowerCase().indexOf("evocontology.org") === -1) ){
+                    term.selfResolvedUrl = term.selfXref.resolvedUrl;
+                }
+
+                //remove synonym if equals to name or description, but CAREFUL WITH CASE SENSITVE! Chang Liver is not the same as Chang liver accoring to Amos and we need to keep both!
+                //Non, il n'y a jamais de diplication entre un nom et un synonyme ds le Cellosaurus (c'est vérifié par le Celloparser d'Alain).
+                //Il s'agit de differences de "casse" qui sont importante pour les cell lines, donc "Chang Liver" est différent de "Chang liver".
+                //Il ne faut en général pas essayer de faire une règle de ce genre. Si par hasard dans un CV ou une ontologie il y a une vrai
+                //duplication entre le nom et le synonyme: tant pis, on avertira les personnes qui le développed.
+                if(term.synonyms && term.synonyms.length > 0){
+                    term.synonyms = term.synonyms.filter(function(s){return s.trim() !== term.name.trim()})
+                    term.synonyms = term.synonyms.filter(function(s){return s.trim() !== term.description.trim()})
+                }
+
+                this.termprops.forEach(function (tp){
+                    self._addPropertyToTermIfPresent(tp.key, term);
+                })
+
+
+                if(term.acsOfRelatedTerms && (term.acsOfRelatedTerms.length > 0)){
+                    term.relatedTerms = []
+                    term.acsOfRelatedTerms.forEach(function (rt){
+                        term.xrefs.forEach(function (x){
+                            if(x.accession === rt){
+                                var rto = {}
+                                x.properties.forEach(function (prop){
+                                    if(prop.name === "term_ontology_display_name"){
+                                        rto["name"] = prop.value
+                                    }else if(prop.name === "term_name"){
+                                        //Upper case first letter
+                                        rto["description"] = prop.value[0].toUpperCase()+prop.value.substr(1);
+                                    }
+                                })
+                                rto.accession = x.accession;
+                                rto.link = "/term/" + x.accession;
+                                term.relatedTerms.push(rto)
+                            }}
+                        )
+                    })
+
+                    term.relatedTerms = term.relatedTerms.sort(self._sort);
+                }
+
+
+
+                //Add external references which are not in related terms already
+                if(term.xrefs && (term.xrefs.length > 0 )){
+                    term.externalReferences = [];
+                    term.xrefs.forEach(function (x){
+                        if(term.acsOfRelatedTerms.indexOf(x.accession) == -1){
+                            term.externalReferences.push(x);
+                        }
+                    })
+                    term.externalReferences = term.externalReferences.sort(this._sort);
+                }
+
+                return term;
+
+            },
+            _addPropertyToTermIfPresent: function (propertyName, term){
+                //DO NOT ADD Cellosaurus comments (part of specifications)
+                if(!(term.ontology === "NextprotCellosaurusCv" && propertyName === "Comment")){
+                    var properties = this._getProperty(propertyName, term.properties);
+                    if(properties && (properties.length > 0)){
+                            if(!(propertyName in term)){
+                                term[propertyName] = []
+                            }
+                            Array.prototype.push.apply(term[propertyName], properties)
+                            var propsOrdered = term[propertyName].sort(this._sort);
+                            term[propertyName] = propsOrdered;
+                    }
+                }
+
+
+            },
+            _sort: function (a, b) {
+
+                if(a.databaseName) {
+                    if(a.databaseName === b.databaseName){
+                        return a.accession.trim().toLowerCase() < b.accession.trim().toLowerCase() ? -1 : 1;
+                    }else return a.databaseName.trim().toLowerCase() < b.databaseName.trim().toLowerCase() ? -1 : 1;
+                }
+                else if(a["propertyValue"]) {
+                    return a["propertyValue"].trim().toLowerCase() < b["propertyValue"].trim().toLowerCase() ? -1 : 1;
+                }
+                else if(a["name"]) {
+                    var result = a["name"].trim().toLowerCase() < b["name"].trim().toLowerCase() ? -1 : 1;
+                    if(a["name"].trim().toLowerCase() === b["name"].trim().toLowerCase() ){
+                        if(a["description"]) {
+                            return a["description"].trim().toLowerCase() < b["description"].trim().toLowerCase() ? -1 : 1;
+                        }else {
+                            return result;
+                        }
+                    }
+                    return result;
+                }else {
+                    return a.trim().toLowerCase() < b.trim().toLowerCase() ? -1 : 1;
+                }
+            }
+        })
+    </script>
+</dom-module>

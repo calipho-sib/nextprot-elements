@@ -1,0 +1,218 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="relevant-entries-section.html">
+
+<link rel="import" href="paginator-element.html">
+<link rel="import" href="entry-item.html">
+
+<!--
+`relevant-entries-section`
+
+@demo demo/relevant-entries-section-demo.html
+-->
+<dom-module id="relevant-entries-section">
+    <template>
+        <style is="custom-style" include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                --paper-toggle-button-checked-button-color: #428bca;
+                --paper-toggle-button-checked-bar-color: #428bca;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+
+            .control-header {
+                margin: 10px 0;
+                padding-bottom: 10px;
+                display: flex;
+                border-bottom: 1px solid #E7EAEC;
+            }
+
+            .mode-toggle {
+                display: inline-flex;
+                margin-top: -3px;
+            }
+
+            .toggle-label {
+                padding: 5px 10px 5px 3px;
+            }
+
+            .title-header {
+                border-bottom: 1px solid rgb(170, 170, 170);
+                font-weight: 500;
+                font-size: 1.8em;
+            }
+
+            .padded-bottom {
+                padding-bottom: 10px;
+            }
+
+            .padded-top {
+                padding-top: 5px;
+            }
+
+            .more-bottom-margin {
+                margin-bottom: 5px;
+            }
+
+            a.disabled {
+                pointer-events: none;
+                color: black;
+                font-weight: bolder;
+            }
+
+            .bg-grey {
+                background: #F3F3F3;
+                border-radius: 5px;
+                margin-right: 5px;
+                padding: 2px;
+            }
+
+            .over-threshold-warning {
+                color: #906013;
+                font-size: 12px;
+                font-weight: 900;
+                margin-left: 5px;
+            }
+
+        </style>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-header">
+                    Relevant for
+                </div>
+                <template is="dom-if" if="[[entries.length]]">
+                    <div class="control-header">
+                        <div class="no-padding col-lg-5">
+                            <template is="dom-if" if="[[entries]]">
+                                Proteins [[from]] to [[to]] of [[entries.length]]
+                            </template>
+                            <template is="dom-if" if="[[_beyondMaximumEntries(relatedEntryCount)]]">
+                                <span class="over-threshold-warning" title="The first 500 most relevant entries were displayed below."><span class="fa fa-exclamation-circle"></span> over [[relatedEntryCount]]</span>
+                            </template>
+                        </div>
+                        <div class="col-lg-10 ">
+                            <span class="col-lg-2">
+                                show&nbsp;
+                                <select on-change="_changePageSize">
+                                    <template is="dom-repeat" items="{{pageSizeOptions}}" as="pageSizeOption">
+                                        <option value="{{pageSizeOption}}"
+                                                selected$="{{_isPageSizeOptionSelected(pageSizeOption)}}">{{pageSizeOption}}
+                                        </option>
+                                    </template>
+                                </select>
+                            </span>
+                            <span class="bg-grey">
+                                <a id="summary-link" class$="[[_summaryLinkClass]]" role="button" on-click="_updateLinks">summary</a> |
+                                <a id="details-link" class$="[[_detailsLinkClass]]" role="button" on-click="_updateLinks">details</a>
+                            </span>
+                        </div>
+                    </div>
+
+                    <paginator-element items="[[entries]]" layout="entry-item"
+                                       page-size="[[pageSize]]" bind-attribute="summary" bind-value="[[summary]]"
+                                       from="{{from}}" to="{{to}}"></paginator-element>
+                </template>
+                <template is="dom-if" if="[[!entries.length]]"><span class="grey-x">Nothing to show</span></template>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'relevant-entries-section',
+            properties: {
+                entries: {
+                    type: Array,
+                    notify: true
+                },
+                summary: {
+                    type: Boolean,
+                    value: false
+                },
+                maxNumberOfEntriesPaginated: {
+                    type: Number,
+                    readOnly: true,
+                    value: 500
+                },
+                //This is the total number of publications that could be available (if more than the maximum which is 500)
+                relatedEntryCount: {
+                    type: Number,
+                    notify: true
+                },
+                pageSize: {
+                    type: Number
+                },
+                pageSizeOptions: {
+                    type: Array,
+                    value: [10, 20, 50, 100]
+                },
+                _preferedPageSizeName: {
+                    type: String,
+                    value: "publications-with-linked-entries-view.prefered-size",
+                    readOnly: true
+                },
+                _summaryLinkClass: {
+                    type: String,
+                    value: ""
+                },
+                _detailsLinkClass: {
+                    type: String,
+                    value: "disabled"
+                }
+            },
+            attached: function () {
+                this.pageSize = this._getPreferedPageSizeFromLocalStorage();
+            },
+            _isPageSizeOptionSelected: function (pageSizeValue) {
+
+                return this._getPreferedPageSizeFromLocalStorage() == pageSizeValue;
+            },
+            _getPreferedPageSizeFromLocalStorage: function () {
+
+                var localStorageSizeValue = localStorage.getItem(this._preferedPageSizeName);
+
+                // does not exist
+                if (localStorageSizeValue === null) {
+                    localStorageSizeValue = 10;
+                    localStorage.setItem(this._preferedPageSizeName, localStorageSizeValue);
+                }
+
+                return parseInt(localStorageSizeValue);
+            },
+            _changePageSize: function (evt) {
+                this.pageSize = parseInt(evt.target[evt.target.selectedIndex].value);
+                localStorage.setItem(this._preferedPageSizeName, this.pageSize);
+            },
+            _handleError: function (error) {
+                console.error("Error: ", error);
+                this.$.spinner.active = false;
+                this.$.spinner.hidden = true;
+
+                this.count = 0;
+            },
+            _toView: function (summary) {
+                return (summary) ? "summary" : "detailed";
+            },
+            _beyondMaximumEntries: function (count) {
+                return count > this.maxNumberOfEntriesPaginated;
+            },
+            _updateLinks: function (evt) {
+                this.summary = (evt.target.id === "summary-link");
+
+                if (this.summary) {
+                    this._detailsLinkClass = "";
+                    this._summaryLinkClass = "disabled";
+                }
+                else {
+                    this._detailsLinkClass = "disabled";
+                    this._summaryLinkClass = "";
+                }
+            }
+        });
+    </script>
+</dom-module>

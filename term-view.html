@@ -1,0 +1,102 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="relevant-entries-section.html">
+
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="paginator-element.html">
+<link rel="import" href="entry-item.html">
+
+<!--
+`term-view`
+Term view demo
+
+@demo demo/term-view-demo.html
+-->
+<dom-module id="term-view">
+    <template>
+        <style is="custom-style" include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                --paper-toggle-button-checked-button-color: #428bca;
+                --paper-toggle-button-checked-bar-color: #428bca;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+
+        </style>
+
+        <div class="row padded-bottom">
+            <div class="col-md-12">
+                <term-overview-section nx-config='[[nxConfig]]'></term-overview-section>
+            </div>
+        </div>
+
+         <relevant-entries-section related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
+
+         <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'term-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {},
+                    notify: true
+
+                },
+                _entries: {
+                    type: Array
+                },
+                relatedEntryCount: {
+                    type: Number,
+                    value: 0
+                }
+            },
+            attached: function () {
+
+                var self = this;
+                var data = {"filter":"","quality":"gold-and-silver","query": self.nxConfig.termAccession ,"sort":"","order":"", rows: 500}
+                $.ajax({
+                    type: "POST",
+                    headers: {
+                        Accept : "application/json; charset=utf-8",
+                        "Content-Type": "application/json; charset=utf-8"
+                    },
+                    url : "https://api.nextprot.org/search/entry.json",
+                    data: JSON.stringify(data),
+                    success : function(response) {
+                        var entries = [];
+                        console.log(response);
+                        response.results.forEach(function (res){
+                            res.accession = res.id;
+                            entries.push(res);
+                        })
+                        self.relatedEntryCount = response.found;
+                        self._entries = entries;
+                        self.$.spinnertermview.active = false;
+                        self.$.spinnertermview.hidden = true;
+                    },
+                    error : function(error) {
+
+                        self.relatedEntryCount = 0;
+                        self._entries = [];
+
+                        console.error("Error: ", error);
+
+                        self.$.spinnertermview.active = false;
+                        self.$.spinnertermview.hidden = true;
+                    }
+                })
+
+
+            }
+        });
+    </script>
+</dom-module>

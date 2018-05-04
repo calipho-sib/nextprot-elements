@@ -1,0 +1,202 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="external-scripts.html">
+
+<!--
+`tree-browser-item`
+-->
+<dom-module id="tree-browser-item">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+            ul {
+                list-style: none;
+                margin-left: 0;
+                padding-left: 1em;
+                text-indent: -1em;
+            }
+        </style>
+        <ul>
+        <template is="dom-if" if="[[_isBold(tree, boldname)]]">
+            <li><span class="glyphicon glyphicon-chevron-right"></span><b> [[tree.value.name]]  </b> [<a href="/term/[[tree.value.accession]]">[[tree.value.accession]]</a>]</li>
+        </template>
+
+        <template is="dom-if" if="[[!_isBold(tree, boldname)]]">
+            <li><span class="glyphicon glyphicon-chevron-right"></span> [[tree.value.name]] [<a href="/term/[[tree.value.accession]]">[[tree.value.accession]]</a>]</li>
+        </template>
+
+        <template is="dom-if" if="[[_hasChildren(tree)]]">
+            <template is="dom-repeat" items="[[tree.children]]" as="childTree" initial-count="1" target-framerate="1000">
+                <tree-browser-item boldname="[[boldname]]" tree="[[childTree]]"></tree-browser-item>
+            </template>
+        </template>
+        </ul>
+    </template>
+    <script>
+        Polymer({
+            is: 'tree-browser-item',
+            properties: {
+                tree: {
+                    type: Object,
+                    value: []
+                },
+                boldname: {
+                    type: Object
+                }
+            },
+            _isBold: function(node, bn) {
+                return (bn === node.value.accession);
+            },
+            _hasChildren: function(node){
+                if(node && node.children && node.children.length > 0){
+                    return true;
+                }else return false;
+            }})
+    </script>
+</dom-module>
+
+
+<!--
+`tree-browser-view`
+View for tree browser view:
+
+@demo demo/tree-browser-view-demo.html
+-->
+<dom-module id="tree-browser-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+            .title-header {
+                border-bottom: 1px solid rgb(170, 170, 170);
+                font-weight: 500;
+                font-size: 1.8em;
+            }
+            tree-browser-item {
+                margin-top: 20px;
+                margin-left: 20px;
+            }
+        </style>
+        <div class="row padded-bottom">
+            <div class="col-md-12">
+                <term-overview-section nx-config=[[nxConfig]]></term-overview-section>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-header">
+                    Tree browser
+                </div>
+                <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
+                <template is="dom-if" if="[[ancestorGraph]]">
+                    <template is="dom-repeat" items="[[trees]]" as="tree">
+                        <tree-browser-item boldname="[[termAccession]]" tree="[[tree]]"></tree-browser-item>
+                    </template>
+                </template>
+            </div>
+        </div>
+    </template>
+
+    <script>
+
+        function TNode(value) {
+
+            this.value = value;
+            this.children = [];
+            this.parent = null;
+
+            this.setParentNode = function(node) {
+                this.parent = node;
+            }
+
+            this.getParentNode = function() {
+                return this.parent;
+            }
+
+            this.addChild = function(node) {
+                node.setParentNode(this);
+                this.children[this.children.length] = node;
+            }
+
+            this.getChildren = function() {
+                return this.children;
+            }
+
+            this.removeChildren = function() {
+                this.children = [];
+            }
+        }
+
+
+    </script>
+
+    <script>
+        Polymer({
+            is: 'tree-browser-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                termAccession: {
+                    type: Object,
+                    value: {}
+                },
+                trees: {
+                    type: Array,
+                    value: []
+                }
+            },
+            attached: function (){
+                var self = this;
+                this.termAccession = this.nxConfig.termAccession;
+                var nxClient = getNXClient(this.nxConfig);
+                nxClient.getJSON("term/" + this.nxConfig.termAccession + "/ancestor-graph.json?type=all").then(function(d) {
+                    console.log("Received data")
+                    self.ancestorGraph = d["ancestor-graph"];
+                    var edges = self.ancestorGraph.edges;
+                    var nodes = self.ancestorGraph.nodes;
+//                    console.log(nodes);
+//                    console.log(edges);
+                    var nodesMap = {};
+                    nodes.forEach(function(n){ nodesMap[n.id] = n; })
+                    var ids = nodes.map(function (n) {return n.id});
+                    var heads = edges.map(function (e) {return e.head});
+                    var roots = [];
+                    ids.forEach(function (id){ if((heads.indexOf(id) === -1)){ roots.push(id); }})
+                    var trees = [];
+                    roots.forEach(function (r) {
+                        var tree = self._buildTree(r, nodesMap, edges);
+                        trees.push(tree);
+                    })
+                    self.trees = trees;
+//                    console.log(self.trees);
+
+
+                    console.log("Done")
+                    self.$.spinnertermview.active = false;
+                    self.$.spinnertermview.hidden = true;
+
+                })
+            },
+            _buildTree: function(nodeId, nodesMap, edges){
+                var self = this;
+                var node = nodesMap[nodeId];
+                var tn = new TNode(node);
+                edges.forEach(function (e){
+                    if(e.tail === nodeId){
+                        tn.addChild(self._buildTree(e.head, nodesMap, edges))
+                    }
+                })
+                return tn;
+            }
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,50 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="graph-section.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="ancestor-graph-section.html">
+
+<!--
+`ancestor-graph-view`
+View for ancestor graph view:
+
+Specs:
+https://calipho.isb-sib.ch/wiki/display/cal/Ancestor+Graph+Specification
+
+Related issues:
+https://issues.isb-sib.ch/browse/NEXTPROT-1493
+
+@demo demo/ancestor-graph-view-demo.html
+-->
+<dom-module id="ancestor-graph-view" is="dom-if" if="[[dotGraph]]">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                --paper-toggle-button-checked-button-color: #428bca;
+                --paper-toggle-button-checked-bar-color: #428bca;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+        </style>
+        <div class="row padded-bottom">
+            <div class="col-md-12">
+                <term-overview-section nx-config=[[nxConfig]]></term-overview-section>
+            </div>
+        </div>
+        <ancestor-graph-section accession-input=[[nxConfig.termAccession]] subgraph-distance="0" regex="1" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-section>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'ancestor-graph-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                }
+            }
+        }); //Polymer end
+    </script>
+</dom-module>

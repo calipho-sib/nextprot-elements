@@ -5,6 +5,7 @@
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
+<link rel="import" href="relevant-entries-section.html">
 
 <link rel="import" href="publication.html">
 <link rel="import" href="paginator-element.html">
@@ -94,52 +95,13 @@ Publication with linked entries view demo
                 </div>
             </div>
         </template>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="title-header">
-                    Relevant for
-                </div>
-                <div class="padded-top">
-                    <paper-spinner-lite id="spinner" active></paper-spinner-lite>
-                </div>
-                <template is="dom-if" if="[[data]]">
 
-                    <template is="dom-if" if="[[data.entries.length]]">
-                        <div class="control-header">
-                            <div class="no-padding col-lg-5">
-                                <template is="dom-if" if="[[data.entries]]">
-                                    Proteins [[from]] to [[to]] of [[data.entries.length]]
-                                </template>
-                                <template is="dom-if" if="[[_beyondMaximumEntries(data.relatedEntryCount)]]">
-                                    <span class="over-threshold-warning" title="The first 500 most relevant entries were displayed below."><span class="fa fa-exclamation-circle"></span> over [[data.relatedEntryCount]]</span>
-                                </template>
-                            </div>
-                            <div class="col-lg-10 ">
-                                <span class="col-lg-2">
-                                    show&nbsp;
-                                    <select on-change="_changePageSize">
-                                        <template is="dom-repeat" items="{{pageSizeOptions}}" as="pageSizeOption">
-                                            <option value="{{pageSizeOption}}"
-                                                    selected$="{{_isPageSizeOptionSelected(pageSizeOption)}}">{{pageSizeOption}}
-                                            </option>
-                                        </template>
-                                    </select>
-                                </span>
-                                <span class="bg-grey">
-                                    <a id="summary-link" class$="[[_summaryLinkClass]]" role="button" on-click="_updateLinks">summary</a> |
-                                    <a id="details-link" class$="[[_detailsLinkClass]]" role="button" on-click="_updateLinks">details</a>
-                                </span>
-                            </div>
-                        </div>
+        <template is="dom-if" if="[[_entries]]">
+             <relevant-entries-section related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
+        </template>
 
-                        <paginator-element items="[[data.entries]]" layout="entry-item"
-                                           page-size="[[pageSize]]" bind-attribute="summary" bind-value="[[summary]]"
-                                           from="{{from}}" to="{{to}}"></paginator-element>
-                    </template>
-                    <template is="dom-if" if="[[!data.entries.length]]"><span class="grey-x">Nothing to show</span></template>
-                </template>
-            </div>
-        </div>
+        <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+
     </template>
     <script>
         Polymer({
@@ -161,12 +123,9 @@ Publication with linked entries view demo
                     type: Number,
                     notify: true
                 },
-                pageSize: {
-                    type: Number
-                },
-                pageSizeOptions: {
-                    type: Array,
-                    value: [10, 20, 50, 100]
+                //This is for relevant for
+                _entries: {
+                    type: Object
                 },
                 _preferedPageSizeName: {
                     type: String,
@@ -184,7 +143,6 @@ Publication with linked entries view demo
             },
             attached: function () {
 
-                this.pageSize = this._getPreferedPageSizeFromLocalStorage();
                 this._initApiClient();
 
                 if (this.nxConfig.publicationId) {
@@ -200,32 +158,7 @@ Publication with linked entries view demo
                 }
             },
             _initApiClient: function () {
-                this._npClient = new Nextprot.Client("neXtProt publication with linked entries", "Calipho Group");
-
-                if (this.nxConfig.env) {
-                    this._npClient.updateEnvironment(this.nxConfig.env);
-                }
-            },
-            _isPageSizeOptionSelected: function (pageSizeValue) {
-
-                return this._getPreferedPageSizeFromLocalStorage() == pageSizeValue;
-            },
-            _getPreferedPageSizeFromLocalStorage: function () {
-
-                var localStorageSizeValue = localStorage.getItem(this._preferedPageSizeName);
-
-                // does not exist
-                if (localStorageSizeValue === null) {
-                    localStorageSizeValue = 10;
-                    localStorage.setItem(this._preferedPageSizeName, localStorageSizeValue);
-                }
-
-                return parseInt(localStorageSizeValue);
-            },
-            _changePageSize: function (evt) {
-                console.log(evt)
-                this.pageSize = parseInt(evt.target[evt.target.selectedIndex].value);
-                localStorage.setItem(this._preferedPageSizeName, this.pageSize);
+                this._npClient = getNXClient(this.nxConfig);
             },
             _handleResponseData: function (data) {
 
@@ -243,7 +176,8 @@ Publication with linked entries view demo
                 });
 
                 this.data = data;
-                this.data.entries = entries;
+                this._entries = entries;
+                this.relatedEntryCount = data.relatedEntryCount;
 
                 this.$.spinner.active = false;
                 this.$.spinner.hidden = true;
@@ -257,9 +191,6 @@ Publication with linked entries view demo
             },
             _toView: function (summary) {
                 return (summary) ? "summary" : "detailed";
-            },
-            _beyondMaximumEntries: function (count) {
-                return count > 500;
             },
             _updateLinks: function (evt) {
                 this.summary = (evt.target.id === "summary-link");
