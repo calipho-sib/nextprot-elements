@@ -21,6 +21,7 @@ Exon view demo
             :host {
                 display: block;
                 background:#f8f8f8;
+                overflow-y: auto;
             }
         </style>
         <div class="row">
@@ -72,12 +73,13 @@ Exon view demo
                 var self = this;
 
                 this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/exon-mapping.json")
-                    .then(function (response) {
-                        self._handleResponseData(response);
+                    .then(function (response_exonmap) {
 
                         self._npClient.getJSON("/entry/" + self.nxConfig.entry + "/isoform.json")
-                            .then(function (response) {
-                                self._handlenonMappedIsoforms(response);
+                            .then(function (response_iso) {
+                                self._handleResponseData(response_exonmap,response_iso);
+                                self._handlenonMappedIsoforms(response_iso);
+                                
                             })
                             .catch(function (error) {
                                 self._handleError(error);
@@ -94,8 +96,16 @@ Exon view demo
                     this._npClient.updateEnvironment(this.nxConfig.env);
                 }
             },
-            _handleResponseData: function (data) {
-                this.data = data;
+            _handleResponseData: function (data_exon,data_iso) {
+                this._addCanonicalInfo(data_exon,data_iso);
+                this.data = data_exon;
+            },
+            _addCanonicalInfo: function (data_exon,data_iso) {
+                data_iso.entry.isoforms.forEach(function(iso){
+                    if (data_exon.mappedIsoformInfos[iso.isoformAccession]){
+                        data_exon.mappedIsoformInfos[iso.isoformAccession].canonical = iso.canonicalIsoform;
+                    }
+                });
             },
             _handlenonMappedIsoforms: function (data) {
                 var self = this;
@@ -113,7 +123,6 @@ Exon view demo
                 });
             },
             _calcFirstCodingPositions: function (data) {
-
                 this._startCodingPosition = (data.startExonPositions && data.startExonPositions.length > 0) ? data.startExonPositions[0] : 0;
                 this._stopCodingPosition = (data.stopExonPositions && data.stopExonPositions.length > 0) ? data.stopExonPositions[0] : 0;
             },

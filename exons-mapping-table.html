@@ -58,6 +58,13 @@ exons mapping table demo
             #tableDiv {
                 overflow: auto;
             }
+            .iso-canonical{
+                color:#C50064;
+                font-size:12px;
+                font-weight:500;
+                letter-spacing:0.1px;
+                vertical-align: text-top;
+            }
         </style>
 
         <paper-spinner-lite id="spinner" active></paper-spinner-lite>
@@ -76,6 +83,9 @@ exons mapping table demo
                     <template is="dom-repeat" items="[[_getMappedIsoformInfos(data)]]" as="iso">
                         <th style="text-align:center;">Coding for <br>
                             [[iso.name]]
+                            <template is="dom-if" if="[[iso.canonical]]">
+                                <span class="iso-canonical">(canonical)</span>
+                            </template>
                             <div>
                         <a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" class="ext-link" target='_blank'>[[iso.main-transcript]]</a>
                             </div>
@@ -131,7 +141,6 @@ exons mapping table demo
                 }
             },
             _prepareData: function() {
-
                 var i;
                 for (i = 0; i < this.data.sortedExonKeys.length; i++) {
 
@@ -196,7 +205,6 @@ exons mapping table demo
                 var i;
                 var infos = [];
                 for (i=0 ; i<data.sortedMappedIsoformInfoKeys.length ; i++) {
-
                     infos.push(data.mappedIsoformInfos[data.sortedMappedIsoformInfoKeys[i]]);
                 }
 

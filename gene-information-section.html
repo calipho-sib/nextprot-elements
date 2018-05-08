@@ -134,7 +134,7 @@ gene information section demo
                                     Gene not mapped on the current assembly of the human genome.
                                     </div>
                                 </template>
-                                <template is="dom-if" if="[[_startExonPosition]]">
+                                <template is="dom-if" if="[[startExonPosition]]">
                                     <td class="gray-x">Coding positions</td>
                                     <td>From [[_numberWithCommas(_startCodingPosition)]] to [[_numberWithCommas(_stopCodingPosition)]]
                                     [length: [[_formatLength(_startCodingPosition, _stopCodingPosition)]] bp]</td>
@@ -275,8 +275,7 @@ gene information section demo
             },
             _formatGeneName: function (location) {
 
-                if (location.firstPosition === 0 && location.lastPosition === 0) {
-                    return "-";
+                if (location.firstPosition === 0 && location.lastPosition === 0 && !location.recommendedName) {                    return "-";
                 }
 
                 return (location.recommendedName && location.recommendedName !== "unknown") ? location.recommendedName : "-";
