@@ -194,7 +194,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                                     +'style=filled;'
                                     + 'fillcolor="'+ this.getNodeColor(APInodes[i]["accession"]) +'"'
                                     + 'tooltip=' + '"' + APInodes[i]["name"] + '"'//Tooltip on hover
-                                    + 'href="https://www.nextprot.org/term/' + APInodes[i]["accession"] //URL in node
+                                    + 'href="/term/' + APInodes[i]["accession"] //URL in node
                                     + '"' + ';] '
                 }
 
@@ -204,13 +204,13 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
             edgesDotBuild: function (APIedges) {
 
                 var colors = {
-                    "is_a": "black", //166160
+                    "is_a": "black", //166160 as NP1
                     "derives_from": "pink", //14255
-                    "part_of" : "brown", //9436
-                    "regulates": "orange", //3224
+                    "part_of" : "blue", //9436 as NP1
+                    "regulates": "orange", //3224 as NP1
                     "negatively_regulates": "red", //2797
-                    "positively_regulates": "green", //2779
-                    "used_in": "blue" //890
+                    "positively_regulates": "green", //2779 as NP1
+                    "used_in": "brown" //890
                 }
 
 
