@@ -72,6 +72,9 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
             }
         </style>
         <div id="termOverview">
+            <div hidden id="noCvTermWarning" class='alert alert-warning noData'>There is no cv term information available in neXtProt for [[nxConfig.termAccession]].
+                Suggestions for updates are welcome! Please <a href="javascript:location='mailto:\u0073\u0075\u0070\u0070\u006f\u0072\u0074\u0040\u006e\u0065\u0078\u0074\u0070\u0072\u006f\u0074\u002e\u006f\u0072\u0067';void 0">contact us</a>.
+            </div>
             <h3>
                 <template is="dom-if" if="[[term.name]]">
                     <template is="dom-if" if="[[_isEnzyme(term)]]">
@@ -80,8 +83,8 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     <template is="dom-if" if="[[!_isEnzyme(term)]]">
                         [[term.accession]] → [[term.name]]
                     </template>
+                    <span style="font-size: 12px"><a target="_blank" href="http://old.nextprot.org/db/term/[[term.accession]]">(NP1 version)</a></span>
                 </template>
-                <span style="font-size: 12px"><a target="_blank" href="http://old.nextprot.org/db/term/[[term.accession]]">(NP1 version)</a></span>
                 [[data.entryName]]
                 <template is="dom-if" if="[[data.recommendedProteinName]]">
                     <template is="dom-if" if="[[data.recommendedProteinName.EC.0]]">
@@ -241,9 +244,13 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 var self = this;
                 // fetch data from overview
                 this._npClient.getTermByAccession(self.nxConfig.termAccession).then(function (term) {
-
-                    self.term = self._convertForTemplate(term["cvTerm"]);
-                    // load data
+                    console.log(self.nxConfig.termAccession, term);
+                    if(term["cvTerm"]){
+                        self.$.noCvTermWarning.hidden=true;
+                        self.term = self._convertForTemplate(term["cvTerm"]);
+                    }else {
+                        self.$.noCvTermWarning.hidden=false;
+                    }
                     //self._loadData(overview);
                     self.$.spinner.active = false;
 
