@@ -122,6 +122,18 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                         <div class="col-md-9 col-xs-9"> [[term.definition]]  </div>
                     </div>
                 </template>
+                <template is="dom-if" if="[[_getValueProperties(term, 'abbreviation')]]">
+                        <div id="term-abbreviation" class="row">
+                            <div class="col-md-3 col-xs-3 grey-x text-align-right">ABBREVIATION :</div>
+                            <div class="col-md-9 col-xs-9">
+                                <dl>
+                                    <template is="dom-repeat" items="[[_getValueProperties(term, 'abbreviation')]]" as="property">
+                                            <dt class="col-md-9 col-xs-9 multiple-prop">[[property.propertyValue]]</dt>
+                                    </template>
+                                </dl>
+                            </div>
+                        </div>
+                </template>
                 <template is="dom-if" if="[[term.synonyms]]">
                     <template is="dom-if" if="[[term.synonyms.0]]">
                         <div id="term-synonyms" class="row">
@@ -138,6 +150,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 </template>
                 <template is="dom-repeat" items="[[termprops]]" as="prop">
                     <template is="dom-if" if="[[_getValueProperties(term, prop.key)]]">
+                        <template is="dom-if" if="[[!pro.show]]">
                         <div id="term-[[pro.key]]" class="row">
                             <div class="col-md-3 col-xs-3 grey-x text-align-right">[[prop.label]] :</div>
                             <div class="col-md-9 col-xs-9">
@@ -157,12 +170,8 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                                     </template>
                                 </dl>
                             </div>
-                            <template is="dom-if" if="[[prop.ERROR_COMMENT]]">
-                                <div class="col-xs-offset-3 col-md-offset-3 col-md-9 col-xs-9">
-                                    <p class="errorcomment">[[prop.ERROR_COMMENT]]</p>
-                                </div>
-                        </template>
                         </div>
+                    </template>
                     </template>
                 </template>
                 <template is="dom-if" if="[[term.relatedTerms]]">
@@ -214,7 +223,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
 
                             {key: "Feature category", label: "CATEGORY"},
                             {key: "Category", label: "CATEGORY"},
-
+                            {key: "abbreviation", label: "ABBREVIATION", show: false}, //Don't show because it will be shown at other place
                             {key: "Catalyst", label: "CATALYST"},
                             {key: "Reaction", label: "REACTION"},
                             {key: "Sex of cell", label: "SEX OF CELL"},
@@ -244,7 +253,6 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 var self = this;
                 // fetch data from overview
                 this._npClient.getTermByAccession(self.nxConfig.termAccession).then(function (term) {
-                    console.log(self.nxConfig.termAccession, term);
                     if(term["cvTerm"]){
                         self.$.noCvTermWarning.hidden=true;
                         self.term = self._convertForTemplate(term["cvTerm"]);
