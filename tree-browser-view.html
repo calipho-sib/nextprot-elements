@@ -22,11 +22,11 @@
         </style>
         <ul>
         <template is="dom-if" if="[[_isBold(tree, boldname)]]">
-            <li><span class="glyphicon glyphicon-chevron-right"></span><b> [[tree.value.name]]  </b> [<a href="/term/[[tree.value.accession]]">[[tree.value.accession]]</a>]</li>
+            <li><span class="fa fa-chevron-right"></span><b> [[tree.value.name]]  </b> [<a href="/term/[[tree.value.accession]]">[[tree.value.accession]]</a>]</li>
         </template>
 
         <template is="dom-if" if="[[!_isBold(tree, boldname)]]">
-            <li><span class="glyphicon glyphicon-chevron-right"></span> [[tree.value.name]] [<a href="/term/[[tree.value.accession]]">[[tree.value.accession]]</a>]</li>
+            <li><span class="fa fa-chevron-right"></span> [[tree.value.name]] [<a href="/term/[[tree.value.accession]]">[[tree.value.accession]]</a>]</li>
         </template>
 
         <template is="dom-if" if="[[_hasChildren(tree)]]">
