@@ -22,11 +22,17 @@
         </style>
         <ul>
         <template is="dom-if" if="[[_isBold(tree, boldname)]]">
-            <li><span class="glyphicon glyphicon-chevron-right"></span><b> [[tree.value.name]]  </b> [<a href="/term/[[tree.value.accession]]">[[tree.value.accession]]</a>]</li>
+            <li on-tap="_toggle"><span class="fa fa-chevron-right"></span><b> [[tree.value.name]]  </b> [<a href="/term/[[tree.value.accession]]">[[tree.value.accession]]</a>]</li>
+            <iron-collapse id="collapse_[[index]]">
+                <span>loading...</span>
+            </iron-collapse>
         </template>
 
         <template is="dom-if" if="[[!_isBold(tree, boldname)]]">
-            <li><span class="glyphicon glyphicon-chevron-right"></span> [[tree.value.name]] [<a href="/term/[[tree.value.accession]]">[[tree.value.accession]]</a>]</li>
+            <li on-tap="_toggle"><span class="fa fa-chevron-right"></span> [[tree.value.name]] [<a href="/term/[[tree.value.accession]]">[[tree.value.accession]]</a>]</li>
+            <iron-collapse id="collapse_[[index]]">
+                <span>loading...</span>
+            </iron-collapse>
         </template>
 
         <template is="dom-if" if="[[_hasChildren(tree)]]">
@@ -40,6 +46,10 @@
         Polymer({
             is: 'tree-browser-item',
             properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
                 tree: {
                     type: Object,
                     value: []
@@ -48,8 +58,23 @@
                     type: Object
                 }
             },
+
             _isBold: function(node, bn) {
                 return (bn === node.value.accession);
+            },
+            _toggle: function(event) {
+                event.target.classList.toggle("fa-chevron-down");
+                var ironCollapse = event.target.parentNode.parentNode.getElementsByTagName("iron-collapse")[0];
+                ironCollapse.toggle();
+
+                var span = ironCollapse.getElementsByTagName("span")[0];
+
+                var self = this;
+                var nxClient = getNXClient(this.nxConfig);
+                nxClient.getJSON("term/" + self.boldname + ".json").then(function(d) {
+                    span.innerHTML = d.cvTerm.childAccession.join(" ")
+                })
+
             },
             _hasChildren: function(node){
                 if(node && node.children && node.children.length > 0){
@@ -97,7 +122,7 @@ View for tree browser view:
                 <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
                 <template is="dom-if" if="[[ancestorGraph]]">
                     <template is="dom-repeat" items="[[trees]]" as="tree">
-                        <tree-browser-item boldname="[[termAccession]]" tree="[[tree]]"></tree-browser-item>
+                        <tree-browser-item nx-config=[[nxConfig]] boldname="[[termAccession]]" tree="[[tree]]"></tree-browser-item>
                     </template>
                 </template>
             </div>
