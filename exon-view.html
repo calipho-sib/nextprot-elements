@@ -35,11 +35,13 @@ Exon view demo
                                           start-exon-position="[[_startCodingPosition]]" stop-exon-position="[[_stopCodingPosition]]"></gene-information-section>
             </div>
         </div>
+        <template is="dom-if" if="[[_hasData(data)]]">
         <div class="row">
             <div class="nxSection" class="col-md-12">
                 <exons-mapping-table data="[[data]]"></exons-mapping-table>
             </div>
         </div>
+        </template>
     </template>
     <script>
         Polymer({
@@ -133,6 +135,10 @@ Exon view demo
             },
             _handleError: function (error) {
                 console.error("Error: ", error);
+            },
+            _hasData: function(data) {
+
+                return data && data.sortedExonKeys.length > 0;
             }
         });
     </script>
