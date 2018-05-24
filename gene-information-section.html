@@ -123,7 +123,7 @@ gene information section demo
                                 </tr>
                                 <tr>
                                     <td class="gray-x">Alignment</td>
-                                    <td>The isoform is aligned on <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.</td>
+                                    <td>The isoform[[_potential_s_plus_auxilary_verb]] aligned on <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.</td>
                                 </tr>
                             </template>
                             <tr>
@@ -179,6 +179,10 @@ gene information section demo
                     type: Object,
                     value: {}
                 },
+                mappedIsoformCount: {
+                    type: Number,
+                    observer: '_updateSentence'
+                },
                 nonMappedIsoforms: {
                     type: Array,
                     value: []
@@ -206,6 +210,10 @@ gene information section demo
                 _dataLoaded: {
                     type: Boolean,
                     observer: '_updateSpinnerStatus'
+                },
+                _potential_s_plus_auxilary_verb: {
+                    type: String,
+                    value: " is"
                 }
             },
             observers: [
@@ -359,6 +367,15 @@ gene information section demo
 
                     this.$.spinner.active = false;
                     this.$.spinner.hidden = true;
+                }
+            },
+            _updateSentence: function(mappedIsoformCount) {
+
+                if (mappedIsoformCount > 1) {
+                    this._potential_s_plus_auxilary_verb = "s are";
+                }
+                else {
+                    this._potential_s_plus_auxilary_verb = " is";
                 }
             }
         });
