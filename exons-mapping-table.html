@@ -150,6 +150,7 @@ exons mapping table demo
             },
             _prepareData: function() {
                 var i;
+                this._rows = [];
                 for (i = 0; i < this.data.sortedExonKeys.length; i++) {
 
                     this._rows.push(this._newRow(this.data.sortedExonKeys[i]));
