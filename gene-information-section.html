@@ -14,14 +14,10 @@ gene information section demo
     <template>
         <style include="nextprot-elements-shared-styles">
 
-            :host{
-                white-space: nowrap;
-            }
-
             #infoTable {
                 border: solid lightgray 1px;
                 width:auto;
-                font-size: 95%;
+                white-space: nowrap;
             }
             #infoTable thead {
                 background-color: #f8f8f8;
@@ -65,7 +61,10 @@ gene information section demo
             .gray-x {
                 color: #999;
                 padding-right: 20px;
-                text-transform: uppercase;
+            }
+
+            .blue-well {
+                display: inline-block;
             }
 
             #tableDiv {
@@ -74,7 +73,6 @@ gene information section demo
 
             #mappingTable {
                 margin-bottom: 10px;
-                font-size: 95%;
             }
         </style>
 
@@ -118,11 +116,11 @@ gene information section demo
                         <tbody>
                             <template is="dom-if" if="[[_multipleLocations(_locations)]]">
                                 <tr>
-                                    <td class="gray-x">Mapping</td>
+                                    <td class="gray-x">MAPPING</td>
                                     <td>This protein has [[_locations.length]] Ensembl mappings.</td>
                                 </tr>
                                 <tr>
-                                    <td class="gray-x">Alignment</td>
+                                    <td class="gray-x">ALIGNMENT</td>
                                     <td>The isoform[[_potential_s_plus_auxilary_verb]] aligned on <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.</td>
                                 </tr>
                             </template>
@@ -135,13 +133,18 @@ gene information section demo
                                     </div>
                                 </template>
                                 <template is="dom-if" if="[[startExonPosition]]">
-                                    <td class="gray-x">Coding positions</td>
+                                    <td class="gray-x">CODING POSITIONS<span id="coding-position" class="colored-label definition-button" on-tap="_toggle">Definition</span></td>
                                     <td>From [[_numberWithCommas(_startCodingPosition)]] to [[_numberWithCommas(_stopCodingPosition)]]
                                     [length: [[_formatLength(_startCodingPosition, _stopCodingPosition)]] bp]</td>
                                 </template>
                             </tr>
                         </tbody>
                     </table>
+                    <iron-collapse id="description-coding-position">
+                        <div class="well blue-well">
+                            These values are computed starting with the first base of the initiation codon to the last base of the stop codon, taking into account all annotated isoforms.
+                        </div>
+                    </iron-collapse>
                 </template>
 
                 <!-- non mapped isoforms -->
@@ -377,6 +380,10 @@ gene information section demo
                 else {
                     this._potential_s_plus_auxilary_verb = " is";
                 }
+            },
+            _toggle: function(mouseEvent){
+                var srcElementId = mouseEvent.target.id || mouseEvent.target.parentNode.id;
+                this.$$("#description-coding-position").toggle();
             }
         });
     </script>
