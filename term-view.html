@@ -63,13 +63,16 @@ Term view demo
 
                 var self = this;
                 var data = {"filter":"","quality":"gold-and-silver","query": self.nxConfig.termAccession ,"sort":"","order":"", rows: 500}
+
+                var nxClient = getNXClient(this.nxConfig);
+
                 $.ajax({
                     type: "POST",
                     headers: {
                         Accept : "application/json; charset=utf-8",
                         "Content-Type": "application/json; charset=utf-8"
                     },
-                    url : "https://api.nextprot.org/search/entry.json",
+                    url : nxClient.getApiBaseUrl() + "/search/entry.json",
                     data: JSON.stringify(data),
                     success : function(response) {
                         var entries = [];
