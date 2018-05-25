@@ -131,7 +131,7 @@ exons mapping table demo
                                 <span class="iso-canonical">(canonical)</span>
                             </template>
                             <div>
-                        <a href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" class="ext-link" target='_blank'>[[iso.main-transcript]]</a>
+                        <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" target='_blank'>[[iso.main-transcript]]</a>
                             </div>
                             <template is="dom-if" if="[[iso.other-transcripts]]">
                                 <span on-tap="_toggle">
@@ -141,7 +141,7 @@ exons mapping table demo
                                 <iron-collapse id="collapse_[[index]]" no-animation>
                                     <ul>
                                         <template is="dom-repeat" items="[[iso.other-transcripts]]" as="other">
-                                            <li><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" rel="nofollow">[[other]]</a></li>
+                                            <li><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" target='_blank'>[[other]]</a></li>
                                         </template>
                                     </ul>
                                 </iron-collapse>
@@ -193,9 +193,8 @@ exons mapping table demo
             
                 for (var h = 0;h < headerColumns.length; h++){
                     
-                    var parentWidth = window.getComputedStyle(headerColumns[h]).getPropertyValue('width');
-                    
-                    headerColumns[h].getElementsByTagName("div")[0].style.width = parentWidth;
+                    headerColumns[h].getElementsByTagName("div")[0].style.width =
+                        window.getComputedStyle(headerColumns[h]).getPropertyValue('width');
                 }
                 this._updateHeaderHeight();
             },
@@ -299,7 +298,6 @@ exons mapping table demo
 
                 this.$$("#transcripts_"+index).classList.toggle("fa-chevron-down");
                 this.$$("#showHide_"+index).innerText = opened ? "Hide" : "Show";
-                var self = this;
                 this._updateHeaderHeight();
             },
             _hasData: function(data) {
