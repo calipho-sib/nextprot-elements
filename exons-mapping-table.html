@@ -16,14 +16,12 @@ exons mapping table demo
         <style include="nextprot-elements-shared-styles">
 
             #exonTable {
-                border: solid lightgray 1px;
                 width:auto;
                 white-space: nowrap;
             }
 
             #exonTable thead {
                 background-color: #f8f8f8;
-                border-top:1px solid lightgray;
                 border-left:1px solid #ddd;
                 border-right:1px solid #ddd;
             }
@@ -56,17 +54,59 @@ exons mapping table demo
             ul {
                 list-style-type: none;
             }
-            iron-collapse{
-            }
-            #tableDiv {
-                overflow: auto;
-            }
+            
             .iso-canonical{
                 color:#C50064;
                 font-size:12px;
                 font-weight:500;
                 letter-spacing:0.1px;
                 vertical-align: text-top;
+            }
+            th>div{
+                position: absolute;
+                top:0;
+                border-left:1px solid lightgray;
+                padding:5px 3px;
+                min-height:80px;
+            }
+            th:first-of-type>div{
+              border-left:0px;
+            }
+            #tableCont{
+                position: relative;
+                 padding-top: 75px;
+                display:inline-block;
+                border-top:1px solid lightgray;
+                border-right:1px solid lightgray;
+                border-left:1px solid lightgray;
+                border-bottom:1px solid lightgray;
+            }
+            #tableDiv{
+                overflow-y: scroll;
+                max-height:200px;
+                display:inline-block;
+                border-top:1px solid lightgray;
+            }
+            #tableDiv th{
+                height: 0px;
+                padding-bottom: 0px;
+                padding-top: 0px;
+                padding-left: 0px;
+                padding-right:0px;
+                border: 0px;
+                white-space: nowrap;
+            }
+            #tableDiv td{
+                min-width:70px;
+                border-right: 0px;  
+            }
+            #exonTable td:first-of-type{
+              border-left:0;
+            }
+            #exonTable{
+                margin:0px;
+                border-right:0;
+                border-left:0;
             }
         </style>
 
@@ -76,15 +116,16 @@ exons mapping table demo
             <div class="category-header">
                 <h4 class="category-title">Exons</h4>
             </div>
+            <div id="tableCont">
             <div id="tableDiv">
             <table id="exonTable" class="table table-hover">
                 <thead>
                 <tr>
-                    <th>Identifier</th>
-                    <th>Position<br>on gene</th>
-                    <th>Length</th>
+                    <th class="thead-column"><div>Identifier</div></th>
+                    <th class="thead-column"><div>Position<br>on gene</div></th>
+                    <th class="thead-column"><div>Length</div></th>
                     <template is="dom-repeat" items="[[_getMappedIsoformInfos(data)]]" as="iso">
-                        <th style="text-align:center;">Coding for <br>
+                        <th style="text-align:center;" class="thead-column"><div>Coding for <br>
                             [[iso.name]]
                             <template is="dom-if" if="[[iso.canonical]]">
                                 <span class="iso-canonical">(canonical)</span>
@@ -97,7 +138,7 @@ exons mapping table demo
                                     <span id="transcripts_[[index]]" class="fa fa-chevron-right" style="display: inline-block;width:14px;"></span>
                                     <span id="showHide_[[index]]" style="display: inline-block;width:36px;">&nbsp;show</span> <span>transcripts ([[iso.other-transcripts.length]])</span>
                                 </span>
-                                <iron-collapse id="collapse_[[index]]">
+                                <iron-collapse id="collapse_[[index]]" no-animation>
                                     <ul>
                                         <template is="dom-repeat" items="[[iso.other-transcripts]]" as="other">
                                             <li><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" rel="nofollow">[[other]]</a></li>
@@ -105,6 +146,8 @@ exons mapping table demo
                                     </ul>
                                 </iron-collapse>
                             </template>
+                            </div>
+                        </th>
                     </template>
                 </tr>
                 </thead>
@@ -123,6 +166,7 @@ exons mapping table demo
                     </template>
                 </tbody>
             </table>
+            </div>
             </div>
         </template>
     </template>
@@ -143,6 +187,18 @@ exons mapping table demo
                     observer: '_updateSpinnerStatus'
                 }
             },
+            _updateHeaderWidth: function(){
+                
+                var headerColumns = this.$$("#exonTable").querySelectorAll(".thead-column");
+            
+                for (var h = 0;h < headerColumns.length; h++){
+                    
+                    var parentWidth = window.getComputedStyle(headerColumns[h]).getPropertyValue('width');
+                    
+                    headerColumns[h].getElementsByTagName("div")[0].style.width = parentWidth;
+                }
+                this._updateHeaderHeight();
+            },
             _prepareData: function() {
                 var i;
                 this._rows = [];
@@ -154,6 +210,7 @@ exons mapping table demo
                 var self = this;
                 Polymer.RenderStatus.afterNextRender(self, function () {
                     self._dataLoaded = true;
+                    self._updateHeaderWidth();
                 });
             },
             _newRow: function(pos) {
@@ -220,6 +277,21 @@ exons mapping table demo
                 }
                 else return ""
             },
+            _updateHeaderHeight: function(){
+                var headerColumns = this.$$("#exonTable").querySelectorAll(".thead-column");
+            
+                var heightMax = 0;
+                for (var h = 0;h < headerColumns.length; h++){
+                    headerColumns[h].getElementsByTagName("div")[0].style.height = "auto";
+                    var colheight = headerColumns[h].getElementsByTagName("div")[0].clientHeight;
+                    if (heightMax < colheight) heightMax = colheight;
+                }
+                for (var h = 0;h < headerColumns.length; h++){
+                    headerColumns[h].getElementsByTagName("div")[0].style.height = heightMax + "px";
+                }
+                
+                this.$$("#tableCont").style.paddingTop = heightMax + "px";
+            },
             _toggle: function(event) {
                 var index = event.model.index;
                 this.$$("#collapse_"+index).toggle();
@@ -227,7 +299,8 @@ exons mapping table demo
 
                 this.$$("#transcripts_"+index).classList.toggle("fa-chevron-down");
                 this.$$("#showHide_"+index).innerText = opened ? "Hide" : "Show";
-
+                var self = this;
+                this._updateHeaderHeight();
             },
             _hasData: function(data) {
 
