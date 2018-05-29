@@ -291,8 +291,6 @@ exons mapping table demo
 
                 for (var h = 0; h < headerColumns.length; h++) {
 
-                    console.log("width=", headerColumns[h].getElementsByTagName("div")[0].style.width, "computed width=",  window.getComputedStyle(headerColumns[h]).getPropertyValue('width'));
-
                     headerColumns[h].getElementsByTagName("div")[0].style.width =
                         window.getComputedStyle(headerColumns[h]).getPropertyValue('width');
                 }
