@@ -21,7 +21,6 @@ Exon view demo
             :host {
                 display: block;
                 background:#f8f8f8;
-                overflow-y: auto;
             }
         </style>
         <div class="row">
@@ -30,14 +29,14 @@ Exon view demo
             </div>
         </div>
         <div class="row">
-            <div class="nxSection" class="col-md-12">
+            <div id="nxGeneInfoSection" class="col-md-12">
                 <gene-information-section nx-config="[[nxConfig]]" mapped-isoform-count="[[_mappedIsoformCount]]" non-mapped-isoforms="[[_nonMappedIsoforms]]"
                                           start-exon-position="[[_startCodingPosition]]" stop-exon-position="[[_stopCodingPosition]]"></gene-information-section>
             </div>
         </div>
         <template is="dom-if" if="[[_hasData(data)]]">
         <div class="row">
-            <div class="nxSection" class="col-md-12">
+            <div id="nxExonMappingSection" class="col-md-12">
                 <exons-mapping-table data="[[data]]"></exons-mapping-table>
             </div>
         </div>

@@ -70,41 +70,37 @@ exons mapping table demo
                 min-height:80px;
             }
             th:first-of-type>div{
-              border-left:0px;
+              border-left:0;
             }
             #tableCont{
                 position: relative;
-                 padding-top: 75px;
+                overflow-x: auto;
                 display:inline-block;
-                border-top:1px solid lightgray;
-                border-right:1px solid lightgray;
-                border-left:1px solid lightgray;
-                border-bottom:1px solid lightgray;
+                border: 1px solid lightgray;
+                max-width: 100%;
             }
             #tableDiv{
                 overflow-y: scroll;
                 max-height:200px;
                 display:inline-block;
                 border-top:1px solid lightgray;
+                background:white;
             }
             #tableDiv th{
-                height: 0px;
-                padding-bottom: 0px;
-                padding-top: 0px;
-                padding-left: 0px;
-                padding-right:0px;
-                border: 0px;
+                height: 0;
+                padding: 0;
+                border: 0;
                 white-space: nowrap;
             }
             #tableDiv td{
                 min-width:70px;
-                border-right: 0px;  
+                border-right: 0;
             }
             #exonTable td:first-of-type{
               border-left:0;
             }
             #exonTable{
-                margin:0px;
+                margin:0;
                 border-right:0;
                 border-left:0;
             }
@@ -117,56 +113,56 @@ exons mapping table demo
                 <h4 class="category-title">Exons</h4>
             </div>
             <div id="tableCont">
-            <div id="tableDiv">
-            <table id="exonTable" class="table table-hover">
-                <thead>
-                <tr>
-                    <th class="thead-column"><div>Identifier</div></th>
-                    <th class="thead-column"><div>Position<br>on gene</div></th>
-                    <th class="thead-column"><div>Length</div></th>
-                    <template is="dom-repeat" items="[[_getMappedIsoformInfos(data)]]" as="iso">
-                        <th style="text-align:center;" class="thead-column"><div>Coding for <br>
-                            [[iso.name]]
-                            <template is="dom-if" if="[[iso.canonical]]">
-                                <span class="iso-canonical">(canonical)</span>
-                            </template>
-                            <div>
-                        <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" target='_blank'>[[iso.main-transcript]]</a>
-                            </div>
-                            <template is="dom-if" if="[[iso.other-transcripts]]">
-                                <span on-tap="_toggle">
-                                    <span id="transcripts_[[index]]" class="fa fa-chevron-right" style="display: inline-block;width:14px;"></span>
-                                    <span id="showHide_[[index]]" style="display: inline-block;width:36px;">&nbsp;show</span> <span>transcripts ([[iso.other-transcripts.length]])</span>
-                                </span>
-                                <iron-collapse id="collapse_[[index]]" no-animation>
-                                    <ul>
-                                        <template is="dom-repeat" items="[[iso.other-transcripts]]" as="other">
-                                            <li><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" target='_blank'>[[other]]</a></li>
-                                        </template>
-                                    </ul>
-                                </iron-collapse>
-                            </template>
-                            </div>
-                        </th>
-                    </template>
-                </tr>
-                </thead>
-                <tbody>
-                    <template is="dom-repeat" items="[[_rows]]" as="row">
+                <div id="tableDiv">
+                    <table id="exonTable" class="table table-hover">
+                        <thead>
                         <tr>
-                            <template is="dom-repeat" items="[[row]]" as="cell">
-                                <template is="dom-if" if="[[!_exonCell(index)]]">
-                                    <td class$="[[_getCellClass(index)]]">[[cell]]</td>
-                                </template>
-                                <template is="dom-if" if="[[_exonCell(index)]]">
-                                    <td><exon-item data="[[cell]]"></exon-item></td>
-                                </template>
+                            <th class="thead-column"><div>Identifier</div></th>
+                            <th class="thead-column"><div>Position<br>on gene</div></th>
+                            <th class="thead-column"><div>Length</div></th>
+                            <template is="dom-repeat" items="[[_getMappedIsoformInfos(data)]]" as="iso">
+                                <th style="text-align:center;" class="thead-column"><div>Coding for <br>
+                                    [[iso.name]]
+                                    <template is="dom-if" if="[[iso.canonical]]">
+                                        <span class="iso-canonical">(canonical)</span>
+                                    </template>
+                                    <div>
+                                <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]" target='_blank'>[[iso.main-transcript]]</a>
+                                    </div>
+                                    <template is="dom-if" if="[[iso.other-transcripts]]">
+                                        <span on-tap="_toggle">
+                                            <span id="transcripts_[[index]]" class="fa fa-chevron-right" style="display: inline-block;width:14px;"></span>
+                                            <span id="showHide_[[index]]" style="display: inline-block;width:36px;">&nbsp;show</span> <span>transcripts ([[iso.other-transcripts.length]])</span>
+                                        </span>
+                                        <iron-collapse id="collapse_[[index]]" no-animation>
+                                            <ul>
+                                                <template is="dom-repeat" items="[[iso.other-transcripts]]" as="other">
+                                                    <li><a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]" target='_blank'>[[other]]</a></li>
+                                                </template>
+                                            </ul>
+                                        </iron-collapse>
+                                    </template>
+                                    </div>
+                                </th>
                             </template>
                         </tr>
-                    </template>
-                </tbody>
-            </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            <template is="dom-repeat" items="[[_rows]]" as="row">
+                                <tr>
+                                    <template is="dom-repeat" items="[[row]]" as="cell">
+                                        <template is="dom-if" if="[[!_exonCell(index)]]">
+                                            <td class$="[[_getCellClass(index)]]">[[cell]]</td>
+                                        </template>
+                                        <template is="dom-if" if="[[_exonCell(index)]]">
+                                            <td><exon-item data="[[cell]]"></exon-item></td>
+                                        </template>
+                                    </template>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </template>
     </template>
