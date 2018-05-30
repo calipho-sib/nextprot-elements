@@ -24,20 +24,20 @@ Exon view demo
                 overflow-y: auto;
             }
         </style>
-        <div class="row">
-            <div id="nxOverview" class="col-md-12">
+        <div class="row nxSection">
+            <div class="col-md-12">
                 <protein-overview nx-config="[[nxConfig]]"></protein-overview>
             </div>
         </div>
-        <div class="row">
-            <div id="nxGeneInfoSection" class="col-md-12">
+        <div class="row nxSection">
+            <div class="col-md-12">
                 <gene-information-section nx-config="[[nxConfig]]" mapped-isoform-count="[[_mappedIsoformCount]]" non-mapped-isoforms="[[_nonMappedIsoforms]]"
                                           start-exon-position="[[_startCodingPosition]]" stop-exon-position="[[_stopCodingPosition]]"></gene-information-section>
             </div>
         </div>
         <template is="dom-if" if="[[_hasData(data)]]">
-        <div class="row">
-            <div id="nxExonMappingSection" class="col-md-12">
+        <div class="row nxSection">
+            <div class="col-md-12">
                 <exons-mapping-table data="[[data]]"></exons-mapping-table>
             </div>
         </div>
