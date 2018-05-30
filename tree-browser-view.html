@@ -24,15 +24,18 @@
                 font-weight: bold;
             }
 
+            .noproteins-size {
+                font-size: 12px;
+            }
+
         </style>
         <ul>
             <template is="dom-if" if="[[!dynamicChild]]">
-                <li>
-
-                <div style="display: inline-block" on-tap="_toggle">
-                    <span class="fa fa-chevron-right"></span>
-                    <span class$="{{_isCurrentTerm(currentNode, boldname)}}">[[currentNode.value.name]]</span>
-                </div>
+                <li class$="{{_getFontSizeClass(currentNode)}}">
+                    <div style="display: inline-block" on-tap="_toggle">
+                        <span class="fa fa-chevron-right"></span>
+                        <span class$="{{_isCurrentTerm(currentNode, boldname)}}">[[currentNode.value.name]]</span>
+                    </div>
 
                     [<a href="/term/[[currentNode.value.accession]]">[[currentNode.value.accession]]</a>]
                     <template is="dom-if" if="[[_hasRelevantProteins(currentNode)]]">
@@ -83,6 +86,12 @@
             },
             _hasRelevantProteins: function(currentNode) {
                 return (currentNode.value.relevantFor > 0)
+            },
+            _getFontSizeClass: function(currentNode) {
+                if (currentNode.value.relevantFor == 0)
+                    return 'noproteins-size';
+                else return ''
+
             },
             _isCurrentTerm: function(currentNode, bn) {
                 if(bn === currentNode.value.accession) return 'currentTerm';
