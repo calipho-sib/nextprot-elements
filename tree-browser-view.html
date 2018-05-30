@@ -27,18 +27,18 @@
         </style>
         <ul>
 
-        <li on-tap="_toggle"><span class="fa fa-chevron-right"></span>
-
-            <span class$="{{_isCurrentTerm(currentNode, boldname)}}">[[currentNode.value.name]]</span>
-
-            [<a href="/term/[[currentNode.value.accession]]">[[currentNode.value.accession]]</a>] (<a href$="/proteins/search?query=/" + {{currentNode.value.accession}}>[[currentNode.value.relevantFor]] proteins</a>)</li>
-        <iron-collapse id="collapse_[[index]]">
-            <span>loading...</span>
-        </iron-collapse>
+        <template is="dom-if" if="[[!dynamicChild]]">
+                <li on-tap="_toggle"><span class="fa fa-chevron-right"></span>
+                <span class$="{{_isCurrentTerm(currentNode, boldname)}}">[[currentNode.value.name]]</span>
+                [<a href="/term/[[currentNode.value.accession]]">[[currentNode.value.accession]]</a>] (<a href$="/proteins/search?query=/" + {{currentNode.value.accession}}>[[currentNode.value.relevantFor]] proteins</a>)</li>
+            <iron-collapse id="collapse_[[index]]">
+                <div class="dynamic-child"><span>loading...</span></div>
+            </iron-collapse>
+        </template>
 
         <template is="dom-if" if="[[_hasChildren(currentNode)]]">
             <template is="dom-repeat" items="[[currentNode.children]]" as="childTree" initial-count="1" target-framerate="1000">
-                <tree-browser-item boldname="[[boldname]]" current-node="[[childTree]]"></tree-browser-item>
+                <tree-browser-item boldname="[[boldname]]" current-node="[[childTree]]" nx-config="[[nxConfig]]"></tree-browser-item>
             </template>
         </template>
         </ul>
@@ -47,6 +47,10 @@
         Polymer({
             is: 'tree-browser-item',
             properties: {
+                dynamicChild: {
+                    type: Boolean,
+                    value: false,
+                },
                 nxConfig: {
                     type: Object,
                     value: {}
@@ -59,7 +63,6 @@
                     type: Object
                 }
             },
-
             _isCurrentTerm: function(currentNode, bn) {
                 if(bn === currentNode.value.accession) return 'currentTerm';
             },
@@ -69,11 +72,41 @@
                 var ironCollapse = event.target.parentNode.parentNode.getElementsByTagName("iron-collapse")[0];
                 ironCollapse.toggle();
 
-                var span = ironCollapse.getElementsByTagName("span")[0];
                 var self = this;
                 var nxClient = getNXClient(this.nxConfig);
-                nxClient.getJSON("term/" + self.boldname + ".json").then(function(d) {
-                    span.innerHTML = d.cvTerm.childAccession.join(",")
+
+                var div = ironCollapse.getElementsByClassName("dynamic-child")[0];
+                div.innerHTML = '';
+
+                var childNode = {
+                    "children": [],
+                    "value" : {
+                        "accession": self.currentNode.value.accession
+                    }
+                };
+
+                nxClient.getJSON("term/" + self.currentNode.value.accession + "/descendant-graph.json?includeRelevantFor=true&depth=1", true).then(function(d) {
+                    d["descendant-graph"].nodes.forEach(function(n) {
+                        console.log(n)
+                        console.log(self.currentNode)
+
+                        if(n.accession !== self.currentNode.value.accession) {
+                            var cn = Object.assign({}, n, {})
+                            cn.children = []
+                            childNode.children.push({"value" : cn})
+                        }
+                    })
+
+                    var browserItem = document.createElement("tree-browser-item");
+                    browserItem.setAttribute("nx-config", JSON.stringify(self.nxConfig));
+                    browserItem.setAttribute("boldname", self.boldname);
+                    browserItem.setAttribute("dynamic-child", true);
+                    browserItem.setAttribute("current-node", JSON.stringify(childNode));
+
+                    console.log(browserItem);
+
+                    div.appendChild(browserItem);
+                    self.updateStyles();
                 })
             },
             _hasChildren: function(node){
@@ -81,6 +114,7 @@
                     return true;
                 }else return false;
             }})
+
     </script>
 </dom-module>
 
@@ -202,6 +236,7 @@ View for tree browser view:
                     })
                     self.trees = trees;
 //                    console.log(self.trees);
+
 
 
                     console.log("Done")
