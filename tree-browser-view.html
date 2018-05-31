@@ -4,6 +4,7 @@
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="term-overview-section.html">
 <link rel="import" href="external-scripts.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
 
 <!--
 `tree-browser-item`
@@ -196,6 +197,7 @@ View for tree browser view:
                 <div class="title-header">
                     Tree browser
                 </div>
+                <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
                 <paper-spinner-lite id="spinnerterm" active></paper-spinner-lite>
                 <template is="dom-if" if="[[ancestorGraph]]">
                     <template is="dom-repeat" items="[[trees]]" as="tree">
@@ -254,13 +256,24 @@ View for tree browser view:
                 trees: {
                     type: Array,
                     value: []
+                },
+                includeSilver: {
+                    type: Boolean,
+                    value: false
                 }
             },
-            attached: function (){
+            attached: function(){
+              this._loadData();
+            },
+            _loadData: function (){
                 var self = this;
                 this.termAccession = this.nxConfig.termAccession;
                 var nxClient = getNXClient(this.nxConfig);
-                nxClient.getJSON("term/" + this.nxConfig.termAccession + "/ancestor-graph.json?includeRelevantFor=true", true).then(function(d) {
+                var url = "term/" + this.nxConfig.termAccession + "/ancestor-graph.json?includeRelevantFor=true";
+                if (this.includeSilver){
+                    url += "&includeSilver=true";
+                }
+                nxClient.getJSON(url, true).then(function(d) {
                     self.ancestorGraph = d["ancestor-graph"];
                     var edges = self.ancestorGraph.edges;
                     var nodes = self.ancestorGraph.nodes;
@@ -280,6 +293,10 @@ View for tree browser view:
                     self.$.spinnerterm.hidden = true;
 
                 })
+            },
+            _silverChange: function (event) {
+                this.includeSilver = event.target.checked;
+                this._loadData();
             },
             _buildTree: function(nodeId, nodesMap, edges){
                 var self = this;

@@ -24,7 +24,8 @@
     "sequence-viewer": "^0.2.35",
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
     "viz.js": "^1.8.1",
-    "iron-demo-helpers": "^2.1.0"
+    "iron-demo-helpers": "^2.1.0",
+    "paper-checkbox": "^2.0.4"
   },
   "keywords": [
     "web-component",

@@ -3,6 +3,7 @@
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../paper-toast/paper-toast.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
 <link rel="import" href="relevant-entries-section.html">
@@ -28,6 +29,10 @@ Term view demo
                 overflow-y: auto;
             }
 
+            paper-checkbox {
+                margin-left: 20px;
+            }
+
         </style>
 
         <div class="row padded-bottom">
@@ -36,7 +41,9 @@ Term view demo
             </div>
         </div>
 
-         <relevant-entries-section related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
+        <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
+
+        <relevant-entries-section related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
 
          <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
 
@@ -57,12 +64,36 @@ Term view demo
                 relatedEntryCount: {
                     type: Number,
                     value: 0
+                },
+                includeSilver: {
+                    type: Boolean,
+                    value: false
                 }
             },
+
             attached: function () {
+                this._loadData();
+            },
+
+            _silverChange: function (event) {
+
+                this.includeSilver = event.target.checked;
+                this._loadData();
+
+            },
+            _loadData: function(){
 
                 var self = this;
-                var data = {"filter":"","quality":"gold-and-silver","query": self.nxConfig.termAccession ,"sort":"","order":"", rows: 500}
+
+                self.$.spinnertermview.active = true;
+                self.$.spinnertermview.hidden = false;
+
+
+                var data = {"filter":"","quality":"gold","query": self.nxConfig.termAccession ,"sort":"","order":"", rows: 500}
+
+                if(this.includeSilver){
+                    data["quality"] = "gold-and-silver"
+                }
 
                 var nxClient = getNXClient(this.nxConfig);
 
@@ -97,7 +128,6 @@ Term view demo
                         self.$.spinnertermview.hidden = true;
                     }
                 })
-
 
             }
         });
