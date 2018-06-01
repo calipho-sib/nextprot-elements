@@ -19,9 +19,15 @@ Exon view demo
     <template>
         <style include="nextprot-elements-shared-styles">
             :host {
-                display: block;
+                display: flex;
                 background:#f8f8f8;
                 overflow-y: auto;
+                flex-direction: column;
+                min-height: calc(100vh - 150px);
+            }
+
+            #exonMappingTable {
+                flex: 1 1 0;
             }
         </style>
         <div class="row nxSection">
@@ -36,7 +42,7 @@ Exon view demo
             </div>
         </div>
         <template is="dom-if" if="[[_hasData(data)]]">
-        <div class="row nxSection">
+        <div id="exonMappingTable" class="row nxSection">
             <div class="col-md-12">
                 <exons-mapping-table data="[[data]]"></exons-mapping-table>
             </div>
