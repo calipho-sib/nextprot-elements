@@ -1,8 +1,10 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="term-overview-section.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="term-overview-section.html">
 <link rel="import" href="external-scripts.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
 
 <!--
 `tree-browser-item`
@@ -17,28 +19,39 @@
                 list-style: none;
                 margin-left: 0;
                 padding-left: 1em;
-                text-indent: -1em;
                 cursor: pointer;
             }
            .currentTerm {
                 font-weight: bold;
             }
 
+            .noproteins-size {
+                font-size: 12px;
+            }
+
         </style>
         <ul>
+            <template is="dom-if" if="[[!dynamicChild]]">
+                <li class$="{{_getFontSizeClass(currentNode)}}">
+                    <div style="display: inline-block" on-tap="_toggle">
+                        <span class="fa fa-chevron-right"></span>
+                        <span class$="{{_isCurrentTerm(currentNode, boldname)}}">[[currentNode.value.name]]</span>
+                    </div>
 
-        <li on-tap="_toggle"><span class="fa fa-chevron-right"></span>
+                    [<a href="/term/[[currentNode.value.accession]]">[[currentNode.value.accession]]</a>]
+                    <template is="dom-if" if="[[_hasRelevantProteins(currentNode)]]">
+                    (<a href$="/proteins/search?query=/" + {{currentNode.value.accession}}>[[currentNode.value.relevantFor]] proteins</a>)
+                    </template>
+                </li>
 
-            <span class$="{{_isCurrentTerm(currentNode, boldname)}}">[[currentNode.value.name]]</span>
-
-            [<a href="/term/[[currentNode.value.accession]]">[[currentNode.value.accession]]</a>] (<a href$="/proteins/search?query=/" + {{currentNode.value.accession}}>[[currentNode.value.relevantFor]] proteins</a>)</li>
-        <iron-collapse id="collapse_[[index]]">
-            <span>loading...</span>
-        </iron-collapse>
-
+                <iron-collapse id="collapse_[[index]]" no-animation>
+                <div class="dynamic-child">
+                </div>
+            </iron-collapse>
+        </template>
         <template is="dom-if" if="[[_hasChildren(currentNode)]]">
             <template is="dom-repeat" items="[[currentNode.children]]" as="childTree" initial-count="1" target-framerate="1000">
-                <tree-browser-item boldname="[[boldname]]" current-node="[[childTree]]"></tree-browser-item>
+                <tree-browser-item boldname="[[boldname]]" current-node="[[childTree]]" nx-config="[[nxConfig]]"></tree-browser-item>
             </template>
         </template>
         </ul>
@@ -47,6 +60,10 @@
         Polymer({
             is: 'tree-browser-item',
             properties: {
+                dynamicChild: {
+                    type: Boolean,
+                    value: false,
+                },
                 nxConfig: {
                     type: Object,
                     value: {}
@@ -57,30 +74,92 @@
                 },
                 boldname: {
                     type: Object
+                },
+                processedChildren: {
+                    type: Boolean,
+                    value: false
+                },
+                leaf: {
+                    type: Boolean,
+                    value: false
                 }
-            },
 
+            },
+            _hasRelevantProteins: function(currentNode) {
+                return (currentNode.value.relevantFor > 0)
+            },
+            _getFontSizeClass: function(currentNode) {
+                if (currentNode.value.relevantFor == 0)
+                    return 'noproteins-size';
+                else return ''
+
+            },
             _isCurrentTerm: function(currentNode, bn) {
                 if(bn === currentNode.value.accession) return 'currentTerm';
             },
             _toggle: function(event) {
-                event.target.classList.toggle("fa-chevron-down");
-                event.target.classList.toggle("fa-chevron-right");
-                var ironCollapse = event.target.parentNode.parentNode.getElementsByTagName("iron-collapse")[0];
-                ironCollapse.toggle();
 
-                var span = ironCollapse.getElementsByTagName("span")[0];
-                var self = this;
-                var nxClient = getNXClient(this.nxConfig);
-                nxClient.getJSON("term/" + self.boldname + ".json").then(function(d) {
-                    span.innerHTML = d.cvTerm.childAccession.join(",")
-                })
+                if(!this.leaf){
+
+                    var cTg = event.currentTarget;
+                    var chevronSpan = cTg.getElementsByClassName("fa")[0];
+
+                    chevronSpan.classList.toggle("fa-chevron-down");
+                    chevronSpan.classList.toggle("fa-chevron-right");
+                    var ironCollapse = cTg.parentNode.parentNode.getElementsByTagName("iron-collapse")[0];
+                    ironCollapse.toggle();
+
+                    if(!this.processedChildren){
+
+                        var self = this;
+                        var nxClient = getNXClient(this.nxConfig);
+
+                        var div = ironCollapse.getElementsByClassName("dynamic-child")[0];
+                        div.innerHTML = '<div><paper-spinner-lite active></paper-spinner-lite></div>';
+
+                        var childNode = {
+                            "children": [],
+                            "value" : {
+                                "accession": self.currentNode.value.accession
+                            }
+                        };
+
+                        nxClient.getJSON("term/" + self.currentNode.value.accession + "/descendant-graph.json?includeRelevantFor=true&depth=1", true).then(function(d) {
+                            div.innerHTML = '';
+                            //No more children
+                            if(d["descendant-graph"].nodes.length == 1){
+                                chevronSpan.classList.remove("fa-chevron-down");
+                                chevronSpan.classList.remove("fa-chevron-right");
+                                self.leaf = true;
+                            }else {
+                                d["descendant-graph"].nodes.forEach(function(n) {
+                                    if(n.accession !== self.currentNode.value.accession) {
+                                        var cn = Object.assign({}, n, {})
+                                        cn.children = []
+                                        childNode.children.push({"value" : cn})
+                                    }
+                                })
+                                var browserItem = document.createElement("tree-browser-item");
+                                browserItem.setAttribute("nx-config", JSON.stringify(self.nxConfig));
+                                browserItem.setAttribute("boldname", self.boldname);
+                                browserItem.setAttribute("dynamic-child", true);
+                                browserItem.setAttribute("current-node", JSON.stringify(childNode));
+                                self.processedChildren = true;
+                                div.appendChild(browserItem);
+                            }
+                            //self.updateStyles();
+                        })
+
+                    }
+                }
+
             },
             _hasChildren: function(node){
                 if(node && node.children && node.children.length > 0){
                     return true;
                 }else return false;
             }})
+
     </script>
 </dom-module>
 
@@ -106,7 +185,6 @@ View for tree browser view:
             }
             tree-browser-item {
                 margin-top: 20px;
-                margin-left: 20px;
             }
         </style>
         <div class="row padded-bottom">
@@ -119,7 +197,8 @@ View for tree browser view:
                 <div class="title-header">
                     Tree browser
                 </div>
-                <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
+                <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
+                <paper-spinner-lite id="spinnerterm" active></paper-spinner-lite>
                 <template is="dom-if" if="[[ancestorGraph]]">
                     <template is="dom-repeat" items="[[trees]]" as="tree">
                         <tree-browser-item nx-config=[[nxConfig]] boldname="[[termAccession]]" current-node="[[tree]]"></tree-browser-item>
@@ -177,18 +256,27 @@ View for tree browser view:
                 trees: {
                     type: Array,
                     value: []
+                },
+                includeSilver: {
+                    type: Boolean,
+                    value: false
                 }
             },
-            attached: function (){
+            attached: function(){
+              this._loadData();
+            },
+            _loadData: function (){
                 var self = this;
                 this.termAccession = this.nxConfig.termAccession;
                 var nxClient = getNXClient(this.nxConfig);
-                nxClient.getJSON("term/" + this.nxConfig.termAccession + "/ancestor-graph.json?includeRelevantFor=true", true).then(function(d) {
+                var url = "term/" + this.nxConfig.termAccession + "/ancestor-graph.json?includeRelevantFor=true";
+                if (this.includeSilver){
+                    url += "&includeSilver=true";
+                }
+                nxClient.getJSON(url, true).then(function(d) {
                     self.ancestorGraph = d["ancestor-graph"];
                     var edges = self.ancestorGraph.edges;
                     var nodes = self.ancestorGraph.nodes;
-//                    console.log(nodes);
-//                    console.log(edges);
                     var nodesMap = {};
                     nodes.forEach(function(n){ nodesMap[n.id] = n; })
                     var ids = nodes.map(function (n) {return n.id});
@@ -201,14 +289,14 @@ View for tree browser view:
                         trees.push(tree);
                     })
                     self.trees = trees;
-//                    console.log(self.trees);
-
-
-                    console.log("Done")
-                    self.$.spinnertermview.active = false;
-                    self.$.spinnertermview.hidden = true;
+                    self.$.spinnerterm.active = false;
+                    self.$.spinnerterm.hidden = true;
 
                 })
+            },
+            _silverChange: function (event) {
+                this.includeSilver = event.target.checked;
+                this._loadData();
             },
             _buildTree: function(nodeId, nodesMap, edges){
                 var self = this;
