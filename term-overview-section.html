@@ -148,9 +148,8 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                         </div>
                     </template>
                 </template>
-                <template is="dom-repeat" items="[[termprops]]" as="prop">
+                <template is="dom-repeat" items="[[termprops]]" filter="{{_showInPropList}}" as="prop">
                     <template is="dom-if" if="[[_getValueProperties(term, prop.key)]]">
-                        <template is="dom-if" if="[[!pro.show]]">
                         <div id="term-[[pro.key]]" class="row">
                             <div class="col-md-3 col-xs-3 grey-x text-align-right">[[prop.label]] :</div>
                             <div class="col-md-9 col-xs-9">
@@ -171,7 +170,6 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                                 </dl>
                             </div>
                         </div>
-                    </template>
                     </template>
                 </template>
                 <template is="dom-if" if="[[term.relatedTerms]]">
@@ -265,6 +263,10 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 }, function (error) {
                     self._handleError(error);
                 });
+            },
+            _showInPropList: function(tp){
+                if (tp.show) return tp.show;
+                else return true;
             },
             _isEnzyme: function(term){
                 return (term.ontology == "EnzymeClassificationCv")
