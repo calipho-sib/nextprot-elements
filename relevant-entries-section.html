@@ -108,8 +108,8 @@
                                 </select>
                             </span>
                             <span class="bg-grey">
-                                <a id="summary-link" class$="[[_summaryLinkClass]]" role="button" on-click="_updateLinks">summary</a> |
-                                <a id="details-link" class$="[[_detailsLinkClass]]" role="button" on-click="_updateLinks">details</a>
+                                <a id="summary-link" class$="[[_summaryLinkClass]]" role="button" on-click="_updateLinks">Summary</a> |
+                                <a id="details-link" class$="[[_detailsLinkClass]]" role="button" on-click="_updateLinks">Details</a>
                             </span>
                         </div>
                     </div>
@@ -194,9 +194,6 @@
                 this.$.spinner.hidden = true;
 
                 this.count = 0;
-            },
-            _toView: function (summary) {
-                return (summary) ? "summary" : "detailed";
             },
             _beyondMaximumEntries: function (count) {
                 return count > this.maxNumberOfEntriesPaginated;
