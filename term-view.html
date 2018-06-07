@@ -30,7 +30,13 @@ Term view demo
             }
 
             paper-checkbox {
-                margin-left: 20px;
+                position: absolute;
+                right: 30px;
+                top: 45px;
+            }
+
+            #div-checkbox {
+                position: relative;
             }
 
         </style>
@@ -41,7 +47,9 @@ Term view demo
             </div>
         </div>
 
-        <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
+        <div id="div-checkbox">
+            <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
+        </div>
 
         <relevant-entries-section related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
 
