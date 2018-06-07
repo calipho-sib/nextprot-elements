@@ -15,6 +15,10 @@ exons mapping table demo
     <template>
         <style include="nextprot-elements-shared-styles">
 
+            :host {
+                padding-bottom: 20px;
+            }
+
             #exonTable {
                 width: auto;
                 white-space: nowrap;
@@ -82,10 +86,12 @@ exons mapping table demo
                 border: 1px solid lightgray;
                 max-width: 100%;
                 background-color: #f8f8f8;
+                max-height: calc(100% - 70px);
+                overflow-y: hidden;
             }
             #tableDiv{
                 overflow-y: auto;
-                max-height:200px;
+                max-height:500px;
                 display:inline-block;
                 border-top:1px solid lightgray;
                 background-color: white;
@@ -138,30 +144,32 @@ exons mapping table demo
                                 <th style="text-align:center;" class="thead-column">
                                     <div>Coding for <br>
                                         [[iso.name]]
-                                        <template is="dom-if" if="[[iso.canonical]]">
-                                            <span class="iso-canonical">(canonical)</span>
-                                        </template>
-                                        <div>
-                                            <a class="ext-link"
-                                               href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]"
-                                               target='_blank'>[[iso.main-transcript]]</a>
-                                        </div>
-                                        <template is="dom-if" if="[[iso.other-transcripts]]">
-                                        <span on-tap="_toggle">
-                                            <span id="transcripts_[[index]]" class="fa fa-chevron-right"
-                                                  style="display: inline-block;width:14px;"></span>
-                                            <span id="showHide_[[index]]" style="display: inline-block;width:36px;">&nbsp;show</span> <span>transcripts ([[iso.other-transcripts.length]])</span>
-                                        </span>
-                                            <iron-collapse id="collapse_[[index]]" no-animation>
-                                                <ul>
-                                                    <template is="dom-repeat" items="[[iso.other-transcripts]]"
-                                                              as="other">
-                                                        <li><a class="ext-link"
-                                                               href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]"
-                                                               target='_blank'>[[other]]</a></li>
-                                                    </template>
-                                                </ul>
-                                            </iron-collapse>
+                                        <template is="dom-if" if="[[_displayTranscriptMappingInfos(iso)]]">
+                                            <template is="dom-if" if="[[iso.canonical]]">
+                                                <span class="iso-canonical">(canonical)</span>
+                                            </template>
+                                            <div>
+                                                <a class="ext-link"
+                                                   href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]"
+                                                   target='_blank'>[[iso.main-transcript]]</a>
+                                            </div>
+                                            <template is="dom-if" if="[[iso.other-transcripts]]">
+                                            <span on-tap="_toggle">
+                                                <span id="transcripts_[[index]]" class="fa fa-chevron-right"
+                                                      style="display: inline-block;width:14px;"></span>
+                                                <span id="showHide_[[index]]" style="display: inline-block;width:36px;">&nbsp;show</span> <span>transcripts ([[iso.other-transcripts.length]])</span>
+                                            </span>
+                                                <iron-collapse id="collapse_[[index]]" no-animation>
+                                                    <ul>
+                                                        <template is="dom-repeat" items="[[iso.other-transcripts]]"
+                                                                  as="other">
+                                                            <li><a class="ext-link"
+                                                                   href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]"
+                                                                   target='_blank'>[[other]]</a></li>
+                                                        </template>
+                                                    </ul>
+                                                </iron-collapse>
+                                            </template>
                                         </template>
                                     </div>
                                 </th>
@@ -323,6 +331,12 @@ exons mapping table demo
             _hasData: function (data) {
 
                 return data && data.sortedExonKeys.length > 0;
+            },
+            _displayTranscriptMappingInfos: function (infos) {
+
+                console.log("INFOS", infos);
+
+                return infos.quality && infos.quality === "GOLD";
             },
             _updateSpinnerStatus: function (dataLoaded) {
 
