@@ -61,57 +61,29 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     value: {}
                 },
                 accessionInput: {
-                    type: String,
-                    observer: "APIcaller"
-                },
-                arrowInput: {
-                    value: 0.5,
-                    type: Number,
-                    observer: "APIcaller"
-                },
-                fontInput: {
-                    value: 14,
-                    type: Number,
-                    observer: "APIcaller"
-                },
-                splineInput: {
-                    value: "spline",
-                    type: String,
-                    observer: "APIcaller"
-                },
-                maxWidth: {
-                    value: 11,
-                    type: Number,
-                    observer: "APIcaller"
+                    type: String
                 },
                 dotGraph: {
                     type: String
                 },
-                graphOrientation: {
-                    value: "TB",
-                    type: String,
-                    observer: "APIcaller"
-                },
-                nodeShape: {
-                    value: "square",
-                    type: String,
-                    observer: "APIcaller"
-                },
                 regex: {
                     value: 1,
-                    type: Number,
-                    observer: "APIcaller"
-                },
-                subgraphDistance: {
-                    value: 0,
-                    type: Number,
-                    observer: "APIcaller"
+                    type: Number
                 }
             },
             ready: function(){
               this.requestApi();
             },
             requestApi: function (){
+
+                var graphParams = {
+                    subgraphDistance: 0,
+                    nodeShape: "square",
+                    graphOrientation: "TB",
+                    maxWidth: 11,
+                    splineInput: "spline",
+                    fontInput: 14
+                };
 
                 if(this.accessionInput){
                     this.nxConfig.termAccession = this.accessionInput;
@@ -136,7 +108,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 var dotFormatEdges = self.edgesDotBuild(edges);
 
                 //Creating the subgraphs from distance dictionary: (only if asked for it)
-                if (this.subgraphDistance === "1"){
+                if (graphParams.subgraphDistance === "1"){
                     var subgraphs = self.nodeDistancer(agraph["ancestor-graph"]);
                 } else {
                     var subgraphs = ""
@@ -144,11 +116,11 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 
                 // Variables kept for showcase, however may be useful for future changes in layout
                     self.dotGraph = 'digraph "" {node [shape=' +
-                        this.nodeShape //Full list of possible shapes http://www.graphviz.org/content/node-shapes#polygon
-                        + ', fontsize='+ self.fontInput +'];'
-                        + 'graph [rankdir=' + self.graphOrientation
-                        +', autosize=false, size="90.2,' + self.maxWidth //Maximum size of the graph
-                        + '", splines=' + self.splineInput + '];'
+                        graphParams.nodeShape //Full list of possible shapes http://www.graphviz.org/content/node-shapes#polygon
+                        + ', fontsize='+ graphParams.fontInput +'];'
+                        + 'graph [rankdir=' + graphParams.graphOrientation
+                        +', autosize=false, size="90.2,' + graphParams.maxWidth //Maximum size of the graph
+                        + '", splines=' + graphParams.splineInput + '];'
                         + subgraphs
                         +'labelfontname="Helvetica";'
                         +'bgcolor="#f8f8f8";'
@@ -159,12 +131,6 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 })
 
             },
-            //API call when the DOM is initialized:
-            APIcaller: function () {
-                this.requestApi();
-                //this.$.APIcall.generateRequest();
-            },
-
             getNodeColor: function (nodeAccession) {
                 return (nodeAccession === this.accessionInput) ? "#BDE5B9" : "#FFFFFF"; //Node color either green or white
             },
@@ -232,7 +198,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     dotEdgesBuilt += '"'+head+'"'
                                     + " -> "
                                     + '"'+tail+'"'
-                                    + " [arrowsize="+ this.arrowInput
+                                    + " [arrowsize="+ 0.5
                                     + ', color="' + edgeColor + '"'
                                     + ', fontsize="10"'
                                     + ', hoverWidth="3"'
