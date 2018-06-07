@@ -29,17 +29,6 @@
                 font-size: 12px;
             }
 
-            paper-checkbox {
-                position: absolute;
-                right: 30px;
-                top: 45px;
-            }
-
-            @media (max-width: 768px) {
-                paper-checkbox {
-                    top:15px;
-                }
-            }
 
         </style>
         <ul>
@@ -197,6 +186,21 @@ View for tree browser view:
             }
             tree-browser-item {
                 margin-top: 20px;
+            }
+
+
+            paper-checkbox {
+                z-index: 10;
+                position: absolute;
+                right: 30px;
+                top: 45px;
+            }
+
+            @media (max-width: 768px) {
+                paper-checkbox {
+                    z-index: 10;
+                    top:15px;
+                }
             }
         </style>
         <div class="row padded-bottom">
