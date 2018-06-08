@@ -41,7 +41,7 @@
 
                     [<a href="/term/[[currentNode.value.accession]]">[[currentNode.value.accession]]</a>]
                     <template is="dom-if" if="[[_hasRelevantProteins(currentNode)]]">
-                    (<a href$="/proteins/search?query=/" + {{currentNode.value.accession}}>[[currentNode.value.relevantFor]] proteins</a>)
+                    (<a href="/term/[[currentNode.value.accession]]">[[currentNode.value.relevantFor]] proteins</a>)
                     </template>
                 </li>
 
