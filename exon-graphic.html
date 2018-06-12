@@ -87,6 +87,10 @@ Exon graphic demo
             // ----|_________|
             _calcStartExonGraphicParams: function() {
 
+                if (this.data.drawCodingPartOnly) {
+                    return this._calcCodingExonGraphicParams();
+                }
+
                 var nonCodingPartLen = this.data.startPosition - this.data.geneRegion.firstPosition + 1;
                 var codingRegionLen = this.data.geneRegion.lastPosition - this.data.startPosition + 1;
 
@@ -124,16 +128,24 @@ Exon graphic demo
 
                 return {
                     "codingRegionStart" : 0,
-                    "codingRegionLength" : this._scale(codingPartLen)
+                    "codingRegionLength" : (this.data.codingPartOnly) ? this._scale2CodingRegion(codingPartLen) : this._scale(codingPartLen)
                 }
             },
             _scale: function(subRegionLen) {
 
                 return subRegionLen * this._exonWidth / this._calcGeneRegionLength();
             },
+            _scale2CodingRegion: function(subRegionLen) {
+
+                return Math.floor(subRegionLen / 3) * 3 * this._exonWidth / this._calcCodingGeneRegionLength();
+            },
             _calcGeneRegionLength: function() {
 
                 return this.data.geneRegion.lastPosition - this.data.geneRegion.firstPosition + 1;
+            },
+            _calcCodingGeneRegionLength: function() {
+
+                return this.data.codingGeneRegion.lastPosition - this.data.codingGeneRegion.firstPosition + 1;
             },
             _drawGraphic: function(svg, codingRegionCoord) {
 

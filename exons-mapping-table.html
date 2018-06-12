@@ -238,8 +238,13 @@ exons mapping table demo
                 var i;
                 for (i = 0; i < this.data.sortedMappedIsoformInfoKeys.length; i++) {
 
-                    if (this.data.sortedMappedIsoformInfoKeys[i] in exonByIsoform) {
-                        row.push(exonByIsoform[this.data.sortedMappedIsoformInfoKeys[i]]);
+                    var isoformAccession = this.data.sortedMappedIsoformInfoKeys[i];
+
+                    if (isoformAccession in exonByIsoform) {
+                        var exon = exonByIsoform[isoformAccession];
+                        exon.drawCodingPartOnly = this.data.mappedIsoformInfos[isoformAccession].quality === "BRONZE" && this.data.lowQualityMappings;
+
+                        row.push(exon);
                     }
                     else {
                         row.push(null);
@@ -334,8 +339,6 @@ exons mapping table demo
                 return data && data.sortedExonKeys.length > 0;
             },
             _displayTranscriptMappingInfos: function (infos) {
-
-                console.log("INFOS", infos);
 
                 return infos.quality && infos.quality === "GOLD";
             },
