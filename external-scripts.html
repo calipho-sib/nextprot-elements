@@ -19,11 +19,11 @@
 
             if(!window.nxclient) { //If not defined
                 window.nxclient = new Nextprot.Client("neXtProt elements", "Calipho team");
-                console.log("Init neXtProt client")
+//                console.log("Init neXtProt client")
             }
 
             if (config.env) {
-                console.log("Setting environment " + config.env)
+//                console.log("Setting environment " + config.env)
                 window.nxclient.updateEnvironment(config.env);
             }
 
