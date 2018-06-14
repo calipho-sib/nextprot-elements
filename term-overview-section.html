@@ -298,6 +298,9 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                         if(ploop === parg){
                             var pv = prop.propertyValue;
                             prop.propertyValue = pv[0].toUpperCase()+pv.substr(1);
+                            if(propertyName == "Reaction"){
+                                prop.propertyValue = prop.propertyValue.replace("=", "⇄")
+                            }
                             result.push(prop);
                         }
                     })
