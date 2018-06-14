@@ -156,7 +156,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                                 <dl>
                                     <template is="dom-repeat" items="[[_getValueProperties(term, prop.key)]]" as="property">
                                         <template is="dom-if" if="[[prop.templateUrl]]">
-                                            <dt class="col-md-9 col-xs-9 multiple-prop"> [[_getTemplateUrl(term, property, 'label')]] <a href="[[_getTemplateUrl(term, property, 'url')]]" class="ext-link">[[_getTemplateUrl(term, property, 'urlLabel')]]</a> </dt>
+                                            <dt class="col-md-9 col-xs-9 multiple-prop"> [[_getTemplateUrl(term, property, 'label')]] <a target="_blank" href="[[_getTemplateUrl(term, property, 'url')]]" class="ext-link">[[_getTemplateUrl(term, property, 'urlLabel')]]</a> </dt>
                                         </template>
                                         <template is="dom-if" if="[[!prop.templateUrl]]">
                                                 <template is="dom-if" if="[[prop.atomicFormula]]">
@@ -224,7 +224,6 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                             {key: "abbreviation", label: "ABBREVIATION", show: false}, //Don't show because it will be shown at other place
                             {key: "Catalyst", label: "CATALYST"},
                             {key: "Reaction", label: "REACTION"},
-                            {key: "Sex of cell", label: "SEX OF CELL"},
                             {key: "Comment", label: "COMMENT"},
                             {key: "Target", label: "TARGETED AMINO ACID"},
                             {key: "Position of the modification", label: "POSITION OF THE MODIFICATION"},
