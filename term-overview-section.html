@@ -148,7 +148,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                         </div>
                     </template>
                 </template>
-                <template is="dom-repeat" items="[[termprops]]" filter="{{_showInPropList}}" as="prop">
+                <template is="dom-repeat" items="[[termprops]]" filter="_showInPropList" as="prop">
                     <template is="dom-if" if="[[_getValueProperties(term, prop.key)]]">
                         <div id="term-[[pro.key]]" class="row">
                             <div class="col-md-3 col-xs-3 grey-x text-align-right">[[prop.label]] :</div>
@@ -264,7 +264,9 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 });
             },
             _showInPropList: function(tp){
-                if (tp.show) return tp.show;
+                if (tp.show !== undefined) {
+                    return tp.show;
+                }
                 else return true;
             },
             _isEnzyme: function(term){
