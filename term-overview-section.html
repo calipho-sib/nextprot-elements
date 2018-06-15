@@ -291,13 +291,14 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
             },
             _getProperty: function (propertyName, properties){
                 var result = []
+                var self = this;
                 if(properties && (properties.length > 0)) {
                     properties.forEach(function(prop){
                         var ploop = prop.propertyName.replace(/ /g,'').toLowerCase();
                         var parg = propertyName.replace(/ /g,'').toLowerCase();
                         if(ploop === parg){
                             var pv = prop.propertyValue;
-                            prop.propertyValue = pv[0].toUpperCase()+pv.substr(1);
+                            prop.propertyValue = self._upperCaseFirstLetter(pv)
                             if(propertyName == "Reaction"){
                                 prop.propertyValue = prop.propertyValue.replace("=", "⇄")
                             }
@@ -307,9 +308,22 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 }
                 return result;
             },
+            _upperCaseFirstLetter: function(string){
+                return string[0].toUpperCase() + string.substr(1);
+            },
             _convertForTemplate: function (cvTerm) {
                 var self = this;
                 var term = JSON.parse(JSON.stringify(cvTerm));
+
+                //Add capital letter
+                if(term.name)
+                    term.name = self._upperCaseFirstLetter(term.name)
+
+                if(term.definition)
+                    term.definition = self._upperCaseFirstLetter(term.definition)
+
+                if(term.description)
+                    term.description = self._upperCaseFirstLetter(term.description)
 
                 if(term.name !== term.description && term.ontology != "EnzymeClassificationCv"){
                     term.definition = term.description;
@@ -350,7 +364,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                                         rto["name"] = prop.value
                                     }else if(prop.name === "term_name"){
                                         //Upper case first letter
-                                        rto["description"] = prop.value[0].toUpperCase()+prop.value.substr(1);
+                                        rto["description"] = self._upperCaseFirstLetter(prop.value)
                                     }
                                 })
                                 rto.accession = x.accession;
