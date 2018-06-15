@@ -192,7 +192,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                             <div class="col-md-3 col-xs-3 grey-x text-align-right">EXTERNAL REFERENCES :</div>
                             <div class="col-md-9 col-xs-9">
                                 <dl>
-                                    <template is="dom-repeat" items="[[term.externalReferences]]" as="xref">
+                                    <template is="dom-repeat" items="[[term.externalReferences]]" filter="_showExternalReferences" as="xref">
                                         <dt>[[xref.databaseName]]: <a class="ext-link" target='_blank' href="[[xref.resolvedUrl]]">[[xref.accession]]</a></dt>
                                     </template>
                                 </dl>
@@ -262,6 +262,9 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 }, function (error) {
                     self._handleError(error);
                 });
+            },
+            _showExternalReferences: function(xref){
+              return xref.databaseName != "UniProt domain";
             },
             _showInPropList: function(tp){
                 if (tp.show !== undefined) {
