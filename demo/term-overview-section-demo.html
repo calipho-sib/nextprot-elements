@@ -21,15 +21,52 @@
       }
 
     </style>
+
+
   </head>
   <body>
+
+        <script type="text/javascript">
+
+          // typical examples of taxonomic range property values to be parsed
+          // structure is: <strain>; taxId:<taxId1> (<species1>) [,  taxId:<taxId2> (<species2>)  ...]
+          // where [] shows optional repetition of elements 
+          var rangeList = [];
+          rangeList.push("Eukaryota; taxId:3027 (Cryptophyta), taxId:33090 (Viridiplantae), taxId:33634 (Stramenopiles), taxId:33682 (Euglenozoa), taxId:38254 (Glaucocystophyceae)");
+          rangeList.push("Bacteria; taxId:326423 (Bacillus velezensis (strain DSM 23117 / BGSC 10A6 / FZB42)), taxId:1408 (Bacillus pumilus)");
+          rangeList.push("Archaea; taxId:2157 (Archaea)");                        // <== label should be "Archaea"
+          rangeList.push("Eukaryota; taxId:4751 (Fungi), taxId:33208 (Metazoa)"); // <== label1 should be "Eukaryota » Fungi", label2 should be " , Metazoa"
+          rangeList.push("Eukaryota; taxId:9606 (Homo sapiens)");                 // <== label should be "Eukaryota » Homo sapiens"
+
+          function myFunction() {
+            for (idx in rangeList) {
+              var value = rangeList[idx];
+              console.log('-------------------');
+              console.log('Property value:', value);
+              var el = document.getElementById("toto");
+              var result = el._parseTaxonomicRange(value);
+              for (idx in result) {
+                var species = result[idx];
+                console.log('Parsed element ' + idx + ': taxon=' + species.taxon + '|label=' + species.label + '|url='+species.url);
+              }
+            }
+            console.log('-------------------');
+          }
+        </script>
 
     <div class="vertical-section-container centered">
       <h3>Basic term-overview-section Demo</h3>
       <h2>Specifications can be found in the <a href="https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs">wiki</a> or in the <a href="https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/edit">doc</a></h2>
 
       <demo-snippet>
+
         <template>
+
+          <button onclick="myFunction()">Parse taxonomic ranges</button>
+
+          <term-overview-section id="toto" nx-config='{"env": "dev", "termAccession": "PTM-0053"}'></term-overview-section>
+
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "PTM-0033"}'></term-overview-section>
 
           <term-overview-section nx-config='{"env": "dev", "termAccession": "3.6.1.n2"}'></term-overview-section>
           <term-overview-section nx-config='{"env": "dev", "termAccession": "CVCL_3449"}'></term-overview-section>

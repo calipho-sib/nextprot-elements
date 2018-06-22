@@ -155,10 +155,14 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                             <div class="col-md-9 col-xs-9">
                                 <dl>
                                     <template is="dom-repeat" items="[[_getValueProperties(term, prop.key)]]" as="property">
-                                        <template is="dom-if" if="[[prop.templateUrl]]">
-                                            <dt class="col-md-9 col-xs-9 multiple-prop"> [[_getTemplateUrl(term, property, 'label')]] <a target="_blank" href="[[_getTemplateUrl(term, property, 'url')]]" class="ext-link">[[_getTemplateUrl(term, property, 'urlLabel')]]</a> </dt>
+                                        <template is="dom-if" if="[[prop.taxonomicRange]]">
+                                            <dt class="col-md-9 col-xs-9 multiple-prop">
+                                                <template is="dom-repeat" items="[[_parseTaxonomicRange(property.propertyValue)]]" as="species">
+                                                    [[species.label]] <a target="_blank" href="[[species.url]]" class="ext-link">[[species.taxon]]</a>
+                                                </template>
+                                            </dt>
                                         </template>
-                                        <template is="dom-if" if="[[!prop.templateUrl]]">
+                                        <template is="dom-if" if="[[!prop.taxonomicRange]]">
                                                 <template is="dom-if" if="[[prop.atomicFormula]]">
                                                         <dt class="col-md-9 col-xs-9 multiple-prop"><atomic-formula-item formula=[[property.propertyValue]]></atomic-formula-item></dt>
                                                 </template>
@@ -228,7 +232,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                             {key: "Target", label: "TARGETED AMINO ACID"},
                             {key: "Position of the modification", label: "POSITION OF THE MODIFICATION"},
                             {key: "Cellular location", label: "CELLULAR LOCATION"},
-                            {key: "Taxonomic range", label: "TAXONOMIC RANGE", templateUrl: "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?lvl=0&id="},
+                            {key: "Taxonomic range", label: "TAXONOMIC RANGE", taxonomicRange: true},
                             {key: "Correction formula", label: "ATOMIC CORRECTION FORMULA", atomicFormula: true},
                             {key: "Average mass difference", label: "AVERAGE MASS DIFFERENCE"},
                             {key: "Monoisotopic mass difference", label: "MONOISOTONIC MASS DIFFERENCE"}
@@ -263,6 +267,35 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     self._handleError(error);
                 });
             },
+
+
+            _parseTaxonomicRange: function(value) {
+                var realm = value.split(';')[0].trim();
+                var species = value.split(';')[1];
+                var speciesList= [];
+                var speciesArray = species.split(',');
+                for (idx in speciesArray) {
+                    var data = speciesArray[idx].trim();
+                    var species = {};
+                    var spacePos = data.indexOf(' ');
+                    species.taxon =  data.substr(0,spacePos);
+                    species.url = "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?lvl=0&id=" + species.taxon;
+                    var label = data.substr(spacePos).trim();
+                    // remove parentheses embedding the label
+                    label = label.substr(1);
+                    label = label.substr(0, label.length-1);
+                    // build the label of the first species by prefixing it with the realm if different of label
+                    if (idx==0 && label != realm) label = realm + " » " + label; 
+                    // build labels for species after the first one
+                    if (idx>0) label = ' , ' + label;
+                    species.label = label;                        
+                    speciesList.push(species);
+                }
+                return speciesList;
+            },
+
+
+
             _showExternalReferences: function(xref){
               return xref.databaseName != "UniProt domain";
             },
