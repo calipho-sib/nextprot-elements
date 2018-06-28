@@ -55,12 +55,12 @@ Term view demo
             </div>
         </div>
 
-        <template is="dom-if" if="[[!noCvTerm]]">
+        <div id="relevantentries">
             <div id="div-checkbox">
                 <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
             </div>
             <relevant-entries-section id="relevantEntries" related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
-        </template>
+        </div>
 
         <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
 
@@ -104,7 +104,7 @@ Term view demo
 
             },
             _cvTermUpdated: function(newNoCvTermValue){
-                this.noCvTerm = newNoCvTermValue;
+                this.$.relevantentries.hidden = newNoCvTermValue;
             },
             _loadData: function(){
 

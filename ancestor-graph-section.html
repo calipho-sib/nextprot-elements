@@ -128,7 +128,9 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                         + dotFormatEdges
                         + '}';
 
-                })
+                }, function(error) {
+                    console.log("HTTP API error occured in ancestor graph section (no cv term found?)" , error)
+                });
 
             },
             getNodeColor: function (nodeAccession) {

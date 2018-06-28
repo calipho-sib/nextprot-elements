@@ -216,10 +216,10 @@ View for tree browser view:
         </style>
         <div class="row padded-bottom">
             <div class="col-md-12">
-                <term-overview-section nx-config=[[nxConfig]]></term-overview-section>
+                <term-overview-section nx-config=[[nxConfig]] no-cv-term="{{noCvTerm}}"></term-overview-section>
             </div>
         </div>
-        <div class="row">
+        <div id="treebrowser" class="row">
             <div class="col-md-12">
                 <div class="title-header">
                     Tree browser
@@ -276,6 +276,11 @@ View for tree browser view:
                     type: Object,
                     value: {}
                 },
+                noCvTerm: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_cvTermUpdated'
+                },
                 termAccession: {
                     type: Object,
                     value: {}
@@ -291,6 +296,9 @@ View for tree browser view:
             },
             attached: function(){
               this._loadData();
+            },
+            _cvTermUpdated: function(newNoCvTermValue){
+                this.$.treebrowser.hidden = newNoCvTermValue;
             },
             _loadData: function (){
                 var self = this;
@@ -319,6 +327,9 @@ View for tree browser view:
                     self.$.spinnerterm.active = false;
                     self.$.spinnerterm.hidden = true;
 
+                }, function (e){
+                    //error occured
+                    console.log("HTTP error occured when getting tree browser view (possible causes: no cv term found? api down?)" , e);
                 })
             },
             _silverChange: function (event) {

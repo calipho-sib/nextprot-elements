@@ -30,10 +30,10 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
         </style>
         <div class="row padded-bottom">
             <div class="col-md-12">
-                <term-overview-section nx-config=[[nxConfig]]></term-overview-section>
+                <term-overview-section nx-config=[[nxConfig]] no-cv-term="{{noCvTerm}}"></term-overview-section>
             </div>
         </div>
-        <ancestor-graph-section accession-input=[[nxConfig.termAccession]] subgraph-distance="0" regex="1" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-section>
+        <ancestor-graph-section id="graphsection" accession-input=[[nxConfig.termAccession]] subgraph-distance="0" regex="1" node-shape="square" graph-orientation="TB" data-input="small" arrow-input=0.5 font-input=14 spline-input="spline" zoom-input=11></ancestor-graph-section>
     </template>
 
     <script>
@@ -43,7 +43,15 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                 nxConfig: {
                     type: Object,
                     value: {}
+                },
+                noCvTerm: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_cvTermUpdated'
                 }
+            },
+            _cvTermUpdated: function(newNoCvTermValue){
+                this.$.graphsection.hidden = newNoCvTermValue;
             }
         }); //Polymer end
     </script>
