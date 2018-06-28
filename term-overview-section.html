@@ -215,6 +215,11 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     type: Object,
                     value: {}
                 },
+                noCvTerm : {
+                    type: Boolean,
+                    value: false,
+                    notify: true
+                },
                 term: {
                     type: Object,
                     value: {}
@@ -257,8 +262,10 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     if(term["cvTerm"]){
                         self.$.noCvTermWarning.hidden=true;
                         self.term = self._convertForTemplate(term["cvTerm"]);
+                        self.noCvTerm = false;
                     }else {
                         self.$.noCvTermWarning.hidden=false;
+                        self.noCvTerm = true;
                     }
                     //self._loadData(overview);
                     self.$.spinner.active = false;

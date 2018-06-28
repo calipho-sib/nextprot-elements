@@ -51,17 +51,18 @@ Term view demo
 
         <div class="row padded-bottom">
             <div class="col-md-12">
-                <term-overview-section nx-config='[[nxConfig]]'></term-overview-section>
+                <term-overview-section nx-config='[[nxConfig]]' no-cv-term="{{noCvTerm}}"></term-overview-section>
             </div>
         </div>
 
-        <div id="div-checkbox">
-            <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
-        </div>
+        <template is="dom-if" if="[[!noCvTerm]]">
+            <div id="div-checkbox">
+                <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
+            </div>
+            <relevant-entries-section id="relevantEntries" related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
+        </template>
 
-        <relevant-entries-section related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
-
-         <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
+        <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
 
     </template>
     <script>
@@ -73,6 +74,11 @@ Term view demo
                     value: {},
                     notify: true
 
+                },
+                noCvTerm: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_cvTermUpdated'
                 },
                 _entries: {
                     type: Array
@@ -97,13 +103,15 @@ Term view demo
                 this._loadData();
 
             },
+            _cvTermUpdated: function(newNoCvTermValue){
+                this.noCvTerm = newNoCvTermValue;
+            },
             _loadData: function(){
 
                 var self = this;
 
                 self.$.spinnertermview.active = true;
                 self.$.spinnertermview.hidden = false;
-
 
                 var data = {"filter":"","quality":"gold","query": self.nxConfig.termAccession ,"sort":"","order":"", rows: 500}
 
@@ -123,7 +131,6 @@ Term view demo
                     data: JSON.stringify(data),
                     success : function(response) {
                         var entries = [];
-                        console.log(response);
                         response.results.forEach(function (res){
                             res.accession = res.id;
                             entries.push(res);
