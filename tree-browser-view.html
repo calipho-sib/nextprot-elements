@@ -108,6 +108,7 @@
                     chevronSpan.classList.toggle("fa-chevron-down");
                     chevronSpan.classList.toggle("fa-chevron-right");
                     var ironCollapse = cTg.parentNode.parentNode.getElementsByTagName("iron-collapse")[0];
+
                     ironCollapse.toggle();
 
                     if(!this.processedChildren){
@@ -115,6 +116,16 @@
                         var self = this;
                         var nxClient = getNXClient(this.nxConfig);
 
+                        //Remove the single children, which was put in the beginning
+                        var singleChildItem;
+                        var singleChildItemsList = cTg.parentNode.parentNode.getElementsByTagName("tree-browser-item");
+                        if(singleChildItemsList.length > 0){
+                            singleChildItem = singleChildItemsList[0];
+                        }
+                        if(singleChildItem !== undefined){
+                            singleChildItem.innerHTML = '';
+                        }
+                        
                         var div = ironCollapse.getElementsByClassName("dynamic-child")[0];
                         div.innerHTML = '<div><paper-spinner-lite active></paper-spinner-lite></div>';
 
