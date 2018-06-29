@@ -51,7 +51,7 @@
             </iron-collapse>
         </template>
         <template is="dom-if" if="[[_hasChildren(currentNode)]]">
-            <template is="dom-repeat" items="[[currentNode.children]]" as="childTree" initial-count="1" target-framerate="1000">
+            <template is="dom-repeat" items="[[currentNode.children]]" as="childTree" initial-count="1" sort="_sortTerms" target-framerate="1000">
                 <tree-browser-item boldname="[[boldname]]" current-node="[[childTree]]" nx-config="[[nxConfig]]"></tree-browser-item>
             </template>
         </template>
@@ -97,6 +97,14 @@
             },
             _isCurrentTerm: function(currentNode, bn) {
                 if(bn === currentNode.value.accession) return 'currentTerm';
+            },
+            _sortTerms: function(a, b) {
+                var ax = a.value.name.toLowerCase();
+                var bx = b.value.name.toLowerCase();
+
+                if(ax < bx) return -1;
+                if(ax > bx) return 1;
+                else return 0;
             },
             _toggle: function(event) {
 
@@ -227,7 +235,7 @@ View for tree browser view:
                 <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
                 <paper-spinner-lite id="spinnerterm" active></paper-spinner-lite>
                 <template is="dom-if" if="[[ancestorGraph]]">
-                    <template is="dom-repeat" items="[[trees]]" as="tree">
+                    <template is="dom-repeat" items="[[trees]]" as="tree" sort="_sortTerms" >
                         <tree-browser-item nx-config=[[nxConfig]] boldname="[[termAccession]]" current-node="[[tree]]"></tree-browser-item>
                     </template>
                 </template>
@@ -331,6 +339,14 @@ View for tree browser view:
                     //error occured
                     console.log("HTTP error occured when getting tree browser view (possible causes: no cv term found? api down?)" , e);
                 })
+            },
+            _sortTerms: function(a, b) {
+                var ax = a.value.name.toLowerCase();
+                var bx = b.value.name.toLowerCase();
+
+                if(ax < bx) return -1;
+                if(ax > bx) return 1;
+                else return 0;
             },
             _silverChange: function (event) {
                 this.includeSilver = event.target.checked;
