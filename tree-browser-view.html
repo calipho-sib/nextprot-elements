@@ -169,8 +169,10 @@
 
             _sortTerms: function(a, b) {
 
-                //In case of enzymes
-                if(a.value.name.startsWith("EC")){
+                //In case of enzymes, starts with EC and contains 3 dots (4 spaces)
+                console.log(a.value.name);
+
+                if(a.value.name.startsWith("EC") && (a.value.name.split(".").length ) == 4){
 
                     var ax = a.value.accession.toLowerCase();
                     var bx = b.value.accession.toLowerCase();
