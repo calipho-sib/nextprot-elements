@@ -161,7 +161,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     dotNodesBuilt += ' ['+'label='+'"'+ regexNodeName + '"'//Text in the nodes
                                     +'style=filled;'
                                     + 'fillcolor="'+ this.getNodeColor(APInodes[i]["accession"]) +'"'
-                                    + 'tooltip=' + '"' + APInodes[i]["name"] + '"'//Tooltip on hover
+                                    + 'tooltip=' + '"' + APInodes[i]["accession"] + ": " + APInodes[i]["name"] + '"'//Tooltip on hover
                                     + 'href="/term/' + APInodes[i]["accession"] //URL in node
                                     + '"' + ';] '
                 }
