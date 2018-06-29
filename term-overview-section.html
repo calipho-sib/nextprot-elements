@@ -267,12 +267,23 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                         self.$.noCvTermWarning.hidden=false;
                         self.noCvTerm = true;
                     }
-                    //self._loadData(overview);
+
                     self.$.spinner.active = false;
 
+
                 }, function (error) {
-                    self._handleError(error);
-                });
+
+                    if(error.status = 404){
+                        self.$.noCvTermWarning.hidden=false;
+                        self.noCvTerm = true;
+                    }else {
+                        console.log("Some unexpected error occued", error);
+                    }
+
+                    self.$.spinner.active = false;
+
+
+                })
             },
 
 
