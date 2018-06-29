@@ -98,14 +98,6 @@
             _isCurrentTerm: function(currentNode, bn) {
                 if(bn === currentNode.value.accession) return 'currentTerm';
             },
-            _sortTerms: function(a, b) {
-                var ax = a.value.name.toLowerCase();
-                var bx = b.value.name.toLowerCase();
-
-                if(ax < bx) return -1;
-                if(ax > bx) return 1;
-                else return 0;
-            },
             _toggle: function(event) {
 
                 if(!this.leaf){
@@ -174,6 +166,49 @@
                 }
 
             },
+
+            _sortTerms: function(a, b) {
+
+                //In case of enzymes
+                if(a.value.name.startsWith("EC")){
+
+                    var ax = a.value.accession.toLowerCase();
+                    var bx = b.value.accession.toLowerCase();
+
+                    var aix = ax.split(".");
+                    var bix = bx.split(".");
+
+                    for(var i =0; i<4; i++){
+                        var aixn = parseInt(aix[i]);
+                        var bixn = parseInt(bix[i]);
+
+                        //case of EC 6.3.2.n3 for example where n3 is NaN
+                        if(isNaN(aixn) && !isNaN(bixn)){
+                            return 1;
+                        }
+                        if(!isNaN(aixn) && isNaN(bixn)){
+                            return -1;
+                        }
+                        if(isNaN(aixn) && isNaN(bixn)){
+                            return 0;
+                        }
+
+                        var result = aixn - bixn;
+                        if(result != 0)
+                            return result;
+                    }
+                    return 0;
+
+                }else {
+                    var ax = a.value.name.toLowerCase();
+                    var bx = b.value.name.toLowerCase();
+
+                    if(ax < bx) return -1;
+                    if(ax > bx) return 1;
+                    else return 0;
+                }
+            },
+
             _hasChildren: function(node){
                 if(node && node.children && node.children.length > 0){
                     return true;
@@ -235,7 +270,7 @@ View for tree browser view:
                 <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
                 <paper-spinner-lite id="spinnerterm" active></paper-spinner-lite>
                 <template is="dom-if" if="[[ancestorGraph]]">
-                    <template is="dom-repeat" items="[[trees]]" as="tree" sort="_sortTerms" >
+                    <template is="dom-repeat" items="[[trees]]" as="tree" >
                         <tree-browser-item nx-config=[[nxConfig]] boldname="[[termAccession]]" current-node="[[tree]]"></tree-browser-item>
                     </template>
                 </template>
@@ -339,14 +374,6 @@ View for tree browser view:
                     //error occured
                     console.log("HTTP error occured when getting tree browser view (possible causes: no cv term found? api down?)" , e);
                 })
-            },
-            _sortTerms: function(a, b) {
-                var ax = a.value.name.toLowerCase();
-                var bx = b.value.name.toLowerCase();
-
-                if(ax < bx) return -1;
-                if(ax > bx) return 1;
-                else return 0;
             },
             _silverChange: function (event) {
                 this.includeSilver = event.target.checked;
