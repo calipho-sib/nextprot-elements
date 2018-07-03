@@ -3,6 +3,7 @@
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../paper-toast/paper-toast.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
 <link rel="import" href="paginator-element.html">
@@ -78,11 +79,20 @@
                 margin-left: 5px;
             }
 
+            .blue-well, .definition-button {
+                font-size: 14px;
+            }
         </style>
         <div class="row">
             <div class="col-md-12">
                 <div class="title-header">
-                    Relevant for
+                    <span>Relevant for</span>
+                    <span class="colored-label definition-button" on-tap="_toggle">Definition</span>
+                    <iron-collapse id="relevant-for-description">
+                        <div class="well blue-well">
+                            Entries for which this term and its children are relevant.
+                        </div>
+                    </iron-collapse>
                 </div>
                 <template is="dom-if" if="[[entries.length]]">
                     <div class="control-header">
@@ -207,6 +217,10 @@
                     this._detailsLinkClass = "disabled";
                     this._summaryLinkClass = "";
                 }
+            },
+            _toggle: function(mouseEvent){
+                var srcElementId = mouseEvent.target.id || mouseEvent.target.parentNode.id;
+                this.$$("#relevant-for-description").toggle();
             }
         });
     </script>
