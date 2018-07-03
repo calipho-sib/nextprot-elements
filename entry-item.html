@@ -131,6 +131,15 @@ Protein entry item demo
                     this.isStructure = data.filters.indexOf("filterstructure") !== -1;
                 }
                 this.protExistence = data.protein_existence.split("_").join(" ");
+
+                if (!data.var_num) {
+                    data.var_num = 0;
+                }
+
+                if (!data.ptm_num) {
+                    data.var_num = 0;
+                }
+                console.log(data)
             },
             _computeATagClass: function (boolean) {
                 return (boolean) ? '' : 'inactive';
