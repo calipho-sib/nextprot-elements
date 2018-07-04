@@ -149,8 +149,12 @@ Protein entry item demo
 
                 var header = data.recommended_name;
 
+                if (data.ec_name) {
+                    header += " ["+ data.ec_name + "]";
+                }
+
                 if (data.recommended_gene_names) {
-                    header += " <em>("+ data.recommended_gene_names + ")</em>";
+                    header += " ("+ data.recommended_gene_names + ")";
                 }
                 header+= " [" + data.accession + "]";
 
