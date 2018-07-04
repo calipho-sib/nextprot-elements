@@ -113,7 +113,15 @@ Term view demo
                 self.$.spinnertermview.active = true;
                 self.$.spinnertermview.hidden = false;
 
-                var data = {"filter":"","quality":"gold","query": self.nxConfig.termAccession ,"sort":"","order":"", rows: 500}
+
+                var term = self.nxConfig.termAccession;
+
+                //If it is an enzyme add 'EC' before (Daniel says: IMO this should be fixed at the level of the db adding a prefix to all enzymes, and so the URL will be .../EC 1.1.1.1/... instead of /1.1.1.1/)
+                if(/^(\d)\.(\d|-)\.(\d|-)\.(\d+|-|\w)$/.test(self.nxConfig.termAccession)){
+                    term = "EC " + term;
+                }
+
+                var data = {"filter":"","quality":"gold","query": "\"" + term + "\"","sort":"","order":"", rows: 500}
 
                 if(this.includeSilver){
                     data["quality"] = "gold-and-silver"
