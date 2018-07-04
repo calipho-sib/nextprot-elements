@@ -197,7 +197,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                             <div class="col-md-9 col-xs-9">
                                 <dl>
                                     <template is="dom-repeat" items="[[term.externalReferences]]" filter="_showExternalReferences" as="xref">
-                                        <dt>[[xref.databaseName]]: <a class="ext-link" target='_blank' href="[[xref.resolvedUrl]]">[[xref.accession]]</a></dt>
+                                        <dt>[[_getDatabaseName(xref)]]: <a class="ext-link" target='_blank' href="[[xref.resolvedUrl]]">[[xref.accession]]</a></dt>
                                     </template>
                                 </dl>
                             </div>
@@ -366,6 +366,8 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 return string[0].toUpperCase() + string.substr(1);
             },
             _convertForTemplate: function (cvTerm) {
+
+                console.log(cvTerm);
                 var self = this;
                 var term = JSON.parse(JSON.stringify(cvTerm));
 
@@ -486,6 +488,15 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 }else {
                     return a.trim().toLowerCase() < b.trim().toLowerCase() ? -1 : 1;
                 }
+            },
+            _getDatabaseName: function(xref) {
+
+                if (xref.databaseName.includes("UniProt")) {
+
+                    return xref.databaseName.replace("UniProt", "UniProtKB");
+                }
+
+                return xref.databaseName;
             }
         })
     </script>
