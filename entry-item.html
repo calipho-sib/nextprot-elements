@@ -29,7 +29,7 @@ Protein entry item demo
         <template is="dom-if" if="[[data]]">
 
             <!-- Entry view -->
-            <a href="/entry/[[data.accession]]">[[data.recommended_name]] <em>([[data.recommended_gene_names]])</em> [[[data.accession]]]</a>
+            <a href="/entry/[[data.accession]]"><span inner-h-t-m-l=[[_header]]></span></a>
 
             <template is="dom-if" if="[[!summary]]">
                 <div class="small">
@@ -111,6 +111,9 @@ Protein entry item demo
                 summary: {
                     type: Boolean,
                     value: false
+                },
+                _header: {
+                    type: String
                 }
             },
             _handleData: function (data) {
@@ -139,7 +142,19 @@ Protein entry item demo
                 if (!data.ptm_num) {
                     data.ptm_num = 0;
                 }
-                console.log(data)
+
+                this._header = this._createHeader(data);
+            },
+            _createHeader: function(data) {
+
+                var header = data.recommended_name;
+
+                if (data.recommended_gene_names) {
+                    header += " <em>("+ data.recommended_gene_names + ")</em>";
+                }
+                header+= " [" + data.accession + "]";
+
+                return header;
             },
             _computeATagClass: function (boolean) {
                 return (boolean) ? '' : 'inactive';
