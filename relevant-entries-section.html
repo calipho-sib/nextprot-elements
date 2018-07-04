@@ -228,6 +228,10 @@
                     this._detailsLinkClass = "disabled";
                     this._summaryLinkClass = "";
                 }
+            },
+            _toggle: function(mouseEvent){
+                var srcElementId = mouseEvent.target.id || mouseEvent.target.parentNode.id;
+                this.$$("#relevant-for-description").toggle();
             }
         });
     </script>
