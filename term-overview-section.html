@@ -83,7 +83,6 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     <template is="dom-if" if="[[!_isEnzyme(term)]]">
                         [[term.accession]] → [[term.name]]
                     </template>
-                    <span style="font-size: 12px"><a target="_blank" href="http://old.nextprot.org/db/term/[[term.accession]]">(NP1 version)</a></span>
                 </template>
                 [[data.entryName]]
                 <template is="dom-if" if="[[data.recommendedProteinName]]">
@@ -196,7 +195,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                             <div class="col-md-3 col-xs-3 grey-x text-align-right">EXTERNAL REFERENCES :</div>
                             <div class="col-md-9 col-xs-9">
                                 <dl>
-                                    <template is="dom-repeat" items="[[term.externalReferences]]" filter="_showExternalReferences" as="xref">
+                                    <template is="dom-repeat" items="[[term.externalReferences]]" as="xref">
                                         <dt>[[_getDatabaseName(xref)]]: <a class="ext-link" target='_blank' href="[[xref.resolvedUrl]]">[[xref.accession]]</a></dt>
                                     </template>
                                 </dl>
@@ -312,11 +311,6 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 return speciesList;
             },
 
-
-
-            _showExternalReferences: function(xref){
-              return xref.databaseName != "UniProt domain";
-            },
             _showInPropList: function(tp){
                 if (tp.show !== undefined) {
                     return tp.show;
