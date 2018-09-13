@@ -32,8 +32,8 @@ Term view demo
             paper-checkbox {
                 z-index: 10;
                 position: absolute;
-                right: 30px;
-                top: 45px;
+                right: 50px;
+                top: 15px;
             }
 
             @media (max-width: 768px) {
@@ -51,17 +51,18 @@ Term view demo
 
         <div class="row padded-bottom">
             <div class="col-md-12">
-                <term-overview-section nx-config='[[nxConfig]]'></term-overview-section>
+                <term-overview-section nx-config='[[nxConfig]]' no-cv-term="{{noCvTerm}}"></term-overview-section>
             </div>
         </div>
 
-        <div id="div-checkbox">
-            <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
+        <div id="relevantentries">
+            <div id="div-checkbox">
+                <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
+            </div>
+            <relevant-entries-section id="relevantEntries" related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
         </div>
 
-        <relevant-entries-section related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
-
-         <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
+        <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
 
     </template>
     <script>
@@ -73,6 +74,11 @@ Term view demo
                     value: {},
                     notify: true
 
+                },
+                noCvTerm: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_cvTermUpdated'
                 },
                 _entries: {
                     type: Array
@@ -97,6 +103,9 @@ Term view demo
                 this._loadData();
 
             },
+            _cvTermUpdated: function(newNoCvTermValue){
+                this.$.relevantentries.hidden = newNoCvTermValue;
+            },
             _loadData: function(){
 
                 var self = this;
@@ -105,7 +114,14 @@ Term view demo
                 self.$.spinnertermview.hidden = false;
 
 
-                var data = {"filter":"","quality":"gold","query": self.nxConfig.termAccession ,"sort":"","order":"", rows: 500}
+                var term = self.nxConfig.termAccession;
+
+                //If it is an enzyme add 'EC' before (Daniel says: IMO this should be fixed at the level of the db adding a prefix to all enzymes, and so the URL will be .../EC 1.1.1.1/... instead of /1.1.1.1/)
+                if(/^[1-7]\.[1-9-][0-9]?\.[1-9-][0-9]?\.n?[1-9-][0-9]{0,2}$/.test(term)){
+                    term = "EC " + term;
+                }
+
+                var data = {"filter":"","quality":"gold","query": "\"" + term + "\"","sort":"","order":"", rows: 500}
 
                 if(this.includeSilver){
                     data["quality"] = "gold-and-silver"
@@ -123,7 +139,6 @@ Term view demo
                     data: JSON.stringify(data),
                     success : function(response) {
                         var entries = [];
-                        console.log(response);
                         response.results.forEach(function (res){
                             res.accession = res.id;
                             entries.push(res);

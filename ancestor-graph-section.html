@@ -128,7 +128,9 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                         + dotFormatEdges
                         + '}';
 
-                })
+                }, function(error) {
+                    console.log("HTTP API error occured in ancestor graph section (no cv term found?)" , error)
+                });
 
             },
             getNodeColor: function (nodeAccession) {
@@ -159,7 +161,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
                     dotNodesBuilt += ' ['+'label='+'"'+ regexNodeName + '"'//Text in the nodes
                                     +'style=filled;'
                                     + 'fillcolor="'+ this.getNodeColor(APInodes[i]["accession"]) +'"'
-                                    + 'tooltip=' + '"' + APInodes[i]["name"] + '"'//Tooltip on hover
+                                    + 'tooltip=' + '"' + APInodes[i]["accession"] + ": " + APInodes[i]["name"] + '"'//Tooltip on hover
                                     + 'href="/term/' + APInodes[i]["accession"] //URL in node
                                     + '"' + ';] '
                 }
@@ -171,7 +173,7 @@ https://issues.isb-sib.ch/browse/NEXTPROT-1493
 
                 var colors = {
                     "is_a": "black", //166160 as NP1
-                    "derives_from": "pink", //14255
+                    "derives_from": "#C50063", //14255
                     "part_of" : "blue", //9436 as NP1
                     "regulates": "orange", //3224 as NP1
                     "negatively_regulates": "red", //2797

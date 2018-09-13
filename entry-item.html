@@ -29,7 +29,7 @@ Protein entry item demo
         <template is="dom-if" if="[[data]]">
 
             <!-- Entry view -->
-            <a href="/entry/[[data.accession]]">[[data.recommended_name]] <em>([[data.recommended_gene_names]])</em> [[[data.accession]]]</a>
+            <a href="/entry/[[data.accession]]"><span inner-h-t-m-l=[[_header]]></span></a>
 
             <template is="dom-if" if="[[!summary]]">
                 <div class="small">
@@ -54,10 +54,10 @@ Protein entry item demo
                     Variants: <a href="entry/[[data.accession]]/sequence">[[data.var_num]]</a>
                     <br>
                     Disease: <a class$="[[_computeATagClass(isDisease)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isDisease)]]</a>
-                    Expression: <a class$="[[_computeATagClass(isExpression)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isExpression)]]</a>
-                    Mutagenesis: <a class$="[[_computeATagClass(isMutagenesis)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isMutagenesis)]]</a>
-                    Proteomics: <a class$="[[_computeATagClass(isProteomics)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isProteomics)]]</a>
-                    Structure: <a class$="[[_computeATagClass(isStructure)]]" href="entry/[[data.accession]]/medical">[[_convertBooleanToYesOrNo(isStructure)]]</a>
+                    Expression: <a class$="[[_computeATagClass(isExpression)]]" href="entry/[[data.accession]]/expression">[[_convertBooleanToYesOrNo(isExpression)]]</a>
+                    Mutagenesis: <a class$="[[_computeATagClass(isMutagenesis)]]" href="entry/[[data.accession]]/sequence">[[_convertBooleanToYesOrNo(isMutagenesis)]]</a>
+                    Proteomics: <a class$="[[_computeATagClass(isProteomics)]]" href="entry/[[data.accession]]/proteomics">[[_convertBooleanToYesOrNo(isProteomics)]]</a>
+                    Structure: <a class$="[[_computeATagClass(isStructure)]]" href="entry/[[data.accession]]/structures">[[_convertBooleanToYesOrNo(isStructure)]]</a>
                     Proteins existence: <a href="entry/[[data.accession]]/function">[[protExistence]]</a>
                 </div>
             </template>
@@ -111,6 +111,9 @@ Protein entry item demo
                 summary: {
                     type: Boolean,
                     value: false
+                },
+                _header: {
+                    type: String
                 }
             },
             _handleData: function (data) {
@@ -131,6 +134,31 @@ Protein entry item demo
                     this.isStructure = data.filters.indexOf("filterstructure") !== -1;
                 }
                 this.protExistence = data.protein_existence.split("_").join(" ");
+
+                if (!data.var_num) {
+                    data.var_num = 0;
+                }
+
+                if (!data.ptm_num) {
+                    data.ptm_num = 0;
+                }
+
+                this._header = this._createHeader(data);
+            },
+            _createHeader: function(data) {
+
+                var header = data.recommended_name;
+
+                if (data.ec_name) {
+                    header += " ["+ data.ec_name + "]";
+                }
+
+                if (data.recommended_gene_names) {
+                    header += " ("+ data.recommended_gene_names + ")";
+                }
+                header+= " [" + data.accession + "]";
+
+                return header;
             },
             _computeATagClass: function (boolean) {
                 return (boolean) ? '' : 'inactive';

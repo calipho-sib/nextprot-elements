@@ -72,7 +72,7 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
             }
         </style>
         <div id="termOverview">
-            <div hidden id="noCvTermWarning" class='alert alert-warning noData'>There is no cv term information available in neXtProt for [[nxConfig.termAccession]].
+            <div hidden id="noCvTermWarning" class='alert alert-warning noData'>Term '[[nxConfig.termAccession]]' not found.
                 Suggestions for updates are welcome! Please <a href="javascript:location='mailto:\u0073\u0075\u0070\u0070\u006f\u0072\u0074\u0040\u006e\u0065\u0078\u0074\u0070\u0072\u006f\u0074\u002e\u006f\u0072\u0067';void 0">contact us</a>.
             </div>
             <h3>
@@ -83,7 +83,6 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     <template is="dom-if" if="[[!_isEnzyme(term)]]">
                         [[term.accession]] → [[term.name]]
                     </template>
-                    <span style="font-size: 12px"><a target="_blank" href="http://old.nextprot.org/db/term/[[term.accession]]">(NP1 version)</a></span>
                 </template>
                 [[data.entryName]]
                 <template is="dom-if" if="[[data.recommendedProteinName]]">
@@ -196,8 +195,8 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                             <div class="col-md-3 col-xs-3 grey-x text-align-right">EXTERNAL REFERENCES :</div>
                             <div class="col-md-9 col-xs-9">
                                 <dl>
-                                    <template is="dom-repeat" items="[[term.externalReferences]]" filter="_showExternalReferences" as="xref">
-                                        <dt>[[xref.databaseName]]: <a class="ext-link" target='_blank' href="[[xref.resolvedUrl]]">[[xref.accession]]</a></dt>
+                                    <template is="dom-repeat" items="[[term.externalReferences]]" as="xref">
+                                        <dt>[[_getDatabaseName(xref)]]: <a class="ext-link" target='_blank' href="[[xref.resolvedUrl]]">[[xref.accession]]</a></dt>
                                     </template>
                                 </dl>
                             </div>
@@ -214,6 +213,11 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 nxConfig: {
                     type: Object,
                     value: {}
+                },
+                noCvTerm : {
+                    type: Boolean,
+                    value: false,
+                    notify: true
                 },
                 term: {
                     type: Object,
@@ -257,15 +261,28 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                     if(term["cvTerm"]){
                         self.$.noCvTermWarning.hidden=true;
                         self.term = self._convertForTemplate(term["cvTerm"]);
+                        self.noCvTerm = false;
                     }else {
                         self.$.noCvTermWarning.hidden=false;
+                        self.noCvTerm = true;
                     }
-                    //self._loadData(overview);
+
                     self.$.spinner.active = false;
 
+
                 }, function (error) {
-                    self._handleError(error);
-                });
+
+                    if(error.status = 404){
+                        self.$.noCvTermWarning.hidden=false;
+                        self.noCvTerm = true;
+                    }else {
+                        console.log("Some unexpected error occued", error);
+                    }
+
+                    self.$.spinner.active = false;
+
+
+                })
             },
 
 
@@ -294,11 +311,6 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 return speciesList;
             },
 
-
-
-            _showExternalReferences: function(xref){
-              return xref.databaseName != "UniProt domain";
-            },
             _showInPropList: function(tp){
                 if (tp.show !== undefined) {
                     return tp.show;
@@ -348,6 +360,8 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 return string[0].toUpperCase() + string.substr(1);
             },
             _convertForTemplate: function (cvTerm) {
+
+                console.log(cvTerm);
                 var self = this;
                 var term = JSON.parse(JSON.stringify(cvTerm));
 
@@ -468,6 +482,15 @@ https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/
                 }else {
                     return a.trim().toLowerCase() < b.trim().toLowerCase() ? -1 : 1;
                 }
+            },
+            _getDatabaseName: function(xref) {
+
+                if (xref.databaseName.includes("UniProt")) {
+
+                    return xref.databaseName.replace("UniProt", "UniProtKB");
+                }
+
+                return xref.databaseName;
             }
         })
     </script>

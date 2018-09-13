@@ -3,10 +3,9 @@
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../paper-toast/paper-toast.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
-<link rel="import" href="relevant-entries-section.html">
-
 <link rel="import" href="paginator-element.html">
 <link rel="import" href="entry-item.html">
 
@@ -29,7 +28,6 @@
             .control-header {
                 margin: 10px 0;
                 padding-bottom: 10px;
-                display: flex;
                 border-bottom: 1px solid #E7EAEC;
             }
 
@@ -80,15 +78,34 @@
                 margin-left: 5px;
             }
 
+            .blue-well, .definition-button {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+
+            .inline-group {
+                display: inline-block;
+                padding: 0 10px 0 0;
+            }
+
+            .no-wrap {
+                white-space: nowrap;
+            }
         </style>
         <div class="row">
             <div class="col-md-12">
                 <div class="title-header">
-                    Relevant for
+                    <span>Relevant for</span>
+                    <span class="colored-label definition-button" on-tap="_toggle">Definition</span>
+                    <iron-collapse id="relevant-for-description">
+                        <div class="well blue-well">
+                            Entries for which this term and its children are relevant.
+                        </div>
+                    </iron-collapse>
                 </div>
                 <template is="dom-if" if="[[entries.length]]">
                     <div class="control-header">
-                        <div class="no-padding col-lg-5">
+                        <div class="no-padding inline-group">
                             <template is="dom-if" if="[[entries]]">
                                 Proteins [[from]] to [[to]] of [[entries.length]]
                             </template>
@@ -96,8 +113,8 @@
                                 <span class="over-threshold-warning" title="The first 500 most relevant entries were displayed below."><span class="fa fa-exclamation-circle"></span> over [[relatedEntryCount]]</span>
                             </template>
                         </div>
-                        <div class="col-lg-10 ">
-                            <span class="col-lg-2">
+                        <div class="inline-group">
+                            <span class="no-wrap">
                                 show&nbsp;
                                 <select on-change="_changePageSize">
                                     <template is="dom-repeat" items="{{pageSizeOptions}}" as="pageSizeOption">
@@ -107,7 +124,9 @@
                                     </template>
                                 </select>
                             </span>
-                            <span class="bg-grey">
+                        </div>
+                        <div class="inline-group">
+                            <span class="bg-grey no-wrap">
                                 <a id="summary-link" class$="[[_summaryLinkClass]]" role="button" on-click="_updateLinks">Summary</a> |
                                 <a id="details-link" class$="[[_detailsLinkClass]]" role="button" on-click="_updateLinks">Details</a>
                             </span>
@@ -209,6 +228,10 @@
                     this._detailsLinkClass = "disabled";
                     this._summaryLinkClass = "";
                 }
+            },
+            _toggle: function(mouseEvent){
+                var srcElementId = mouseEvent.target.id || mouseEvent.target.parentNode.id;
+                this.$$("#relevant-for-description").toggle();
             }
         });
     </script>
