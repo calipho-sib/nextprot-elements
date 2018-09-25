@@ -163,6 +163,22 @@ Exteranl links section present in function, medical, expression, interactions, s
               })
             }
           }
+          else if (["MoonDB"].indexOf(typeList[elem].databaseName)!==-1){
+                if(typeList[elem].properties.length>0){
+
+                    newTypeList.push({
+                        name: typeList[elem].databaseName,
+                        xrefs : [{
+                            accession: typeList[elem].accession,
+                            url : typeList[elem].resolvedUrl,
+                            prefix: "",
+                            suffix : "[" + typeList[elem].properties
+                                .filter(function(property) { return property.name === "type"; })
+                                .map(function(property) { return property.value; }) + "]"
+                        }]
+                    })
+                }
+          }
           else if (["Allergome", "MIM"].indexOf(typeList[elem].databaseName)!==-1) {
             if(typeList[elem].properties.length>0){
               newTypeList.push({
