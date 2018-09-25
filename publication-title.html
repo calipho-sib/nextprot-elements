@@ -18,7 +18,6 @@ Publication title item demo
             }
         </style>
         <template is="dom-if" if="[[title]]">
-            <input type="button" value="Click me" on-click="_onClick">
             <div>
                 <template is="dom-if" if="[[linkId]]">
                     <a class="title-link" href="/publication/[[linkId]]" target='_parent'>[[title]]</a>
@@ -42,23 +41,6 @@ Publication title item demo
                     type: String,
                     value: ""
                 }
-            },
-             _onClick: function() {
-
-                var invocation = new XMLHttpRequest();
-                var url = 'http://build-api.nextprot.org/entry-publications/entry/NX_P01308/count.json';
-                //invocation.onreadystatechange = _myHandler;
-                invocation.onreadystatechange = function() {
-                       // Typical action to be performed when the document is ready:
-                       console.log('readyState', this.readyState);
-                       console.log('status', this.status);
-                       console.log('responseText',invocation.responseText);
-                };
-
-                invocation.open('GET', url, true);
-                invocation.send(); 
-
-                //alert('Hi');
             }
         });
     </script>
