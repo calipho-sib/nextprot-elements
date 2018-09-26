@@ -8,418 +8,470 @@ Exteranl links section present in function, medical, expression, interactions, s
 @demo demo/xref-section-demo.html
 -->
 <dom-module id="xrefs-section">
-  <template>
-    <style include="nextprot-elements-shared-styles">
-      :host {
-        display: block;
-      }
-      .inline-group {
-        display: inline-flex;
-        margin: 2px 5px;
-      }
-    </style>
-    <div id="xrefs-header" class="category-header">
-      <h4 id="xrefs-title" class="category-title">Further external links</h4>
-      <paper-spinner-lite id="spinner" active></paper-spinner-lite>
-    </div>
-    <div class="category-main">
-      <template is="dom-repeat" items="[[_toArray(data)]]" as="category" sort="_sortCategories">
-        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotations">
-          <div class="row">
-            <template is="dom-if" if="[[_checkCategories()]]">
-              <div>
-                <h4 class="annotation-category-title text-align-left"> [[annotations.name]]</h4>
-              </div>
-            </template>
-            <div>
-              <template is="dom-repeat" items="[[annotations.value]]" as="annotation">
-                <div class="row annotation-row">
-                  <div class="annotation-title-container">
-                    <div class="annotation-title">[[annotation.name]]</div>
-                    <div>
-                      <template is="dom-repeat" items="[[annotation.xrefs]]" as="xref">
-                        <div class="inline-group" role="group">
-                          <template is="dom-if" if="[[xref.prefix]]">
-                            <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
-                          </template>
-                          <a class="selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
-                          <template is="dom-if" if="[[xref.suffix]]">
-                            <label class="suffix-label">[[xref.suffix]]</label>
-                          </template>
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+
+            .inline-group {
+                display: inline-flex;
+                margin: 2px 5px;
+            }
+        </style>
+        <div id="xrefs-header" class="category-header">
+            <h4 id="xrefs-title" class="category-title">Further external links</h4>
+            <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+        </div>
+        <div class="category-main">
+            <template is="dom-repeat" items="[[_toArray(data)]]" as="category" sort="_sortCategories">
+                <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotations">
+                    <div class="row">
+                        <template is="dom-if" if="[[_checkCategories()]]">
+                            <div>
+                                <h4 class="annotation-category-title text-align-left"> [[annotations.name]]</h4>
+                            </div>
+                        </template>
+                        <div>
+                            <template is="dom-repeat" items="[[annotations.value]]" as="annotation">
+                                <div class="row annotation-row">
+                                    <div class="annotation-title-container">
+                                        <div class="annotation-title">[[annotation.name]]</div>
+                                        <div>
+                                            <template is="dom-repeat" items="[[annotation.xrefs]]" as="xref">
+                                                <div class="inline-group" role="group">
+                                                    <template is="dom-if" if="[[xref.prefix]]">
+                                                        <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
+                                                    </template>
+                                                    <a class="selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
+                                                    <template is="dom-if" if="[[xref.suffix]]">
+                                                        <label class="suffix-label">[[xref.suffix]]</label>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
-                      </template>
                     </div>
-                  </div>
-                </div>
-              </template>
-            </div>
-          </div>
-          <template is="dom-if" if="[[_checkIfLast(data,index)]]">
-            <hr class="bottom-line">
-          </template>
-        </template>
-      </template>
-    </div>
-  </template>
-  <script>
-    Polymer({
-      is: 'xrefs-section',
-      properties: {
-        nxConfig: {
-          type: Object,
-          value: {}
-        },
-        categories: {
-          type: Array
-        },
-        view: {
-          type: String
-        },
-        count: {
-          type: Number,
-          notify: true
-        }
-      },
-        _status : {
-            ALT_TERM: 'Different termination',
-            ALT_INIT: 'Different initiation',
-            NOT_ANNOTATED_CDS:'No translation available',
-            ALT_SEQ:'Sequence problems',
-            ALT_FRAME:'Frameshift'
-        },
-      ready: function(){
-        var nx = new Nextprot.Client("xref-section", "ndu");
-        if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
-        var self=this;
-        nx.getEntryXrefInPageView(self.nxConfig.entry, self.view)
-                .then(function (data) {
-                    
-                  self.getXrefByView(Object.keys(data.xrefs).map(function(k) { return data.xrefs[k] }));
-                  self.$.spinner.active = false;
-                }).catch(function (err) {
-                    console.error("Error when querying API for entry "+self.nxConfig.entry, err);
-                  // catch any error that happened so far
-                  self.$.spinner.active = false;
-                  self.count = 0;
+                    <template is="dom-if" if="[[_checkIfLast(data,index)]]">
+                        <hr class="bottom-line">
+                    </template>
+                </template>
+            </template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'xrefs-section',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                categories: {
+                    type: Array
+                },
+                view: {
+                    type: String
+                },
+                count: {
+                    type: Number,
+                    notify: true
+                }
+            },
+            _status: {
+                ALT_TERM: 'Different termination',
+                ALT_INIT: 'Different initiation',
+                NOT_ANNOTATED_CDS: 'No translation available',
+                ALT_SEQ: 'Sequence problems',
+                ALT_FRAME: 'Frameshift'
+            },
+            ready: function () {
+                var nx = new Nextprot.Client("xref-section", "ndu");
+                if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
+                var self = this;
+                nx.getEntryXrefInPageView(self.nxConfig.entry, self.view)
+                    .then(function (data) {
+
+                        self.getXrefByView(Object.keys(data.xrefs).map(function (k) {
+                            return data.xrefs[k]
+                        }));
+                        self.$.spinner.active = false;
+                    }).catch(function (err) {
+                    console.error("Error when querying API for entry " + self.nxConfig.entry, err);
+                    // catch any error that happened so far
+                    self.$.spinner.active = false;
+                    self.count = 0;
                 });
-      },
-      getXrefByView: function(list) {
-        this.count = 0;
-        data = [];
-        var dataObject = {};
-        var self = this;
-        list.forEach(function (k) {
-          if (self.categories.indexOf(k.databaseName) >= 0) {
-            if (dataObject[k.databaseCategory]) dataObject[k.databaseCategory].push(k);
-            else dataObject[k.databaseCategory] = [k];
-          }
-        });
-        data = Object.keys(dataObject).map(function (key) {
-          var temp = {};
-          temp[key] = dataObject[key];
-          return temp
-        });
-        data = data.map(function(t){
-          t[Object.keys(t)[0]] = self._filterExceptions(t[Object.keys(t)[0]]);
-          return t;
-        });
+            },
+            getXrefByView: function (list) {
+                this.count = 0;
+                data = [];
+                var dataObject = {};
+                var self = this;
+                list.forEach(function (k) {
+                    if (self.categories.indexOf(k.databaseName) >= 0) {
+                        if (dataObject[k.databaseCategory]) dataObject[k.databaseCategory].push(k);
+                        else dataObject[k.databaseCategory] = [k];
+                    }
+                });
+                data = Object.keys(dataObject).map(function (key) {
+                    var temp = {};
+                    temp[key] = dataObject[key];
+                    return temp
+                });
+                data = data.map(function (t) {
+                    t[Object.keys(t)[0]] = self._filterExceptions(t[Object.keys(t)[0]]);
+                    return t;
+                });
 
-        for (var i in data) {
-          var cat = data[i][Object.keys(data[i])[0]];
-          if (cat.length===0) data.splice(i, 1);
-          cat.forEach(function(x2){self.count+=1;})
-          cat.sort(function (a,b){
-            var dbA = a.name.toUpperCase();
-            var dbB = b.name.toUpperCase();
-            var prefA = a.xrefs[0].prefix.toUpperCase();
-            var prefB = b.xrefs[0].prefix.toUpperCase();
-            var accA = a.xrefs[0].accession.toUpperCase();
-            var accB = b.xrefs[0].accession.toUpperCase();
-            if (dbA < dbB) return -1;
-            else if (dbA > dbB) return 1;
-            else if (prefA < prefB) return -1;
-            else if (prefA > prefB) return 1;
-            else if (accA < accB) return -1;
-            else if (accA > accB) return 1;
-            else return 0;
-          })
-        }
+                for (var i in data) {
+                    var cat = data[i][Object.keys(data[i])[0]];
+                    if (cat.length === 0) data.splice(i, 1);
+                    cat.forEach(function (x2) {
+                        self.count += 1;
+                    })
+                    cat.sort(function (a, b) {
+                        var dbA = a.name.toUpperCase();
+                        var dbB = b.name.toUpperCase();
+                        var prefA = a.xrefs[0].prefix.toUpperCase();
+                        var prefB = b.xrefs[0].prefix.toUpperCase();
+                        var accA = a.xrefs[0].accession.toUpperCase();
+                        var accB = b.xrefs[0].accession.toUpperCase();
+                        if (dbA < dbB) return -1;
+                        else if (dbA > dbB) return 1;
+                        else if (prefA < prefB) return -1;
+                        else if (prefA > prefB) return 1;
+                        else if (accA < accB) return -1;
+                        else if (accA > accB) return 1;
+                        else return 0;
+                    })
+                }
 //        console.log("DATA XREFS", data)
-        this.data = data;
-      },
-      _filterExceptions: function(typeList) {
-        var newTypeList = [];
-        for (elem in typeList){
-          if (["IntAct", "BioGrid", "ESTHER"].indexOf(typeList[elem].databaseName)!==-1){
-            if(typeList[elem].properties.length>0){
-              newTypeList.push({
-                name: typeList[elem].databaseName,
-                xrefs : [{
-                  accession: typeList[elem].accession,
-                  url : typeList[elem].resolvedUrl,
-                  prefix: "",
-                  suffix : "["+typeList[elem].properties[0].name[0].toUpperCase()+typeList[elem].properties[0].name.substring(1)+": "+typeList[elem].properties[0].value+"]"
-                }]
-              })
-            }
-          }
-          else if (["MoonDB"].indexOf(typeList[elem].databaseName)!==-1){
-                if(typeList[elem].properties.length>0){
+                this.data = data;
+            },
+            _filterExceptions: function (typeList) {
+                var newTypeList = [];
 
-                    newTypeList.push({
-                        name: typeList[elem].databaseName,
-                        xrefs : [{
-                            accession: typeList[elem].accession,
-                            url : typeList[elem].resolvedUrl,
-                            prefix: "",
-                            suffix : "[" + typeList[elem].properties
-                                .filter(function(property) { return property.name === "type"; })
-                                .map(function(property) { return property.value; }) + "]"
-                        }]
-                    })
+                for (elem in typeList) {
+                    if (["IntAct", "BioGrid", "ESTHER"].indexOf(typeList[elem].databaseName) !== -1) {
+                        if (typeList[elem].properties.length > 0) {
+                            newTypeList.push({
+                                name: typeList[elem].databaseName,
+                                xrefs: [{
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "",
+                                    suffix: "[" + typeList[elem].properties[0].name[0].toUpperCase() + typeList[elem].properties[0].name.substring(1) + ": " + typeList[elem].properties[0].value + "]"
+                                }]
+                            })
+                        }
+                    }
+                    else if (typeList[elem].databaseName === "MoonDB") {
+                        if (typeList[elem].properties.length > 0) {
+                            newTypeList.push({
+                                name: typeList[elem].databaseName,
+                                xrefs: [{
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "",
+                                    suffix: "[" + this._filterByNameMapToValue(typeList[elem].properties, "type") + "]"
+                                }]
+                            })
+                        }
+                    }
+                    else if (typeList[elem].databaseName === "Bgee") {
+                        if (typeList[elem].properties.length > 0) {
+                            newTypeList.push({
+                                name: typeList[elem].databaseName,
+                                xrefs: [{
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "",
+                                    suffix: "[" + this._filterByNameMapToValue(typeList[elem].properties, "expression patterns") + "]"
+                                }]
+                            })
+                        }
+                    }
+                    else if (["Allergome", "MIM"].indexOf(typeList[elem].databaseName) !== -1) {
+                        if (typeList[elem].properties.length > 0) {
+                            newTypeList.push({
+                                name: typeList[elem].databaseName,
+                                xrefs: [{
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "",
+                                    suffix: "[" + typeList[elem].properties[0].value + "]"
+                                }]
+                            })
+                        }
+                    }
+                    else if (typeList[elem].databaseName === "Ensembl") {
+                        if (typeList[elem].accession.startsWith("ENST")) {
+                            if (typeList[elem].properties) {
+                                var ensembl = {
+                                    name: typeList[elem].databaseName,
+                                    xrefs: [{
+                                        accession: typeList[elem].accession,
+                                        url: typeList[elem].resolvedUrl,
+                                        prefix: "Transcript",
+                                        suffix: ""
+                                    }]
+                                };
+                                typeList[elem].properties.forEach(function (p) {
+                                    if (p.name === "nxmapped protein sequence ID") {
+                                        var result = $.grep(typeList, function (e) {
+                                            return e.accession === p.value;
+                                        })[0];
+                                        ensembl.xrefs.push({
+                                            accession: result.accession,
+                                            url: result.resolvedUrl,
+                                            prefix: "Protein",
+                                            suffix: ""
+                                        });
+                                    }
+                                })
+                                typeList[elem].properties.forEach(function (p) {
+                                    if (p.name === "nxmapped gene ID") {
+                                        var result = $.grep(typeList, function (e) {
+                                            return e.accession === p.value;
+                                        })[0];
+                                        ensembl.xrefs.push({
+                                            accession: result.accession,
+                                            url: result.resolvedUrl,
+                                            prefix: "Gene",
+                                            suffix: ""
+                                        });
+                                    }
+                                })
+
+                                if ($.grep(ensembl.xrefs, function (e) {
+                                    return e.prefix === "Protein";
+                                }).length === 1) {
+                                    newTypeList.push(ensembl);
+                                }
+                            }
+                        }
+                    }
+                    else if (typeList[elem].databaseName === "EMBL") { //TODO
+                        if (typeList[elem].properties.length > 0) {
+                            var molType = $.grep(typeList[elem].properties, function (e) {
+                                return e.name === "molecule type";
+                            })[0];
+                            var addInfos = $.grep(typeList[elem].properties, function (e) {
+                                return e.name === "status"
+                            })[0];
+                            var suffix = addInfos ? this._status[addInfos.value] + "." : "";
+
+                            var embl = {
+                                name: typeList[elem].databaseName,
+                                xrefs: []
+                            };
+                            if (molType.value === "mRNA") {
+                                embl.xrefs.push({
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "mRNA",
+                                    suffix: ""
+                                })
+
+                                var protSeqIdArray = $.grep(typeList[elem].properties, function (e) {
+                                    return e.name === "protein sequence ID";
+                                });
+
+                                if (protSeqIdArray.length === 1) {
+                                    var translationID = protSeqIdArray[0].value;
+                                    var translation = $.grep(typeList, function (e) {
+                                        return e.accession == translationID;
+                                    })[0];
+                                    embl.xrefs.push({
+                                        accession: translation.accession,
+                                        url: translation.resolvedUrl,
+                                        prefix: "Translation",
+                                        suffix: suffix
+                                    })
+                                }
+                            }
+                            else if (molType.value === "protein") {
+                                var geneIDs = $.grep(typeList[elem].properties, function (e) {
+                                    return e.name === "genomic sequence ID";
+                                });
+                                geneIDs.forEach(function (g) {
+                                    var gene = $.grep(typeList, function (e) {
+                                        return e.accession == g.value;
+                                    })[0];
+                                    embl.xrefs.push({
+                                        accession: gene.accession,
+                                        url: gene.resolvedUrl,
+                                        prefix: "Genomic DNA",
+                                        suffix: ""
+                                    })
+                                })
+                                embl.xrefs.push({
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "Translation",
+                                    suffix: suffix
+                                })
+                            }
+                            else if (molType.value === "Genomic_DNA" && addInfos.value) {
+                                var geneIDs = $.grep(typeList[elem].properties, function (e) {
+                                    return e.name === "genomic sequence ID";
+                                });
+                                embl.xrefs.push({
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "Genomic DNA",
+                                    suffix: suffix
+                                })
+                            }
+                            else if (molType.value === "Unassigned_DNA" && addInfos.value) {
+                                var geneIDs = $.grep(typeList[elem].properties, function (e) {
+                                    return e.name === "genomic sequence ID";
+                                });
+                                embl.xrefs.push({
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "Unassigned DNA",
+                                    suffix: suffix
+                                })
+                            }
+
+
+                            newTypeList.push(embl);
+                        }
+                    }
+                    else if (typeList[elem].databaseName === "RefSeq") { //TODO
+                        if (typeList[elem].properties.length > 0) {
+                            var nucleotideID = $.grep(typeList[elem].properties, function (e) {
+                                return e.name === "nucleotide sequence ID";
+                            })[0].value;
+                            var refseq = {
+                                name: typeList[elem].databaseName,
+                                xrefs: [{
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "Protein",
+                                    suffix: ""
+                                }]
+                            };
+                            var nucleotide = $.grep(typeList, function (e) {
+                                return e.accession == nucleotideID;
+                            })[0];
+                            refseq.xrefs.push({
+                                accession: nucleotide.accession,
+                                url: nucleotide.resolvedUrl,
+                                prefix: "Nucleotide sequence",
+                                suffix: ""
+                            });
+                            newTypeList.push(refseq);
+                        }
+                    }
+                    else if (typeList[elem].databaseName === "Reactome"
+                        || typeList[elem].databaseName === "KEGGPathway") {
+                        continue;
+                    }
+                    else if (typeList[elem].databaseName === "MIM") {
+                        var isGene = false;
+                        for (var p in typeList[elem].properties) {
+                            if (typeList[elem].properties[p].name = "value"
+                                && typeList[elem].properties[p].value == "gene") isGene = true;
+                        }
+                        if (!isGene)
+                            newTypeList.push({
+                                name: typeList[elem].databaseName,
+                                xrefs: [{
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "",
+                                    suffix: suffix
+                                }]
+                            })
+                    }
+                    else if (typeList[elem].databaseName === "SFLD") {
+                        newTypeList.push({
+                            name: typeList[elem].databaseName,
+                            xrefs: [{
+                                accession: typeList[elem].accession,
+                                url: typeList[elem].resolvedUrl,
+                                prefix: "",
+                                suffix: "[" + typeList[elem].properties[0].value + "]"
+                            }]
+                        })
+                    }
+                    else if (typeList[elem].databaseName === "PIR") {
+                        newTypeList.push({
+                            name: typeList[elem].databaseName,
+                            xrefs: [{
+                                accession: typeList[elem].accession,
+                                url: typeList[elem].resolvedUrl,
+                                prefix: "",
+                                suffix: ""
+                            }]
+                        })
+                    }
+                    else {
+                        var suffix = "";
+                        if (typeList[elem].properties.length > 0) {
+                            var addInfos = $.grep(typeList[elem].properties, function (e) {
+                                return e.name === "entry name" || e.name === "isoform ID" || e.name === "gene designation" || e.name === "taxonomic scope";
+                            })[0];
+                            suffix = addInfos ? "[" + addInfos.value + "]" : "";
+                        }
+                        newTypeList.push({
+                            name: typeList[elem].databaseName,
+                            xrefs: [{
+                                accession: typeList[elem].accession,
+                                url: typeList[elem].resolvedUrl,
+                                prefix: "",
+                                suffix: suffix
+                            }]
+                        })
+                    }
+
                 }
-          }
-          else if (["Allergome", "MIM"].indexOf(typeList[elem].databaseName)!==-1) {
-            if(typeList[elem].properties.length>0){
-              newTypeList.push({
-                name: typeList[elem].databaseName,
-                xrefs : [{
-                  accession: typeList[elem].accession,
-                  url : typeList[elem].resolvedUrl,
-                  prefix: "",
-                  suffix : "["+typeList[elem].properties[0].value+"]"
-                }]
-              })
-            }
-          }
-          else if (typeList[elem].databaseName === "Ensembl"){
-            if (typeList[elem].accession.startsWith("ENST")){
-              if (typeList[elem].properties) {
-                var ensembl = {
-                  name: typeList[elem].databaseName,
-                  xrefs : [{
-                    accession: typeList[elem].accession,
-                    url : typeList[elem].resolvedUrl,
-                    prefix : "Transcript",
-                    suffix : ""
-                  }]
-                };
-                typeList[elem].properties.forEach(function(p){
-                  if (p.name === "nxmapped protein sequence ID") {
-                    var result = $.grep(typeList, function(e){ return e.accession == p.value; })[0];
-                    ensembl.xrefs.push({
-                      accession: result.accession,
-                      url : result.resolvedUrl,
-                      prefix : "Protein",
-                      suffix : ""
+                return newTypeList;
+            },
+            _sortCategories: function (a, b) {
+                var firstCategoryName = Object.keys(a.value)[0];
+                var secondCategoryName = Object.keys(b.value)[0];
+                if (firstCategoryName.toLowerCase() == "other" &&
+                    secondCategoryName.toLowerCase() != "other") return 1;
+                if (secondCategoryName.toLowerCase() == "other" &&
+                    firstCategoryName.toLowerCase() != "other") return -1;
+                return firstCategoryName.toLowerCase() > secondCategoryName.toLowerCase() ? 1 : -1;
+            },
+            _toArray: function (obj) {
+                if (typeof obj === 'object') {
+                    return Object.keys(obj).map(function (key) {
+                        return {
+                            name: key,
+                            value: obj[key]
+                        };
                     });
-                  }
-                })
-                typeList[elem].properties.forEach(function(p){
-                  if (p.name === "nxmapped gene ID") {
-                    var result = $.grep(typeList, function(e){ return e.accession == p.value; })[0];
-                    ensembl.xrefs.push({
-                      accession: result.accession,
-                      url : result.resolvedUrl,
-                      prefix : "Gene",
-                      suffix : ""
-                    });
-                  }
-                })
-
-                  if ($.grep(ensembl.xrefs, function(e){ return e.prefix == "Protein"; }).length == 1) {
-                      newTypeList.push(ensembl);
-                  }
-              }
-            }
-          }
-          else if (typeList[elem].databaseName === "EMBL"){ //TODO
-            if (typeList[elem].properties.length > 0) {
-              var molType = $.grep(typeList[elem].properties, function(e){ return e.name === "molecule type"; })[0];
-              var addInfos = $.grep(typeList[elem].properties, function(e){ return e.name === "status"})[0];
-              var suffix = addInfos ? this._status[addInfos.value]+"." : "";
-
-              var embl = {
-                name: typeList[elem].databaseName,
-                xrefs : []
-              };
-              if (molType.value === "mRNA") {
-                embl.xrefs.push({
-                  accession: typeList[elem].accession,
-                  url : typeList[elem].resolvedUrl,
-                  prefix : "mRNA",
-                  suffix : ""
-                })
-
-                var protSeqIdArray = $.grep(typeList[elem].properties, function(e){ return e.name === "protein sequence ID"; });
-
-                if (protSeqIdArray.length === 1) {
-                    var translationID = protSeqIdArray[0].value;
-                    var translation = $.grep(typeList, function (e) {
-                        return e.accession == translationID;
-                    })[0];
-                    embl.xrefs.push({
-                        accession: translation.accession,
-                        url: translation.resolvedUrl,
-                        prefix: "Translation",
-                        suffix: suffix
-                    })
                 }
-              }
-              else if (molType.value === "protein") {
-                var geneIDs = $.grep(typeList[elem].properties, function(e){ return e.name === "genomic sequence ID"; });
-                geneIDs.forEach(function(g){
-                  var gene = $.grep(typeList, function(e){ return e.accession == g.value; })[0];
-                  embl.xrefs.push({
-                    accession: gene.accession,
-                    url : gene.resolvedUrl,
-                    prefix : "Genomic DNA",
-                    suffix : ""
-                  })
-                })
-                embl.xrefs.push({
-                  accession: typeList[elem].accession,
-                  url : typeList[elem].resolvedUrl,
-                  prefix : "Translation",
-                  suffix : suffix
-                })
-              }
-              else if (molType.value === "Genomic_DNA" && addInfos.value) {
-                var geneIDs = $.grep(typeList[elem].properties, function(e){ return e.name === "genomic sequence ID"; });
-                embl.xrefs.push({
-                  accession: typeList[elem].accession,
-                  url : typeList[elem].resolvedUrl,
-                  prefix : "Genomic DNA",
-                  suffix : suffix
-                })
-              }
-              else if (molType.value === "Unassigned_DNA" && addInfos.value) {
-                var geneIDs = $.grep(typeList[elem].properties, function(e){ return e.name === "genomic sequence ID"; });
-                embl.xrefs.push({
-                  accession: typeList[elem].accession,
-                  url : typeList[elem].resolvedUrl,
-                  prefix : "Unassigned DNA",
-                  suffix : suffix
-                })
-              }
+                return null;
+            },
+            _checkIfLast: function (array, index) {
+                if (array.length - 1 === index) return true;
+                return false;
+            },
+            _checkCategories: function () {
+                if (this.data.length > 1 || Object.keys(this.data[0])[0].toLowerCase() != "other") return true;
+                return false;
+            },
+            _filterByNameMapToValue: function (properties, name) {
 
-
-              newTypeList.push(embl);
+                return properties
+                    .filter(function (property) {
+                        return property.name === name;
+                    })
+                    .map(function (property) {
+                        return property.value;
+                    });
             }
-          }
-          else if (typeList[elem].databaseName === "RefSeq"){ //TODO
-            if (typeList[elem].properties.length > 0) {
-              var nucleotideID = $.grep(typeList[elem].properties, function(e){ return e.name === "nucleotide sequence ID"; })[0].value;
-              var refseq = {
-                name: typeList[elem].databaseName,
-                xrefs : [{
-                  accession: typeList[elem].accession,
-                  url : typeList[elem].resolvedUrl,
-                  prefix : "Protein",
-                  suffix : ""
-                }]
-              };
-              var nucleotide = $.grep(typeList, function(e){ return e.accession == nucleotideID; })[0];
-              refseq.xrefs.push({
-                accession: nucleotide.accession,
-                url : nucleotide.resolvedUrl,
-                prefix : "Nucleotide sequence",
-                suffix : ""
-              });
-              newTypeList.push(refseq);
-            }
-          }
-          else if (typeList[elem].databaseName === "Reactome"
-                  || typeList[elem].databaseName === "KEGGPathway") {
-            continue;
-          }
-          else if (typeList[elem].databaseName === "MIM") {
-            var isGene = false;
-            for (var p in typeList[elem].properties){
-              if(typeList[elem].properties[p].name="value"
-              && typeList[elem].properties[p].value=="gene") isGene = true;
-            }
-            if(!isGene)
-              newTypeList.push({
-                name: typeList[elem].databaseName,
-                xrefs : [{
-                  accession: typeList[elem].accession,
-                  url : typeList[elem].resolvedUrl,
-                  prefix : "",
-                  suffix : suffix
-                }]
-              })
-          }
-          else if (typeList[elem].databaseName === "SFLD") {
-            newTypeList.push({
-              name: typeList[elem].databaseName,
-              xrefs : [{
-                accession: typeList[elem].accession,
-                url : typeList[elem].resolvedUrl,
-                prefix : "",
-                suffix : "["+typeList[elem].properties[0].value+"]"
-              }]
-            })
-          }
-          else if (typeList[elem].databaseName === "PIR") {
-            newTypeList.push({
-              name: typeList[elem].databaseName,
-              xrefs : [{
-                accession: typeList[elem].accession,
-                url : typeList[elem].resolvedUrl,
-                prefix : "",
-                suffix : ""
-              }]
-            })
-          }
-          else {
-            var suffix = "";
-            if (typeList[elem].properties.length>0){
-              var addInfos = $.grep(typeList[elem].properties, function(e){ return e.name === "entry name" || e.name === "isoform ID" || e.name === "gene designation" || e.name === "taxonomic scope"; })[0];
-              suffix = addInfos ? "["+addInfos.value+"]" : "";
-            }
-            newTypeList.push({
-              name: typeList[elem].databaseName,
-              xrefs : [{
-                accession: typeList[elem].accession,
-                url : typeList[elem].resolvedUrl,
-                prefix : "",
-                suffix : suffix
-              }]
-            })
-          }
-
-        }
-        return newTypeList;
-      },
-      _sortCategories: function(a,b){
-        var firstCategoryName = Object.keys(a.value)[0];
-        var secondCategoryName = Object.keys(b.value)[0];
-        if (firstCategoryName.toLowerCase() == "other" &&
-                secondCategoryName.toLowerCase() != "other") return 1;
-        if (secondCategoryName.toLowerCase() == "other" &&
-                firstCategoryName.toLowerCase() != "other") return -1;
-        return firstCategoryName.toLowerCase() > secondCategoryName.toLowerCase() ? 1 : -1;
-      },
-      _toArray: function(obj) {
-        if (typeof obj === 'object') {
-          return Object.keys(obj).map(function(key) {
-            return {
-              name: key,
-              value: obj[key]
-            };
-          });
-        }
-        return null;
-      },
-      _checkIfLast: function(array,index){
-        if(array.length-1===index) return true;
-        return false;
-      },
-      _checkCategories: function(){
-        if(this.data.length>1 || Object.keys(this.data[0])[0].toLowerCase()!="other") return true;
-        return false;
-      }
-    });
-  </script>
+        });
+    </script>
 </dom-module>
