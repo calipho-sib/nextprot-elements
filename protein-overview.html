@@ -588,10 +588,7 @@ Protein overview
                     "families": overview.families.map(function (f) {
                         return NXUtils.getFamily(f, {})
                     }),
-                    "proteinEvidence": this._updateProteinExistenceText(overview.proteinExistences.proteinExistenceInferred.proteinExistence.description),
-                    //"proteinEvidence": this._updateProteinExistenceText(overview.proteinExistence.description),
-
-                    //"proteinEvidenceCaution": overview.proteinExistenceInfo,
+                    "proteinEvidence": this._updateProteinExistenceText(overview.proteinExistence),
                     "integDate": overview.history.formattedNextprotIntegrationDate,
                     "lastUpdate": overview.history.formattedNextprotUpdateDate,
                     "UniprotIntegDate": overview.history.formattedUniprotIntegrationDate,
@@ -626,8 +623,10 @@ Protein overview
             _pluralize: function (item) {
                 return item.length > 1 ? "s" : "";
             },
-            _updateProteinExistenceText: function (term) {
-                var existence = term.toLowerCase();
+            _updateProteinExistenceText: function (pe) {
+
+                var description = pe.description;
+                var existence = description.toLowerCase();
                 var mainSentence = "Entry whose protein(s) existence is ";
                 switch (existence) {
                     case "uncertain":
