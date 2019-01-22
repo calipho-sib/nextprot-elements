@@ -32,16 +32,27 @@ View listing identifiers annotations.
         <div class="row">
             <div id="nxAnnotations" class="col-md-12">
                 <div class="category-main">
-                    <template is="dom-repeat" items="[[_toArray(identifiers)]]" as="category">
+                    <template is="dom-repeat" items="[[_toCatArray(identifiers)]]" as="category">
                         <div class="row category-row">
                             <div class="col-xl-1 col-lg-3 col-md-4 col-sm-5 col-xs-6">
-                                <h4 class="annotation-category-title"> [[category.name]]</h4>
+                                <h4 class="annotation-category-title">[[category.key]]</h4>
                             </div>
                             <div>
-                                <template is="dom-repeat" items="[[_toArray(category.value)]]" as="database" initial-count="10" target-framerate="1">
+                                <template is="dom-repeat" items="[[_toSubCatArray(category.value)]]" as="subcat">
                                     <div class="row annotation-row">
                                         <div class="col-xl-11 col-lg-10 col-md-9 col-sm-7 col-xs-7">
-                                            [[database.name]] [[database.value]]
+                                            [[subcat.key]]: 
+                                            <template is="dom-repeat" items="[[_toIdentifierSortedArray(subcat.value)]]" as="thing">
+                                                <template is="dom-if" if="[[thing.link]]">
+                                                    <a class="selectable ext-link" href="[[thing.link]]" target="_blank">[[thing.accession]]</a>
+                                                </template>
+                                                <template is="dom-if" if="[[! thing.link]]">
+                                                    [[thing.accession]]
+                                                </template>
+                                                <span>
+                                                
+                                                </span>
+                                            </template>
                                         </div>
                                     </div>
                                 </template>
@@ -72,6 +83,7 @@ View listing identifiers annotations.
             },
             ready: function(){
                 var nx = new Nextprot.Client("neXtprot identifiers view", "Calipho Group");
+                // nx.setApiBaseUrl('http://localhost:8080/nextprot-api-web');
                 var self = this;
                 nx.getFullAnnotationsByCategory(this.nxConfig.entry, "IDENTIFIER")
                     .then(function (response) {
@@ -79,29 +91,98 @@ View listing identifiers annotations.
                     });
             },
             _process: function(identifiers){
-                processedIdentifiers = [];
+                result = {};
                 var self = this;
                 identifiers.forEach(function(identifier){
-                    console.log(identifier);
-                    if (Object.keys(processedIdentifiers).indexOf(identifier.databaseCategory)===-1) processedIdentifiers[identifier.databaseCategory]=[];
-                    if (Object.keys(processedIdentifiers[identifier.databaseCategory]).indexOf(identifier.database)===-1 &&
-                        Object.keys(processedIdentifiers[identifier.databaseCategory]).indexOf(identifier.provenance)===-1) processedIdentifiers[identifier.databaseCategory][identifier.database || identifier.provenance]=[];
-                    processedIdentifiers[identifier.databaseCategory][identifier.database || identifier.provenance] = identifier.name;
+                    var catKey = identifier.databaseCategory;
+                    if (! result.hasOwnProperty(catKey)) result[catKey]={};
+                    var catObj = result[catKey];
+                    var typKey = identifier.type;
+                    if (! catObj.hasOwnProperty(typKey)) catObj[typKey]=[];
+                    catObj[typKey].push({accession:identifier.name, link:identifier.link});
                 });
-                this.identifiers = processedIdentifiers;
-                //console.log(this.identifiers);
+                this.identifiers = result;
             },
             _checkAnnotations: function(){
                 if(this.annotationsCount===0) this.$.nxAnnotations.hidden=true;
                 else this.$.nxAnnotations.hidden=false;
                 this.$.noDataWarning.hidden=!this.$.nxAnnotations.hidden;
             },
+
+            // arr is a sub category value: an array of objects
+            // the array returned is alpha sorted by accession
+            _toIdentifierSortedArray: function(arr) {
+                if (typeof arr === 'object') {
+                    return arr.sort(function(a,b) { 
+                        if (a.accession < b.accession) return -1;
+                        if (a.accession > b.accession) return  1;
+                        return 0;
+                    });
+                }
+                return null;
+            },
+
+            // obj is a category object value
+            // the fucntion returns an array of objects where
+            // the field key is the name of a sub category
+            // the field value ist its content
+            // the array is alpha sorted by key
+            _toSubCatArray: function(obj) {
+                if (typeof obj === 'object') {
+                    var self=this;
+                    var result = self._toArray(obj);
+                    result.sort(function(a,b) { 
+                        // special rule for transcript that should come before protein
+                        if (a.key === 'Transcript' && b.key === 'Protein') return -1;
+                        if (b.key === 'Transcript' && a.key === 'Protein') return  1;
+                        // general rule: alpha sorted
+                        if (a.key < b.key) return -1;
+                        if (a.key > b.key) return  1;
+                        return 0;
+                    });
+                    return result;
+                }
+                return null;
+            },
+
+            // obj is the identifiers object
+            // the fucntion returns an array of objects where
+            // the field key is the name of a category
+            // the field value is its content
+            // the array is sorted with the _catOrder() function
+            _toCatArray: function(obj) {
+                if (typeof obj === 'object') {
+                    var self=this;
+                    var result = self._toArray(obj);
+                    result.sort(function(a,b) { 
+                        return self._catOrder(a.key) - self._catOrder(b.key);
+                    });
+                    return result;
+                }
+                return null;
+
+            },
+
+
+            // defines order for identifier main category 
+            _catOrder: function(cat) {
+                if (cat === 'UniProtKB') return 1;
+                if (cat === 'CLONE NAMES') return 2;
+                if (cat === 'MICROARRAY PROBE IDENTIFIERS') return 3;
+                if (cat === 'ENSEMBL') return 4;
+                if (cat === 'NCBI') return 5;
+                if (cat === 'ADDITIONAL IDENTIFIERS') return 6;
+                return 100;
+            },
+
+            // obj is any kind of object
+            // obj is turned into an array there
+            // the field key is one of the Object.keys() item
+            // the field value is the key value
             _toArray: function(obj) {
                 if (typeof obj === 'object') {
-                    return Object.keys(obj).map(function(key) {
-                        return {
-                            name: key,
-                            value: obj[key]
+                    return result = Object.keys(obj).map(function(key) {
+                        return { key: key, value: obj[key]
                         };
                     });
                 }

@@ -1,0 +1,151 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+
+<link rel="import" href="exon-item.html">
+<link rel="import" href="exons-mapping-table.html">
+<link rel="import" href="gene-information-section.html">
+
+<link rel="import" href="external-scripts.html">
+
+<link rel="import" href="protein-overview.html">
+
+<!--
+`exon-view`
+Exon view demo
+
+@demo demo/exon-view-demo.html
+-->
+<dom-module id="exon-view">
+    <template>
+        <!-- https://www.learnenough.com/css-and-layout-tutorial/css/flex-intro/flex-footer -->
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: flex;
+                background:#f8f8f8;
+                flex-direction: column;
+                min-height: calc(100vh - 150px);
+            }
+
+            #exonMappingTable {
+                flex: 1 1 0;
+            }
+        </style>
+        <div class="row nxSection">
+            <div class="col-md-12">
+                <protein-overview nx-config="[[nxConfig]]"></protein-overview>
+            </div>
+        </div>
+        <div class="row nxSection">
+            <div class="col-md-12">
+                <gene-information-section nx-config="[[nxConfig]]" mapped-isoform-count="[[_mappedIsoformCount]]" non-mapped-isoforms="[[_nonMappedIsoforms]]"
+                                          start-exon-position="[[_startCodingPosition]]" stop-exon-position="[[_stopCodingPosition]]"></gene-information-section>
+            </div>
+        </div>
+        <template is="dom-if" if="[[_hasData(data)]]">
+        <div id="exonMappingTable" class="row nxSection">
+            <div class="col-md-12">
+                <exons-mapping-table data="[[data]]"></exons-mapping-table>
+            </div>
+        </div>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'exon-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                data: {
+                    type: Object,
+                    observer: "_calcFirstCodingPositions"
+                },
+                _nonMappedIsoforms: {
+                    type: Array,
+                    value: []
+                },
+                _startCodingPosition: {
+                    type: Number,
+                    value: 0
+                },
+                _stopCodingPosition: {
+                    type: Number,
+                    value: 0
+                },
+                _mappedIsoformCount: {
+                    type: Number,
+                    value: 0
+                }
+            },
+            attached: function () {
+
+                this._initApiClient();
+
+                var self = this;
+
+                this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/exon-mapping.json")
+                    .then(function (response_exonmap) {
+
+                        self._npClient.getJSON("/entry/" + self.nxConfig.entry + "/isoform.json")
+                            .then(function (response_iso) {
+                                self._handleResponseData(response_exonmap,response_iso);
+                                self._handlenonMappedIsoforms(response_iso);
+                                
+                            })
+                            .catch(function (error) {
+                                self._handleError(error);
+                            });
+                    })
+                    .catch(function (error) {
+                        self._handleError(error);
+                    });
+            },
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtProt publications", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+            },
+            _handleResponseData: function (data_exon,data_iso) {
+                this._addCanonicalInfo(data_exon,data_iso);
+                this.data = data_exon;
+                this._mappedIsoformCount = data_exon.sortedMappedIsoformInfoKeys.length;
+            },
+            _addCanonicalInfo: function (data_exon,data_iso) {
+                data_iso.entry.isoforms.forEach(function(iso){
+                    if (data_exon.mappedIsoformInfos[iso.isoformAccession]){
+                        data_exon.mappedIsoformInfos[iso.isoformAccession].canonical = iso.canonicalIsoform;
+                    }
+                });
+            },
+            _handlenonMappedIsoforms: function (data) {
+                var self = this;
+
+                var isoforms = data.entry.isoforms.filter(function(iso) {
+
+                    return self.data.nonMappedIsoforms.indexOf(iso.isoformAccession) !== -1;
+                });
+
+                this._nonMappedIsoforms = isoforms.map(function (iso) {
+                    return {
+                        "name": iso.mainEntityName.name,
+                        "accession": iso.isoformAccession
+                    }
+                });
+            },
+            _calcFirstCodingPositions: function (data) {
+                this._startCodingPosition = (data.startExonPositions && data.startExonPositions.length > 0) ? data.startExonPositions[0] : 0;
+                this._stopCodingPosition = (data.stopExonPositions && data.stopExonPositions.length > 0) ? data.stopExonPositions[0] : 0;
+            },
+            _handleError: function (error) {
+                console.error("Error: ", error);
+            },
+            _hasData: function(data) {
+
+                return data && data.sortedExonKeys.length > 0;
+            }
+        });
+    </script>
+</dom-module>

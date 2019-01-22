@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+    <title>coding-exon-text demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../coding-exon-text.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .vertical-section-container {
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+<div class="vertical-section-container centered">
+    <!-- https://dev-api.nextprot.org/entry/NX_Q8NHL6/genomic-mapping.json -->
+
+        <h3>non coding exon-text demo</h3>
+        <demo-snippet>
+            <template>
+                <coding-exon-text data='
+                      {
+                        "name" : "NX_ENSE00002518881",
+                        "accession" : "ENSE00002518881",
+                        "transcriptName" : "NX_ENST00000396332",
+                        "geneRegion" : {
+                            "geneName" : "NX_ENSG00000104972",
+                            "firstPosition" : 13355,
+                            "lastPosition" : 13476
+                        },
+                        "exonCategory" : "NOT_CODING",
+                        "rank" : 1,
+                        "firstAminoAcid" : null,
+                        "lastAminoAcid" : null
+                      }'></coding-exon-text>
+            </template>
+        </demo-snippet>
+
+        <h3>start exon-text demo</h3>
+        <demo-snippet>
+            <template>
+                <coding-exon-text data='
+                      {
+                        "name" : "NX_ENSE00002515980",
+                        "accession" : "ENSE00002515980",
+                        "transcriptName" : "NX_ENST00000396332",
+                        "geneRegion" : {
+                            "geneName" : "NX_ENSG00000104972",
+                            "firstPosition" : 13869,
+                            "lastPosition" : 13950
+                        },
+                        "exonCategory" : "START",
+                        "rank" : 2,
+                        "firstAminoAcid" : {
+                            "code" : "Met",
+                            "position" : 1,
+                            "phase" : 0
+                        },
+                        "lastAminoAcid" : {
+                            "code" : "Gly",
+                            "position" : 12,
+                            "phase" : 1
+                        },
+                        "startPosition" : 13917
+                      }'></coding-exon-text>
+            </template>
+        </demo-snippet>
+
+        <h3>coding exon-text demo</h3>
+        <demo-snippet>
+            <template>
+                <coding-exon-text data='
+                      {
+                        "exonCategory": "CODING",
+                        "accession": "ENSE00003621576",
+                        "rank": 11,
+                        "firstAminoAcid": {
+                          "code": "Thr",
+                          "position": 495,
+                          "phase": 1
+                        },
+                        "lastAminoAcid": {
+                          "code": "Arg",
+                          "position": 520,
+                          "phase": 2
+                        },
+                        "transcriptName": "NX_ENST00000396327",
+                        "geneRegion": {
+                          "geneName": "NX_ENSG00000104972",
+                          "firstPosition": 17947,
+                          "lastPosition": 18022
+                        },
+                        "firstPositionOnGene": 17947,
+                        "lastPositionOnGene": 18022,
+                        "name": "NX_ENSE00003621576"
+                      }'></coding-exon-text>
+            </template>
+        </demo-snippet>
+
+        <h3>stop exon-text with font change demo</h3>
+        <demo-snippet>
+            <template>
+                <coding-exon-text data='
+                      {
+                        "exonCategory": "STOP",
+                        "stopPosition": 19718,
+                        "accession": "ENSE00003619461",
+                        "rank": 16,
+                        "firstAminoAcid": {
+                          "code": "Ala",
+                          "position": 603,
+                          "phase": 0
+                        },
+                        "lastAminoAcid": {
+                          "code": "His",
+                          "position": 650,
+                          "phase": 0
+                        },
+                        "transcriptName": "NX_ENST00000396332",
+                        "geneRegion": {
+                          "geneName": "NX_ENSG00000104972",
+                          "firstPosition": 19575,
+                          "lastPosition": 20371
+                        },
+                        "firstPositionOnGene": 19575,
+                        "lastPositionOnGene": 20371,
+                        "name": "NX_ENSE00003619461"
+                      }'></coding-exon-text>
+            </template>
+        </demo-snippet>
+</div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="quality-label.html">
 <link rel="import" href="publication-item.html">
+<link rel="import" href="experimental-context.html">
 <link rel="import" href="nextprot-elements-shared-styles.html">
 
 <!--
@@ -49,6 +50,10 @@ Block element representing an evidence record.
                 margin-top: 5px;
                 padding-left: 17px;
             }
+            experimental-context{
+                margin-top: 10px;
+                padding-left: 17px;
+            }
             .border-left {
                 border-left: 1px solid #ddd;
             }
@@ -57,6 +62,13 @@ Block element representing an evidence record.
             }
             .evidence-highlighted {
                 background-color: rgba(223, 240, 216, 1);
+            }
+            .ext-link:after {
+                content: "\f08e";
+                font-family: "FontAwesome";
+                font-size: 11px;
+                margin-left: 5px;
+                vertical-align: middle;
             }
 
         </style>
@@ -85,7 +97,7 @@ Block element representing an evidence record.
                     </template>
                     <template is="dom-if" if="[[data.publication]]">
                         <div class="evidence-publication">
-                            <publication-item data="[[data.publication]]"></publication-item>
+                            <np-publication publication="[[data.publication]]" view="detailed"></np-publication>
                         </div>
                     </template>
                     <template is="dom-if" if="[[data.context.disease]]">
@@ -103,6 +115,11 @@ Block element representing an evidence record.
                             <p><span>[[data.levelAndStageLabel]]</span></p>
                         </div>
                     </template>
+                    
+                    <template is="dom-if" if="[[data.mdata]]">
+                        <experimental-context data="[[data.mdata]]"></experimental-context>
+                    </template>
+<!--                        <experimental-context></experimental-context>-->
                 </div>
             </div>
         </template>

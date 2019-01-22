@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+    <title>publication-abstract demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../entry-view-reference.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .vertical-section-container {
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+<div class="vertical-section-container centered">
+    <h3>Basic entry-view-reference demo</h3>
+    <demo-snippet>
+        <template>
+            <entry-view-reference></entry-view-reference>
+        </template>
+    </demo-snippet>
+    <demo-snippet>
+        <template>
+            <h4>Data binding</h4>
+            <hr>
+            <script>
+
+                var elements = document.querySelectorAll("entry-view-reference");
+
+                console.log(elements);
+
+                for(var i in elements){
+                    elements[i].refs = {
+                        "Medical": "/entry/NX_Q8WXG9/medical",
+                        "Sequence": "/entry/NX_Q8WXG9/sequence",
+                        "Structures": "/entry/NX_Q8WXG9/structures"
+                    };
+                }
+            </script>
+        </template>
+    </demo-snippet>
+</div>
+
+</body>
+</html>

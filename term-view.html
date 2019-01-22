@@ -1,0 +1,166 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="relevant-entries-section.html">
+
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="paginator-element.html">
+<link rel="import" href="entry-item.html">
+
+<!--
+`term-view`
+Term view demo
+
+@demo demo/term-view-demo.html
+-->
+<dom-module id="term-view">
+    <template>
+        <style is="custom-style" include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                --paper-toggle-button-checked-button-color: #428bca;
+                --paper-toggle-button-checked-bar-color: #428bca;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+
+            paper-checkbox {
+                z-index: 10;
+                position: absolute;
+                right: 50px;
+                top: 15px;
+            }
+
+            @media (max-width: 768px) {
+                paper-checkbox {
+                    z-index: 10;
+                    top:15px;
+                }
+            }
+
+            #div-checkbox {
+                position: relative;
+            }
+
+        </style>
+
+        <div class="row padded-bottom">
+            <div class="col-md-12">
+                <term-overview-section nx-config='[[nxConfig]]' no-cv-term="{{noCvTerm}}"></term-overview-section>
+            </div>
+        </div>
+
+        <div id="relevantentries">
+            <div id="div-checkbox">
+                <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
+            </div>
+            <relevant-entries-section id="relevantEntries" related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
+        </div>
+
+        <paper-spinner-lite id="spinnertermview" active></paper-spinner-lite>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'term-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {},
+                    notify: true
+
+                },
+                noCvTerm: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_cvTermUpdated'
+                },
+                _entries: {
+                    type: Array
+                },
+                relatedEntryCount: {
+                    type: Number,
+                    value: 0
+                },
+                includeSilver: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+            attached: function () {
+                this._loadData();
+            },
+
+            _silverChange: function (event) {
+
+                this.includeSilver = event.target.checked;
+                this._loadData();
+
+            },
+            _cvTermUpdated: function(newNoCvTermValue){
+                this.$.relevantentries.hidden = newNoCvTermValue;
+            },
+            _loadData: function(){
+
+                var self = this;
+
+                self.$.spinnertermview.active = true;
+                self.$.spinnertermview.hidden = false;
+
+
+                var term = self.nxConfig.termAccession;
+
+                //If it is an enzyme add 'EC' before (Daniel says: IMO this should be fixed at the level of the db adding a prefix to all enzymes, and so the URL will be .../EC 1.1.1.1/... instead of /1.1.1.1/)
+                if(/^[1-7]\.[1-9-][0-9]?\.[1-9-][0-9]?\.n?[1-9-][0-9]{0,2}$/.test(term)){
+                    term = "EC " + term;
+                }
+
+                var data = {"filter":"","quality":"gold","query": "\"" + term + "\"","sort":"","order":"", rows: 500}
+
+                if(this.includeSilver){
+                    data["quality"] = "gold-and-silver"
+                }
+
+                var nxClient = getNXClient(this.nxConfig);
+
+                $.ajax({
+                    type: "POST",
+                    headers: {
+                        Accept : "application/json; charset=utf-8",
+                        "Content-Type": "application/json; charset=utf-8"
+                    },
+                    url : nxClient.getApiBaseUrl() + "/search/entry.json",
+                    data: JSON.stringify(data),
+                    success : function(response) {
+                        var entries = [];
+                        response.results.forEach(function (res){
+                            res.accession = res.id;
+                            entries.push(res);
+                        })
+                        self.relatedEntryCount = response.found;
+                        self._entries = entries;
+                        self.$.spinnertermview.active = false;
+                        self.$.spinnertermview.hidden = true;
+                    },
+                    error : function(error) {
+
+                        self.relatedEntryCount = 0;
+                        self._entries = [];
+
+                        console.error("Error: ", error);
+
+                        self.$.spinnertermview.active = false;
+                        self.$.spinnertermview.hidden = true;
+                    }
+                })
+
+            }
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <title>function-view demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../exon-view.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .vertical-section-container {
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="vertical-section-container centered">
+    <h3>exon-view</h3>
+    <demo-snippet>
+        <template>
+            <exon-view nx-config='{"env": "dev", "entry": "NX_P46976"}'></exon-view>
+<!--            <exon-view nx-config='{"env": "alpha", "entry": "NX_P62805"}'></exon-view>-->
+<!--            <exon-view nx-config='{"env": "alpha", "entry": "NX_P11532"}'></exon-view>-->
+        </template>
+    </demo-snippet>
+    <h3>exon-view no exon</h3>
+    <demo-snippet>
+        <template>
+            <exon-view nx-config='{"env": "dev", "entry": "NX_Q96PT3"}'></exon-view>
+        </template>
+    </demo-snippet>
+    <h3>exon-view multi-gene</h3>
+    <demo-snippet>
+        <template>
+            <exon-view nx-config='{"env": "dev", "entry": "NX_P78358"}'></exon-view>
+        </template>
+    </demo-snippet>
+    <h3>exon-view with bronze mapping</h3>
+    <demo-snippet>
+        <template>
+            <exon-view nx-config='{"env": "dev", "entry": "NX_O94759"}'></exon-view>
+        </template>
+    </demo-snippet>
+    <h3>exon-view with only bronze mappings</h3>
+    <demo-snippet>
+        <template>
+            <exon-view nx-config='{"env": "dev", "entry": "NX_Q07157"}'></exon-view>
+        </template>
+    </demo-snippet>
+</div>
+</body>
+</html>

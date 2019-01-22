@@ -1,0 +1,209 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="relevant-entries-section.html">
+
+<link rel="import" href="publication.html">
+<link rel="import" href="paginator-element.html">
+<link rel="import" href="entry-item.html">
+
+<!--
+`publication-with-linked-entries-view`
+Publication with linked entries view demo
+
+@demo demo/publication-with-linked-entries-view-demo.html
+-->
+<dom-module id="publication-with-linked-entries-view">
+    <template>
+        <style is="custom-style" include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                --paper-toggle-button-checked-button-color: #428bca;
+                --paper-toggle-button-checked-bar-color: #428bca;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+
+            .control-header {
+                margin: 10px 0;
+                padding-bottom: 10px;
+                display: flex;
+                border-bottom: 1px solid #E7EAEC;
+            }
+
+            .mode-toggle {
+                display: inline-flex;
+                margin-top: -3px;
+            }
+
+            .toggle-label {
+                padding: 5px 10px 5px 3px;
+            }
+
+            .title-header {
+                border-bottom: 1px solid rgb(170, 170, 170);
+                font-weight: 500;
+                font-size: 1.8em;
+            }
+
+            .padded-bottom {
+                padding-bottom: 10px;
+            }
+
+            .padded-top {
+                padding-top: 5px;
+            }
+
+            .more-bottom-margin {
+                margin-bottom: 5px;
+            }
+
+            a.disabled {
+                pointer-events: none;
+                color: black;
+                font-weight: bolder;
+            }
+
+            .bg-grey {
+                background: #F3F3F3;
+                border-radius: 5px;
+                margin-right: 5px;
+                padding: 2px;
+            }
+
+            .over-threshold-warning {
+                color: #906013;
+                font-size: 12px;
+                font-weight: 900;
+                margin-left: 5px;
+            }
+
+        </style>
+
+        <template is="dom-if" if="[[data]]">
+            <div class="row padded-bottom">
+                <div class="col-md-12">
+                    <div class="title-header more-bottom-margin">
+                        <publication-authors-and-journal publication="[[data.publication]]" summary
+                                                         journal-year-only></publication-authors-and-journal>
+                    </div>
+                    <np-publication publication="[[data.publication]]" view="standard"></np-publication>
+                </div>
+            </div>
+        </template>
+
+        <template is="dom-if" if="[[_entries]]">
+             <relevant-entries-section related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
+        </template>
+
+        <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'publication-with-linked-entries-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                data: {
+                    type: Object,
+                    notify: true
+                },
+                summary: {
+                    type: Boolean,
+                    value: false
+                },
+                count: {
+                    type: Number,
+                    notify: true
+                },
+                //This is for relevant for
+                _entries: {
+                    type: Object
+                },
+                _preferedPageSizeName: {
+                    type: String,
+                    value: "publications-with-linked-entries-view.prefered-size",
+                    readOnly: true
+                },
+                _summaryLinkClass: {
+                    type: String,
+                    value: ""
+                },
+                _detailsLinkClass: {
+                    type: String,
+                    value: "disabled"
+                }
+            },
+            attached: function () {
+
+                this._initApiClient();
+
+                if (this.nxConfig.publicationId) {
+                    var self = this;
+
+                    this._npClient.getJSON("/entry-publications/pubid/" + this.nxConfig.publicationId + ".json")
+                        .then(function (response) {
+                            self._handleResponseData(response);
+                        })
+                        .catch(function (error) {
+                            self._handleError(error);
+                        });
+                }
+            },
+            _initApiClient: function () {
+                this._npClient = getNXClient(this.nxConfig);
+            },
+            _handleResponseData: function (data) {
+
+                var entries = [];
+
+                Object.values(data.entryPublicationMap).forEach(function (entryPublication) {
+                    var entry = {
+                        accession: entryPublication.entryAccession,
+                        citedInViews: entryPublication.citedInViews
+                    };
+
+                    $.extend(entry, data.entrySolrResultMap[entry.accession]);
+
+                    entries.push(entry);
+                });
+
+                this.data = data;
+                this._entries = entries;
+                this.relatedEntryCount = data.relatedEntryCount;
+
+                this.$.spinner.active = false;
+                this.$.spinner.hidden = true;
+            },
+            _handleError: function (error) {
+                console.error("Error: ", error);
+                this.$.spinner.active = false;
+                this.$.spinner.hidden = true;
+
+                this.count = 0;
+            },
+            _toView: function (summary) {
+                return (summary) ? "summary" : "detailed";
+            },
+            _updateLinks: function (evt) {
+                this.summary = (evt.target.id === "summary-link");
+
+                if (this.summary) {
+                    this._detailsLinkClass = "";
+                    this._summaryLinkClass = "disabled";
+                }
+                else {
+                    this._detailsLinkClass = "disabled";
+                    this._summaryLinkClass = "";
+                }
+            }
+        });
+    </script>
+</dom-module>

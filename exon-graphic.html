@@ -1,0 +1,179 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="external-scripts.html">
+<!--
+`exon-item`
+Exon graphic demo
+
+@demo demo/exon-graphic-demo.html
+-->
+<dom-module id="exon-graphic">
+    <template>
+        <style>
+
+        </style>
+        <svg id="svgTag"></svg>
+    </template>
+    <script>
+        Polymer({
+            is: 'exon-graphic',
+            properties: {
+                data: {
+                    type: Object
+                },
+                _exonWidth: {
+                    type: Number,
+                    value: 30,
+                    readOnly: true
+                },
+                _codingExonColor: {
+                    type: String,
+                    value: "#0F8292",
+                    readOnly: true
+                }
+            },
+            attached: function() {
+                this._init();
+                this._drawExon();
+            },
+            // https://stackoverflow.com/questions/12485818/can-a-svg-embedded-in-an-html-table-cell-overflow-that-cell
+            _init: function() {
+
+                this._exonGraphicHeight = 10;
+                this._nonCodingExonGraphicHeight = 1;
+                this._svgWidth = this._exonWidth;
+                this._svgHeight = this._exonGraphicHeight;
+                this._exonY = this._svgHeight/2;
+            },
+            _drawExon: function() {
+                var svg = d3.select(this).select("#svgTag")
+                    .attr("width", this._svgWidth)
+                    .attr("height", this._svgHeight)
+                    .attr("transform","translate(0,2)");
+
+                var codingRegionCoordinates;
+
+                switch(this.data.exonCategory) {
+
+                    case 'NOT_CODING':
+                        codingRegionCoordinates = this._calcNonCodingExonGraphicParams();
+                        break;
+                    case 'START':
+                        codingRegionCoordinates = this._calcStartExonGraphicParams();
+                        break;
+                    case 'MONO':
+                        codingRegionCoordinates = this._calcMonoExonGraphicParams();
+                        break;
+                    case 'CODING':
+                        codingRegionCoordinates = this._calcCodingExonGraphicParams();
+                        break;
+                    case 'STOP':
+                        codingRegionCoordinates = this._calcStopExonGraphicParams();
+                        break;
+                }
+
+                this._drawGraphic(svg, codingRegionCoordinates);
+            },
+            // ---------------
+            _calcNonCodingExonGraphicParams: function() {
+
+                // non-coding part only (grey line)
+                return {
+                    "codingRegionStart" : 0,
+                    "codingRegionLength" : 0
+                }
+            },
+            //      _________
+            // ----|_________|
+            _calcStartExonGraphicParams: function() {
+
+                if (this.data.drawCodingPartOnly) {
+                    return this._calcCodingExonGraphicParams();
+                }
+
+                var nonCodingPartLen = this.data.startPosition - this.data.geneRegion.firstPosition + 1;
+                var codingRegionLen = this.data.geneRegion.lastPosition - this.data.startPosition + 1;
+
+                return {
+                    "codingRegionStart" : this._scale(nonCodingPartLen),
+                    "codingRegionLength" : this._scale(codingRegionLen)
+                }
+            },
+            //      _____
+            // ----|_____|----
+            _calcMonoExonGraphicParams: function() {
+
+                var nonCodingPartLen = this.data.startPosition - this.data.geneRegion.firstPosition + 1;
+                var codingPartLen = this.data.stopPosition - this.data.startPosition + 1;
+
+                return {
+                    "codingRegionStart" : this._scale(nonCodingPartLen),
+                    "codingRegionLength" : this._scale(codingPartLen)
+                }
+            },
+            //  _____________
+            // |_____________|
+            _calcCodingExonGraphicParams: function() {
+
+                return {
+                    "codingRegionStart" : 0,
+                    "codingRegionLength" : this._scale(this._calcGeneRegionLength())
+                }
+            },
+            //  _________
+            // |_________|----
+            _calcStopExonGraphicParams: function() {
+
+                var codingPartLen = this.data.stopPosition - this.data.geneRegion.firstPosition + 1;
+
+                return {
+                    "codingRegionStart" : 0,
+                    "codingRegionLength" : (this.data.codingPartOnly) ? this._scale2CodingRegion(codingPartLen) : this._scale(codingPartLen)
+                }
+            },
+            _scale: function(subRegionLen) {
+
+                return subRegionLen * this._exonWidth / this._calcGeneRegionLength();
+            },
+            _scale2CodingRegion: function(subRegionLen) {
+
+                return Math.floor(subRegionLen / 3) * 3 * this._exonWidth / this._calcCodingGeneRegionLength();
+            },
+            _calcGeneRegionLength: function() {
+
+                return this.data.geneRegion.lastPosition - this.data.geneRegion.firstPosition + 1;
+            },
+            _calcCodingGeneRegionLength: function() {
+
+                return this.data.codingGeneRegion.lastPosition - this.data.codingGeneRegion.firstPosition + 1;
+            },
+            _drawGraphic: function(svg, codingRegionCoord) {
+
+                svg
+                    .append('line')
+                    .style('stroke-width', this._nonCodingExonGraphicHeight)
+                    .style('stroke', 'black')
+                    .style('position', 'absolute')
+                    .attr("x1", 0)
+                    .attr("y1", this._exonY)
+                    .attr("x2", this._exonWidth)
+                    .attr("y2", this._exonY)
+                ;
+
+                if (codingRegionCoord.codingRegionLength > 0) {
+
+                    svg
+                        .append('rect')
+                        .attr({
+                            x: codingRegionCoord.codingRegionStart,
+                            y:0,
+                            width: codingRegionCoord.codingRegionLength,
+                            height: this._exonGraphicHeight,
+                            fill: this._codingExonColor
+                        })
+                    ;
+                }
+            }
+        });
+    </script>
+</dom-module>

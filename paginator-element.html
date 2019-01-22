@@ -29,11 +29,11 @@ Element to allow pagination on a page when given an array of JSON object.
             }
         </style>
         <div id="container"></div>
-            <div id="navigation">
-                <button on-click="previousPage">Previous</button>
-                <span> Page: <select id="pageSelector" on-change="_selectedPageChange"></select> of <span>[[pageCount]]</span></span>
-                <button on-click="nextPage">Next</button>
-            </div>
+        <div id="navigation">
+            <button on-click="previousPage">Previous</button>
+            <span> Page: <select id="pageSelector" on-change="_selectedPageChange"></select> of <span>[[pageCount]]</span></span>
+            <button on-click="nextPage">Next</button>
+        </div>
     </template>
     <script>
         Polymer({
@@ -126,12 +126,13 @@ Element to allow pagination on a page when given an array of JSON object.
                 var end = start + this.pageSize;
                 this.to = this.items.length<end?this.items.length:end;
                 for(var i = start; i < end && i < this.items.length; i++){
-                    var node = document.createElement(this.layout);
+                    var node = document.createElement((this.layout) ? this.layout : 'pagination-item');
                     node.data = this.items[i];
                     node[this.bindAttribute] = this.bindValue;
                     this.$.container.appendChild(node);
                 }
                 this._setupPageNumbers();
+                $(document).scrollTop(0);
             },
             /**
              * Display the &lt;select&gt; to allow for quick selection of the pages
@@ -183,7 +184,6 @@ Element to allow pagination on a page when given an array of JSON object.
                 }
                 this._displayItems();
             }
-
         });
     </script>
 </dom-module>

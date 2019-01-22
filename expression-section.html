@@ -134,7 +134,7 @@ Annotation section used in function, medical, and expression views.
                     type: Object,
                     value: { "methods" : [ 
                         {
-                        methodName : "Microarray", methodEvidenceCodeName: "microarray RNA expression level evidence", ecoCode: "ECO:0000104",
+                        methodName : "Microarray", methodEvidenceCodeName: "DNA to cDNA expression microarray evidence", ecoCode: "ECO:0000104",
                         possibleValues : [{expressionLevel : "positive", tooltip: "positive", color: "#ffa10a"},
                             {expressionLevel : "negative", tooltip: "negative", color : "#969e96"}]
                         },
@@ -150,7 +150,8 @@ Annotation section used in function, medical, and expression views.
                             methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",ecoCode: "ECO:0000009",
                             possibleValues : [{expressionLevel: "positive", tooltip: "positive", color: "#ffa10a"}]
                         },
-                        {   methodName : "IHC", methodEvidenceCodeName: "immunolocalization evidence",ecoCode: "ECO:0000087",
+                        {   
+                            methodName : "IHC", methodEvidenceCodeName: "immunohistochemistry evidence",ecoCode: "ECO:0001055",
                             possibleValues : [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
                                 {expressionLevel: "medium", tooltip: "positive (medium)", color: "#ffc870"},
                                 {expressionLevel: "low", tooltip: "positive (low)", color: "#ffe6bd"},

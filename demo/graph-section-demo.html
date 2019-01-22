@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+    <title>graph-section demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../graph-section.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        .vertical-section-container {
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="vertical-section-container centered">
+    <h3>Basic graph-section Demo</h3>
+    <div>
+    Choose the accession number: <select id="datasize" onchange="changeStyle(this.value, 'dataInput')">
+        <option value="small">TS-0079 (Small)</option>
+        <option value="big">Big</option>
+    </select>
+        <br/>
+
+        Choose the arrow size: <select id="arrowsize" onchange="changeStyle(this.value, 'arrowInput')">
+        <option value="0.5" >0.5</option>
+        <option value="1">1</option>
+        <option value="1.5">1.5</option>
+        <option value="2">2</option>
+    </select>
+    <br/>
+    Choose the edges (links) layout: <select id="splinestyle" onchange="changeStyle(this.value, 'splineInput')">
+        <option value="spline" >Default</option>
+        <option value="curved">Curved</option>
+        <option value="polyline">Polyline</option>
+        <option value="ortho">Ortho</option>
+    </select>
+        <br/>
+        Choose the font size: <select id="fontsize" onchange="changeStyle(this.value, 'fontInput')">
+        <option value="14" >14 (Default)</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+    </select>
+        </select>
+        <br/>
+        Choose the zoom level (big data only): <select id="zoom" onchange="changeStyle(this.value, 'zoomInput')">
+        <option value="11">11</option>
+        <option value="15">15</option>
+        <option value="19">19</option>
+        <option value="23">23</option>
+
+    </select>
+    </div>
+    <demo-snippet>
+        <template>
+            <graph-section dataInput="small" arrowInput=0.5 fontInput=14 splineInput="spline" zoomInput=11 data="{}"></graph-section>
+        </template>
+    </demo-snippet>
+</div>
+<script>
+    function changeStyle(newStyle, feature) {
+
+//        var componentStyle = document.querySelectorAll("graph-section");
+        var graphSectionElement = document.querySelectorAll("graph-section");
+
+        graphSectionElement[0][feature] = newStyle;
+    }
+</script>
+</body>
+</html>

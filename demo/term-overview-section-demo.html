@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+  <head>
+    <title>term-overview-section demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../term-overview-section.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .vertical-section-container {
+        max-width: 80%;
+      }
+
+      term-overview-section {
+        margin-bottom: 50px;
+      }
+
+    </style>
+
+
+  </head>
+  <body>
+
+        <script type="text/javascript">
+
+          // typical examples of taxonomic range property values to be parsed
+          // structure is: <strain>; taxId:<taxId1> (<species1>) [,  taxId:<taxId2> (<species2>)  ...]
+          // where [] shows optional repetition of elements 
+          var rangeList = [];
+          rangeList.push("Eukaryota; taxId:3027 (Cryptophyta), taxId:33090 (Viridiplantae), taxId:33634 (Stramenopiles), taxId:33682 (Euglenozoa), taxId:38254 (Glaucocystophyceae)");
+          rangeList.push("Bacteria; taxId:326423 (Bacillus velezensis (strain DSM 23117 / BGSC 10A6 / FZB42)), taxId:1408 (Bacillus pumilus)");
+          rangeList.push("Archaea; taxId:2157 (Archaea)");                        // <== label should be "Archaea"
+          rangeList.push("Eukaryota; taxId:4751 (Fungi), taxId:33208 (Metazoa)"); // <== label1 should be "Eukaryota » Fungi", label2 should be " , Metazoa"
+          rangeList.push("Eukaryota; taxId:9606 (Homo sapiens)");                 // <== label should be "Eukaryota » Homo sapiens"
+
+          function myFunction() {
+            for (idx in rangeList) {
+              var value = rangeList[idx];
+              console.log('-------------------');
+              console.log('Property value:', value);
+              var el = document.getElementById("toto");
+              var result = el._parseTaxonomicRange(value);
+              for (idx in result) {
+                var species = result[idx];
+                console.log('Parsed element ' + idx + ': taxon=' + species.taxon + '|label=' + species.label + '|url='+species.url);
+              }
+            }
+            console.log('-------------------');
+          }
+        </script>
+
+    <div class="vertical-section-container centered">
+      <h3>Basic term-overview-section Demo</h3>
+      <h2>Specifications can be found in the <a href="https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+term+views+specs">wiki</a> or in the <a href="https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/edit">doc</a></h2>
+
+      <demo-snippet>
+
+        <template>
+
+          <button onclick="myFunction()">Parse taxonomic ranges</button>
+
+          <term-overview-section id="toto" nx-config='{"env": "dev", "termAccession": "PTM-0053"}'></term-overview-section>
+
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "PTM-0033"}'></term-overview-section>
+
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "3.6.1.n2"}'></term-overview-section>
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "CVCL_3449"}'></term-overview-section>
+
+          For nextprot-domain-cv add external links to PROSITE or INTERPRO documentation will now be in the EXTERNAL REFERENCES section. Examples:
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "DO-00274"}'></term-overview-section>
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "DO-00903"}'></term-overview-section>
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "DO-00639"}'></term-overview-section>
+
+
+          Term that does not exist
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "DO-9842794253"}'></term-overview-section>
+
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "D005835"}'></term-overview-section>
+
+          label ONTOLOGY = ontologyAltname » accession ; see SP_TV_10 for the format of accession
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "PTM-0312"}'></term-overview-section>
+          label DEFINITION : description (display only if found for term) Example without definition: DO-00903
+          <br>
+          <span style="color:red">Too many synonyms... (AB hydrolase-1) should not be present</span>
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "DO-00903"}'></term-overview-section>
+
+          label ABBREVIATION for uniprot-disease-cv : ACRONYM? (display only if found for term) Example: DI-00002  PAM: NOT FOUND IN API PROPERTIES
+          <br>
+          <term-overview-section nx-config='{"env": "dev", "termAccession": " DI-00002"}'></term-overview-section>
+
+          label SYNONYMS : synonyms (display only if found for term). When there are multiple synonyms, these should be displayed in alphanumerical order on separate lines. Examples: ICEPO:0000002MP:0011635
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "ICEPO:0000002"}'></term-overview-section>
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "MP:0011635"}'></term-overview-section>
+
+          label CATEGORY : "propertyName": "Category" but can be different for different CVs (display only if found for term) Example: CVCL_0238 DO-00474  AB+LL:Should Feature key be displayed as Category?
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "CVCL_0238"}'></term-overview-section>
+
+          label CATALYST : "propertyName": "Catalyst" (display only if found for term) Example: 1.1.1.1
+          <br>
+          label REACTION : "propertyName": "Reaction" (display only if found for term). Display in alphanumerical order if there are more than 1. Example: 1.1.1.1
+          <br>
+          label COMMENT : "propertyName": "Comment" (display only if found for term). Example: 1.1.1.1  Do NOT display for nextprot-cellosaurus-cv
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "1.1.1.1"}'></term-overview-section>
+
+          label TARGETED AMINO ACID : "propertyName": "Target" (display only if found for term) Example: PTM-0312
+          <br>
+          label POSITION OF THE MODIFICATION : "propertyName": "Position of the modification" (corresponds to PA and PP lines in ptmlist). When there are multiple positions of the modification, these should be displayed in alphanumerical order on separate lines. Example: PTM-0312
+          <br>
+          label CELLULAR LOCATION : "propertyName": "Cellular location" (display only if found for term) Example: PTM-0312
+          <br>
+          label TAXONOMIC RANGE : "propertyName": "Taxonomic range" (display only if found for term). When there are multiple synonyms, these should be displayed in alphanumerical order on separate lines. Example: PTM-0312
+          <br>
+          label ATOMIC CORRECTION FORMULA : "propertyName": "Correction formula" (display only if found for term) Example: PTM-0312
+          <br>
+          label AVERAGE MASS DIFFERENCE : "propertyName": "Average mass difference" (display only if found for term) Example: PTM-0312
+          <br>
+          label MONOISOTONIC MASS DIFFERENCE : "propertyName": "Monoisotopic mass difference" (display only if found for term) Example: PTM-0312
+
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "PTM-0312"}'></term-overview-section>
+
+          label RELATED TERMS : sameAs + corresponding xrefs (display only if found for term) Display Ontology » Term AC where AC links to ?. Example 1: UniProt keyword » Cobalt KW-0170 in CVME_0002Example 2: GO:0003824 Example 3: D006319 Example: cell line links to NCI Thesaurus. Example 3: PTM-0476
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "PTM-0476"}'></term-overview-section>
+
+          &lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; WITH LINK -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;
+          <h2>For term accessions displayed in the ONTOLOGY section, the following have an external link</h2>
+          enzyme-classification-cv : Example 1...- links to https://enzyme.expasy.org/EC/1.-.-.-
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "1.-.-.-"}'></term-overview-section>
+
+          evidence-code-ontology-cv : Example ECO:0000040 links to http://purl.obolibrary.org/obo/ECO_0000040  Link is incorrect in NP1
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "ECO:0000040"}'></term-overview-section>
+
+          go-biological-process-cv : Example GO:0000002 links to https://www.ebi.ac.uk/QuickGO/term/GO:0000002
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "GO:0000002"}'></term-overview-section>
+
+          go-cellular-component-cv : Example GO:0000015 links to https://www.ebi.ac.uk/QuickGO/term/GO:0000015
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "GO:0000015"}'></term-overview-section>
+
+          go-molecular-function-cv : Example GO:0000006 links to https://www.ebi.ac.uk/QuickGO/term/GO:0000006
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "GO:0000006"}'></term-overview-section>
+
+          mammalian-phenotype-cv : Example MP:0000003 links to http://www.informatics.jax.org/searches/Phat.cgi?id=MP:0000003
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "MP:0000003"}'></term-overview-section>
+
+          mesh-anatomy-cv : Example D000005 links to https://meshb.nlm.nih.gov/record/ui?ui=D000005  Replace link in NP1 which redirects to this link
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "D000005"}'></term-overview-section>
+
+          mesh-cv : Example D000006 links to https://meshb.nlm.nih.gov/record/ui?ui=D000006  Replace link in NP1 which redirects to this link
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "D000006"}'></term-overview-section>
+
+          nci-metathesaurus-cv : Example C0001080 links to http://ncimeta.nci.nih.gov/ncimbrowser/ConceptReport.jsp?dictionary=NCI%20MetaThesaurus&code=C0001080
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "C0001080"}'></term-overview-section>
+
+          nci-thesaurus-cv : Example C100007 links to http://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI%20Thesaurus&code=C100007
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "C100007"}'></term-overview-section>
+
+          cellosaurus-cv (nextprot-cellosaurus-cv) : Example CVCL_0002 links to http://web.expasy.org/cellosaurus/CVCL_0002
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "CVCL_0002"}'></term-overview-section>
+
+          omim-cv : Example 608393 links to http://www.omim.org/entry/608393
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "608393"}'></term-overview-section>
+
+          sequence-ontology-cv : Example SO:0001778 links to http://www.sequenceontology.org/browser/current_release/term/SO:0001778
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "SO:0001778"}'></term-overview-section>
+
+          uniprot-disease-cv : Example DI-04168 links to https://www.uniprot.org/diseases/DI-04168  No link in NP1
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "DI-04168"}'></term-overview-section>
+
+          uniprot-keyword-cv : Example KW-0413 links to https://www.uniprot.org/keywords/KW-0413  No link in NP1
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "KW-0413"}'></term-overview-section>
+
+          uniprot-subcellular-location-cv : Example SL-0002 links to https://www.uniprot.org/locations/SL-0002  No link in NP1
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "SL-0002"}'></term-overview-section>
+
+          uniprot-subcellular-orientation-cv : Example SL-9910 links to https://www.uniprot.org/locations/SL-9910  No link in NP1
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "SL-9910"}'></term-overview-section>
+
+          uniprot-subcellular-topology-cv : Example SL-9902 links to https://www.uniprot.org/locations/SL-9902  No link in NP1
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "SL-9902"}'></term-overview-section>
+
+
+
+          &lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; NO LINK -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;
+
+          <h2>For term accessions displayed in the ONTOLOGY section, the following are text only i.e. no link</h2>
+          bgee-developmental-stage-cv (no link possible) : Example HsapDO:0000001
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "HsapDO:0000001"}'></term-overview-section>
+
+          evoc-developmental-stage-cv (not maintained) : Example EV:0300000 NEXTPROT-748 There should be NO links to eVOC  Link is incorrect in NP1
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "EV:0300000"}'></term-overview-section>
+
+          nextprot-anatomy-cv (internal) : Example TS-0001
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "TS-0001"}'></term-overview-section>
+
+          nextprot-annotation-cv (internal) : Example CVAN_0002
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "CVAN_0002"}'></term-overview-section>
+
+          nextprot-domain-cv (internal) : Example DO-00001
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "DO-00001"}'></term-overview-section>
+
+
+          nextprot-family-cv (internal) : Example FA-00001
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "FA-00001"}'></term-overview-section>
+
+          nextprot-icepo-cv (internal) : Example ICEPO:0000001
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "ICEPO:0000001"}'></term-overview-section>
+
+          nextprot-metal-cv (internal) : Example CVME_0001
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "CVME_0001"}'></term-overview-section>
+
+          nextprot-modification-effect-cv (internal) : Example ME:0000002
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "ME:0000002"}'></term-overview-section>
+
+          nextprot-protein-property-cv (internal) : Example PP:0001
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "PP:0001"}'></term-overview-section>
+
+
+          nextprot-topology-cv (internal) : Example CVTO_0001  Ontology is incorrectly indicated as "UniProt topology"
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "CVTO_0001"}'></term-overview-section>
+          non-standard-amino-acid-cv (internal) : Example CVAA_0001
+
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "CVAA_0001"}'></term-overview-section>
+
+          organelle-cv (internal) : Example CVOR_0001
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "CVOR_0001"}'></term-overview-section>
+
+          unipathway-cv (not maintained) : Example UPA00030 NEXTPROT-1069 Remove links to UniPathway in terminology pages for UniPathway terms
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "UPA00030"}'></term-overview-section>
+
+          uniprot-ptm-cv (no link possible) : Example PTM-0312
+          <term-overview-section nx-config='{"env": "dev", "termAccession": "PTM-0312"}'></term-overview-section>
+
+
+
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>

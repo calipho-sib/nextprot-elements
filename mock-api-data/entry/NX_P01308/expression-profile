@@ -1,24 +1,13 @@
 {
   "entry" : {
     "properties" : {
-      "proteinExistence" : "Evidence at protein level",
-      "proteinExistenceInfo" : null,
-      "ptmCount" : 3,
-      "varCount" : 68,
-      "isoformCount" : 1,
       "interactionCount" : 8,
       "maxSeqLen" : 110,
       "filterstructure" : true,
       "filterdisease" : true,
       "filtermutagenesis" : true,
       "filterproteomics" : true,
-      "filterexpressionprofile" : true,
-      "referencesCount" : 699,
-      "referencesSubmissionsCount" : 4,
-      "referencesAdditionalPublicationsCount" : 615,
-      "referencesCuratedPublicationsCount" : 83,
-      "referencesWebResourcesCount" : 3,
-      "referencesPatentsCount" : 0
+      "filterexpressionprofile" : true
     },
     "uniqueName" : "NX_P01308",
     "publications" : [ ],

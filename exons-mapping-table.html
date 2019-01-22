@@ -1,0 +1,355 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="exon-item.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+
+<!--
+`exons-mapping-table`
+exons mapping table demo
+
+@demo demo/exons-mapping-table-demo.html
+-->
+<dom-module id="exons-mapping-table">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+
+            :host {
+                padding-bottom: 20px;
+            }
+
+            #exonTable {
+                width: auto;
+                white-space: nowrap;
+            }
+
+            #exonTable thead {
+                border-left: 1px solid #ddd;
+                border-right: 1px solid #ddd;
+            }
+
+            #exonTable th {
+                text-align: center;
+                vertical-align: top;
+                border-right: 1px solid #ddd;
+                border-left: 1px solid #ddd;
+                border-bottom: 1px solid #ddd;
+                padding: 5px;
+            }
+
+            #exonTable td {
+                text-align: left;
+                padding: 1px 5px;
+                border-bottom: 0;
+                border-top: 0;
+                border-left: 1px solid #ddd;
+                border-right: 1px solid #ddd;
+            }
+
+            #exonTable .aligned-right {
+                text-align: right;
+            }
+
+            #exonTable ul {
+                padding-left: 0;
+            }
+
+            ul {
+                list-style-type: none;
+            }
+
+            .iso-canonical {
+                color: #C50064;
+                font-size: 12px;
+                font-weight: 500;
+                letter-spacing: 0.1px;
+                vertical-align: text-top;
+            }
+
+            th > div {
+                position: absolute;
+                top: 0;
+                border-left: 1px solid lightgray;
+                padding: 5px 3px;
+                min-height: 80px;
+            }
+
+            th:first-of-type > div {
+                border-left: 0;
+            }
+
+            #tableCont {
+                position: relative;
+                overflow-x: auto;
+                display: inline-block;
+                border: 1px solid lightgray;
+                max-width: 100%;
+                background-color: #f8f8f8;
+                max-height: calc(100% - 70px);
+                overflow-y: hidden;
+            }
+            #tableDiv{
+                overflow-y: auto;
+                overflow-x: hidden;
+                max-height:500px;
+                display:inline-block;
+                border-top:1px solid lightgray;
+                background-color: white;
+            }
+
+            #tableDiv th {
+                height: 0;
+                padding: 0;
+                border: 0;
+                white-space: nowrap;
+            }
+
+            #tableDiv td {
+                min-width: 70px;
+                border-right: 0;
+            }
+
+            #exonTable td:first-of-type {
+                border-left: 0;
+            }
+
+            #exonTable {
+                margin: 0;
+                border-right: 0;
+                border-left: 0;
+            }
+        </style>
+
+        <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+
+        <template is="dom-if" if="[[_hasData(data)]]">
+            <div class="category-header">
+                <h4 class="category-title">Exons</h4>
+            </div>
+            <div id="tableCont">
+                <div id="tableDiv">
+                    <table id="exonTable" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th class="thead-column">
+                                <div>Identifier</div>
+                            </th>
+                            <th class="thead-column">
+                                <div>Position<br>on gene</div>
+                            </th>
+                            <th class="thead-column">
+                                <div>Length</div>
+                            </th>
+                            <template is="dom-repeat" items="[[_getMappedIsoformInfos(data)]]" as="iso">
+                                <th style="text-align:center;" class="thead-column">
+                                    <div>Coding for <br>
+                                        [[iso.name]]
+                                        <template is="dom-if" if="[[_displayTranscriptMappingInfos(iso)]]">
+                                            <template is="dom-if" if="[[iso.canonical]]">
+                                                <span class="iso-canonical">(canonical)</span>
+                                            </template>
+                                            <div>
+                                                <a class="ext-link"
+                                                   href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[iso.main-transcript]]"
+                                                   target='_blank'>[[iso.main-transcript]]</a>
+                                            </div>
+                                            <template is="dom-if" if="[[iso.other-transcripts]]">
+                                            <span on-tap="_toggle">
+                                                <span id="transcripts_[[index]]" class="fa fa-chevron-right"
+                                                      style="display: inline-block;width:14px;"></span>
+                                                <span id="showHide_[[index]]" style="display: inline-block;width:36px;">&nbsp;show</span> <span>transcripts ([[iso.other-transcripts.length]])</span>
+                                            </span>
+                                                <iron-collapse id="collapse_[[index]]" no-animation>
+                                                    <ul>
+                                                        <template is="dom-repeat" items="[[iso.other-transcripts]]"
+                                                                  as="other">
+                                                            <li><a class="ext-link"
+                                                                   href="http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=[[other]]"
+                                                                   target='_blank'>[[other]]</a></li>
+                                                        </template>
+                                                    </ul>
+                                                </iron-collapse>
+                                            </template>
+                                        </template>
+                                    </div>
+                                </th>
+                            </template>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <template is="dom-repeat" items="[[_rows]]" as="row">
+                            <tr>
+                                <template is="dom-repeat" items="[[row]]" as="cell">
+                                    <template is="dom-if" if="[[!_exonCell(index)]]">
+                                        <td class$="[[_getCellClass(index)]]">[[cell]]</td>
+                                    </template>
+                                    <template is="dom-if" if="[[_exonCell(index)]]">
+                                        <td>
+                                            <exon-item data="[[cell]]"></exon-item>
+                                        </td>
+                                    </template>
+                                </template>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'exons-mapping-table',
+            properties: {
+                data: {
+                    type: Object,
+                    observer: "_prepareData"
+                },
+                _rows: {
+                    type: Array,
+                    value: []
+                },
+                _dataLoaded: {
+                    type: Boolean,
+                    observer: '_updateSpinnerStatus'
+                }
+            },
+            _prepareData: function () {
+                var i;
+                this._rows = [];
+                for (i = 0; i < this.data.sortedExonKeys.length; i++) {
+
+                    this._rows.push(this._newRow(this.data.sortedExonKeys[i]));
+                }
+
+                var self = this;
+                Polymer.RenderStatus.afterNextRender(self, function () {
+                    self._dataLoaded = true;
+                    self._updateHeaderWidth();
+                    self._updateHeaderHeight();
+                });
+            },
+            _newRow: function (pos) {
+
+                var exonByIsoform = this.data.exons[pos];
+
+                var row = [this._findENSE(exonByIsoform), this._formatPos(pos), this._calcLength(pos)];
+                var i;
+                for (i = 0; i < this.data.sortedMappedIsoformInfoKeys.length; i++) {
+
+                    var isoformAccession = this.data.sortedMappedIsoformInfoKeys[i];
+
+                    if (isoformAccession in exonByIsoform) {
+                        var exon = exonByIsoform[isoformAccession];
+                        exon.drawCodingPartOnly = this.data.mappedIsoformInfos[isoformAccession].quality === "BRONZE" && this.data.lowQualityMappings;
+
+                        row.push(exon);
+                    }
+                    else {
+                        row.push(null);
+                    }
+                }
+                return row;
+            },
+            _formatPos: function (pos) {
+
+                var fromAndTo = pos.split("-");
+                return fromAndTo[0] + " - " + fromAndTo[1];
+            },
+            _calcLength: function (pos) {
+
+                var fromAndTo = pos.split("-");
+                return fromAndTo[1] - fromAndTo[0] + 1;
+            },
+            _exonCell: function (index) {
+                return index > 2;
+            },
+            _findENSE: function (exonByIsoform) {
+
+                var i;
+                var accessions = [];
+                for (i = 0; i < this.data.sortedMappedIsoformInfoKeys.length; i++) {
+
+                    if (this.data.sortedMappedIsoformInfoKeys[i] in exonByIsoform) {
+                        if (exonByIsoform[this.data.sortedMappedIsoformInfoKeys[i]].accession) {
+                            accessions.push(exonByIsoform[this.data.sortedMappedIsoformInfoKeys[i]].accession);
+                        }
+                    }
+                }
+
+                if (accessions.length > 0) {
+                    return accessions[0];
+                }
+                return null;
+            },
+            _getMappedIsoformInfos: function (data) {
+
+                var i;
+                var infos = [];
+                for (i = 0; i < data.sortedMappedIsoformInfoKeys.length; i++) {
+                    infos.push(data.mappedIsoformInfos[data.sortedMappedIsoformInfoKeys[i]]);
+                }
+
+                return infos;
+            },
+            _getCellClass: function (index) {
+                if (index === 1 || index === 2) {
+                    return "aligned-right"
+                }
+                else return ""
+            },
+            _updateHeaderWidth: function () {
+
+                var headerColumns = this.$$("#exonTable").querySelectorAll(".thead-column");
+
+                for (var h = 0; h < headerColumns.length; h++) {
+
+                    headerColumns[h].getElementsByTagName("div")[0].style.width =
+                        window.getComputedStyle(headerColumns[h]).getPropertyValue('width');
+                }
+            },
+            _updateHeaderHeight: function () {
+                var headerColumns = this.$$("#exonTable").querySelectorAll(".thead-column");
+
+                var heightMax = 0;
+                for (var h = 0; h < headerColumns.length; h++) {
+
+                    headerColumns[h].getElementsByTagName("div")[0].style.height = "auto";
+                    var colheight = headerColumns[h].getElementsByTagName("div")[0].clientHeight;
+                    if (heightMax < colheight) heightMax = colheight;
+                }
+                for (var h = 0; h < headerColumns.length; h++) {
+                    headerColumns[h].getElementsByTagName("div")[0].style.height = heightMax + "px";
+                }
+
+                this.$$("#tableCont").style.paddingTop = heightMax + "px";
+            },
+            _toggle: function (event) {
+                var index = event.model.index;
+                this.$$("#collapse_" + index).toggle();
+                var opened = this.$$("#collapse_" + index).opened;
+
+                this.$$("#transcripts_" + index).classList.toggle("fa-chevron-down");
+                this.$$("#showHide_" + index).innerText = opened ? "Hide" : "Show";
+                this._updateHeaderHeight();
+            },
+            _hasData: function (data) {
+
+                return data && data.sortedExonKeys.length > 0;
+            },
+            _displayTranscriptMappingInfos: function (infos) {
+
+                return infos.quality && infos.quality === "GOLD";
+            },
+            _updateSpinnerStatus: function (dataLoaded) {
+
+                if (dataLoaded) {
+
+                    this.$.spinner.active = false;
+                    this.$.spinner.hidden = true;
+                }
+            }
+        });
+    </script>
+</dom-module>

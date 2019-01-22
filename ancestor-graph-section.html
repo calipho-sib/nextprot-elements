@@ -1,0 +1,279 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="graph-section.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+
+<!--
+`ancestor-graph-section`
+View for ancestor graph section:
+
+Specs:
+https://calipho.isb-sib.ch/wiki/display/cal/Ancestor+Graph+Specification
+
+Related issues:
+https://issues.isb-sib.ch/browse/NEXTPROT-1493
+
+@demo demo/ancestor-graph-section-demo.html
+-->
+<dom-module id="ancestor-graph-section" is="dom-if" if="[[dotGraph]]">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                --paper-toggle-button-checked-button-color: #428bca;
+                --paper-toggle-button-checked-bar-color: #428bca;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+
+            .title-header {
+                border-bottom: 1px solid rgb(170, 170, 170);
+                font-weight: 500;
+                font-size: 1.8em;
+            }
+        </style>
+        <!--<iron-ajax id ="APIcall"-->
+                <!--url="https://dev-api.nextprot.org/term/[[accessionInput]]/ancestor-graph.json"-->
+                <!--params='{"type":"all"}'-->
+                <!--handle-as="json"-->
+                <!--on-response="ancestorBuild" ></iron-ajax>-->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-header">
+                    Relationship graph
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div id="graph-item" class="col-md-12">
+                <graph-section style="overflow: auto;" dotdata="[[dotGraph]]"></graph-section>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'ancestor-graph-section',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                accessionInput: {
+                    type: String
+                },
+                dotGraph: {
+                    type: String
+                },
+                regex: {
+                    value: 1,
+                    type: Number
+                }
+            },
+            ready: function(){
+              this.requestApi();
+            },
+            requestApi: function (){
+
+                var graphParams = {
+                    subgraphDistance: 0,
+                    nodeShape: "square",
+                    graphOrientation: "TB",
+                    maxWidth: 11,
+                    splineInput: "spline",
+                    fontInput: 14
+                };
+
+                if(this.accessionInput){
+                    this.nxConfig.termAccession = this.accessionInput;
+                }
+
+                this.accessionInput = this.nxConfig.termAccession;
+
+                this._npClient = getNXClient(this.nxConfig);
+                var self = this;
+                // fetch data from overview
+                this._npClient.getJSON("term/" + this.accessionInput + "/ancestor-graph").then(function (data) {
+
+                    var agraph = data["ancestor-graph"];
+
+
+                //Defining nodes as the array of objects containing the nodes:
+                var nodes = agraph["nodes"];
+                var dotFormatNodes = self.nodesDotBuild(nodes);
+
+                // Defining edges as the array of objects containing the edge
+                var edges = agraph["edges"];
+                var dotFormatEdges = self.edgesDotBuild(edges);
+
+                //Creating the subgraphs from distance dictionary: (only if asked for it)
+                if (graphParams.subgraphDistance === "1"){
+                    var subgraphs = self.nodeDistancer(agraph["ancestor-graph"]);
+                } else {
+                    var subgraphs = ""
+                }
+
+                // Variables kept for showcase, however may be useful for future changes in layout
+                    self.dotGraph = 'digraph "" {node [shape=' +
+                        graphParams.nodeShape //Full list of possible shapes http://www.graphviz.org/content/node-shapes#polygon
+                        + ', fontsize='+ graphParams.fontInput +'];'
+                        + 'graph [rankdir=' + graphParams.graphOrientation
+                        +', autosize=false, size="90.2,' + graphParams.maxWidth //Maximum size of the graph
+                        + '", splines=' + graphParams.splineInput + '];'
+                        + subgraphs
+                        +'labelfontname="Helvetica";'
+                        +'bgcolor="#f8f8f8";'
+                        + dotFormatNodes
+                        + dotFormatEdges
+                        + '}';
+
+                }, function(error) {
+                    console.log("HTTP API error occured in ancestor graph section (no cv term found?)" , error)
+                });
+
+            },
+            getNodeColor: function (nodeAccession) {
+                return (nodeAccession === this.accessionInput) ? "#BDE5B9" : "#FFFFFF"; //Node color either green or white
+            },
+
+            nodesDotBuild: function (APInodes) {
+                //Contains the names of the nodes and style in dot format
+                var dotNodesBuilt = "";
+
+//              Node loop: to add the nodes to the graph
+                for (var i = 0; i < APInodes.length; i++) {
+                    var regexNodeName = "";
+
+                    //Different regex expressions:
+                    if (parseInt(this.regex) === 1) {
+                        regexNodeName = APInodes[i]["name"].replace(/.{1}\S*\s+/g, "$&\n")
+                    } else if (parseInt(this.regex) === 15) {
+                        regexNodeName = APInodes[i]["name"].replace(/.{15}\S*\s+/g, "$&\n")
+                    } else if (parseInt(this.regex) === 20) {
+                        regexNodeName = APInodes[i]["name"].replace(/.{20}\S*\s+/g, "$&\n")
+                    } else if (parseInt(this.regex) === 100) {
+                        regexNodeName = APInodes[i]["name"].replace(/.{100}\S*\s+/g, "$&\n")
+                    }
+
+                    // Translates nodes into Dot Nodes
+                    dotNodesBuilt += APInodes[i]["id"];
+                    dotNodesBuilt += ' ['+'label='+'"'+ regexNodeName + '"'//Text in the nodes
+                                    +'style=filled;'
+                                    + 'fillcolor="'+ this.getNodeColor(APInodes[i]["accession"]) +'"'
+                                    + 'tooltip=' + '"' + APInodes[i]["accession"] + ": " + APInodes[i]["name"] + '"'//Tooltip on hover
+                                    + 'href="/term/' + APInodes[i]["accession"] //URL in node
+                                    + '"' + ';] '
+                }
+
+                return dotNodesBuilt
+            },
+
+            edgesDotBuild: function (APIedges) {
+
+                var colors = {
+                    "is_a": "black", //166160 as NP1
+                    "derives_from": "#C50063", //14255
+                    "part_of" : "blue", //9436 as NP1
+                    "regulates": "orange", //3224 as NP1
+                    "negatively_regulates": "red", //2797
+                    "positively_regulates": "green", //2779 as NP1
+                    "used_in": "brown" //890
+                }
+
+
+//                Where the edges data will be stored
+                var dotEdgesBuilt = "";
+
+//              Edge loop: to add each edge into the graph
+                for (var i = 0; i < APIedges.length; i++) {
+                    //variables which call object dictionary:
+                    var head = APIedges[i]["head"];
+                    var tail = APIedges[i]["tail"];
+                    var label = APIedges[i]["label"];
+                    var edgeColor = "black";
+                    if(label){
+                        edgeColor = colors[label];
+                    }else {
+                        label = ""
+                    }
+                    dotEdgesBuilt += '"'+head+'"'
+                                    + " -> "
+                                    + '"'+tail+'"'
+                                    + " [arrowsize="+ 0.5
+                                    + ', color="' + edgeColor + '"'
+                                    + ', fontsize="10"'
+                                    + ', hoverWidth="3"'
+                                    + ', fontcolor="' + edgeColor + '"'
+                                    + ', label=" ' + label.replace("_", " ") + '"'
+                                    + ", weight=2];";
+                }
+
+                return dotEdgesBuilt
+            },
+
+            getSubgraphs: function (distanceDictionary) {
+                //Stores the subgraphs in dot format
+                var dotSubgraphsBuilt = "";
+
+                //Subgraph loop: to add each level in a subgraph
+                for (var i = 0; i < Object.keys(distanceDictionary).length; i++) {
+
+                    dotSubgraphsBuilt += "subgraph cluster_" + i
+                                        + '{color=blue;' // Could be set to white
+                                        + distanceDictionary[i].toString() + '}'
+                }
+
+                return dotSubgraphsBuilt
+            },
+
+            nodeDistancer: function (APIresponse) {
+                //Creates a dictionary with levels
+                //I did not implement the attribute because it would do a lot of for loops in order to add it.
+                // It would be more efficient to get it from the API
+                // However, proof of concept: APIdata.detail.response["ancestor-graph"]["nodes"][0]["distance"] = 12;
+
+                var nodesDistance = [];
+
+                //Adding the root ID as distance 0
+                var nodesAdded = [];
+
+                nodesDistance[0] = APIresponse["nodes"][0]["id"];
+                nodesAdded.push(APIresponse["nodes"][0]["id"]);
+
+                //Counting the number of times the while loop is called. It is useful for the distance in the dict
+                var whileCount = 0;
+
+                //Edge loop to determine distance
+                while (nodesAdded.length < APIresponse["nodes"].length) { //While nodes added < nodes available
+                    for (var i = 0; i < APIresponse["edges"].length; i++) { //Loop through the edges
+
+                        if (nodesDistance[whileCount].toString().indexOf(APIresponse["edges"][i]["head"]) > -1) { //if the head in the edges, is the same as the head of the current distance
+
+                            //Create an array in NodeDistance if the level is undefined:
+                            if (nodesDistance[whileCount+1] === undefined) {
+                                nodesDistance[whileCount+1] = new Array();
+                            }
+
+                            nodesDistance[whileCount+1].push(APIresponse["edges"][i]["tail"]); //add the tail to the dictionary
+
+                            if (nodesAdded.toString().indexOf(APIresponse["edges"][i]["tail"]) > -1) {//if it exist in the list
+                                console.log("check if we have the lowest ");
+                                //To improve here we should check for the lowest level, maybe a for loop.
+                            }
+                            else {
+                                nodesAdded.push(APIresponse["edges"][i]["tail"]);
+                            }
+                            //Here if we want to add it as attribute to the node itself, we could call a function
+                            // to loop through the nodes and add it as an attribute (however it makes the page very slow)
+                        }
+
+                    }
+                    whileCount += 1; //Adding 1 to count to go to a higher level (maybe another name could be whileDistance or currentDistance
+                }
+                //Creating subgraphs
+                return this.getSubgraphs(nodesDistance)
+            },
+        });
+    </script>
+</dom-module>

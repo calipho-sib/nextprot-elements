@@ -1,0 +1,397 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="term-overview-section.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+
+<!--
+`tree-browser-item`
+-->
+<dom-module id="tree-browser-item">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+            ul {
+                list-style: none;
+                margin-left: 0;
+                padding-left: 1em;
+                cursor: pointer;
+            }
+           .currentTerm {
+                font-weight: bold;
+            }
+
+            .noproteins-size {
+                /*font-size: 12px;*/
+            }
+
+
+        </style>
+        <ul>
+            <template is="dom-if" if="[[!dynamicChild]]">
+                <li class$="{{_getFontSizeClass(currentNode)}}">
+                    <div style="display: inline-block" on-tap="_toggle">
+                        <span class="fa fa-chevron-right"></span>
+                        <span class$="{{_isCurrentTerm(currentNode, boldname)}}">[[currentNode.value.name]]</span>
+                    </div>
+
+                    [<a href="/term/[[currentNode.value.accession]]">[[currentNode.value.accession]]</a>]
+                    <template is="dom-if" if="[[_hasRelevantProteins(currentNode)]]">
+                    ([[currentNode.value.relevantFor]] proteins)
+                    </template>
+                </li>
+
+                <iron-collapse id="collapse_[[index]]" no-animation>
+                <div class="dynamic-child">
+                </div>
+            </iron-collapse>
+        </template>
+        <template is="dom-if" if="[[_hasChildren(currentNode)]]">
+            <template is="dom-repeat" items="[[currentNode.children]]" as="childTree" initial-count="1" sort="_sortTerms" target-framerate="1000">
+                <tree-browser-item boldname="[[boldname]]" current-node="[[childTree]]" nx-config="[[nxConfig]]"></tree-browser-item>
+            </template>
+        </template>
+        </ul>
+    </template>
+    <script>
+        Polymer({
+            is: 'tree-browser-item',
+            properties: {
+                dynamicChild: {
+                    type: Boolean,
+                    value: false,
+                },
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                currentNode: {
+                    type: Object,
+                    value: []
+                },
+                boldname: {
+                    type: Object
+                },
+                processedChildren: {
+                    type: Boolean,
+                    value: false
+                },
+                leaf: {
+                    type: Boolean,
+                    value: false
+                }
+
+            },
+            _hasRelevantProteins: function(currentNode) {
+                return (currentNode.value.relevantFor > 0)
+            },
+            _getFontSizeClass: function(currentNode) {
+                if (currentNode.value.relevantFor == 0)
+                    return 'noproteins-size';
+                else return ''
+
+            },
+            _isCurrentTerm: function(currentNode, bn) {
+                if(bn === currentNode.value.accession) return 'currentTerm';
+            },
+            _toggle: function(event) {
+
+                if(!this.leaf){
+
+                    var cTg = event.currentTarget;
+                    var chevronSpan = cTg.getElementsByClassName("fa")[0];
+
+                    chevronSpan.classList.toggle("fa-chevron-down");
+                    chevronSpan.classList.toggle("fa-chevron-right");
+                    var ironCollapse = cTg.parentNode.parentNode.getElementsByTagName("iron-collapse")[0];
+
+                    ironCollapse.toggle();
+
+                    if(!this.processedChildren){
+
+                        var self = this;
+                        var nxClient = getNXClient(this.nxConfig);
+
+                        //Remove the single children, which was put in the beginning
+                        var singleChildItem;
+                        var singleChildItemsList = cTg.parentNode.parentNode.getElementsByTagName("tree-browser-item");
+                        if(singleChildItemsList.length > 0){
+                            singleChildItem = singleChildItemsList[0];
+                        }
+                        if(singleChildItem !== undefined){
+                            singleChildItem.innerHTML = '';
+                        }
+                        
+                        var div = ironCollapse.getElementsByClassName("dynamic-child")[0];
+                        div.innerHTML = '<div><paper-spinner-lite active></paper-spinner-lite></div>';
+
+                        var childNode = {
+                            "children": [],
+                            "value" : {
+                                "accession": self.currentNode.value.accession
+                            }
+                        };
+
+                        nxClient.getJSON("term/" + self.currentNode.value.accession + "/descendant-graph.json?includeRelevantFor=true&depth=1", true).then(function(d) {
+                            div.innerHTML = '';
+                            //No more children
+                            if(d["descendant-graph"].nodes.length == 1){
+                                chevronSpan.classList.remove("fa-chevron-down");
+                                chevronSpan.classList.remove("fa-chevron-right");
+                                self.leaf = true;
+                            }else {
+                                d["descendant-graph"].nodes.forEach(function(n) {
+                                    if(n.accession !== self.currentNode.value.accession) {
+                                        var cn = Object.assign({}, n, {})
+                                        cn.children = []
+                                        childNode.children.push({"value" : cn})
+                                    }
+                                })
+                                var browserItem = document.createElement("tree-browser-item");
+                                browserItem.setAttribute("nx-config", JSON.stringify(self.nxConfig));
+                                browserItem.setAttribute("boldname", self.boldname);
+                                browserItem.setAttribute("dynamic-child", true);
+                                browserItem.setAttribute("current-node", JSON.stringify(childNode));
+                                self.processedChildren = true;
+                                div.appendChild(browserItem);
+                            }
+                            //self.updateStyles();
+                        })
+
+                    }
+                }
+
+            },
+
+            _sortTerms: function(a, b) {
+
+                //In case of enzymes, starts with EC and contains 3 dots (4 spaces)
+                console.log(a.value.name);
+
+                if(a.value.name.startsWith("EC") && (a.value.name.split(".").length ) == 4){
+
+                    var ax = a.value.accession.toLowerCase();
+                    var bx = b.value.accession.toLowerCase();
+
+                    var aix = ax.split(".");
+                    var bix = bx.split(".");
+
+                    for(var i =0; i<4; i++){
+                        var aixn = parseInt(aix[i]);
+                        var bixn = parseInt(bix[i]);
+
+                        //case of EC 6.3.2.n3 for example where n3 is NaN
+                        if(isNaN(aixn) && !isNaN(bixn)){
+                            return 1;
+                        }
+                        if(!isNaN(aixn) && isNaN(bixn)){
+                            return -1;
+                        }
+                        if(isNaN(aixn) && isNaN(bixn)){
+                            return 0;
+                        }
+
+                        var result = aixn - bixn;
+                        if(result != 0)
+                            return result;
+                    }
+                    return 0;
+
+                }else {
+                    var ax = a.value.name.toLowerCase();
+                    var bx = b.value.name.toLowerCase();
+
+                    if(ax < bx) return -1;
+                    if(ax > bx) return 1;
+                    else return 0;
+                }
+            },
+
+            _hasChildren: function(node){
+                if(node && node.children && node.children.length > 0){
+                    return true;
+                }else return false;
+            }})
+
+    </script>
+</dom-module>
+
+
+<!--
+`tree-browser-view`
+View for tree browser view:
+
+@demo demo/tree-browser-view-demo.html
+-->
+<dom-module id="tree-browser-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background: #f8f8f8;
+                overflow-y: auto;
+            }
+            .title-header {
+                border-bottom: 1px solid rgb(170, 170, 170);
+                font-weight: 500;
+                font-size: 1.8em;
+            }
+            tree-browser-item {
+                margin-top: 20px;
+            }
+
+
+            paper-checkbox {
+                z-index: 10;
+                position: absolute;
+                right: 30px;
+                top: 45px;
+            }
+
+            @media (max-width: 768px) {
+                paper-checkbox {
+                    z-index: 10;
+                    top:15px;
+                }
+            }
+        </style>
+        <div class="row padded-bottom">
+            <div class="col-md-12">
+                <term-overview-section nx-config=[[nxConfig]] no-cv-term="{{noCvTerm}}"></term-overview-section>
+            </div>
+        </div>
+        <div id="treebrowser" class="row">
+            <div class="col-md-12">
+                <div class="title-header">
+                    Tree browser
+                </div>
+                <paper-checkbox on-change="_silverChange">Include silver</paper-checkbox>
+                <paper-spinner-lite id="spinnerterm" active></paper-spinner-lite>
+                <template is="dom-if" if="[[ancestorGraph]]">
+                    <template is="dom-repeat" items="[[trees]]" as="tree" >
+                        <tree-browser-item nx-config=[[nxConfig]] boldname="[[termAccession]]" current-node="[[tree]]"></tree-browser-item>
+                    </template>
+                </template>
+            </div>
+        </div>
+    </template>
+
+    <script>
+
+        function TNode(value) {
+
+            this.value = value;
+            this.children = [];
+            this.parent = null;
+
+            this.setParentNode = function(node) {
+                this.parent = node;
+            }
+
+            this.getParentNode = function() {
+                return this.parent;
+            }
+
+            this.addChild = function(node) {
+                node.setParentNode(this);
+                this.children[this.children.length] = node;
+            }
+
+            this.getChildren = function() {
+                return this.children;
+            }
+
+            this.removeChildren = function() {
+                this.children = [];
+            }
+        }
+
+
+    </script>
+
+    <script>
+        Polymer({
+            is: 'tree-browser-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                noCvTerm: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_cvTermUpdated'
+                },
+                termAccession: {
+                    type: Object,
+                    value: {}
+                },
+                trees: {
+                    type: Array,
+                    value: []
+                },
+                includeSilver: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            attached: function(){
+              this._loadData();
+            },
+            _cvTermUpdated: function(newNoCvTermValue){
+                this.$.treebrowser.hidden = newNoCvTermValue;
+            },
+            _loadData: function (){
+                var self = this;
+                this.termAccession = this.nxConfig.termAccession;
+                var nxClient = getNXClient(this.nxConfig);
+                var url = "term/" + this.nxConfig.termAccession + "/ancestor-graph.json?includeRelevantFor=true";
+                if (this.includeSilver){
+                    url += "&includeSilver=true";
+                }
+                nxClient.getJSON(url, true).then(function(d) {
+                    self.ancestorGraph = d["ancestor-graph"];
+                    var edges = self.ancestorGraph.edges;
+                    var nodes = self.ancestorGraph.nodes;
+                    var nodesMap = {};
+                    nodes.forEach(function(n){ nodesMap[n.id] = n; })
+                    var ids = nodes.map(function (n) {return n.id});
+                    var heads = edges.map(function (e) {return e.head});
+                    var roots = [];
+                    ids.forEach(function (id){ if((heads.indexOf(id) === -1)){ roots.push(id); }})
+                    var trees = [];
+                    roots.forEach(function (r) {
+                        var tree = self._buildTree(r, nodesMap, edges);
+                        trees.push(tree);
+                    })
+                    self.trees = trees;
+                    self.$.spinnerterm.active = false;
+                    self.$.spinnerterm.hidden = true;
+
+                }, function (e){
+                    //error occured
+                    console.log("HTTP error occured when getting tree browser view (possible causes: no cv term found? api down?)" , e);
+                })
+            },
+            _silverChange: function (event) {
+                this.includeSilver = event.target.checked;
+                this._loadData();
+            },
+            _buildTree: function(nodeId, nodesMap, edges){
+                var self = this;
+                var node = nodesMap[nodeId];
+                var tn = new TNode(node);
+                edges.forEach(function (e){
+                    if(e.tail === nodeId){
+                        tn.addChild(self._buildTree(e.head, nodesMap, edges))
+                    }
+                })
+                return tn;
+            }
+        });
+    </script>
+</dom-module>

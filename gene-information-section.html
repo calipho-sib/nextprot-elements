@@ -1,0 +1,390 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+
+<!--
+`gene-information-section`
+gene information section demo
+
+@demo demo/gene-information-section-demo.html
+-->
+<dom-module id="gene-information-section">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+
+            #infoTable {
+                border: solid lightgray 1px;
+                width:auto;
+                background-color: white;
+                white-space: nowrap;
+            }
+            #infoTable thead {
+                background-color: #f8f8f8;
+                border: 1px solid lightgray;
+                border-right-color: #ddd;
+                border-left-color: #ddd;
+            }
+
+            #infoTable th {
+                text-align: center;
+                vertical-align: top;
+                border-right:1px solid #ddd;
+                border-left:1px solid #ddd;
+                border-bottom:0;
+            }
+
+            .bg-blue-light-xx {
+                background-color: #F3F5FC;
+                color: #444;
+                border: #ebeffa 1px solid;
+                -webkit-border-radius: 5px;
+                margin: 10px 5px;
+                padding: 5px;
+                width: auto;
+                display: inline-block;
+            }
+
+            #infoTable td {
+                text-align: left;
+                border-left:1px solid #ddd;
+                border-right:1px solid #ddd;
+                border-bottom:0;
+                border-top:0;
+            }
+
+            h3 {
+                text-align: left;
+            }
+
+            .gray-x {
+                color: #999;
+                padding-right: 20px;
+            }
+
+            .blue-well {
+                display: inline-block;
+            }
+
+            #tableDiv {
+                overflow: auto;
+            }
+
+            #mappingTable {
+                margin-bottom: 10px;
+            }
+        </style>
+
+        <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+
+        <template is="dom-if" if="[[_locations]]">
+            <div class="category-header">
+                <h4 class="category-title">Gene information</h4>
+            </div>
+
+            <div id="tableDiv">
+                <div>
+                    <table id="infoTable" class="table">
+                        <thead>
+                        <tr>
+                            <th style="text-align:left;">Gene</th>
+                            <th style="text-align:left;">Chromosomal location</th>
+                            <th style="text-align:left;">Orientation</th>
+                            <th>Position on chromosome</th>
+                            <th style="text-align:right;">Length</th>
+                            <th style="text-align:left;">Ensembl</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <template is="dom-repeat" items="[[_getSortedLocations(_locations)]]" as="location">
+                            <tr>
+                                <td style="text-align:left;">[[_formatGeneName(location)]]</td>
+                                <td style="text-align:left;">[[location.prettyLocation]]</td>
+                                <td style="text-align:left;">[[_formatOrientation(location)]]</td>
+                                <td style="text-align:center">[[_formatLocation(location)]]</td>
+                                <td style="text-align:right">[[_formatLength(location.firstPosition, location.lastPosition)]]</td>
+                                <td style="text-align:left"><span inner-h-t-m-l=[[_createEnsemblHtmlLink(location)]]></span></td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <template is="dom-if" if="[[_chosenLocation]]">
+                    <table id="mappingTable">
+                        <tbody>
+                            <template is="dom-if" if="[[_multipleLocations(_locations)]]">
+                                <tr>
+                                    <td class="gray-x">MAPPING</td>
+                                    <td>This protein has [[_locations.length]] Ensembl mappings.</td>
+                                </tr>
+                                <tr>
+                                    <td class="gray-x">ALIGNMENT</td>
+                                    <td>The isoform[[_potential_s_plus_auxilary_verb]] aligned on <a class="ext-link" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=[[_chosenLocation.accession]]" rel="nofollow">&nbsp;[[_chosenLocation.accession]]</a>.</td>
+                                </tr>
+                            </template>
+                            <tr>
+                                <!-- If entry mapped on chromosome 'unknown', then display message: "Gene not mapped on the current assembly of the human genome."
+                                    Example: https://www.nextprot.org/entry/NX_O00370/exons -->
+                                <template is="dom-if" if="[[!_isChromosomeLocationDefined(_chosenLocation)]]">
+                                    <div class="bg-blue-light-xx">
+                                    Gene not mapped on the current assembly of the human genome.
+                                    </div>
+                                </template>
+                                <template is="dom-if" if="[[startExonPosition]]">
+                                    <td class="gray-x">CODING POSITIONS<span id="coding-position" class="colored-label definition-button" on-tap="_toggle">Definition</span></td>
+                                    <td>From [[_numberWithCommas(_startCodingPosition)]] to [[_numberWithCommas(_stopCodingPosition)]]
+                                    [length: [[_formatLength(_startCodingPosition, _stopCodingPosition)]] bp]</td>
+                                </template>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <iron-collapse id="description-coding-position">
+                        <div class="well blue-well">
+                            These values are computed starting with the first base of the initiation codon to the last base of the stop codon, taking into account all annotated isoforms.
+                        </div>
+                    </iron-collapse>
+                </template>
+
+                <!-- non mapped isoforms -->
+                <template is="dom-if" if="[[_hasNonMappedIso(nonMappedIsoforms)]]">
+                    <div class="bg-blue-light-xx">
+                        <template is="dom-if" if="[[_hasSingleNonAlignedIso(nonMappedIsoforms)]]">
+                            <template is="dom-repeat" items="[[nonMappedIsoforms]]" as="nonAlignedIso">
+                                <div>
+                                <span>Isoform
+                                <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a>
+                                is not aligned on gene.</span>
+                                </div>
+                            </template>
+                        </template>
+
+                        <template is="dom-if" if="[[_hasMultipleNonAlignedIso(nonMappedIsoforms)]]">
+                            <span>Isoforms
+                            <template is="dom-repeat" items="[[nonMappedIsoforms]]" as="nonAlignedIso">
+                                <span>
+                                    <a href="https://www.nextprot.org/entry/[[nonAlignedIso.accession]]/sequence">[[nonAlignedIso.name]]</a><template style="white-space: nowrap;" is="dom-if" if="[[!_isLastIndex(nonMappedIsoforms, index)]]">,</template>
+                                </span>
+                            </template>
+                                are not aligned on gene.</span>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'gene-information-section',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                },
+                mappedIsoformCount: {
+                    type: Number,
+                    observer: '_updateSentence'
+                },
+                nonMappedIsoforms: {
+                    type: Array,
+                    value: []
+                },
+                startExonPosition: {
+                    type: Number
+                },
+                stopExonPosition: {
+                    type: Number
+                },
+                _locations: {
+                    type: Array
+                },
+                _chosenLocation: {
+                    type: Object
+                },
+                _startCodingPosition: {
+                    type: Number,
+                    value: 0
+                },
+                _stopCodingPosition: {
+                    type: Number,
+                    value: 0
+                },
+                _dataLoaded: {
+                    type: Boolean,
+                    observer: '_updateSpinnerStatus'
+                },
+                _potential_s_plus_auxilary_verb: {
+                    type: String,
+                    value: " is"
+                }
+            },
+            observers: [
+                '_calcCodingPositions(startExonPosition, stopExonPosition, _chosenLocation)'
+            ],
+            attached: function () {
+                this._initApiClient();
+
+                var self = this;
+
+                this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/chromosomal-location.json")
+                    .then(function (response) {
+                        self._handleResponseData(response);
+                    })
+                    .catch(function (error) {
+                        self._handleError(error);
+                    });
+            },
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtProt protein overview", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+            },
+            _handleResponseData: function (data) {
+
+                var self = this;
+
+                this._locations = data.entry.chromosomalLocations;
+                this._chosenLocation = this._locations
+                    .filter(function(location) {
+                        return location.bestGeneLocation;
+                    })
+                    .reduce(function(locations) {
+                        return (locations.length > 0) ? locations[0] : null;
+                    });
+
+                Polymer.RenderStatus.afterNextRender(self, function () {
+                    self._dataLoaded = true;
+                });
+            },
+            _handleError: function (error) {
+                console.error("Error: ", error);
+            },
+            _formatOrientation: function (location) {
+
+                if (location.firstPosition === 0 && location.lastPosition === 0) {
+                    return "";
+                }
+
+                if (location.strand === 1) {
+                    return "plus strand"
+                }
+                else if (location.strand === -1) {
+                    return "minus strand";
+                }
+                return "";
+            },
+            _formatLocation: function (location) {
+
+                if (location.firstPosition === 0 && location.lastPosition === 0) {
+                    return "";
+                }
+
+                return this._numberWithCommas(location.firstPosition)+ " - " + this._numberWithCommas(location.lastPosition);
+            },
+            _formatGeneName: function (location) {
+
+                if (location.firstPosition === 0 && location.lastPosition === 0 && !location.recommendedName) {                    return "-";
+                }
+
+                return (location.recommendedName && location.recommendedName !== "unknown") ? location.recommendedName : "-";
+            },
+            _formatLength: function (firstPos, lastPos) {
+
+                if (firstPos === 0 && lastPos === 0) {
+                    return "";
+                }
+
+                return this._numberWithCommas(lastPos - firstPos + 1);
+            },
+            _numberWithCommas: function (x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            },
+            _multipleLocations: function (locations) {
+                return locations.length > 1;
+            },
+            _createEnsemblHtmlLink: function (location) {
+                if ((location.firstPosition === 0 && location.lastPosition === 0) ||
+                    location.accession.startsWith("VG_")) {
+                    return "";
+                }
+
+                return '<a class="ext-link" target="_blank" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g='+location.accession+'">'+location.accession+'</a>';
+            },
+            _isChromosomeLocationDefined: function (location) {
+
+                return location.firstPosition > 0 && location.lastPosition > 0;
+            },
+            _isCodingPositionDefined: function () {
+
+                return this.startExonPosition > 0 && this.lastExonPosition > 0;
+            },
+            _hasNonMappedIso: function (nonMappedIsoforms) {
+
+                return this._isChromosomeLocationDefined(this._chosenLocation) &&
+                    (nonMappedIsoforms && nonMappedIsoforms.length > 0 || this._createEnsemblHtmlLink(this._chosenLocation) === "");
+            },
+            _hasSingleNonAlignedIso: function (nonMappedIsoforms) {
+
+                return nonMappedIsoforms && nonMappedIsoforms.length === 1;
+            },
+            _hasMultipleNonAlignedIso: function (nonMappedIsoforms) {
+
+                return nonMappedIsoforms && nonMappedIsoforms.length > 1;
+            },
+            _isLastIndex: function (nonMappedIsoforms, index) {
+
+                return index === nonMappedIsoforms.length-1;
+            },
+            _getSortedLocations: function(locations) {
+                return locations.sort(function(loc1, loc2) {
+
+                    if (!loc1 || loc1 === 0 || !loc1.recommendedName) {
+                        return 1;
+                    }
+                    else if (!loc2 || loc2 === 0 || !loc2.recommendedName) {
+                        return -1;
+                    }
+                    if (loc1.recommendedName < loc2.recommendedName) {
+                        return -1;
+                    }
+                    else if (loc1.recommendedName > loc2.recommendedName) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            },
+            _calcCodingPositions: function (startExonPosition, stopExonPosition, _chosenLocation) {
+
+                if (_chosenLocation && startExonPosition > 0 &&  stopExonPosition > 0) {
+
+                    this._startCodingPosition = _chosenLocation.firstPosition + startExonPosition - 1;
+                    this._stopCodingPosition = _chosenLocation.firstPosition + stopExonPosition - 1;
+                }
+            },
+            _updateSpinnerStatus: function(dataLoaded) {
+
+                if (dataLoaded) {
+
+                    this.$.spinner.active = false;
+                    this.$.spinner.hidden = true;
+                }
+            },
+            _updateSentence: function(mappedIsoformCount) {
+
+                if (mappedIsoformCount > 1) {
+                    this._potential_s_plus_auxilary_verb = "s are";
+                }
+                else {
+                    this._potential_s_plus_auxilary_verb = " is";
+                }
+            },
+            _toggle: function(mouseEvent){
+                var srcElementId = mouseEvent.target.id || mouseEvent.target.parentNode.id;
+                this.$$("#description-coding-position").toggle();
+            }
+        });
+    </script>
+</dom-module>
