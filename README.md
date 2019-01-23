@@ -4,6 +4,8 @@
 ## Install the Polymer-CLI
 
 First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. 
+(ex: ```npm install -g polymer-cli@1.5.4.```)
+
 Then run `bower install` to install all dependencies defined in `bower.json`.
 
 ## Viewing Your Application
