@@ -179,6 +179,7 @@ Annotation section used in function, medical, and expression views.
                                                 <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
                                                 <p>[[annotation.value.description]]</p>
                                                 <div class="annotation-labels">
+                                                <template is="dom-if" if="[[annotation.value.chemicalName]]"><p>[[annotation.value.chemicalName]]</p></template>
                                                     <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
                                                     <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                 </div>
@@ -417,6 +418,12 @@ Annotation section used in function, medical, and expression views.
                     else if (a.cvTermAccessionCode) a.cvTermAccessionCodeLabel=a.cvTermAccessionCode;
                     if (a.properties) {
                         for (var j in a.properties) if(a.properties[j].name==="rank") a.rank=a.properties[j].value;
+                    }
+                    console.log(a.apicategory);
+                    if (a.apicategory==="SMALL_MOLECULE_INTERACTION") {
+                        console.log(a.bioObject.properties["chemical name"])
+                        a.chemicalName = a.bioObject.properties["chemical name"] ?
+                                a.bioObject.properties["chemical name"] : undefined;
                     }
                     if (a.apicategory==="COFACTOR") {
                         a.chemicalName = a.bioObject.properties["chemical name"] ?
