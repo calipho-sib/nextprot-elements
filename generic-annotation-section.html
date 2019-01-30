@@ -391,6 +391,9 @@ Annotation section used in function, medical, and expression views.
                         if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*\sbind.*/)) continue;
                         if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/^bind.*/)) continue;
                     } else if (this.section==="medical") {
+                        if (a.bioObject && a.apicategory === "SMALL_MOLECULE_INTERACTION" && a.bioObject.database !== "DrugBank") {
+                            continue;
+                        }
                         if (["DISEASE", "VARIANT_INFO"].indexOf(a.apicategory)!==-1) a.description = this._parseDiseaseDescription(a);
                         if (a.apicategory==="MISCELLANEOUS"
                             && !(a.description.toLowerCase().match(/.*antibod.*/)
@@ -507,7 +510,7 @@ Annotation section used in function, medical, and expression views.
                     a.matureProtein = a.propertiesMap["mature protein"] ? a.propertiesMap["mature protein"][0].value : false;
                     a.xeno = a.database!="neXtProt" ? true : false;
                     if(!a.categoryLabel) a.categoryLabel = a.apicategory.replace(/_/g, " ");
-                    if (a.apicategory === "SMALL_MOLECULE_INTERACTION" && a.database === "ChEBI") {
+                    if (a.apicategory === "SMALL_MOLECULE_INTERACTION" && a.database !== "DrugBank") {
                         a.categoryLabel = "PROTEIN-CHEMICAL INTERACTION";
                     }
                     if (!data.hasOwnProperty(a.categoryLabel)) data[a.categoryLabel]=[];
