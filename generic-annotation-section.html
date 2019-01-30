@@ -419,9 +419,7 @@ Annotation section used in function, medical, and expression views.
                     if (a.properties) {
                         for (var j in a.properties) if(a.properties[j].name==="rank") a.rank=a.properties[j].value;
                     }
-                    console.log(a.apicategory);
                     if (a.apicategory==="SMALL_MOLECULE_INTERACTION") {
-                        console.log(a.bioObject.properties["chemical name"])
                         a.chemicalName = a.bioObject.properties["chemical name"] ?
                                 a.bioObject.properties["chemical name"] : undefined;
                     }
@@ -509,6 +507,9 @@ Annotation section used in function, medical, and expression views.
                     a.matureProtein = a.propertiesMap["mature protein"] ? a.propertiesMap["mature protein"][0].value : false;
                     a.xeno = a.database!="neXtProt" ? true : false;
                     if(!a.categoryLabel) a.categoryLabel = a.apicategory.replace(/_/g, " ");
+                    if (a.apicategory === "SMALL_MOLECULE_INTERACTION" && a.database === "ChEBI") {
+                        a.categoryLabel = "PROTEIN-CHEMICAL INTERACTION";
+                    }
                     if (!data.hasOwnProperty(a.categoryLabel)) data[a.categoryLabel]=[];
                     var evidences = self._getEvidence(a.evidences, data_xrefs, data_publi);
                     for (var e in evidences) if(e>0 && evidences[e].negative!==evidences[e-1].negative) {
