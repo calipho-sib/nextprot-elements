@@ -580,6 +580,7 @@ Annotation section used in function, medical, and expression views.
                         numberOfExperiments: a.numberOfExperiments
                     });
                 }
+
                 for (var i in Object.keys(data)) {
                     var category = Object.keys(data)[i];
                     if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "OVERVIEW", "PTM", "DOMAIN"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByRank);
@@ -588,6 +589,7 @@ Annotation section used in function, medical, and expression views.
                     else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBiophysicochemical);
                     else if (category==="PROTEIN-PROTEIN INTERACTION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBinaryInteractions);
                     else if (category==="DISEASE") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortDisease.bind(this));
+                    else if (category==="PROTEIN-CHEMICAL INTERACTION" || category==="PROTEIN-DRUG INTERACTION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByChemicalName);
                     else data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortAlphabetically);
                     count+=data[Object.keys(data)[i]].length;
                 }
@@ -623,6 +625,9 @@ Annotation section used in function, medical, and expression views.
             },
             _sortByRank: function(a,b) {
                 return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
+            },
+            _sortByChemicalName: function(a,b) {
+                return ('' + a.chemicalName).localeCompare(b.chemicalName);
             },
             _sortOverview: function(a,b){
                 return (a.isoformSpecific && !b.isoformSpecific)?1:-1;
