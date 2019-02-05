@@ -378,6 +378,8 @@ Annotation section used in function, medical, and expression views.
                 }, {} );
                 for (var i in data_annot) {
                     var a = data_annot[i];
+                    console.log("DATA", a);
+
                     if (this.section==="function"){
                         if (a.apicategory==="GO_MOLECULAR_FUNCTION" && a.cvTermAccessionCode=="GO:0003674") continue;
                         if (a.apicategory==="GO_BIOLOGICAL_PROCESS" && a.cvTermAccessionCode=="GO:0008150") continue;
@@ -432,16 +434,16 @@ Annotation section used in function, medical, and expression views.
                         if(this.section==="function") {
                             if (a.rank==1 &&  annotCategoryCount["COFACTOR"]>1) a.prefix = "It requires the following cofactors "
                             else if (a.rank==1) a.prefix = "It requires the following cofactor "
-                            a.rank = 100+ a.rank;
+                            a.rank = 200+ a.rank;
                         }
                     }
-                    if (a.apicategory==="COFACTOR_INFO" && this.section==="function") a.rank=200 + a.rank;
+                    if (a.apicategory==="COFACTOR_INFO" && this.section==="function") a.rank=300 + a.rank;
                     if (a.apicategory==="CATALYTIC_ACTIVITY" && a.rank==1 && annotCategoryCount["CATALYTIC_ACTIVITY"]>1) a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reactions";
                     else if (a.apicategory=="CATALYTIC_ACTIVITY" && a.rank==1) a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reaction";
                     if (a.apicategory==="ACTIVITY_REGULATION") {
                         if (a.rank==1 &&  annotCategoryCount["ACTIVITY_REGULATION"]>1) a.prefix = "It is regulated in the following manners "
                         if (a.rank==1) a.prefix = "It is regulated in the following manner";
-                        a.rank = 200+ a.rank;
+                        a.rank = 100+ a.rank;
                     }
                     if(a.apicategory==="PATHWAY") {
                         a.apicategory=self._getUniqueListOfEvidenceSources(a.evidences)+" pathways";
