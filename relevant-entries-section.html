@@ -193,9 +193,6 @@
             attached: function () {
                 this.pageSize = this._getPreferedPageSizeFromLocalStorage();
             },
-            ready: function() {
-                console.log(this.definition);
-            },
             _isPageSizeOptionSelected: function (pageSizeValue) {
 
                 return this._getPreferedPageSizeFromLocalStorage() == pageSizeValue;
