@@ -9,7 +9,9 @@ module.exports = function (grunt) {
             },
             simple: {
                 src: [
+                    'vendor/datatables.min.js',
                     'js/compiled_infos_templates.js',
+                    'biovizJS/library/jquery.ui-contextmenu.min.js',
                     'js/bio-viz.js',
                     'biovizJS/BiovizJS.js'
                 ],
@@ -17,6 +19,8 @@ module.exports = function (grunt) {
             },
             simpleCss:{
                 src: [
+                      'vendor/datatables.min.css',
+                      'biovizJS/css/bioviz-theme/jquery-ui.min.css',
                       'css/style.css'],
                 dest: 'dist/bio-viz.min.css'
             }
