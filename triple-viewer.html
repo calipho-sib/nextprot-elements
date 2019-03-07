@@ -232,6 +232,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 height: 32px;
                 width: 32px;
             }
+
         </style>
         <div class="row">
             <div id="featureViewer">
@@ -253,7 +254,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         </div>
                     </div>
                 </template>
-                <paper-spinner-lite id="featViewerSpinner" class="size" active></paper-spinner-lite>
+                <paper-spinner-lite id="featViewerSpinner" class="size"></paper-spinner-lite>
             </div>
         </div>
         <div class="row">
@@ -418,9 +419,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     if(self.count){
                         self.reloadSVG();
                         self._addFiltering();
-                        self.$.featViewerSpinner.active = false;
 //                        self.$.featTableSpinner.active = false;
                     }
+                    //self.$.featViewerSpinner.active = false;
                     if (self.hideSequenceViewer) self.$$("#featuresTable").classList.add("col-md-12");
                     else self.$$("#featuresTable").classList.add("col-md-6")
                 });
@@ -787,8 +788,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 this.ft.onFeatureSelected(function(d){
                     self.selection = d.detail;
                     // update isoform selector
-                    console.log("feature selected");
-                    console.log(d);
+                    //console.log("feature selected");
+                    //console.log(d);
                     self.fvSelection(d.detail);
                 });
                 
