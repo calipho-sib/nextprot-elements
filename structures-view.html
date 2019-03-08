@@ -340,10 +340,7 @@ View listing sequence annotations.
                 }
             },
             _checkAnnotations: function() {
-                if (this.positionalAnnotationsCount==-1) {
-                  this.$.nxPositionalAnnotations.hidden=true;
-                  this.$.noDataWarning.hidden=true;      
-                } else if (this.positionalAnnotationsCount==0) {
+                if (this.positionalAnnotationsCount==0) {
                   this.$.nxPositionalAnnotations.hidden=true;
                   this.$.noDataWarning.hidden=false;
                 } else {
