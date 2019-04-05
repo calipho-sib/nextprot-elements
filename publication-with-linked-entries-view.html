@@ -162,7 +162,8 @@ Publication with linked entries view demo
                 Object.values(data.entryPublicationMap).forEach(function (entryPublication) {
                     var entry = {
                         accession: entryPublication.entryAccession,
-                        citedInViews: entryPublication.citedInViews
+                        citedInViews: entryPublication.citedInViews,
+                        directLinks: entryPublication.directLinks
                     };
 
                     $.extend(entry, data.entrySolrResultMap[entry.accession]);

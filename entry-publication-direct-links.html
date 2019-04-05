@@ -1,0 +1,64 @@
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`entry-publication-direct-links`
+Entry publication direct links
+
+@demo demo/entry-publication-direct-links-demo.html
+-->
+<dom-module id="entry-publication-direct-links">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+            }
+
+            .annotscope-bg {
+                background-color: #dedede;
+                color: #7A7A7A;
+                border-radius: 5px;
+                padding: 1px 3px;
+                font-size: 11px;
+            }
+
+            .annotscope-label {
+                font-size: 13px;                
+            }
+
+        </style>
+
+        <template is="dom-if" if="[[_hasDlinks(dlinks)]]">
+            <template is="dom-repeat" items="[[dlinks]]" as="annotscope">
+                <div>
+                    <span class="annotscope-bg">[[annotscope.database]]</span>
+                    <template is="dom-if" if="[[!_isUniprotKB(annotscope.database)]]">
+                        [<a class='ext-link' href="[[annotscope.link]]">[[annotscope.accession]]</a>]
+                    </template>
+                    <span class="annotscope-label">[[annotscope.label]]</span>
+                </div>
+            </template>
+        </template>
+
+
+    </template>
+    <script>
+        Polymer({
+            is: 'entry-publication-direct-links',
+            properties: {
+                dlinks: {
+                    type: Object
+                }
+            },
+            _hasDlinks: function (linkarr) {
+                if (linkarr) {
+                    return linkarr.length > 0;
+                }
+                return false;
+            },
+            _isUniprotKB: function (database) {
+                return database === "UniProtKB";
+            }
+
+
+        });
+    </script>
+</dom-module>

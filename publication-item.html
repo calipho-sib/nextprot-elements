@@ -2,6 +2,7 @@
 
 <link rel="import" href="publication.html">
 <link rel="import" href="entry-view-reference.html">
+<link rel="import" href="entry-publication-direct-links.html">
 
 <!--
 `publication-item`
@@ -31,13 +32,6 @@ Publication item demo
                 padding-bottom: var(--publication-item-margin-bottom);
             }
 
-            .annotscope-bg {
-                background-color: #dedede;
-                color: #7A7A7A;
-                border-radius: 5px;
-                padding: 1px 3px;
-                font-size: 11px;
-            }
         </style>
         <template is="dom-if" if="[[data]]">
 
@@ -48,15 +42,9 @@ Publication item demo
             <entry-view-reference refs="[[data.citedInViews]]"></entry-view-reference>
 
             <!-- Direct links -->
-            <template is="dom-repeat" items="[[data.directLinks]]" as="annotscope">
-                <div>
-                    <span class="annotscope-bg">[[annotscope.database]]</span>
-                    <template is="dom-if" if="[[!_isUniprotKB(annotscope.database)]]">
-                        [<a class='ext-link' href="[[annotscope.link]]">[[annotscope.accession]]</a>]
-                    </template>
-                    <span>[[annotscope.label]]</span>
-                </div>
-            </template>
+            <entry-publication-direct-links dlinks="[[data.directLinks]]"></entry-publication-direct-links>
+
+
         </template>
     </template>
     <script>
