@@ -20,6 +20,14 @@ Entry publication direct links
                 font-size: 11px;
             }
 
+            .annotscope-bg-selected {
+                background-color: #337ab7;
+                color: #ffffff;
+                border-radius: 5px;
+                padding: 1px 3px;
+                font-size: 11px;
+            }
+
             .annotscope-label {
                 font-size: 13px;                
             }
@@ -29,7 +37,7 @@ Entry publication direct links
         <template is="dom-if" if="[[_hasDlinks(dlinks)]]">
             <template is="dom-repeat" items="[[dlinks]]" as="annotscope">
                 <div>
-                    <span class="annotscope-bg">[[annotscope.database]]</span>
+                    <span class$="[[_getClassForScope(annotscope.database)]]">[[annotscope.database]]</span>
                     <template is="dom-if" if="[[!_isUniprotKB(annotscope.database)]]">
                         [<a class='ext-link' href="[[annotscope.link]]">[[annotscope.accession]]</a>]
                     </template>
@@ -46,7 +54,15 @@ Entry publication direct links
             properties: {
                 dlinks: {
                     type: Object
+                },
+                selectedScope: {
+                    type: String
                 }
+            },
+            _getClassForScope: function(dbname) {
+                var scopeClass = 'annotscope-bg';
+                if (dbname == this.selectedScope) scopeClass += '-selected';
+                return scopeClass;
             },
             _hasDlinks: function (linkarr) {
                 if (linkarr) {

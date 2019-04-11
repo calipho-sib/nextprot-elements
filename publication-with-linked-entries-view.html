@@ -118,6 +118,10 @@ Publication with linked entries view demo
                     type: Number,
                     notify: true
                 },
+                selectedEntry: {
+                    type: String
+                },
+
                 //This is for relevant for
                 _entries: {
                     type: Object
@@ -158,12 +162,13 @@ Publication with linked entries view demo
             _handleResponseData: function (data) {
 
                 var entries = [];
-
+                var me = this;
                 Object.values(data.entryPublicationMap).forEach(function (entryPublication) {
                     var entry = {
                         accession: entryPublication.entryAccession,
                         citedInViews: entryPublication.citedInViews,
-                        directLinks: entryPublication.directLinks
+                        directLinks: entryPublication.directLinks,
+                        selected: (entryPublication.entryAccession == me.selectedEntry)
                     };
 
                     $.extend(entry, data.entrySolrResultMap[entry.accession]);

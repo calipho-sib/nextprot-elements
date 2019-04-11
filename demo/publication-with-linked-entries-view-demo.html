@@ -22,9 +22,9 @@
 
 
     <demo-snippet>
-        <h3>Publication with direct links in relevant entries</h3>
+        <h3>Publication with direct links in relevant entries with an entry and its GeneRif that are highlighted</h3>
         <template>
-            <publication-with-linked-entries-view nx-config='{"env": "alpha", "publicationId": "50137570"}'></publication-with-linked-entries-view>
+            <publication-with-linked-entries-view nx-config='{"env": "alpha", "publicationId": "50137570"}' selected-entry="NX_P52701"></publication-with-linked-entries-view>
         </template>
     </demo-snippet>
 
@@ -38,7 +38,7 @@
     <demo-snippet>
         <h3>Publication with more than 500 relevant entries</h3>
         <template>
-            <publication-with-linked-entries-view nx-config='{"env": "alpha", "publicationId": "633392"}'></publication-with-linked-entries-view>
+            <publication-with-linked-entries-view nx-config='{"env": "alpha", "publicationId": "633392"}' selected-entry="NX_O00115"></publication-with-linked-entries-view>
             <!--
             time wget --no-check-certificate https://dev-api.nextprot.org/entry-publications/pubid/{pubid}.json
 
