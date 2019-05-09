@@ -143,7 +143,7 @@ Publication with linked entries view demo
                 if (this.nxConfig.publicationId) {
                     var self = this;
 
-                    this._npClient.getJSON("/entry-publications/pubid/" + this.nxConfig.publicationId + "?start=0&rows=50")
+                    this._npClient.getJSON("/entry-publications/pubid/" + this.nxConfig.publicationId + ".json?start=0&rows=50")
                         .then(function (response) {
                             self._handleResponseData(response);
                         })
