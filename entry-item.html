@@ -132,7 +132,9 @@ Protein entry item demo
                     this.isProteomics = data.filters.indexOf("filterproteomics") !== -1;
                     this.isStructure = data.filters.indexOf("filterstructure") !== -1;
                 }
-                this.protExistence = data.protein_existence.split("_").join(" ");
+                if(data.protExistence) {
+                    this.protExistence = data.protein_existence.split("_").join(" ");
+                }
 
                 if (!data.var_num) {
                     data.var_num = 0;
