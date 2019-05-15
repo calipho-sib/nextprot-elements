@@ -92,7 +92,7 @@ Publication with linked entries view demo
         </template>
 
         <template is="dom-if" if="[[_entries]]">
-             <relevant-entries-section page="{{page}}" related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
+             <relevant-entries-section page="{{page}}" page-size="{{pageSize}}" related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
         </template>
 
         <paper-spinner-lite id="spinner" active></paper-spinner-lite>
@@ -142,6 +142,11 @@ Publication with linked entries view demo
                     type: Object,
                     notify: true,
                     observer: 'onPageChange'
+                },
+                pageSize: {
+                    type: Number,
+                    notify: true,
+                    observer: 'onPageSizeChange'
                 }
             },
 
@@ -165,7 +170,7 @@ Publication with linked entries view demo
 
                 // Initialize the page properties
                 this.page = 0;
-
+                this.pageSize = 100;
                 // Fetch the initial date for page 1
                 var start = 0;
                 var rows = this.maxPageSize;
@@ -233,7 +238,7 @@ Publication with linked entries view demo
 
             // Fetches the relevent entries for a given page
             _fetchPublicationDateForPage: function(page) {
-                start = this.page * this.maxPageSize;
+                start = this.page * this.pageSize;
                 rows = this.maxPageSize;
                 this._npClient.getJSON("/entry-publications/pubid/" + this.nxConfig.publicationId + ".json?start="+start+"&rows="+rows, true)
                     .then(function (response) {

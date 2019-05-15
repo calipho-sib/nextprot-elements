@@ -129,8 +129,8 @@
                         </div>
                     </div>
 
-                    <paginator-element items="[[entries]]" layout="entry-item"
-                                       page-size="[[pageSize]]" bind-attribute="summary" bind-value="[[summary]]"
+                    <paginator-element items="[[entries]]" layout="entry-item" related-entry-count="[[relatedEntryCount]]"
+                                       page="{{page}}" page-size="{{pageSize}}" bind-attribute="summary" bind-value="[[summary]]"
                                        from="{{from}}" to="{{to}}"></paginator-element>
                 </template>
                 <template is="dom-if" if="[[!entries.length]]"><span class="grey-x">No results</span></template>
@@ -165,11 +165,11 @@
                 },
                 page: {
                     type: Number,
-                    notify: true,
-                    observer: 'onPageChange'
+                    notify: true
                 },
                 pageSize: {
-                    type: Number
+                    type: Number,
+                    notify: true
                 },
                 pageSizeOptions: {
                     type: Array,
@@ -192,6 +192,7 @@
             attached: function () {
                 this.pageSize = this._getPreferedPageSizeFromLocalStorage();
             },
+            
             _isPageSizeOptionSelected: function (pageSizeValue) {
 
                 return this._getPreferedPageSizeFromLocalStorage() == pageSizeValue;

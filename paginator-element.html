@@ -69,6 +69,7 @@ Element to allow pagination on a page when given an array of JSON object.
                     type: Number,
                     value: 10,
                     reflectToAttribute: true,
+                    notify: true,
                     observer: '_displayItems'
                 },
                 from: {
@@ -87,13 +88,18 @@ Element to allow pagination on a page when given an array of JSON object.
                     value: 'pagination-item',
                     reflectToAttribute: true
                 },
+                relatedEntryCount: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
                 /**
                  * The number of pages
                  */
                 pageCount:{
                     type: Number,
-                    computed: '_computePageCount(items.length, pageSize)'
+                    computed: '_computePageCount(relatedEntryCount, pageSize)'
                 }
+                
             },
             observers: [
                 '_handleItemsChanged(items.*)'
@@ -178,8 +184,8 @@ Element to allow pagination on a page when given an array of JSON object.
             /**
              * Calculate the number of pages
              */
-            _computePageCount: function(itemsLength, pageSize){
-                return Math.ceil(itemsLength / pageSize);
+            _computePageCount: function(relatedEntryCount, pageSize){
+                return Math.ceil(relatedEntryCount / pageSize);
             },
             /*
              * Handle the loading items when the items are changed
