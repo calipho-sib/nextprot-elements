@@ -49,7 +49,7 @@ Element to allow pagination on a page when given an array of JSON object.
                 /**
                  * The items
                  */
-                items: {
+                entries: {
                     type: Array,
                     value: [],
                     notify: true,
@@ -101,9 +101,6 @@ Element to allow pagination on a page when given an array of JSON object.
                 }
                 
             },
-            observers: [
-                '_handleItemsChanged(items.*)'
-            ],
 
             onDataChange: function() {
                 this._displayItems();
@@ -127,7 +124,7 @@ Element to allow pagination on a page when given an array of JSON object.
 
                     // Check if we need to fetch data from the server
 
-                    this._displayItems();
+                    //this._displayItems();
                 }
             },
             /**
@@ -136,13 +133,13 @@ Element to allow pagination on a page when given an array of JSON object.
             _displayItems: function(){
                 this._clearNodes(this.$.container);
                 var start = this.page * this.pageSize;
-                if(start > this.items.length) start=1;
+                //if(start > this.entries.length) start=1;
                 this.from = start+1;
                 var end = start + this.pageSize;
-                this.to = this.items.length<end?this.items.length:end;
-                for(var i = start; i < end && i < this.items.length; i++){
+                this.to = end;
+                for(var i = 0; i < end && i < this.entries.length; i++){
                     var node = document.createElement((this.layout) ? this.layout : 'pagination-item');
-                    node.data = this.items[i];
+                    node.data = this.entries[i];
                     node[this.bindAttribute] = this.bindValue;
                     this.$.container.appendChild(node);
                 }
@@ -171,7 +168,7 @@ Element to allow pagination on a page when given an array of JSON object.
              */
             _selectedPageChange: function(event){
                 this.page = event.target.selectedIndex;
-                this._displayItems();
+                //this._displayItems();
             },
             /**
              * Remove all of the items from the element
@@ -186,18 +183,6 @@ Element to allow pagination on a page when given an array of JSON object.
              */
             _computePageCount: function(relatedEntryCount, pageSize){
                 return Math.ceil(relatedEntryCount / pageSize);
-            },
-            /*
-             * Handle the loading items when the items are changed
-             */
-            _handleItemsChanged: function(changeRecord){
-                this.page = this.page > this.pageCount ? 0 : this.page; //Reset the page if the number of pages is less than the current page; otherwise stay on page
-                if(!this.items.length) {
-                    this.$.navigation.hidden=true;
-                } else {
-                    this.$.navigation.removeAttribute("hidden");
-                }
-                this._displayItems();
             }
         });
     </script>
