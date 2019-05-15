@@ -163,6 +163,11 @@
                     type: Number,
                     notify: true
                 },
+                page: {
+                    type: Number,
+                    notify: true,
+                    observer: 'onPageChange'
+                },
                 pageSize: {
                     type: Number
                 },

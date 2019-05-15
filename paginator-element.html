@@ -44,14 +44,16 @@ Element to allow pagination on a page when given an array of JSON object.
                 page: {
                     type: Number,
                     value: 0,
-                    reflectToAttribute: true
+                    notify: true
                 },
                 /**
                  * The items
                  */
                 items: {
                     type: Array,
-                    value: []
+                    value: [],
+                    notify: true,
+                    observer: 'onDataChange'
                 },
                 bindAttribute: {
                     type: String
@@ -96,6 +98,11 @@ Element to allow pagination on a page when given an array of JSON object.
             observers: [
                 '_handleItemsChanged(items.*)'
             ],
+
+            onDataChange: function() {
+                this._displayItems();
+            },
+
             /**
              * Go to the previous page, if any
              */
@@ -111,6 +118,9 @@ Element to allow pagination on a page when given an array of JSON object.
             nextPage: function(){
                 if(this.pageCount > (this.page + 1)){
                     this.page++;
+
+                    // Check if we need to fetch data from the server
+
                     this._displayItems();
                 }
             },

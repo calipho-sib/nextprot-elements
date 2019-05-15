@@ -92,7 +92,7 @@ Publication with linked entries view demo
         </template>
 
         <template is="dom-if" if="[[_entries]]">
-             <relevant-entries-section related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
+             <relevant-entries-section page="{{page}}" related-entry-count="[[relatedEntryCount]]" entries="[[_entries]]"></relevant-entries-section>
         </template>
 
         <paper-spinner-lite id="spinner" active></paper-spinner-lite>
@@ -101,6 +101,8 @@ Publication with linked entries view demo
     <script>
         Polymer({
             is: 'publication-with-linked-entries-view',
+            state: 'init',
+            maxPageSize: 100,
             properties: {
                 nxConfig: {
                     type: Object,
@@ -134,16 +136,43 @@ Publication with linked entries view demo
                 _detailsLinkClass: {
                     type: String,
                     value: "disabled"
+                },
+                // To support on demand publication entry display
+                page: {
+                    type: Object,
+                    notify: true,
+                    observer: 'onPageChange'
                 }
             },
+
+            onPageChange: function() {
+                if(this.state === 'initialized') {
+                    // Check if we need to fetch the data
+                    
+
+                    // Calling the API to get the relevent entries for the given page
+                    this._fetchPublicationDateForPage(this.page);
+                }
+            },
+
+            onPageSizeChange: function() {
+                console.log("page size chabnge");
+            },
+
             attached: function () {
 
                 this._initApiClient();
 
+                // Initialize the page properties
+                this.page = 0;
+
+                // Fetch the initial date for page 1
+                var start = 0;
+                var rows = this.maxPageSize;
                 if (this.nxConfig.publicationId) {
                     var self = this;
 
-                    this._npClient.getJSON("/entry-publications/pubid/" + this.nxConfig.publicationId + ".json?start=0&rows=50", true)
+                    this._npClient.getJSON("/entry-publications/pubid/" + this.nxConfig.publicationId + ".json?start=" + start + "&rows=" + rows, true)
                         .then(function (response) {
                             self._handleResponseData(response);
                         })
@@ -151,6 +180,8 @@ Publication with linked entries view demo
                             self._handleError(error);
                         });
                 }
+
+                this.state = 'initialized';
             },
             _initApiClient: function () {
                 this._npClient = getNXClient(this.nxConfig);
@@ -198,6 +229,19 @@ Publication with linked entries view demo
                     this._detailsLinkClass = "disabled";
                     this._summaryLinkClass = "";
                 }
+            },
+
+            // Fetches the relevent entries for a given page
+            _fetchPublicationDateForPage: function(page) {
+                start = this.page * this.maxPageSize;
+                rows = this.maxPageSize;
+                this._npClient.getJSON("/entry-publications/pubid/" + this.nxConfig.publicationId + ".json?start="+start+"&rows="+rows, true)
+                    .then(function (response) {
+                        self._handleResponseData(response);
+                    })
+                    .catch(function (error) {
+                        self._handleError(error);
+                    });
             }
         });
     </script>
