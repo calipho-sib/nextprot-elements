@@ -3,6 +3,8 @@
 
 <link rel="import" href="entry-view-reference.html">
 
+<link rel="import" href="entry-publication-direct-links.html">
+
 <!--
 `entry-item`
 Protein entry item demo
@@ -65,6 +67,12 @@ Protein entry item demo
             <template is="dom-if" if="[[data.citedInViews]]">
                 <entry-view-reference refs="[[data.citedInViews]]"></entry-view-reference>
             </template>
+
+            <!-- Direct links -->
+            <template is="dom-if" if="[[data.directLinks]]">
+                <entry-publication-direct-links dlinks="[[data.directLinks]]" selected-scope="[[_getSelectedScope()]]" ></entry-publication-direct-links>
+            </template>
+
         </template>
     </template>
     <script>
@@ -145,6 +153,20 @@ Protein entry item demo
                 }
 
                 this._header = this._createHeader(data);
+                this._setHostStyle();
+
+            },
+            _setHostStyle: function() {
+                // pam: tried to set host class but didn't succeed, but this works fine 
+                this.style.borderLeftColor = (this.data.selected ? "#337ab7" : "");
+                this.style.borderLeftStyle = (this.data.selected ? "solid" : "");
+                this.style.borderLeftWidth = (this.data.selected ? "5px" : "");
+                this.style.paddingLeft =     (this.data.selected ? "5px" : "");
+            },
+            _getSelectedScope: function() {
+                // pam: used to tell entry-publication-direct-links element to highlight the GeneRif direct links
+                if (this.data.selected) return "GeneRif";
+                return "";
             },
             _createHeader: function(data) {
 

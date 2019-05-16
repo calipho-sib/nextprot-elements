@@ -120,6 +120,10 @@ Publication with linked entries view demo
                     type: Number,
                     notify: true
                 },
+                selectedEntry: {
+                    type: String
+                },
+
                 //This is for relevant for
                 entries: {
                     type: Array,
@@ -188,16 +192,24 @@ Publication with linked entries view demo
             _handleResponseData: function (data) {
 
                 var entries = [];
-
+                var me = this;
                 Object.values(data.entryPublicationMap).forEach(function (entryPublication) {
                     var entry = {
                         accession: entryPublication.entryAccession,
-                        citedInViews: entryPublication.citedInViews
+                        citedInViews: entryPublication.citedInViews,
+                        directLinks: entryPublication.directLinks,
+                        selected: (entryPublication.entryAccession == me.selectedEntry)
                     };
 
                     $.extend(entry, data.entrySolrResultMap[entry.accession]);
-
-                    entries.push(entry);
+                    if (entry.selected) {
+                        // pam: insert as first element if we fall on the selected entry
+                        // pam: this way we don't need to handle paging and scrolling of relevant entries to find and display it
+                        entries.unshift(entry);
+                    } else {
+                        // append to the end of list (normal order)
+                        entries.push(entry);
+                    }
                 });
 
                 this.data = data;
