@@ -153,16 +153,9 @@ Publication with linked entries view demo
 
             onPageChange: function() {
                 if(this.state === 'initialized') {
-                    // Check if we need to fetch the data
-                    
-
                     // Calling the API to get the relevent entries for the given page
                     this._fetchPublicationDateForPage(this.page);
                 }
-            },
-
-            onPageSizeChange: function() {
-                console.log("page size chabnge");
             },
 
             attached: function () {
