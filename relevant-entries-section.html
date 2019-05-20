@@ -103,7 +103,7 @@
                     <div class="control-header">
                         <div class="no-padding inline-group">
                             <template is="dom-if" if="[[entries]]">
-                                Proteins [[from]] to [[to]]
+                                Proteins [[from]] to [[to]] of [[entries.length]]
                             </template>
                             <template is="dom-if" if="[[_beyondMaximumEntries(relatedEntryCount)]]">
                                 <span class="over-threshold-warning" title="The first 500 most relevant entries were displayed below."><span class="fa fa-exclamation-circle"></span> out of [[relatedEntryCount]]</span>
