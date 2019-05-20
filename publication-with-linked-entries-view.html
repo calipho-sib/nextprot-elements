@@ -174,8 +174,13 @@ Publication with linked entries view demo
                 var rows = this.maxPageSize;
                 if (this.nxConfig.publicationId) {
                     var self = this;
-
-                    this._npClient.getJSON("/entry-publications/pubid/" + this.nxConfig.publicationId + ".json?start=" + start + "&rows=" + rows, true)
+                    // Call the API with start and rows paramters which will fetch only the given data
+                    var selectedEntry = this.selectedEntry;
+                    var url = "/entry-publications/pubid/" + this.nxConfig.publicationId + ".json?start=" + start + "&rows=" + rows
+                    if(selectedEntry) {
+                        url += "&entry=" + selectedEntry;
+                    }
+                    this._npClient.getJSON(url, true)
                         .then(function (response) {
                             self._handleResponseData(response);
                         })
