@@ -208,13 +208,9 @@ Publication with linked entries view demo
                     };
 
                     $.extend(entry, data.entrySolrResultMap[entry.accession]);
-                    if (entry.selected) {
-                        // pam: insert as first element if we fall on the selected entry
-                        // pam: this way we don't need to handle paging and scrolling of relevant entries to find and display it
-                        entries.unshift(entry);
-                    } else {
-                        // append to the end of list (normal order)
-                        entries.push(entry);
+                    entries.push(entry);
+                    if (entry.selected) {    
+                        selectedEntryObject = entry;
                     }
                 });
 
