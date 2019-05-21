@@ -198,6 +198,7 @@ Publication with linked entries view demo
 
                 var entries = [];
                 var me = this;
+                var selectedEntryObject;
                 Object.values(data.entryPublicationMap).forEach(function (entryPublication) {
                     var entry = {
                         accession: entryPublication.entryAccession,
@@ -216,6 +217,29 @@ Publication with linked entries view demo
                         entries.push(entry);
                     }
                 });
+
+                // Sorts the entries 
+                entries.sort((e1,e2) => {
+                    if(e1.accession === me.selectedEntry.accession ) {
+                        return 1;
+                    }
+                    if(e2.accession === me.selectedEntry.accession ) {
+                        return 1;
+                    }
+                    if(e1.accession > e2.accession) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                });
+
+                // If a selected entry is present it will be pushed to the top
+                if(me.selectedEntry) {
+                    entries.filter(function(item) { 
+                        return item.accession !== me.selectedEntry
+                    });
+                    entries.splice(0, 0, selectedEntryObject);
+                }
 
                 this.data = data;
                 this.entries = entries;
