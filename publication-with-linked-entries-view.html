@@ -231,10 +231,10 @@ Publication with linked entries view demo
 
                 // If a selected entry is present it will be pushed to the top
                 if(me.selectedEntry) {
-                    entries.filter(function(item) { 
+                    entries = entries.filter(function(item) { 
                         return item.accession !== me.selectedEntry
-                    });
-                    entries.splice(0, 0, selectedEntryObject);
+                    })
+                    entries.unshift(selectedEntryObject);
                 }
 
                 this.data = data;
