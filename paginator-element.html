@@ -70,7 +70,7 @@ Element to allow pagination on a page when given an array of JSON object.
                     value: 10,
                     reflectToAttribute: true,
                     notify: true,
-                    observer: '_displayItems'
+                    observer: '_displayOnPageChange'
                 },
                 from: {
                     type: Number,
@@ -130,12 +130,28 @@ Element to allow pagination on a page when given an array of JSON object.
             /**
              * Display the items
              */
-            _displayItems: function(){
+             _displayItems: function(){
                 this._clearNodes(this.$.container);
                 var start = this.page * this.pageSize;
                 this.from = start+1;
                 var end = start + this.pageSize;
-                this.to = this.entries.length < end ? this.entries.length : end;
+                this.to =  end;
+                for(var i = 0; i < this.pageSize && i < this.entries.length; i++){
+                    var node = document.createElement((this.layout) ? this.layout : 'pagination-item');
+                    node.data = this.entries[i];
+                    node[this.bindAttribute] = this.bindValue;
+                    this.$.container.appendChild(node);
+                }
+                this._setupPageNumbers();
+                $(document).scrollTop(0);
+            },
+            /**
+             * Display the items
+             */
+             _displayOnPageChange: function(){
+                this._clearNodes(this.$.container);
+                var end = this.from + this.pageSize - 1;
+                this.to =  end;
                 for(var i = 0; i < this.pageSize && i < this.entries.length; i++){
                     var node = document.createElement((this.layout) ? this.layout : 'pagination-item');
                     node.data = this.entries[i];
