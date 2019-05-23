@@ -312,7 +312,7 @@
                 return false;
             },
             _computeStyleSecondSquare: function(data){
-                if (data.childrenFound){
+                if (data.childrenFound && !this.isTabular){
                     return true;
                 }
                 return false;
