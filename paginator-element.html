@@ -95,11 +95,23 @@ Element to allow pagination on a page when given an array of JSON object.
                 /**
                  * The number of pages
                  */
-                pageCount:{
+                pageCount: {
                     type: Number,
                     computed: '_computePageCount(relatedEntryCount, pageSize)'
-                }
+                },
+                /**
+                 * Flag to specify if the paginator supports ondemand entries
+                 */
+                 ondemand: {
+                     type: Boolean,
+                     reflectToAttribute: true
+                 }
                 
+            },
+
+            attached: function () {
+                this._computePageCount(this.relatedEntryCount, this.pageSize);
+                this._setupPageNumbers()
             },
 
             onDataChange: function() {
@@ -121,10 +133,7 @@ Element to allow pagination on a page when given an array of JSON object.
             nextPage: function(){
                 if(this.pageCount > (this.page + 1)){
                     this.page++;
-
-                    // Check if we need to fetch data from the server
-
-                    //this._displayItems();
+                    this._displayItems();
                 }
             },
             /**
@@ -132,11 +141,20 @@ Element to allow pagination on a page when given an array of JSON object.
              */
              _displayItems: function(){
                 this._clearNodes(this.$.container);
-                var start = this.page * this.pageSize;
-                this.from = start+1;
-                var end = start + this.pageSize;
-                this.to =  end;
-                for(var i = 0; i < this.pageSize && i < this.entries.length; i++){
+                var start, end;
+                if(this.ondemand) {
+                    start = 0;
+                    end = this.pageSize
+                    this.from = this.page * this.pageSize + 1;
+                    this.to =  this.from + this.pageSize -1 ;
+                } else {
+                    start = this.page * this.pageSize;
+                    if(start > this.entries.length) start=1;
+                    this.from = start+1;
+                    end = start + this.pageSize;
+                    this.to = this.entries.length < end ? this.entries.length : end;
+                }
+                for(var i = start; i < end && i < this.entries.length; i++){
                     var node = document.createElement((this.layout) ? this.layout : 'pagination-item');
                     node.data = this.entries[i];
                     node[this.bindAttribute] = this.bindValue;
@@ -150,16 +168,29 @@ Element to allow pagination on a page when given an array of JSON object.
              */
              _displayOnPageChange: function(){
                 this._clearNodes(this.$.container);
-                var end = this.from + this.pageSize - 1;
-                this.to =  end;
-                for(var i = 0; i < this.pageSize && i < this.entries.length; i++){
-                    var node = document.createElement((this.layout) ? this.layout : 'pagination-item');
-                    node.data = this.entries[i];
-                    node[this.bindAttribute] = this.bindValue;
-                    this.$.container.appendChild(node);
+                var start, end;
+                if(this.ondemand) {
+                    start = 0;
+                    end = this.pageSize;
+                    this.to = this.from + this.pageSize - 1;
+                } else {
+                    start = this.page * this.pageSize;
+                    if(start > this.entries.length) start=1;
+                    this.from = start+1;
+                    end = start + this.pageSize;
+                    this.to = this.entries.length < end ? this.entries.length : end;
+                }
+                for(var i = start; i < end && i < this.entries.length; i++){
+                    this._createItemElement(i)
                 }
                 this._setupPageNumbers();
                 $(document).scrollTop(0);
+            },
+            _createItemElement: function(index) {
+                var node = document.createElement((this.layout) ? this.layout : 'pagination-item');
+                node.data = this.entries[index];
+                node[this.bindAttribute] = this.bindValue;
+                this.$.container.appendChild(node);
             },
             /**
              * Display the &lt;select&gt; to allow for quick selection of the pages
@@ -183,7 +214,7 @@ Element to allow pagination on a page when given an array of JSON object.
              */
             _selectedPageChange: function(event){
                 this.page = event.target.selectedIndex;
-                //this._displayItems();
+                this._displayItems();
             },
             /**
              * Remove all of the items from the element
