@@ -146,7 +146,7 @@ Element to allow pagination on a page when given an array of JSON object.
                     start = 0;
                     end = this.pageSize
                     this.from = this.page * this.pageSize + 1;
-                    this.to =  this.from + this.pageSize -1 ;
+                    this.to =  this.relatedEntryCount < this.from + this.pageSize -1 ? this.relatedEntryCount : this.from + this.pageSize -1;
                 } else {
                     start = this.page * this.pageSize;
                     if(start > this.entries.length) start=1;
@@ -172,7 +172,7 @@ Element to allow pagination on a page when given an array of JSON object.
                 if(this.ondemand) {
                     start = 0;
                     end = this.pageSize;
-                    this.to = this.from + this.pageSize - 1;
+                    this.to =  this.relatedEntryCount < this.from + this.pageSize -1 ? this.relatedEntryCount : this.from + this.pageSize -1;
                 } else {
                     start = this.page * this.pageSize;
                     if(start > this.entries.length) start=1;
