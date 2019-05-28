@@ -131,7 +131,7 @@
 
                     <paginator-element entries="[[entries]]" layout="entry-item" related-entry-count="[[relatedEntryCount]]"
                                        page="{{page}}" page-size="{{pageSize}}" bind-attribute="summary" bind-value="[[summary]]"
-                                       from="{{from}}" to="{{to}}"></paginator-element>
+                                       from="{{from}}" to="{{to}}" ondemand="{{ondemand}}"></paginator-element>
                 </template>
                 <template is="dom-if" if="[[!entries.length]]"><span class="grey-x">No results</span></template>
             </div>
