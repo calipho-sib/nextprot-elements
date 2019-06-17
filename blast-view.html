@@ -161,7 +161,7 @@ View presenting blast search results annotations.
                 </div>
             </template>
             <div class="col-lg-12">
-                <paginator-element items="{{results}}" layout="blast-item" bind-attribute="showAlignment" bind-value="[[showAlignment]]" page-size="[[pageSize]]" from="{{from}}" to="{{to}}"></paginator-element>
+                <paginator-element entries="{{results}}" onDemand="{{false}}" page="{{page}}" layout="blast-item" bind-attribute="showAlignment" bind-value="[[showAlignment]]" page-size="[[pageSize]]" from="{{from}}" to="{{to}}" related-entry-count="[[results.length]]"></paginator-element>
             </div>
     </template>
     <script>
@@ -208,6 +208,10 @@ View presenting blast search results annotations.
                 showAlignment: {
                     type: Boolean,
                     value: false
+                },
+                page: {
+                    type: Number,
+                    notify: true
                 },
                 pageSize: {
                     type: Number,
