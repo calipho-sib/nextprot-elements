@@ -20,10 +20,25 @@ Digestion overview
 <dom-module id="digestion-overview">
 
     <template>
-        <!-- Latest compiled and minified CSS -->
-        <template>
-            <div class="enzymes"></div>
-        </template>
+        <div id="isoform-digestion" ></div>
+        <div>
+            <!-- <template is="dom-if" if="[[digestByProtease.proteases]]"></template> -->
+            <h2>Digested peptides </h2>
+            Enter Isoform AC <input id="Isoform" type="text" value="{{entryName}}"> or 
+            <input type="button" id="sequence" value="sequence"><br><br>
+            <label for="MaxMC"> Max missed cleavages </label>
+            <select id="MaxMC">
+                <option selected="selected" value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+            Peptide size min<input id="minSize" type="number" name="min" value="7">
+            max <input id="maxSize" type="number" name="max" value="">
+            <input type="submit" name="Digest" value="DIGEST" on-click="_digestIsoform">
+            <input type="reset" name="reset" value="RESET" >
+        </div>
+        </div>
     </template>
 
     <script>
@@ -37,11 +52,47 @@ Digestion overview
                 dataloaded: {
                     type: Boolean,
                     observer: 'updateSpinnerStatus'
-                }
+                },
+                proteases: {
+                    type: Array,
+                    value: []
+                }, 
+                promises: {
+                    type: Array,
+                    value: []
+                },
+                entryName : {
+                    type: String, 
+                    value: ""
+                },
+                maxmissedcleavages: {
+                    type: Number,
+                    value: '0',
+                },
+                minPeptideSize: {
+                    type: Number,
+                    value: '7'
+                },
+                maxPeptideSize:{
+                    type: Number,
+                    value: ''
+                },
+                digestsByProtease: {
+                    type: Object,
+                    value: {}
+                },
+                _digestIsoform: {function(proteases){
+                }},
             },
+            
             ready: function () {
+                var nx = new Nextprot.Client("digestion", "Calipho Group");
                 this._initApiClient();
-                this._loadData();
+                this._npClient.getJSON("/digestion/available-protease-list.json", "true")
+                    .then(function (proteases) {
+                        console.log(proteases);
+                    });
+                this._buildURL();
             },
             _initApiClient: function () {
                 this._npClient = new Nextprot.Client("neXtProt protein overview", "Calipho Group");
@@ -50,15 +101,30 @@ Digestion overview
                     this._npClient.updateEnvironment(this.nxConfig.env);
                 }
             },
-            _loadData: function () {
-                if (this._npClient !== undefined) {
-                    this._npClient.getJSON("/digestion/available-protease-list").then(function (enzymes) {
-                        console.log(enzymes);
-                    });
+            _buildURL: function (entryName, maxmissedcleavages, minPeptideSize, maxPeptideSize, protease) {
+                var urladdress = "/digestion/" + entryName + ".json?protease=" + protease + "&minpeplen=" + minPeptideSize + "&maxpeplen=" + maxPeptideSize + "&maxmissedcleavages=" + maxmissedcleavages + "&digestmaturepartsonly=true";
+                return urladdress;
+                console.log(urladdress);
+            },
+            _digestIsoform: function (proteases) {
+                console.log(this.entryName);
+                for (var i = 0; i < proteases.length; i++) {
+                    var protease = proteases[i];
+                    var url = this.buildURL(entryName, maxmissedcleavages, minPeptideSize, maxPeptideSize, protease);
+                    this.promises.push(this._npClient.getJSON(url, "true").then(function (digests) {
+
+                        digestsByProtease.protease = digests;
+                        return digests;
+                        console.log(digests);
+                    }));
                 }
-            }
+
+                Promise.all(this.promises).then(function (results) {
+                    console.log(results);
+                    return results; 
+                })
+            },
         });
-        //
 
     </script>
 </dom-module>
