@@ -39,6 +39,7 @@ Digestion overview
                         <tr>
                             <td> Protease name</td>
                             <td> Peptide count</td>
+                            <td> Unique peptide count </td>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,22 +47,40 @@ Digestion overview
 
                         <tr> 
                             <td>[[dBP.name]]</td>
+                            <td>
+                                [[dBP.peptide_count]]
+                            </td>
+                            <td>
+                                [[dBP.unique_peptide_count]]
+                            </td>
                             <!-- <td>
                                 <template is="dom-repeat" items="[[dBP.peptide_list]]" as="pep">
                                     <span>[[pep]] , </span>
                                 </template>
                             </td> -->
-                            <td>
-                                [[dBP.peptide_count]]
-                            </td>
                         </tr>
                     </tbody>
                 </table>
-                        
+                <h3> Select a protease : </h3>
+                <paper-input label="Select a protease" value="{{protease}}"></paper-input>    
+                <input type="submit" name="Digest" value="DIGEST" on-click="_peptidesList">  
+                <table>
+                        <thead>
+                            <tr>
+                                <td> Peptide sequence</td>
+                            </tr>
+                        </thead>
+                        <tbody>    
+                            <tr> 
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
         </div>
             </template>
         </div>
     </template>
+
 
     <script>
         Polymer({
@@ -99,14 +118,22 @@ Digestion overview
                     type: Number,
                     value: ''
                 },
-                digestsByProtease: {
+                protease_data: {
                     type: Array,
                     value: [],
                 },
+                protease:{
+                    type: String,
+                    value:""
+                },
+                results:{
+                    type: Array,
+                    value: []
+                }
             },
            
             ready: function () {
-                var nx = new Nextprot.Client("digestion", "Calipho Group");
+                this.nx = new Nextprot.Client("digestion", "Calipho Group");
                 this._initApiClient();
                 var self = this;
                 this._npClient.getJSON("/digestion/available-protease-list.json", "true")
@@ -127,6 +154,7 @@ Digestion overview
             },
             _digestIsoform: function () {
                 console.log(this.entryName);
+                var full_peptide_list = [];
                 var proteases = this.proteases;
 
                 var self = this;
@@ -150,12 +178,58 @@ Digestion overview
                                 "peptide_count": pepcount
                             });
                         console.log("Peptide count", pepcount);
+                        full_peptide_list = full_peptide_list.concat(digests)
                     }
-                    
-                    // console.log("self.digestsByProtease", self.digestsByProtease);
-                    self.set('digestsByProtease', protease_data);
-                
+                    full_peptide_list = full_peptide_list.filter(function(item, pos, self) {
+                        return self.indexOf(item) == pos;
+                    })
+                    console.log('uniq peptide list submitted to pepx : ',full_peptide_list.length);
+                    var peplist_to_str = full_peptide_list.join(",");
+                    console.log("char count : " + peplist_to_str.length);
+                    self.nx.getEntryforPeptide(peplist_to_str).then(function(data){
+                        console.log("pepx response data length", data.length)
+                        console.log(data)
+                        var new_pep_map = self._createPeptideMap(data);
+                        console.log('new_pep_map',new_pep_map)
+
+                        for(var i=0; i < protease_data.length;i++){
+                            var uniq_count = 0;
+                            protease_data[i].peptide_list.forEach(function(peptide){
+                                if (new_pep_map[peptide].uniqueness) uniq_count +=1;
+                            })
+                            protease_data[i]['unique_peptide_count'] = uniq_count;
+                        }
+                        console.log("new version of protease_data : ",protease_data);
+                        
+                        self.set('digestsByProtease', protease_data);  
+                    })
                 })
+            },
+            _createPeptideMap: function(data){
+                var pepMap = {}
+                data.forEach(function(el){
+                    el.annotationsByCategory["pepx-virtual-annotation"].forEach(function(pep){
+                        if(!pepMap.hasOwnProperty(pep.cvTermName)){
+                            pepMap[pep.cvTermName] = {
+                                'entries': [el.uniqueName],
+                                'uniqueness': pep.properties.filter(function(pp){return pp.name === "peptide unicity"})[0].value === "UNIQUE"
+                            }
+                        }
+                        else{
+                            pepMap[pep.cvTermName].entries.push(el.uniqueName);
+                        }
+                    });
+                });
+                return pepMap;
+            },
+            _peptidesList: function(){
+                console.log("Protease name :",this.protease);
+                console.log("Entry name :",this.entryName);
+                console.log("Peptides list", this.digestsByProtease);
+                var results = this.digestsByProtease.filter(
+                    (a) => a.name == this.protease
+                )[0].peptide_list;
+                console.log("results",results);
             },
         });
 
