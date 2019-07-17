@@ -5,8 +5,11 @@
 <link rel="import" href="evidence-item.html">
 <link rel="import" href="quality-label.html">
 <link rel="import" href="heatmap-table-row.html">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="../nextprot/src/nextprot-core.js"></script>
 <script src="../nextprot/src/nextprot-utils.js"></script>
+
 <!-- <link rel="import" href="/nextprot-js/dataenzymes.html"> -->
 
 <!-- <script src="../../jquery/dist/jquery.js"></script>
@@ -27,25 +30,29 @@ Digestion overview
             <paper-input label="Enter primary Uniprot/neXtProt accession number, i.e NX_P50222-1" value={{entryName}}></paper-input>
             <paper-input  label="Max missed cleavages" auto-validate pattern="[0-3]*" error-message="Number of max missed cleaveages only between 0 and 3" value="{{maxmissedcleavages}}" ></paper-input>
             <paper-input label="Min peptide length" value="{{minPeptideSize}}"></paper-input>
+
             <paper-input label="Max peptide length" value="{{maxPeptideSize}}"></paper-input>
-            <input type="submit" name="Digest" value="DIGEST" on-click="_digestIsoform">
-            <input type="reset" name="reset" value="RESET">
+            <input type="reset" name="reset" value="RESET" style="float: right;">
+            <input type="submit" name="Digest" value="DIGEST" style="float: right;" on-click="_digestIsoform">
         </div>
         </div>
         <div>
             <h3> Digested peptides for each protease : </h3>
-                <table>
+            <table id="table" class="display" width="100%"></table>
+                <table border="1" width=100% class="display">
                     <thead>
                         <tr>
-                            <td> Protease name</td>
-                            <td> Peptide count</td>
-                            <td> Unique peptide count </td>
+                            <td> <b>Protease name</b></td>
+                            <td> <b>Peptide count</b></td>
+                            <td> <b> Unique peptide count </b></td>
                         </tr>
                     </thead>
                     <tbody>
-                            <template is="dom-repeat" items="{{digestsByProtease}}" as="dBP">
-
+                        <template is="dom-repeat" items="{{digestsByProtease}}" as="dBP">
                         <tr> 
+
+
+                            
                             <td>[[dBP.name]]</td>
                             <td>
                                 [[dBP.peptide_count]]
@@ -53,34 +60,83 @@ Digestion overview
                             <td>
                                 [[dBP.unique_peptide_count]]
                             </td>
-                            <!-- <td>
-                                <template is="dom-repeat" items="[[dBP.peptide_list]]" as="pep">
-                                    <span>[[pep]] , </span>
-                                </template>
-                            </td> -->
                         </tr>
+                        </template>
                     </tbody>
                 </table>
-                <h3> Select a protease : </h3>
-                <paper-input label="Select a protease" value="{{protease}}"></paper-input>    
-                <input type="submit" name="Digest" value="DIGEST" on-click="_peptidesList">  
-                <table>
+                <button class="btn" style="float: right;"><i class="fa fa-download"></i> Download as csv</button>
+
+            </div>
+            <div>
+                <paper-input label="Select a protease" value="{{protease}}"></paper-input>
+                <paper-dropdown-menu label="Select a protease"  on-iron-select="_onSportSelected">
+                    <paper-menu class="dropdown-content" selected="{{selectedSportIndex}}">
+                      <template is="dom-repeat" items="[[sports]]" as="sport">
+                        <paper-item>[[sport.name]]</paper-item>
+                      </template>
+                    </paper-menu>
+                  </paper-dropdown-menu>
+                <!-- <select label="Select a protease" value="{{protease}}">
+                    <option value="ARG_C">ARG_C</option>
+                    <option value="ASP_N">ASP_N</option>
+                    <option value="BNPS_SKATOLE">BNPS_SKATOLE</option>
+                    <option value="CASPASE_1">CASPASE_1</option>
+                    <option value="CASPASE_10">CASPASE_10</option>
+                    <option value="CASPASE_2">CASPASE_2</option>
+                    <option value="CASPASE_3">CASPASE_3</option>
+                    <option value="CASPASE_4">CASPASE_1</option>
+                    <option value="CASPASE_5">CASPASE_1</option>
+                    <option value="CASPASE_6">CASPASE_1</option>
+                    <option value="CASPASE_7">CASPASE_1</option>
+                    <option value="CASPASE_8">CASPASE_1</option>
+                    <option value="CASPASE_9">CASPASE_1</option>
+                    <option value="CHYMOTRYPSIN_FYL">CHYMOTRYPSIN_FYL</option>
+                    <option value="CHYMOTRYPSIN_FYLW">CHYMOTRYPSIN_FYLW</option>
+                    <option value="CHYMOTRYPSIN_HIGH_SPEC">CHYMOTRYPSIN_HIGH_SPEC</option>
+                    <option value="CHYMOTRYPSIN_LOW_SPEC">CHYMOTRYPSIN_LOW_SPEC</option>
+                    <option value="CNBR">CNBR</option>
+                    <option value="ENTEROKINASE">ENTEROKINASE</option>
+                    <option value="GLU_C_BICARBONATE">GLU_C_BICARBONATE</option>
+                    <option value="GLU_C_PHOSPHATE">GLU_C_PHOSPHATE</option>
+                    <option value="LYS_C">LYS_C</option>
+                    <option value="PEPSIN_PH_1_3">PEPSIN_PH_1_3</option>
+                    <option value="PEPSIN_PH_GT_2">PEPSIN_PH_GT_2</option>
+                    <option value="PROTEINASE_K">PROTEINASE_K</option>
+                    <option value="THERMOLYSIN">THERMOLYSIN</option>
+                    <option value="TRYPSIN">TRYPSIN</option>
+                  </select>  -->
+                <input type="submit" name="Digest" value="DIGEST" on-click="_peptidesList">
+            </div>
+            <div>
+                <table id="table_2" class="display" width="100%"></table>
+                    <table border="1" width=80% class="display">
                         <thead>
                             <tr>
-                                <td> Peptide sequence</td>
+                                <td> <b>Peptide sequence</b></td>
+                                <td> <b>Length</b></td>
+                                <td> <b>Position</b></td>
+                                <td> <b>Missed cleavages</b></td>
+                                <td> <b>Unique</b></td>
+                                <td> <b>Natural</b></td>
+                                <td> <b>Synthetic</b></td>
                             </tr>
                         </thead>
-                        <tbody>    
+                        <tbody>
+                            
+                            <template is="dom-repeat" items="{{peptides_data}}" as="PepD">
                             <tr> 
-                                <td></td>
-                            </tr>
+                                <td>[[PepD.sequence]]</td>
+                                <td>[[PepD.length]]</td>
+                            </tr> 
+                            </template>
                         </tbody>
                     </table>
-        </div>
+                </div>
+                <input type="submit" name="Digest" value="DIGEST" on-click="_peptidePosition">
             </template>
         </div>
+        </div>
     </template>
-
 
     <script>
         Polymer({
@@ -104,7 +160,7 @@ Digestion overview
                 },
                 entryName: {
                     type: String,
-                    value: "NX_P01308-1"
+                    value: "NX_P01308"
                 },
                 maxmissedcleavages: {
                     type: Number,
@@ -124,11 +180,19 @@ Digestion overview
                 },
                 protease:{
                     type: String,
-                    value:""
+                    value:"ARG_C"
                 },
                 results:{
                     type: Array,
                     value: []
+                },
+                peptides_data: {
+                    type: Array,
+                    value: []
+                },
+                new_pep_map:{
+                    type: Object,
+                    value:{}
                 }
             },
            
@@ -166,8 +230,7 @@ Digestion overview
                     this.promises.push(this._npClient.getJSON(url, "true"));
                 }
                 Promise.all(this.promises).then(function (results) {
-                    console.log("results", results);
-                    console.log("self.digestsByProtease", self.digestsByProtease);
+                    // console.log("results", results);
                     for (var i = 0; i < proteases.length; i++) {
                         var digests = results[i];
                         var pepcount = digests.length;
@@ -177,29 +240,29 @@ Digestion overview
                                 "peptide_list": digests,
                                 "peptide_count": pepcount
                             });
-                        console.log("Peptide count", pepcount);
+                        // console.log("Peptide count", pepcount);
                         full_peptide_list = full_peptide_list.concat(digests)
                     }
                     full_peptide_list = full_peptide_list.filter(function(item, pos, self) {
                         return self.indexOf(item) == pos;
                     })
-                    console.log('uniq peptide list submitted to pepx : ',full_peptide_list.length);
+                    console.log('Peptide list submitted to pepx : ',full_peptide_list.length);
                     var peplist_to_str = full_peptide_list.join(",");
-                    console.log("char count : " + peplist_to_str.length);
+                    // console.log("char count : " + peplist_to_str.length);
                     self.nx.getEntryforPeptide(peplist_to_str).then(function(data){
-                        console.log("pepx response data length", data.length)
-                        console.log(data)
-                        var new_pep_map = self._createPeptideMap(data);
-                        console.log('new_pep_map',new_pep_map)
+                        // console.log("pepx response data length", data.length)
+                        console.log("Entry for peptide", data);
+                        self.new_pep_map = self._createPeptideMap(data);
+                        console.log('new_pep_map',self.new_pep_map)
 
                         for(var i=0; i < protease_data.length;i++){
                             var uniq_count = 0;
                             protease_data[i].peptide_list.forEach(function(peptide){
-                                if (new_pep_map[peptide].uniqueness) uniq_count +=1;
+                                if (self.new_pep_map[peptide].uniqueness) uniq_count +=1;
                             })
                             protease_data[i]['unique_peptide_count'] = uniq_count;
                         }
-                        console.log("new version of protease_data : ",protease_data);
+                        console.log("Proteases with list of peptides and counts: ",protease_data);
                         
                         self.set('digestsByProtease', protease_data);  
                     })
@@ -212,7 +275,7 @@ Digestion overview
                         if(!pepMap.hasOwnProperty(pep.cvTermName)){
                             pepMap[pep.cvTermName] = {
                                 'entries': [el.uniqueName],
-                                'uniqueness': pep.properties.filter(function(pp){return pp.name === "peptide unicity"})[0].value === "UNIQUE"
+                                'uniqueness': pep.properties.filter(function(pp){return pp.name === "peptide unicity"})[0].value === "UNIQUE",
                             }
                         }
                         else{
@@ -222,17 +285,46 @@ Digestion overview
                 });
                 return pepMap;
             },
+
             _peptidesList: function(){
                 console.log("Protease name :",this.protease);
                 console.log("Entry name :",this.entryName);
-                console.log("Peptides list", this.digestsByProtease);
+                console.log("Peptides list", this.protease_data);
                 var results = this.digestsByProtease.filter(
-                    (a) => a.name == this.protease
-                )[0].peptide_list;
+                    (a) => a.name == this.protease)[0].peptide_list;
                 console.log("results",results);
+                var test = [];
+                for (var i = 0; i < results.length; i++) {
+                test.push(
+                            {
+                                "sequence": results[i],
+                                "length": results[i].length
+                            });       
+                }
+                this.peptides_data = test;
+                console.log("peptides_data", this.peptides_data)               
             },
-        });
 
+            _peptidePosition: function(){
+                console.log("new_pep_map2", this.new_pep_map);
+                var peptide_seq="GFF";
+                this.nx.getProteinSequence(this.entryName).then(function(data_seq){
+                    for (var i = 0; i < data_seq.length; i++) {
+                        var isoform_seq = data_seq[i].sequence
+                    }
+                    console.log("Isoform sequence :", isoform_seq);
+                })
+            },
+
+                // console.log(this.new_pep_map);
+                
+
+                // _getPosition: function(isoform_seq,peptide_seq){
+                //  var pos = isoform_seq.indexOf(peptide_seq)
+                //  console.log(pos);
+                // }
+    });
+    
     </script>
 </dom-module>
 
