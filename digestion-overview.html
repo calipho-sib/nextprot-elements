@@ -25,12 +25,10 @@ Digestion overview
     <template>
         <div id="isoform-digestion"></div>
         <div>
-            <!-- <template is="dom-if" if="[[digestByProtease.proteases]]"></template> -->
             <h2>Protein digestion tool </h2>
             <paper-input label="Enter primary Uniprot/neXtProt accession number, i.e NX_P50222-1" value={{entryName}}></paper-input>
             <paper-input  label="Max missed cleavages" auto-validate pattern="[0-3]*" error-message="Number of max missed cleaveages only between 0 and 3" value="{{maxmissedcleavages}}" ></paper-input>
             <paper-input label="Min peptide length" value="{{minPeptideSize}}"></paper-input>
-
             <paper-input label="Max peptide length" value="{{maxPeptideSize}}"></paper-input>
             <input type="reset" name="reset" value="RESET" style="float: right;">
             <input type="submit" name="Digest" value="DIGEST" style="float: right;" on-click="_digestIsoform">
@@ -50,9 +48,6 @@ Digestion overview
                     <tbody>
                         <template is="dom-repeat" items="{{digestsByProtease}}" as="dBP">
                         <tr> 
-
-
-                            
                             <td>[[dBP.name]]</td>
                             <td>
                                 [[dBP.peptide_count]]
@@ -115,7 +110,7 @@ Digestion overview
                                 <td> <b>Peptide sequence</b></td>
                                 <td> <b>Length</b></td>
                                 <td> <b>Position</b></td>
-                                <td> <b>Missed cleavages</b></td>
+                                <!-- <td> <b>Missed cleavages</b></td> -->
                                 <td> <b>Unique</b></td>
                                 <td> <b>Natural</b></td>
                                 <td> <b>Synthetic</b></td>
@@ -127,18 +122,20 @@ Digestion overview
                             <tr> 
                                 <td>[[PepD.sequence]]</td>
                                 <td>[[PepD.length]]</td>
+                                <td>[[PepD.position]]</td>
                             </tr> 
                             </template>
                         </tbody>
                     </table>
                 </div>
-                <input type="submit" name="Digest" value="DIGEST" on-click="_peptidePosition">
+                <input type="submit" name="Digest" value="DIGEST" on-click="_proteineSequence">
             </template>
         </div>
         </div>
     </template>
 
     <script>
+       
         Polymer({
             is: 'digestion-overview',
             properties: {
@@ -160,7 +157,7 @@ Digestion overview
                 },
                 entryName: {
                     type: String,
-                    value: "NX_P01308"
+                    value: "NX_P42167-1"
                 },
                 maxmissedcleavages: {
                     type: Number,
@@ -193,6 +190,14 @@ Digestion overview
                 new_pep_map:{
                     type: Object,
                     value:{}
+                },
+                isoform_seq:{
+                    type: String,
+                    value:""
+                },
+                peptides_positions:{
+                    type: Array,
+                    value:[]
                 }
             },
            
@@ -305,25 +310,51 @@ Digestion overview
                 console.log("peptides_data", this.peptides_data)               
             },
 
-            _peptidePosition: function(){
+            _proteineSequence: function(){
                 console.log("new_pep_map2", this.new_pep_map);
-                var peptide_seq="GFF";
+                var self =this;
                 this.nx.getProteinSequence(this.entryName).then(function(data_seq){
                     for (var i = 0; i < data_seq.length; i++) {
-                        var isoform_seq = data_seq[i].sequence
+                        self.isoform_seq = data_seq[i].sequence
                     }
-                    console.log("Isoform sequence :", isoform_seq);
+                    console.log("Isoform sequence :", self.isoform_seq);
+                    self._peptidePosition();
                 })
+                
             },
 
-                // console.log(this.new_pep_map);
-                
-
-                // _getPosition: function(isoform_seq,peptide_seq){
-                //  var pos = isoform_seq.indexOf(peptide_seq)
-                //  console.log(pos);
-                // }
+            _peptidePosition: function (){
+                var str=this.isoform_seq;
+                for (var pep in this.new_pep_map){
+                    console.log("Peptide:", pep);
+                    console.log("Isoform:", str)
+                    var result = str.indexOf(pep)+1;
+                    console.log("Début pos:",result);
+                    var position = result+pep.length; 
+                    console.log("Fin pos:",position);
+                    var peptide_position= result+"-"+position;
+                    console.log("peptide_position", peptide_position);
+               
+            }  
+            // var res=[];
+            //     res.push(
+            //         {
+            //             "position": this.peptide_position
+            //         }
+            //     )
+            //     this.peptides_positions=res;
+            //     console.log(this.peptides_positions);
+            }
     });
+
+    $(document).ready(function() {
+    $('#table').DataTable( {
+        data: this.protease_data,
+        columns: [
+            { title: "name" },
+        ],
+    } );
+    } );
     
     </script>
 </dom-module>
