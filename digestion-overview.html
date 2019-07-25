@@ -89,7 +89,7 @@ Digestion overview
                 },
                 entryName: {
                     type: String,
-                    value: "NX_P01308-1"
+                    value: ""
                 },
                 maxmissedcleavages: {
                     type: Number,
@@ -109,7 +109,7 @@ Digestion overview
                 },
                 protease:{
                     type: String,
-                    value:"TRYPSIN"
+                    value:""
                 },
                 results:{
                     type: Array,
@@ -171,34 +171,37 @@ Digestion overview
                 Promise.all(peptide_mapping_calls).then(function (peptide_nextprot) {
 
                     console.log("peptide_nextprot",peptide_nextprot);
-                    self.isoform_seq = peptide_nextprot[0][0];
+                    self.isoform_seq = peptide_nextprot[0].filter(function(iso){return iso.isoformAccession === self.entryName})[0];
                     var natural_pep=peptide_nextprot[1].annot;
                     var synthetic_pep=peptide_nextprot[2].annot;
                     console.log("peptide_natural",natural_pep)
                     console.log("peptide_synthetic",synthetic_pep)
-                    var peptide_mapping=[]                ;
+                    var peptide_mapping=[];
                     for (var i =0; i<natural_pep.length; i++){
-                        // var pep_pos = natural_pep[i];
-                        var key =natural_pep[i].targetingIsoformsMap[self.entryName].firstPosition+"-"+natural_pep[i].targetingIsoformsMap[self.entryName].lastPosition;
-                        if(peptide_mapping.hasOwnProperty(key)){
-                            peptide_mapping[key].natural = true;
-                        }
-                        else{
-                            peptide_mapping[key] = {
-                                "natural": true,
-                                "synthetic": false
+                        if(natural_pep[i].targetingIsoformsMap.hasOwnProperty(self.entryName)){
+                            var key =natural_pep[i].targetingIsoformsMap[self.entryName].firstPosition+"-"+natural_pep[i].targetingIsoformsMap[self.entryName].lastPosition;
+                            if(peptide_mapping.hasOwnProperty(key)){
+                                peptide_mapping[key].natural = true;
+                            }
+                            else{
+                                peptide_mapping[key] = {
+                                    "natural": true,
+                                    "synthetic": false
+                                }
                             }
                         }
                     }
                     for (var i =0; i<synthetic_pep.length; i++){
+                        if(synthetic_pep[i].targetingIsoformsMap.hasOwnProperty(self.entryName)){
                         var key =synthetic_pep[i].targetingIsoformsMap[self.entryName].firstPosition+"-"+synthetic_pep[i].targetingIsoformsMap[self.entryName].lastPosition;
-                        if(peptide_mapping.hasOwnProperty(key)){
-                            peptide_mapping[key].synthetic = true;
-                        }
-                        else{
-                            peptide_mapping[key] = {
-                                "natural": false,
-                                "synthetic": true
+                            if(peptide_mapping.hasOwnProperty(key)){
+                                peptide_mapping[key].synthetic = true;
+                            }   
+                            else{
+                                peptide_mapping[key] = {
+                                    "natural": false,
+                                    "synthetic": true
+                                }
                             }
                         }
                     }
@@ -333,7 +336,7 @@ Digestion overview
                     pep_data.push({
                         "sequence":pep_seqs[pep],
                         "position":peptide_position,
-                        "missed_cleavages": "< "+ this.maxmissedcleavages
+                        "missed_cleavages": "<= "+ this.maxmissedcleavages
                     })
                 }
                 return pep_data;
