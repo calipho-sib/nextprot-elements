@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="evidence-item.html">
+<link rel="import" href="quality-label.html">
+<link rel="import" href="heatmap-table-row.html">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="../nextprot/src/nextprot-core.js"></script>
+<script src="../nextprot/src/nextprot-utils.js"></script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css"/>
+ 
+
+<!-- <link rel="import" href="/nextprot-js/dataenzymes.html"> -->
+
+<!-- <script src="../../jquery/dist/jquery.js"></script>
+<script src="../../bootstrap/dist/js/bootstrap.js"></script> -->
+
+<!--
+`digestion-overview`
+Digestion overview
+@demo demo/digestion-overview-demo.html
+-->
+<dom-module id="digestion-overview">
+
+    <template>
+        <div id="isoform-digestion"></div>
+        <div>
+            <h2>Protein digestion tool </h2>
+            <paper-input label="Enter primary Uniprot/neXtProt accession number, i.e NX_P50222-1" value={{entryName}}></paper-input>
+            <paper-input  label="Max missed cleavages" auto-validate pattern="[0-3]*" error-message="Number of max missed cleaveages only between 0 and 3" value="{{maxmissedcleavages}}" ></paper-input>
+            <paper-input label="Min peptide length" value="{{minPeptideSize}}"></paper-input>
+            <paper-input label="Max peptide length" value="{{maxPeptideSize}}"></paper-input>
+            <input type="reset" name="reset" value="RESET" style="float: right;">
+            <input type="submit" name="Digest" value="DIGEST" style="float: right;" on-click="_digestIsoform">
+        </div>
+        </div>
+        <div>
+            <h3> Digested peptides for each protease : </h3>
+            <table id="table" class="display" width="100%"></table>
+                <table border="1" width=100% class="display">
+                        <template is="dom-repeat" items="{{digestsByProtease}}" as="dBP">
+                        </template>
+                </table>
+                <button class="btn" style="float: right;"><i class="fa fa-download"></i> Download as csv</button>
+
+            </div>
+            <div>
+                <paper-input label="Select a protease" value="{{protease}}"></paper-input>
+                <input type="submit" name="Digest" value="DIGEST" on-click="_peptidesList">
+            </div>
+            <div>
+                <table id="table_2" class="display" width="100%"></table>
+                    <table border="1" width=80% class="display">                            
+                            <template is="dom-repeat" items="{{peptides_data}}" as="PepD">
+                            </template>
+                    </table>
+                </div>
+                <!-- <input type="submit" name="Digest" value="DIGEST" on-click="_getUniquepeptides"> -->
+
+            </template>
+        </div>
+        </div>
+    </template>
+
+    <script>
+       
+        Polymer({
+            is: 'digestion-overview',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: { "env": "pro" }
+                },
+                dataloaded: {
+                    type: Boolean,
+                    observer: 'updateSpinnerStatus'
+                },
+                proteases: {
+                    type: Array,
+                    value: []
+                },
+                promises: {
+                    type: Array,
+                    value: []
+                },
+                entryName: {
+                    type: String,
+                    value: ""
+                },
+                maxmissedcleavages: {
+                    type: Number,
+                    value: '0',
+                },
+                minPeptideSize: {
+                    type: Number,
+                    value: '7'
+                },
+                maxPeptideSize: {
+                    type: Number,
+                    value: ''
+                },
+                protease_data: {
+                    type: Array,
+                    value: [],
+                },
+                protease:{
+                    type: String,
+                    value:""
+                },
+                results:{
+                    type: Array,
+                    value: []
+                },
+                peptides_data: {
+                    type: Array,
+                    value: []
+                },
+                new_pep_map:{
+                    type: Object,
+                    value:{}
+                },
+                isoform_seq:{
+                    type: String,
+                    value:""
+                },
+                peptide_mapping:{
+                    type: Array,
+                    value: []
+                }
+            },
+           
+            ready: function () {
+                this.nx = new Nextprot.Client("digestion", "Calipho Group");
+                this._initApiClient();
+                var self = this;
+                this._npClient.getJSON("/digestion/available-protease-list.json", "true")
+                    .then(function (proteases) {
+                        self.proteases = proteases;
+                    });
+            },
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtProt protein overview", "Calipho Group");
+
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+            },
+            _buildURL: function (entryName, maxmissedcleavages, minPeptideSize, maxPeptideSize, protease) {
+                var urladdress = "/digestion/" + entryName + ".json?protease=" + protease + "&minpeplen=" + minPeptideSize + "&maxpeplen=" + maxPeptideSize + "&maxmissedcleavages=" + maxmissedcleavages + "&digestmaturepartsonly=true";
+                return urladdress;
+            },
+            //test
+            _digestIsoform: function () {
+                console.log(this.entryName);
+                var full_peptide_list = [];
+                var proteases = this.proteases;
+
+                var self = this;
+                var protease_data = []
+                var protease_api_call=[]
+                var peptide_mapping_calls = []
+
+                peptide_mapping_calls.push(this.nx.getProteinSequence(this.entryName));
+                peptide_mapping_calls.push(this.nx.getAnnotationsByCategory(this.entryName,"peptide-mapping"));
+                peptide_mapping_calls.push(this.nx.getAnnotationsByCategory(this.entryName, "srm-peptide-mapping"));
+
+
+                Promise.all(peptide_mapping_calls).then(function (peptide_nextprot) {
+
+                    console.log("peptide_nextprot",peptide_nextprot);
+                    self.isoform_seq = peptide_nextprot[0].filter(function(iso){return iso.isoformAccession === self.entryName})[0];
+                    var natural_pep=peptide_nextprot[1].annot;
+                    var synthetic_pep=peptide_nextprot[2].annot;
+                    console.log("peptide_natural",natural_pep)
+                    console.log("peptide_synthetic",synthetic_pep)
+                    var peptide_mapping=[];
+                    for (var i =0; i<natural_pep.length; i++){
+                        if(natural_pep[i].targetingIsoformsMap.hasOwnProperty(self.entryName)){
+                            var key =natural_pep[i].targetingIsoformsMap[self.entryName].firstPosition+"-"+natural_pep[i].targetingIsoformsMap[self.entryName].lastPosition;
+                            if(peptide_mapping.hasOwnProperty(key)){
+                                peptide_mapping[key].natural = true;
+                            }
+                            else{
+                                peptide_mapping[key] = {
+                                    "natural": true,
+                                    "synthetic": false
+                                }
+                            }
+                        }
+                    }
+                    for (var i =0; i<synthetic_pep.length; i++){
+                        if(synthetic_pep[i].targetingIsoformsMap.hasOwnProperty(self.entryName)){
+                        var key =synthetic_pep[i].targetingIsoformsMap[self.entryName].firstPosition+"-"+synthetic_pep[i].targetingIsoformsMap[self.entryName].lastPosition;
+                            if(peptide_mapping.hasOwnProperty(key)){
+                                peptide_mapping[key].synthetic = true;
+                            }   
+                            else{
+                                peptide_mapping[key] = {
+                                    "natural": false,
+                                    "synthetic": true
+                                }
+                            }
+                        }
+                    }
+                    
+                    self.set('peptide_mapping', peptide_mapping); 
+                    console.log("peptide_mapping",peptide_mapping);
+
+                   
+                for (var i = 0; i < proteases.length; i++) {
+                    var protease = proteases[i];
+                    var url = self._buildURL(self.entryName, self.maxmissedcleavages, self.minPeptideSize, self.maxPeptideSize, protease);
+                    protease_api_call.push(self._npClient.getJSON(url, "true"));
+                }
+
+                Promise.all(protease_api_call).then(function (results) {
+                    for (var i = 0; i < proteases.length; i++) {
+                        var digests = results[i];
+                        var pepcount = digests.length;
+
+
+                        protease_data.push(
+                            {
+                                "name": proteases[i],
+                                "peptide_list": digests,
+                                "peptide_count": pepcount
+                            });
+                        // console.log("Peptide count", pepcount);
+                        full_peptide_list = full_peptide_list.concat(digests)
+                    }
+                    full_peptide_list = full_peptide_list.filter(function(item, pos, self) {
+                        return self.indexOf(item) == pos;
+                    })
+                    console.log('Peptide list submitted to pepx : ',full_peptide_list.length);
+                    var peplist_to_str = full_peptide_list.join(",");
+                    // console.log("char count : " + peplist_to_str.length);
+                    self.nx.getEntryforPeptide(peplist_to_str).then(function(data){
+                        // console.log("pepx response data length", data.length)
+                        console.log("Entry for peptide", data);
+                        self.new_pep_map = self._createPeptideMap(data);
+                        console.log('new_pep_map',self.new_pep_map)
+
+                        for(var i=0; i < protease_data.length;i++){
+                            var uniq_count = 0;
+                            protease_data[i].peptide_list.forEach(function(peptide){
+                                if (self.new_pep_map[peptide].uniqueness) uniq_count +=1;
+                            })
+                            protease_data[i]['unique_peptide_count'] = uniq_count;
+                        }
+                        console.log("Proteases with list of peptides and counts: ",protease_data);
+                        
+                        self.set('digestsByProtease', protease_data); 
+                        $(document).ready(function() {
+                            console.log("protease_data",protease_data)
+                            $('#table').DataTable( {
+                                data: protease_data,
+                                columns: [
+                                    { data: 'name', title:'Protease name' },
+                                    { data: 'peptide_count', title:'Peptide count' },
+                                    { data: 'unique_peptide_count', title:'Unique peptide count' }
+                                ],    
+                                buttons: [
+                                    'csv'
+                                ]         
+                            } );
+                            } );
+                    })   
+                
+                
+            }) 
+             
+        }) 
+            },
+            _createPeptideMap: function(data){
+                var pepMap = {}
+                data.forEach(function(el){
+                    el.annotationsByCategory["pepx-virtual-annotation"].forEach(function(pep){
+                        if(!pepMap.hasOwnProperty(pep.cvTermName)){
+                            pepMap[pep.cvTermName] = {
+                                'entries': [el.uniqueName],
+                                'uniqueness': pep.properties.filter(function(pp){return pp.name === "peptide unicity"})[0].value === "UNIQUE",
+                            }
+                        }
+                        else{
+                            pepMap[pep.cvTermName].entries.push(el.uniqueName);
+                        }
+                    });
+                });
+                return pepMap;
+            },
+
+            _peptidesList: function(){
+                console.log("Protease name :",this.protease);
+                console.log("Entry name :",this.entryName);
+                var results = this.digestsByProtease.filter(
+                    (a) => a.name == this.protease)[0].peptide_list;
+                console.log("results",results);
+                
+                var pep_data = this._getPeptidesPosition(results);
+                for (var i = 0; i < pep_data.length; i++) {
+                    pep_data[i]["length"] = pep_data[i].sequence.length;
+                    pep_data[i]["uniqueness"]= this.new_pep_map[pep_data[i].sequence].uniqueness ? "Yes" : "No";
+                    pep_data[i]["natural"]= this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].natural ? "Yes" : "No";
+                    pep_data[i]["synthetic"]=this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].synthetic ? "Yes" : "No";     
+                }
+                var self=this;
+                console.log("result of getpeptidePosition", pep_data);
+                $(document).ready(function() {
+                    $('#table_2').DataTable( {
+                        data: pep_data,
+                        columns: [
+                            { data: 'sequence', title:'Peptide sequence' },
+                            { data: 'length', title:'Length' },
+                            { data:'missed_cleavages', title: 'Missed cleavages'},
+                            { data: 'position', title:'Position'},
+                            { data: 'uniqueness', title: 'Unique without variants'},
+                            { data: 'natural', title: 'Natural'},
+                            { data: 'synthetic', title: 'Synthetic'},
+                        ],                     
+                    } );
+                } );   
+            },
+
+            _getPeptidesPosition: function(pep_seqs){
+                var pep_data = [];
+                console.log("Isoform sequence :", this.isoform_seq);
+                console.log("peptides list for 1 enzyme",pep_seqs)
+
+                for (var pep in pep_seqs){
+                    var position_first = this.isoform_seq.sequence.indexOf(pep_seqs[pep])+1;
+                    var position_last = position_first+pep_seqs[pep].length-1; 
+                    var peptide_position= position_first+"-"+position_last;
+                    pep_data.push({
+                        "sequence":pep_seqs[pep],
+                        "position":peptide_position,
+                        "missed_cleavages": "<= "+ this.maxmissedcleavages
+                    })
+                }
+                return pep_data;
+            },
+            _getUniquepeptides: function(){
+            }
+    });
+
+    </script>
+</dom-module>
+
+</html>
