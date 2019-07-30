@@ -11,24 +11,6 @@
 <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script> -->
 
-<<<<<<< HEAD
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"/>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css"/>
-
-<link rel="stylesheet" type="text/js" href="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"/>
-<link rel="stylesheet" type="text/js" href="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"/>
-<link rel="stylesheet" type="text/js" href="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"/>
-<link rel="stylesheet" type="text/js" href="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"/>
-<link rel="stylesheet" type="text/js" href="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"/>
-<link rel="stylesheet" type="text/js" href="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"/>
-<link rel="stylesheet" type="text/js" href="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"/>
- 
-=======
-<!-- <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css"/>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css"/> -->
->>>>>>> 116d033004cdc3d7cc61f37b22c7aad7b02540df
-
 <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"/>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css"/> -->
 
@@ -148,36 +130,14 @@ Digestion overview
         }
     </style>
     <template>
-<<<<<<< HEAD
-        <div id="isoform-digestion"></div>
-        <div>
-            <h2>Protein digestion tool </h2>
-            <div class="description" style="font-size:18px; display:inline-block; text-align: center; font-style: italic; font-weight: 300">
-            The protein digestion tool allowed scientists for their proteomic experiments by predicting peptides sequences after enzymatic digestion with parameters (missed cleavages, unicity).
-            </div>
-            <hr id="separationLine" class="" style="margin:15px 0px 15px;">
-            <paper-input label="Enter primary Uniprot/neXtProt accession number, i.e NX_P50222-1" value={{entryName}}></paper-input>
-            <paper-input  label="Max missed cleavages" auto-validate pattern="[0-3]*" error-message="Number of max missed cleaveages only between 0 and 3" value="{{maxmissedcleavages}}" ></paper-input>
-            <paper-input label="Min peptide length" value="{{minPeptideSize}}"></paper-input>
-            <paper-input label="Max peptide length" value="{{maxPeptideSize}}"></paper-input>
-            <input type="reset" name="reset" value="RESET" style="float: right;" on-click="_resetValues">
-            <input type="submit" name="Digest" value="DIGEST" style="float: right;" on-click="_digestIsoform">
-        </div>
-        </div>
-        <div>
-            <h3> Digested peptides for each protease : </h3>
-            <table id="table" class="display" width="100%"></table>
-                <table border="1" width=100% class="display">
-                        <template is="dom-repeat" items="{{digestsByProtease}}" as="dBP">
-                        </template>
-                </table>
-                <!-- <button class="btn" style="float: right;"><i class="fa fa-download"></i> Download as csv</button> -->
-=======
->>>>>>> 116d033004cdc3d7cc61f37b22c7aad7b02540df
 
         <!-- <div id="isoform-digestion"></div> -->
         <div id="isoform-digestion">
             <h1>Protein digestion tool </h1>
+            <div class="description" style="font-size:18px; display:inline-block; text-align: center; font-style: italic; font-weight: 300">
+            The protein digestion tool allowed scientists for their proteomic experiments by predicting peptides sequences after enzymatic digestion with parameters (missed cleavages, unicity).
+            </div>
+            <hr id="separationLine" class="" style="margin:15px 0px 15px;">
             <div id="first-form">
                 <div class="form-container">
                     <paper-input style="flex-grow:7"
@@ -473,52 +433,7 @@ Digestion overview
 
 
                     })
-<<<<<<< HEAD
-                    console.log('Peptide list submitted to pepx : ',full_peptide_list.length);
-                    var peplist_to_str = full_peptide_list.join(",");
-                    // console.log("char count : " + peplist_to_str.length);
-                    self.nx.getEntryforPeptide(peplist_to_str).then(function(data){
-                        // console.log("pepx response data length", data.length)
-                        console.log("Entry for peptide", data);
-                        self.new_pep_map = self._createPeptideMap(data);
-                        console.log('new_pep_map',self.new_pep_map)
-
-                        for(var i=0; i < protease_data.length;i++){
-                            var uniq_count = 0;
-                            protease_data[i].peptide_list.forEach(function(peptide){
-                                if (self.new_pep_map[peptide].uniqueness) uniq_count +=1;
-                            })
-                            protease_data[i]['unique_peptide_count'] = uniq_count;
-                        }
-                        console.log("Proteases with list of peptides and counts: ",protease_data);
-                        
-                        self.set('digestsByProtease', protease_data); 
-                        $(document).ready(function() {
-                            console.log("protease_data",protease_data)
-                            $('#table').DataTable( {
-                                data: protease_data,
-                                select: 'single',
-                                columns: [
-                                    { data: 'name', title:'Protease name' },
-                                    { data: 'peptide_count', title:'Peptide count' },
-                                    { data: 'unique_peptide_count', title:'Unique peptide count' }
-                                ],    
-                                buttons: [
-                                    'copy', 'csv', 'excel', 'pdf', 'print'
-                                ]
-                            } );  
-                            $('#table tbody').on( 'click', 'tr', function () {
-                            alert(table.row(this).data());
-                            } );
-                        } );
-                    }) 
-            }) 
-             
-        }) 
-=======
-
                 })
->>>>>>> 116d033004cdc3d7cc61f37b22c7aad7b02540df
             },
             _updateProteaseSelected: function (protease_indexes) {
                 var self = this;
@@ -574,7 +489,6 @@ Digestion overview
                         ],
                         data: pep_data,
                         columns: [
-<<<<<<< HEAD
                             { data: 'sequence', title:'Peptide sequence' },
                             { data: 'length', title:'Length' },
                             { data:'missed_cleavages', title: 'Missed cleavages'},
@@ -596,19 +510,7 @@ Digestion overview
                     //     NULL, NULL, NULL, NULL,
                     //     table(search = '["automatic"]')
                     // ))
-                } );   
-=======
-                            { data: 'sequence', title: 'Peptide sequence' },
-                            { data: 'length', title: 'Length' },
-                            { data: 'missed_cleavages', title: 'Missed cleavages' },
-                            { data: 'position', title: 'Position' },
-                            { data: 'uniqueness', title: 'Unique without variants' },
-                            { data: 'natural', title: 'Natural' },
-                            { data: 'synthetic', title: 'Synthetic' },
-                        ],
-                    });
-                });
->>>>>>> 116d033004cdc3d7cc61f37b22c7aad7b02540df
+                } );  
             },
 
             _getPeptidesPosition: function (pep_seqs) {
