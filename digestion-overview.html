@@ -30,7 +30,6 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
 <script type="text/javascript"
     src="https://cdn.datatables.net/v/bs-3.3.7/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/sl-1.3.0/datatables.min.js"></script>
-
 <style>
 #table.dataTable tbody tr.selected,#table.dataTable tbody tr.selected td {
     color: white;
@@ -134,6 +133,9 @@ Digestion overview
         <!-- <div id="isoform-digestion"></div> -->
         <div id="isoform-digestion">
             <h1>Protein digestion tool </h1>
+            <div class="documentation" style="font-size:15px; display:inline-block; font-weight: 300">
+                <a href="https://www.nextprot.org/help/protein-digestion" target="_blank"> The documentation of this tool is available on this link</a>
+            </div>
             <div class="description" style="font-size:18px; display:inline-block; text-align: center; font-style: italic; font-weight: 300">
             The protein digestion tool allowed scientists for their proteomic experiments by predicting peptides sequences after enzymatic digestion with parameters (missed cleavages, unicity).
             </div>
@@ -141,18 +143,19 @@ Digestion overview
             <div id="first-form">
                 <div class="form-container">
                     <paper-input style="flex-grow:7"
-                        label="Enter primary Uniprot/neXtProt accession number, i.e NX_P50222-1" value={{entryName}}
+                        label="Enter primary neXtProt accession number, i.e NX_P50222-1" value={{entryName}}
                         always-float-label></paper-input>
-                    <paper-input style="flex-grow:1" label="Max missed cleavages" auto-validate pattern="[0-3]*"
+                    <paper-input style="flex-grow:1" label="Max missed cleavages" type=number min=0 max=3
                         error-message="Number of max missed cleaveages only between 0 and 3"
                         value="{{maxmissedcleavages}}" always-float-label></paper-input>
-                    <paper-input style="flex-grow:1" label="Min peptide length" value="{{minPeptideSize}}"
-                        always-float-label></paper-input>
-                    <paper-input style="flex-grow:1" label="Max peptide length" value="{{maxPeptideSize}}"
+                    <paper-input style="flex-grow:1" label="Min peptide length" type=number min=7
+                    error-message="Minimum peptide size is 7"
+                    value="{{minPeptideSize}}" always-float-label></paper-input>
+                    <paper-input style="flex-grow:1" label="Max peptide length" type=number min={{minPeptideSize}} value="{{maxPeptideSize}}"
                         always-float-label></paper-input>
                     <!-- </div>
             <div style="float:right"> -->
-                    <paper-button raised class="custom blue">RESET</paper-button>
+                    <paper-button raised class="custom blue" on-click="_resetValues">RESET</paper-button>
                     <paper-button raised class="custom blue" on-click="_digestIsoform">DIGEST</paper-button>
                 </div>
             </div>
@@ -176,14 +179,12 @@ Digestion overview
                     <div class="form-container">
                         <paper-input label="Select a protease" value="{{proteases_selected}}" always-float-label></paper-input>
                         <!-- <div> -->
+                        <paper-button raised class="custom blue" on-click="_resetProtease">RESET</paper-button>
                         <paper-button raised class="custom blue" on-click="_peptidesList">DIGEST</paper-button>
-                        <!-- </div> -->
-                        <!-- <input type="submit" name="Digest" value="DIGEST" on-click="_peptidesList"> -->
                     </div>
                     <div class="table-container">
                         <table id="table_2" class="table table-striped table-bordered table-condensed" width="100%">
-                    </div>
-                    <!-- <input type="submit" name="Digest" value="DIGEST" on-click="_getUniquepeptides"> -->
+                    </div>  
                 </div>
             </template>
         </div>
@@ -212,7 +213,7 @@ Digestion overview
                 },
                 entryName: {
                     type: String,
-                    value: "NX_P01308-1"
+                    value: ""
                 },
                 maxmissedcleavages: {
                     type: Number,
@@ -276,12 +277,13 @@ Digestion overview
                 var urladdress = "/digestion/" + entryName + ".json?protease=" + protease + "&minpeplen=" + minPeptideSize + "&maxpeplen=" + maxPeptideSize + "&maxmissedcleavages=" + maxmissedcleavages + "&digestmaturepartsonly=true";
                 return urladdress;
             },
-            //test
             _resetValues: function(){
                 this.entryName="";
                 this.maxmissedcleavages=0;
                 this.minPeptideSize=7;
                 this.maxPeptideSize="";
+            },
+            _resetProtease: function(){
             },
             _digestIsoform: function () {
                 console.log(this.entryName);
@@ -376,7 +378,8 @@ Digestion overview
                             for (var i = 0; i < protease_data.length; i++) {
                                 var uniq_count = 0;
                                 protease_data[i].peptide_list.forEach(function (peptide) {
-                                    if (self.new_pep_map[peptide].uniqueness) uniq_count += 1;
+                                    if (self.new_pep_map[peptide].uniqueness !== "NOT_UNIQUE") uniq_count += 1;
+
                                 })
                                 protease_data[i]['unique_peptide_count'] = uniq_count;
                             }
@@ -402,6 +405,9 @@ Digestion overview
                                         { data: 'peptide_count', title: 'Peptide count' },
                                         { data: 'unique_peptide_count', title: 'Unique peptide count' }
                                     ],
+                                    scrollY:        300 ,
+                                    scrollCollapse: true,
+                                    paging:         false,
                                     columnDefs: [{
                                         orderable: false,
                                         className: 'select-checkbox',
@@ -449,9 +455,10 @@ Digestion overview
                 data.forEach(function (el) {
                     el.annotationsByCategory["pepx-virtual-annotation"].forEach(function (pep) {
                         if (!pepMap.hasOwnProperty(pep.cvTermName)) {
+                            var uniqueness = pep.properties.filter(function (pp) { return pp.name === "peptide unicity" })[0].value;
                             pepMap[pep.cvTermName] = {
                                 'entries': [el.uniqueName],
-                                'uniqueness': pep.properties.filter(function (pp) { return pp.name === "peptide unicity" })[0].value === "UNIQUE",
+                                'uniqueness':  uniqueness
                             }
                         }
                         else {
@@ -468,17 +475,65 @@ Digestion overview
                 var results = this.digestsByProtease.filter(
                     (a) => a.name == this.proteases_selected)[0].peptide_list;
                 console.log("results", results);
-
                 var pep_data = this._getPeptidesPosition(results);
                 for (var i = 0; i < pep_data.length; i++) {
+                    pep_data[i]["link"]= this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].natural ? ('See details in peptide view'.link('https://www.nextprot.org/entry/'+ this.entryName + '/peptides')) :  this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].synthetic ? "See details in peptide view".link('https://www.nextprot.org/entry/'+ this.entryName + '/peptides'):"";
                     pep_data[i]["length"] = pep_data[i].sequence.length;
-                    pep_data[i]["uniqueness"] = this.new_pep_map[pep_data[i].sequence].uniqueness ? "Yes" : "No";
+                    pep_data[i]["uniqueness"] = this.new_pep_map[pep_data[i].sequence].uniqueness === "UNIQUE" ? "Yes" : this.new_pep_map[pep_data[i].sequence].uniqueness === "PSEUDO_UNIQUE" ? "PSEUDO_UNIQUE" : "No";
                     pep_data[i]["natural"] = this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].natural ? "Yes" : "No";
                     pep_data[i]["synthetic"] = this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].synthetic ? "Yes" : "No";
                 }
                 var self = this;
                 console.log("result of getpeptidePosition", pep_data);
+
+                $.fn.dataTable.ext.search.push(
+                    function( settings, data, dataIndex ) {
+                        var min = parseInt( $('#min').val(), 10 );
+                        var max = parseInt( $('#max').val(), 10 );
+                        var age = parseFloat( data[5] ) || 0; // use data for the age column
+                
+                        if ( ( isNaN( min ) && isNaN( max ) ) ||
+                            ( isNaN( min ) && age <= max ) ||
+                            ( min <= age   && isNaN( max ) ) ||
+                            ( min <= age   && age <= max ) )
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
+                );
+                
+                $(document).ready(function() {
+                    var table = $('#example').DataTable();
+                    
+                    // Event listener to the two range filtering inputs to redraw on input
+                    $('#min, #max').keyup( function() {
+                        table.draw();
+                    } );
+                } );
+
                 $(document).ready(function () {
+                    $.fn.dataTableExt.oSort["test-desc"] = function (x, y)
+                        {
+                            var x = parseInt(x.split('-')[0]);
+                            var y = parseInt(y.split('-')[0]);
+                            if ( x > y)
+                            {
+                                return -1;
+                            }
+                            return 1;
+                        };
+                        $.fn.dataTableExt.oSort["test-asc"] = function (x, y)
+                        {
+                            var x = parseInt(x.split('-')[0]);
+                            var y = parseInt(y.split('-')[0]);
+                            if ( x > y)
+                            {
+                                return 1;
+                            }
+                            return -1;
+                        }
+                        
                     $('#table_2').DataTable({
                         dom: "<'row firstHeadTable'<'col-md-12'B>>" +
                             "<'row secondHeadTable'<'col-sm-3 col-md-4'i><'col-sm-6 pull-right'f>>" +
@@ -489,6 +544,7 @@ Digestion overview
                         ],
                         data: pep_data,
                         columns: [
+                            { data: 'link', title: 'Link to neXtProt'},                    
                             { data: 'sequence', title:'Peptide sequence' },
                             { data: 'length', title:'Length' },
                             { data:'missed_cleavages', title: 'Missed cleavages'},
@@ -497,27 +553,21 @@ Digestion overview
                             { data: 'natural', title: 'Natural'},
                             { data: 'synthetic', title: 'Synthetic'},
                         ], 
-                        "order" :[[3,"asc"]], 
+                        "order" :[[4,"asc"]], 
                         buttons: [
                             'copy', 'csv', 'excel', 'pdf', 'print'
+                        ],
+                        "columnDefs": [
+                            { "type": "test", targets: 4 },
+                            { width: 200, targets:1}
                         ]
                     } );
-                    // test for range filters but it doesnt work 
-                    // filter = table(position = 'top', clear = false),
-                    // options = table(pageLength = 5, searchCols = table(
-                    //     table(search = ''),
-                    //     table(search = ''),
-                    //     NULL, NULL, NULL, NULL,
-                    //     table(search = '["automatic"]')
-                    // ))
                 } );  
             },
-
             _getPeptidesPosition: function (pep_seqs) {
                 var pep_data = [];
                 console.log("Isoform sequence :", this.isoform_seq);
                 console.log("peptides list for 1 enzyme", pep_seqs)
-
                 for (var pep in pep_seqs) {
                     var position_first = this.isoform_seq.sequence.indexOf(pep_seqs[pep]) + 1;
                     var position_last = position_first + pep_seqs[pep].length - 1;
@@ -530,9 +580,7 @@ Digestion overview
                 }
                 return pep_data;
             },
-            _getUniquepeptides: function () {
-            }
-        });
+        });           
 
     </script>
 </dom-module>
