@@ -370,7 +370,7 @@ Digestion overview
                     alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1");
                     return false; 
                 }
-                if (this.isoformAC[0] !== "N" & this.isoformAC[1] !== "X" & this.isoformAC[3] !== "P" & this.isoformAC[3] !== "Q" ){
+                if (this.isoformAC[0] !== "N" & this.isoformAC[1] !== "X" & this.isoformAC[3] !== "P" & this.isoformAC[3] !== "Q" & this.isoformAC[3] !== "O" ){
                     alert("The isoform accession number is false");
                     return false; 
                 }
@@ -775,8 +775,6 @@ Digestion overview
                     })
                 }
                 return pep_data;
-            },
-            _getUniquepeptides: function () {
             },
             _updateSpinnerStatus: function(show) {
                 if (show) {
