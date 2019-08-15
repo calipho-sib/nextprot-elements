@@ -271,21 +271,21 @@ Digestion overview
             <hr id="separationLine" class="" style="margin:15px 0px 15px;">
             <div id="first-form">
                 <div class="form-container">
-                    <paper-input style="flex-grow:7" 
+                    <paper-input id="nxIso" style="flex-grow:7" 
                         label="Enter neXtProt isoform accession number, i.e NX_P50222-1" value={{isoformAC}}
-                        always-float-label required >
+                        always-float-label required auto-validate="true" pattern=".+-[0-9]+$" error-message="This is not a neXtProt isoform">
                     </paper-input>
                 </div>
                 <div class="form-container">
-                    <paper-input style="flex-grow:1" label="Max missed cleavages" type=number min=0 max=3
+                    <paper-input id="maxMisCleav" style="flex-grow:1" label="Max missed cleavages" type=number min=0 max=3
                         error-message="Number of max missed cleaveages only between 0 and 3"
-                        value="{{maxmissedcleavages}}" always-float-label></paper-input>
-                    <paper-input style="flex-grow:1" label="Min peptide length" type=number min=7
+                        value="{{maxmissedcleavages}}" always-float-label error-message="NOOOOOOO" auto-validate="true"></paper-input>
+                    <paper-input id="minPepLen" style="flex-grow:1" label="Min peptide length" type=number min=7
                     error-message="Minimum peptide size is 7"
-                    value="{{minPeptideSize}}" always-float-label></paper-input>
-                    <paper-input 
+                    value="{{minPeptideSize}}" always-float-label auto-validate="true"></paper-input>
+                    <paper-input id="maxPepLen"
                     style="flex-grow:1" label="Max peptide length" type=number min={{minPeptideSize}} value="{{maxPeptideSize}}"
-                        always-float-label></paper-input>
+                        always-float-label auto-validate="true" error-message="Max length should be more than min length"></paper-input>
                     <paper-button raised class="custom nextprot" on-click="_resetValues">Reset</paper-button>
                     <paper-button raised class="custom nextprot" on-click="_digestIsoform">Digest</paper-button>
                 </div>
@@ -395,7 +395,6 @@ Digestion overview
                 return urladdress;
             },
             _resetValues: function(){
-                this.isoformAC="NX_P46976-1";
                 this.maxmissedcleavages=0;
                 this.minPeptideSize=7;
                 this.maxPeptideSize="";
@@ -431,7 +430,26 @@ Digestion overview
                 }
                 return true;
             },
+            _validateForm: function(){
+                var self = this;
+                var validator = true;
+                var inputs = ["maxMisCleav","minPepLen","maxPepLen"];
+                inputs.forEach(function(inp){
+                    var valid = self.$[inp].validate();
+                    if(!valid) validator = false;
+                })
+                return validator;
+            },
             _digestIsoform: function () {
+
+                this._resetValues();
+
+                var validator = this._validateForm();
+                if(!validator){
+                    console.log("validator is NOT HAPPY!! è_é")
+                    return;
+                }
+
                 if (!this._validateInput()){
                     console.log("if: "+this.isoformAC);
                     return; 
@@ -827,7 +845,6 @@ Digestion overview
                         return -1;
                     }
                     d2_table = $('#table_2').DataTable({
-                        bFilter: false,
                         retreive:true,
                         deferRender: true,
                         processing: true,
