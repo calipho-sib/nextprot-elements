@@ -334,7 +334,7 @@ Digestion overview
                 },
                 isoformAC: {
                     type: String,
-                    value: "NX_P01308-1"
+                    value: ""
                 },
                 maxmissedcleavages: {
                     type: Number,
@@ -418,13 +418,16 @@ Digestion overview
                     alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1"); 
                     return false; 
                 }
-                if (this.isoformAC.length !== 11){
+                if (this.isoformAC.length !== 11 && this.isoformAC!==9){
                     alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1");
                     return false; 
                 }
-                if (this.isoformAC[0] !== "N" & this.isoformAC[1] !== "X" & this.isoformAC[3] !== "P" & this.isoformAC[3] !== "Q" & this.isoformAC[3] !== "O" ){
-                    alert("The isoform accession number is false");
-                    return false; 
+                // if (this.isoformAC[0] !== "N" & this.isoformAC[1] !== "X" & this.isoformAC[3] !== "P" & this.isoformAC[3] !== "Q" & this.isoformAC[3] !== "O" ){
+                //     alert("The isoform accession number is false");
+                //     return false; 
+                // }
+                if (this.isoformAC[0] !=="N" & this.isoformAC[1] !=="X" & this.isoformAC[2] !=="_"){
+                    this.isoformAC='NX_'+this.isoformAC; 
                 }
                 return true;
             },
@@ -877,39 +880,6 @@ Digestion overview
                 } ); 
             }); 
             },
-<<<<<<< HEAD
-=======
-            // _getPeptidesPosition: function (pep_seqs) {
-            //     console.log("Isoform sequence :", this.isoform_seq);
-            //     console.log("peptides list for 1 enzyme", pep_seqs)
-
-            //     for (var i=0;i<pep_seqs.length;i++) {
-            //         var position_first = this.isoform_seq.sequence.indexOf(pep_seqs[i].sequence) + 1;
-            //         var position_last = position_first + pep_seqs[i].sequence.length - 1;
-            //         pep_seqs["position"]= position_first + "-" + position_last;
-            //     }
-            //     return pep_seqs;
-            // },
-            // _getPeptidesPosition: function (pep_seqs) {
-            //     var pep_data = [];
-            //     console.log("Isoform sequence :", this.isoform_seq);
-            //     console.log("peptides list for 1 enzyme", pep_seqs)
-
-            //     for (var pep in pep_seqs) {
-            //         var position_first = this.isoform_seq.sequence.indexOf(pep_seqs[pep]) + 1;
-            //         var position_last = position_first + pep_seqs[pep].length - 1;
-            //         var peptide_position = position_first + "-" + position_last;
-            //         pep_data.push({
-            //             "sequence": pep_seqs[pep],
-            //             "position": peptide_position,
-            //             "missed_cleavages": parseInt(this.maxmissedcleavages)
-            //         })
-            //     }
-            //     return pep_data;
-            // },
-            _getUniquepeptides: function () {
-            },
->>>>>>> b0cfb58cdae73abcd0fc7006b7968c259e7c214a
             _updateSpinnerStatus: function(show) {
                 if (show) {
                     this.$.spinner.active = true;
