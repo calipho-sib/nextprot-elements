@@ -218,6 +218,19 @@ Digestion overview
             background-color: #C50063;
             color: white;
         }
+        a.nextprot-link{
+            text-decoration: none;
+            color: #C50063;
+        }
+        paper-button.peptideViewLink {
+            background-color: white;
+            color: #C50063;
+            padding:5px 10px;
+        }
+        paper-button iron-icon {
+            padding-right:5px;
+            font-size:12px;
+        }
 
         paper-button {
             padding: 5px;
@@ -293,6 +306,9 @@ Digestion overview
 
             <div style="text-align: center;margin-top:50px;"><paper-spinner-lite class="nextprot" id="spinner"></paper-spinner-lite></div>
             <template is="dom-if" if="[[digestsByProtease.length]]">
+                    <a class="nextprot-link" href="https://www.nextprot.org/entry/{{isoformAC}}/peptides" tabindex="-1" target="_blank">
+                        <paper-button raised class="custom peptideViewLink"><iron-icon icon="icons:line-style" slot="prefix"></iron-icon> See Peptide View</paper-button>
+                    </a>
                     <h3> DIGESTED PEPTIDES FOR EACH PROTEASE :</h3>
                 <div class="table-container">
                     <table id="table_1" class="table table-striped table-bordered table-condensed tableuno" width="100%">
@@ -326,7 +342,7 @@ Digestion overview
             properties: {
                 nxConfig: {
                     type: Object,
-                    value: { "env": "pro" }
+                    value: { "env": "dev" }
                 },
                 proteases: {
                     type: Array,
@@ -334,7 +350,7 @@ Digestion overview
                 },
                 isoformAC: {
                     type: String,
-                    value: ""
+                    value: "NX_P01308-1"
                 },
                 maxmissedcleavages: {
                     type: Number,
@@ -385,7 +401,7 @@ Digestion overview
             },
             _initApiClient: function () {
                 this._npClient = new Nextprot.Client("neXtProt protein overview", "Calipho Group");
-
+                this._npClient.updateEnvironment("dev");
                 if (this.nxConfig.env) {
                     this._npClient.updateEnvironment(this.nxConfig.env);
                 }
@@ -395,9 +411,9 @@ Digestion overview
                 return urladdress;
             },
             _resetValues: function(){
-                this.maxmissedcleavages=0;
-                this.minPeptideSize=7;
-                this.maxPeptideSize="";
+                // this.maxmissedcleavages=0;
+                // this.minPeptideSize=7;
+                // this.maxPeptideSize="";
                 this.show_protease_results = false;
                 this.set('digestsByProtease', []);
                 this.set('proteases_selected', "");
@@ -439,6 +455,24 @@ Digestion overview
                     if(!valid) validator = false;
                 })
                 return validator;
+            },
+
+            _getEntryforPeptidePOST: function (peptides, callback) {
+                var start = new Date().getTime();
+                console.log("number of peptides submitted for post : ",peptides.length);
+                // console.log(JSON.stringify(peptides));
+                $.ajax({
+                    url:"https://dev-api.nextprot.org/entries/search/peptide-post.json",
+                    type:"POST",
+                    data:JSON.stringify(peptides),
+                    contentType:"application/json",
+                    success: function(dd){
+                        var end = new Date().getTime();
+                        var time = end - start;
+                        console.log('Execution time: ' + time);
+                        callback(dd);
+                    }
+                })
             },
             _digestIsoform: function () {
 
@@ -519,9 +553,9 @@ Digestion overview
 
                 Promise.all(protease_api_call).then(function (results) {
                     for (var i = 0; i < proteases.length; i++) {
-                        var digests = results[i];
-                        var pepcount = digests.length;
-
+                            var digests = results[i];
+                            var peptides_result = digests.map(function(d){return d.sequence});
+                            var pepcount = peptides_result.length;
 
                             protease_data.push(
                                 {
@@ -529,14 +563,18 @@ Digestion overview
                                     "peptide_list": digests,
                                     "peptide_count": pepcount
                                 });
-                            full_peptide_list = full_peptide_list.concat(digests)
+                            full_peptide_list = full_peptide_list.concat(peptides_result)
                         }
                         full_peptide_list = full_peptide_list.filter(function (item, pos, self) {
                             return self.indexOf(item) == pos;
                         })
                         console.log('Peptide list submitted to pepx : ', full_peptide_list.length);
+                        // self._testPostMethod(full_peptide_list);
+
                         var peplist_to_str = full_peptide_list.join(",");
-                        self.nx.getEntryforPeptide(peplist_to_str).then(function (data) {
+                        console.log("peplist_to_str",peplist_to_str);
+                        // self.nx.getEntryforPeptide(peplist_to_str).then(function (data) {
+                        self._getEntryforPeptidePOST(full_peptide_list, function(data){
                             console.log("Entry for peptide", data);
                             self.new_pep_map = self._createPeptideMap(data);
                             console.log('new_pep_map', self.new_pep_map)
@@ -544,7 +582,7 @@ Digestion overview
                             for (var i = 0; i < protease_data.length; i++) {
                                 var uniq_count = 0;
                                 protease_data[i].peptide_list.forEach(function (peptide) {
-                                    if (self.new_pep_map[peptide].uniqueness !== "NOT_UNIQUE") uniq_count += 1;
+                                    if (self.new_pep_map[peptide.sequence].uniqueness !== "NOT_UNIQUE") uniq_count += 1;
                                 })
                                 protease_data[i]['unique_peptide_count'] = uniq_count;
                             }
@@ -680,7 +718,13 @@ Digestion overview
                     (a) => a.name == this.proteases_selected)[0].peptide_list;
                 console.log("results", results);
 
-                this._miscleavageComputation(results, this.proteases_selected,function(pep_data){
+                var pep_data = results.map(function(r){return {
+                    "sequence": r.sequence,
+                    "missed_cleavages" : r.producedWithMiscleavageCount
+                }})
+                console.log("pep_data",pep_data);
+
+                // this._miscleavageComputation(results, this.proteases_selected,function(pep_data){
                     // var pep_data = this._getPeptidesPosition(results);
                 
                 for (var i = 0; i < pep_data.length; i++) {
@@ -895,7 +939,7 @@ Digestion overview
 
                     self.updateStyles();
                 } ); 
-            }); 
+            // }); 
             },
             _updateSpinnerStatus: function(show) {
                 if (show) {
