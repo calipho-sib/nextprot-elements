@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html>
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="evidence-item.html">
+<link rel="import" href="quality-label.html">
+<link rel="import" href="heatmap-table-row.html">
+<link rel="import" href="paper-input-search.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<!-- <script src="../nextprot/src/nextprot-core.js"></script>
+<script src="../nextprot/src/nextprot-utils.js"></script> -->
+
+<link rel="stylesheet" type="text/css"
+    href="https://cdn.datatables.net/v/bs-3.3.7/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/sl-1.3.0/datatables.min.css" />
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script> -->
+<script type="text/javascript"
+    src="https://cdn.datatables.net/v/bs-3.3.7/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/sl-1.3.0/datatables.min.js"></script>
+
+    <!-- slider lib :  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.css" />
+<style>
+#table.dataTable tbody tr.selected,#table.dataTable tbody tr.selected td {
+    color: white;
+    background-color:#00780066;
+}
+.pagination>.active>a,
+.pagination>.active>a:focus,
+.pagination>.active>a:hover, 
+.pagination>.active>span,
+.pagination>.active>span:focus,
+.pagination>.active>span:hover {
+    background-color: #3FB8AF;
+}
+.pagination>li>a {
+    color: #3FB8AF;
+}
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover {
+    z-index: 3;
+    color: #fff;
+    cursor: default;
+    border-color: #3FB8AF;
+}
+#table_1 tfoot{
+    display: table-header-group;
+}
+#table_2 tfoot{
+    display: table-header-group;
+}
+th div.form-group, th div.form-group input.form-control{
+    width:100%;
+}
+.noUi-horizontal {
+    height: 14px;
+    margin-bottom:5px;
+}
+.noUi-horizontal .noUi-handle {
+    width: 22px;
+    height: 22px;
+    left: -17px;
+    top: -5px;
+}
+.noUi-handle:after, .noUi-handle:before {
+    height: 10px;
+    width: 1px;
+    left: 8px;
+    top: 5px;
+}
+.noUi-handle:after {
+    left: 12px;
+}
+.noUi-horizontal .noUi-tooltip {
+    -webkit-transform: translate(-50%,0);
+    transform: translate(-50%,0);
+    left: 50%;
+    bottom: 105%;
+}
+.noUi-tooltip {
+    display: block;
+    position: absolute;
+    border: none;
+    border-radius: 3px;
+    background:transparent;
+    color: #000;
+    padding: 0px;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 500;
+}
+#table_1.dataTable tbody tr.selected td {
+    color: white;
+    background-color: #3FB8AF;
+}
+#table_1.dataTable tbody tr.selected {
+    color: white;
+    background-color: transparent;
+}
+    .noUi-base .noUi-handle {
+        color: black;
+        display: table;
+        text-align: center;
+    }
+    .noUi-base .noUi-handle::before {
+    background: transparent;
+    content: attr(data-value);
+    display: table-cell;
+    font-size: 12px;
+    font-weight: 100;
+    position: static;
+    width: 100%;
+    vertical-align: middle;
+    }
+    .noUi-base .noUi-handle::after {
+        display: none;
+    }
+/* #table_2.dataTable tbody td:nth-child(8) {
+    text-align:center;
+}   */
+
+#table_2.dataTable thead th {
+    vertical-align:top;
+}  
+#table_2.dataTable tbody td {
+    text-align:center;
+}  
+#table_2.dataTable tbody td:nth-child(2),#table_2.dataTable tbody td:nth-child(3) {
+    text-align:right;
+}  
+
+#table_2.dataTable tbody td:nth-child(1) {
+  max-width: 220px;
+  word-break: break-all;
+  text-align: left;
+}  
+table.dataTable.tabledos tbody td:nth-child(1) {
+  max-width: 300px;
+  min-width: 200px;
+}   
+table.dataTable.tableuno tbody td:nth-child(1),table.dataTable.tableuno thead th:nth-child(1) {
+  width:20px;
+}  
+table.dataTable tfoot th{
+    vertical-align: bottom;
+}
+table.dataTable.table-condensed>tfoot>tr>th {
+    padding-right: 5px;
+}
+table.dataTable.table-condensed>tfoot>tr>th:nth-child(2),table.dataTable.table-condensed>tfoot>tr>th:nth-child(3) {
+    padding: 0px 20px 5px 10px;
+}
+.nxtooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.nxtooltip .nxtooltiptext {
+    visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  right: 110%;
+}
+
+.nxtooltip .nxtooltiptext::after {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  left: 100%; /* To the right of the tooltip */
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent black;
+}
+
+.nxtooltip:hover .nxtooltiptext {
+  visibility: visible;
+}
+table.table{
+    padding:0px;
+}
+table.table tbody tr td,table.table thead tr th{
+    height:auto;
+}
+</style>
+
+<!--
+`digestion-overview`
+Digestion overview
+@demo demo/digestion-overview-demo.html
+-->
+
+<dom-module id="digestion-overview">
+    <style>
+        :host {
+            margin: 10px;
+        }
+        #isoform-digestion{
+            margin:10px;
+        }
+
+        h1 {
+            font-family: "Helvetica Neue";
+            font-weight: 500;
+            font-size: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            font-family: 'Lato';
+            font-size: 16px;
+            font-weight: 700;
+            margin: 30px 10px;
+            text-align:left;
+        }
+
+        paper-button.nextprot {
+            background-color: #C50063;
+            color: white;
+        }
+        a.nextprot-link{
+            text-decoration: none;
+            color: #C50063;
+        }
+        paper-button.peptideViewLink {
+            background-color: white;
+            color: #C50063;
+            padding:5px 10px;
+            margin-left: 10px;
+        }
+        paper-button iron-icon {
+            padding-right:5px;
+            font-size:12px;
+        }
+
+        paper-button {
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        paper-input {
+            --paper-input-container-focus-color: #C50063;            
+        }
+        .table paper-input{
+            --paper-input-container-focus-color: #3FB8AF; 
+            --paper-input-container: {
+                padding:0px;
+            }
+        }
+
+        a {
+            text-decoration: none;
+            color: palevioletred;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            align-content: flex-end;
+            margin: 0px 10px;
+        }
+
+        .form-container paper-input {
+            margin: 0px 10px;
+            flex-grow: 1;
+        }
+
+        .table-container {
+            margin: 10px;
+        }
+
+        paper-spinner-lite.nextprot{
+            --paper-spinner-color: #C50063;
+        }
+        .description{
+            padding: 0px 100px;
+        }
+
+    </style>
+    <template>
+       <div id="isoform-digestion">
+            <h1>Protein digestion tool </h1>
+            <div class="description" style="font-size:18px; display:inline-block; text-align: center; font-style: italic; font-weight: 300">
+                The protein digestion tool allows scientists to determine which enzymes and experimental conditions would yield peptides that could be used to confidently identify a protein of interest.            </div>
+            <div class="documentation" style="font-size:15px; font-weight: 300; text-align:center;margin:20px 0px;">
+                <a href="https://www.nextprot.org/help/protein-digestion" target="_blank"> The documentation of this tool is available on this link</a>
+            </div>
+            <hr id="separationLine" class="" style="margin:15px 0px 15px;">
+            <div id="first-form">
+                <div class="form-container">
+                    <paper-input id="nxIso" style="flex-grow:7" 
+                        label="Enter neXtProt isoform accession number, i.e NX_P50222-1" value={{isoformAC}}
+                        always-float-label required auto-validate="true" pattern=".+-[0-9]+$" error-message="This is not a neXtProt isoform">
+                    </paper-input>
+                </div>
+                <div class="form-container">
+                    <paper-input id="maxMisCleav" style="flex-grow:1" label="Max missed cleavages" type=number min=0 max=3
+                        error-message="Number of max missed cleaveages only between 0 and 3"
+                        value="{{maxmissedcleavages}}" always-float-label error-message="NOOOOOOO" auto-validate="true"></paper-input>
+                    <paper-input id="minPepLen" style="flex-grow:1" label="Min peptide length" type=number min=7
+                    error-message="Minimum peptide size is 7"
+                    value="{{minPeptideSize}}" always-float-label auto-validate="true"></paper-input>
+                    <paper-input id="maxPepLen"
+                    style="flex-grow:1" label="Max peptide length" type=number min={{minPeptideSize}} value="{{maxPeptideSize}}"
+                        always-float-label auto-validate="true" error-message="Max length should be more than min length"></paper-input>
+                    <paper-button raised class="custom nextprot" on-click="_resetValues">Reset</paper-button>
+                    <paper-button raised class="custom nextprot" on-click="_digestIsoform">Digest</paper-button>
+                </div>
+            </div>
+
+            <div style="text-align: center;margin-top:50px;"><paper-spinner-lite class="nextprot" id="spinner"></paper-spinner-lite></div>
+            <template is="dom-if" if="[[digestsByProtease.length]]">
+                    <a class="nextprot-link" href="https://www.nextprot.org/entry/{{isoformAC}}/peptides" tabindex="-1" target="_blank">
+                        <paper-button raised class="custom peptideViewLink"><iron-icon icon="icons:line-style" slot="prefix"></iron-icon> See Peptide View</paper-button>
+                    </a>
+                    <h3> DIGESTED PEPTIDES FOR EACH PROTEASE :</h3>
+                <div class="table-container">
+                    <table id="table_1" class="table table-striped table-bordered table-condensed tableuno" width="100%">
+                    </table>
+                </div>
+
+                
+                    <div>
+                        <div class="form-container">
+                            <paper-input label="Select a protease" value="{{proteases_selected}}">
+                                    <iron-icon icon="icons:search" slot="prefix"></iron-icon>
+                            </paper-input>
+                            <paper-button raised class="custom nextprot" on-click="_peptidesList">Get peptides</paper-button>
+                        </div>
+
+            </template>
+            <template is="dom-if" if="[[show_protease_results]]">
+                    <div class="table-container">
+                        <table id="table_2" class="table table-striped table-bordered table-condensed tabledos" width="100%">
+                        </table>
+                        <!-- <a href="https://www.nextprot.org/entry/+ this.isoformAC + '/peptides'">See details in peptide view</a> -->
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'digestion-overview',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: { "env": "dev" }
+                },
+                proteases: {
+                    type: Array,
+                    value: []
+                },
+                isoformAC: {
+                    type: String,
+                    value: "NX_P01308-1"
+                },
+                maxmissedcleavages: {
+                    type: Number,
+                    value: '0',
+                },
+                minPeptideSize: {
+                    type: Number,
+                    value: '7'
+                },
+                maxPeptideSize: {
+                    type: Number,
+                    value: ''
+                },
+                digestsByProtease: {
+                    type: Array,
+                    value: [],
+                },
+                proteases_selected: {
+                    type: String,
+                    value: ""
+                },
+                show_protease_results: {
+                    type:Boolean,
+                    value:false
+                },
+                new_pep_map: {
+                    type: Object,
+                    value: {}
+                },
+                isoform_seq: {
+                    type: String,
+                    value: ""
+                },
+                peptide_mapping: {
+                    type: Array,
+                    value: []
+                },
+            },
+
+            ready: function () {
+                this.nx = new Nextprot.Client("digestion", "Calipho Group");
+                this._initApiClient();
+                var self = this;
+                this._npClient.getJSON("/digestion/available-protease-list.json", "true")
+                    .then(function (proteases) {
+                        self.proteases = proteases;
+                    });
+            },
+            _initApiClient: function () {
+                this._npClient = new Nextprot.Client("neXtProt protein overview", "Calipho Group");
+                this._npClient.updateEnvironment("dev");
+                if (this.nxConfig.env) {
+                    this._npClient.updateEnvironment(this.nxConfig.env);
+                }
+            },
+            _buildURL: function (isoformAC, maxmissedcleavages, minPeptideSize, maxPeptideSize, protease) {
+                var urladdress = "/digestion/" + isoformAC + ".json?protease=" + protease + "&minpeplen=" + minPeptideSize + "&maxpeplen=" + maxPeptideSize + "&maxmissedcleavages=" + maxmissedcleavages + "&digestmaturepartsonly=true";
+                return urladdress;
+            },
+            _resetValues: function(){
+                // this.maxmissedcleavages=0;
+                // this.minPeptideSize=7;
+                // this.maxPeptideSize="";
+                this.show_protease_results = false;
+                this.set('digestsByProtease', []);
+                this.set('proteases_selected', "");
+                if ( $.fn.dataTable.isDataTable( '#table_1' ) ) {
+                    var table1 = $('#table_1').DataTable();
+                    table1.destroy();
+                }
+                if ( $.fn.dataTable.isDataTable( '#table_2' ) ) {
+                    var table2 = $('#table_2').DataTable();
+                    table2.destroy();
+                }
+                $("#table_1").html("");
+                $("#table_2").html(""); 
+            },
+            _validateInput: function(){
+                if (this.isoformAC === ""){
+                    alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1"); 
+                    return false; 
+                }
+                if (this.isoformAC.length !== 11 && this.isoformAC!==9){
+                    alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1");
+                    return false; 
+                }
+                // if (this.isoformAC[0] !== "N" & this.isoformAC[1] !== "X" & this.isoformAC[3] !== "P" & this.isoformAC[3] !== "Q" & this.isoformAC[3] !== "O" ){
+                //     alert("The isoform accession number is false");
+                //     return false; 
+                // }
+                if (this.isoformAC[0] !=="N" & this.isoformAC[1] !=="X" & this.isoformAC[2] !=="_"){
+                    this.isoformAC='NX_'+this.isoformAC; 
+                }
+                return true;
+            },
+            _validateForm: function(){
+                var self = this;
+                var validator = true;
+                var inputs = ["maxMisCleav","minPepLen","maxPepLen"];
+                inputs.forEach(function(inp){
+                    var valid = self.$[inp].validate();
+                    if(!valid) validator = false;
+                })
+                return validator;
+            },
+
+            _getEntryforPeptidePOST: function (peptides, callback) {
+                var start = new Date().getTime();
+                console.log("number of peptides submitted for post : ",peptides.length);
+                // console.log(JSON.stringify(peptides));
+                $.ajax({
+                    url:"https://dev-api.nextprot.org/entries/search/peptide-post.json",
+                    type:"POST",
+                    data:JSON.stringify(peptides),
+                    contentType:"application/json",
+                    success: function(dd){
+                        var end = new Date().getTime();
+                        var time = end - start;
+                        console.log('Execution time: ' + time);
+                        callback(dd);
+                    }
+                })
+            },
+            _digestIsoform: function () {
+
+                this._resetValues();
+
+                var validator = this._validateForm();
+                if(!validator){
+                    console.log("validator is NOT HAPPY!! è_é")
+                    return;
+                }
+
+                if (!this._validateInput()){
+                    console.log("if: "+this.isoformAC);
+                    return; 
+                };
+                this._updateSpinnerStatus(true);
+                console.log(this.isoformAC);
+                var full_peptide_list = [];
+                var proteases = this.proteases;
+
+                var self = this;
+                var protease_data = []
+                var protease_api_call = []
+                var peptide_mapping_calls = []
+
+                peptide_mapping_calls.push(this.nx.getProteinSequence(this.isoformAC));
+                peptide_mapping_calls.push(this.nx.getAnnotationsByCategory(this.isoformAC, "peptide-mapping"));
+                peptide_mapping_calls.push(this.nx.getAnnotationsByCategory(this.isoformAC, "srm-peptide-mapping"));
+
+
+                Promise.all(peptide_mapping_calls).then(function (peptide_nextprot) {
+
+                    console.log("peptide_nextprot", peptide_nextprot);
+                    self.isoform_seq = peptide_nextprot[0].filter(function (iso) { return iso.isoformAccession === self.isoformAC })[0];
+                    var natural_pep = peptide_nextprot[1].annot;
+                    var synthetic_pep = peptide_nextprot[2].annot;
+                    console.log("peptide_natural", natural_pep)
+                    console.log("peptide_synthetic", synthetic_pep)
+                    var peptide_mapping = [];
+                    for (var i = 0; i < natural_pep.length; i++) {
+                        if (natural_pep[i].targetingIsoformsMap.hasOwnProperty(self.isoformAC)) {
+                            var key = natural_pep[i].targetingIsoformsMap[self.isoformAC].firstPosition + "-" + natural_pep[i].targetingIsoformsMap[self.isoformAC].lastPosition;
+                            if (peptide_mapping.hasOwnProperty(key)) {
+                                peptide_mapping[key].natural = true;
+                            }
+                            else {
+                                peptide_mapping[key] = {
+                                    "natural": true,
+                                    "synthetic": false
+                                }
+                            }
+                        }
+                    }
+                for (var i = 0; i < synthetic_pep.length; i++) {
+                    if (synthetic_pep[i].targetingIsoformsMap.hasOwnProperty(self.isoformAC)) {
+                        var key = synthetic_pep[i].targetingIsoformsMap[self.isoformAC].firstPosition + "-" + synthetic_pep[i].targetingIsoformsMap[self.isoformAC].lastPosition;
+                        if (peptide_mapping.hasOwnProperty(key)) {
+                            peptide_mapping[key].synthetic = true;
+                        }
+                        else {
+                            peptide_mapping[key] = {
+                                "natural": false,
+                                "synthetic": true
+                            }
+                        }
+                    }
+                }
+
+                self.set('peptide_mapping', peptide_mapping);
+                console.log("peptide_mapping", peptide_mapping);
+
+
+                for (var i = 0; i < proteases.length; i++) {
+                    var protease = proteases[i];
+                    var url = self._buildURL(self.isoformAC, self.maxmissedcleavages, self.minPeptideSize, self.maxPeptideSize, protease);
+                    protease_api_call.push(self._npClient.getJSON(url, true));
+                }
+
+                Promise.all(protease_api_call).then(function (results) {
+                    for (var i = 0; i < proteases.length; i++) {
+                            var digests = results[i];
+                            var peptides_result = digests.map(function(d){return d.sequence});
+                            var pepcount = peptides_result.length;
+
+                            protease_data.push(
+                                {
+                                    "name": proteases[i],
+                                    "peptide_list": digests,
+                                    "peptide_count": pepcount
+                                });
+                            full_peptide_list = full_peptide_list.concat(peptides_result)
+                        }
+                        full_peptide_list = full_peptide_list.filter(function (item, pos, self) {
+                            return self.indexOf(item) == pos;
+                        })
+                        console.log('Peptide list submitted to pepx : ', full_peptide_list.length);
+
+                        // var peplist_to_str = full_peptide_list.join(",");
+                        // console.log("peplist_to_str",peplist_to_str);
+                        self._getEntryforPeptidePOST(full_peptide_list, function(data){
+                            console.log("Entry for peptide", data);
+                            self.new_pep_map = self._createPeptideMap(data);
+                            console.log('new_pep_map', self.new_pep_map)
+
+                            for (var i = 0; i < protease_data.length; i++) {
+                                var uniq_count = 0;
+                                protease_data[i].peptide_list.forEach(function (peptide) {
+                                    if (self.new_pep_map[peptide.sequence].uniqueness !== "NOT_UNIQUE") uniq_count += 1;
+                                })
+                                protease_data[i]['unique_peptide_count'] = uniq_count;
+                            }
+                            console.log("Proteases with list of peptides and counts: ", protease_data);
+                            
+                            self.set('digestsByProtease', protease_data);
+                            Polymer.RenderStatus.afterNextRender(self, function() {
+
+                                console.log("protease_data", protease_data)
+                                self._updateSpinnerStatus(false);
+                                var d1_table = $('#table_1').DataTable({
+                                    destroy:true,
+                                    retreive:true,
+                                    orderCellsTop: true,
+                                    fixedHeader: true,
+                                    dom: "<'row firstHeadTable'<'col-md-12'B>>" +
+                                        "<'row secondHeadTable'<'col-sm-3 col-md-4'i><'col-sm-6 pull-right'f>>" +
+                                        "<'row no_overmargin'<'col-sm-12 table_overflow'tr>>" +
+                                        "<'row no_overmargin'<'col-sm-3 col-md-2'l><'col-sm-9 pull-right pageTable'p>>",
+                                    buttons: [
+                                        'copy', 'csv', 'excel', 'print'
+                                    ],
+                                    deferRender: true,
+                                    processing: true,
+                                    scrollY: 300,
+                                    scrollCollapse: true,
+                                    paging: false,
+                                    data: protease_data,
+                                    columns: [
+                                        { defaultContent: '' },
+                                        { data: 'name', title: 'Protease name', className: "uniqueClassName"},
+                                        { data: 'peptide_count', title: 'Peptide count', className: "uniqueClassName"},
+                                        { data: 'unique_peptide_count', title: 'Unique peptide count',className: "uniqueClassName" }
+                                    ],
+                                    columnDefs: [
+                                        { width: 10, targets: 0 },
+                                        {
+                                            orderable: false,
+                                            className: 'select-checkbox',
+                                            targets: 0
+                                        }],
+                                    select: {
+                                        style: 'single'
+                                    },
+                                    order: [[3, 'desc']]
+
+                                });
+                                d1_table
+                                    .on('select', function (e, dt, type, indexes) {
+                                        var selected_rows = d1_table.rows({ selected: true });
+                                        self._updateProteaseSelected(selected_rows[0]);
+                                    })
+                                    .on('deselect', function (e, dt, type, indexes) {
+                                        var selected_rows = d1_table.rows({ selected: true });
+                                        self._updateProteaseSelected(selected_rows[0]);
+                                    });
+
+                            });
+                        });
+                    })
+                })
+            },
+            _updateProteaseSelected: function (protease_indexes) {
+                var self = this;
+                var proteases_list = protease_indexes.map(function(elem){
+                    return self.digestsByProtease[elem]['name']
+                })
+                this.set('proteases_selected',proteases_list);
+                if ( $.fn.dataTable.isDataTable( '#table_2' ) ) {
+                    var table2 = $('#table_2').DataTable();
+                    table2.destroy();
+                }
+                $('#table_2').html("");
+                this.show_protease_results = false;
+            },
+            _createPeptideMap: function (data) {
+                var pepMap = {}
+                data.forEach(function (el) {
+                    el.annotationsByCategory["pepx-virtual-annotation"].forEach(function (pep) {
+                        if (!pepMap.hasOwnProperty(pep.cvTermName)) {
+                            var uniqueness = pep.properties.filter(function (pp) { return pp.name === "peptide unicity" })[0].value;
+                            pepMap[pep.cvTermName] = {
+                                'entries': [el.uniqueName],
+                                'uniqueness':  uniqueness
+                            }
+                        }
+                        else {
+                            pepMap[pep.cvTermName].entries.push(el.uniqueName);
+                        }
+                    })
+                });
+                return pepMap;
+            },
+            _diffArrays: function(a,b){
+                return a.filter(function(i){return b.indexOf(i) < 0;});
+            },
+            _miscleavageComputation: function(data, protease, callback){
+                var self = this;
+                var protease_api_call = [];
+                var temp_data = [];
+                var new_data = [];
+                for (var miscleavage = 0; miscleavage < this.maxmissedcleavages; miscleavage++) {
+                    var url = self._buildURL(this.isoformAC, miscleavage, this.minPeptideSize, this.maxPeptideSize, protease);
+                    protease_api_call.push(this._npClient.getJSON(url, true));
+                }
+                Promise.all(protease_api_call).then(function (results) {
+                    results.forEach(function(res,index){
+                        var diff_array = self._diffArrays(res, temp_data);
+                        diff_array.forEach(function(pep){
+                            new_data.push({
+                                "sequence":pep,
+                                "missed_cleavages": index
+                            })
+                        })
+                        temp_data = res;
+                    })
+                    var diff_array = self._diffArrays(data, temp_data);
+                    diff_array.forEach(function(pep){
+                        new_data.push({
+                            "sequence":pep,
+                            "missed_cleavages": self.maxmissedcleavages
+                        })
+                    })
+                    callback(new_data);
+                })
+            },
+            _peptidesList: function () {
+                this.show_protease_results = true;
+                var self = this;
+                console.log("Protease name :", this.proteases_selected);
+                console.log("Entry name :", this.isoformAC);
+                var results = this.digestsByProtease.filter(
+                    (a) => a.name == this.proteases_selected)[0].peptide_list;
+                console.log("results", results);
+
+                var pep_data = results.map(function(r){return {
+                    "sequence": r.sequence,
+                    "missed_cleavages" : r.producedWithMiscleavageCount
+                }})
+                console.log("pep_data",pep_data);
+
+                // this._miscleavageComputation(results, this.proteases_selected,function(pep_data){
+                    // var pep_data = this._getPeptidesPosition(results);
+                
+                for (var i = 0; i < pep_data.length; i++) {
+
+                    var position_first = self.isoform_seq.sequence.indexOf(pep_data[i].sequence) + 1;
+                    var position_last = position_first + pep_data[i].sequence.length - 1;
+                    pep_data[i]["position"]= position_first + "-" + position_last;
+                    // pep_data[i]["link"]= this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].natural ? ('See details in peptide view <img src="../np-x.png">'.link('https://www.nextprot.org/entry/'+ this.isoformAC + '/peptides')) :  this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].synthetic ? "See details in peptide view".link('https://www.nextprot.org/entry/'+ this.isoformAC + '/peptides'):"";
+                    // pep_data[i]["link"]= (self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].natural) || (self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].synthetic) ? '<a class="nxtooltip" href="https://www.nextprot.org/entry/'+ self.isoformAC + '/peptides"><img src="../np-x.png" height="20" width="18"><span class="nxtooltiptext">See details in peptide view</span></a>' : "";
+                    pep_data[i]["length"] = pep_data[i].sequence.length;
+                    pep_data[i]["uniqueness"] = self.new_pep_map[pep_data[i].sequence].uniqueness === "UNIQUE" ? "Yes" : self.new_pep_map[pep_data[i].sequence].uniqueness === "PSEUDO_UNIQUE" ? "PSEUDO_UNIQUE" : "No";
+                    pep_data[i]["natural"] = self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].natural ? "Yes" : "No";
+                    pep_data[i]["synthetic"] = self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].synthetic ? "Yes" : "No";
+                }
+                console.log("result of getpeptidePosition", pep_data);
+                function sortNumber(a, b) {
+                    return a - b;
+                }
+                var lengthArray = pep_data.map(function(p){return parseInt(p["length"])}).sort(sortNumber);
+                console.log("lengthArray",lengthArray);
+                var pepMin = lengthArray[0];
+                var pepMax = lengthArray[lengthArray.length-1];
+
+                    var length_range = [pepMin,pepMax];
+                    var missCleav_range = [0,3];
+                    var d2_table;
+                    $.fn.dataTable.ext.search.pop();
+                    $.fn.dataTable.ext.search.pop();
+                    $.fn.dataTable.ext.search.push(
+                        function( settings, data, dataIndex ) {
+                            if(settings.nTable.getAttribute('id') === "table_2" ){
+                                var min = parseFloat(length_range[0]);
+                                var max = parseFloat(length_range[1]);
+                                var col = parseFloat( data[1] ) || 0; // data[number] = column number
+                                if ( ( isNaN( min ) && isNaN( max ) ) ||
+                                    ( isNaN( min ) && col <= max ) ||
+                                    ( min <= col   && isNaN( max ) ) ||
+                                    ( min <= col   && col <= max ) )
+                                {
+                                return true;
+                                }
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                    )
+                    $.fn.dataTable.ext.search.push(
+                        function( settings, data, dataIndex ) {
+                            if(settings.nTable.getAttribute('id') === "table_2" ){
+                                var min = parseFloat(missCleav_range[0]);
+                                var max = parseFloat(missCleav_range[1]);
+                                var col = parseFloat( data[2] ) || 0; // data[number] = column number
+                                if ( ( isNaN( min ) && isNaN( max ) ) ||
+                                    ( isNaN( min ) && col <= max ) ||
+                                    ( min <= col   && isNaN( max ) ) ||
+                                    ( min <= col   && col <= max ) )
+                                {
+                                return true;
+                                }
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                    )
+                    Polymer.RenderStatus.afterNextRender(self, function() {
+                    $('#table_2').html(
+                        "<thead></thead><tfoot><tr>"+
+                            "<th></th>"+
+                            "<th></th>"+
+                            "<th></th>"+
+                            "<th></th>"+
+                            "<th></th>"+
+                            "<th></th>"+
+                            "<th></th>"+
+                            // "<th></th>"+
+                        "</tr></tfoot>"
+                    );
+                    $('#table_2 tfoot tr th').each( function (i) {
+                        if(i !== 1 && i!==2 && i!==3){
+                            var title = $(this).text();
+                            $(this).html("");
+                            var dynamicEl = document.createElement("paper-input-search");
+                            dynamicEl.setAttribute("iconinput", "icons:search");
+                            dynamicEl.setAttribute("text_top", "Filter");
+
+                            Polymer.dom(this).appendChild(dynamicEl);
+
+                            $( 'input', this ).on( 'keyup change', function () {
+                                if ( d2_table.column(i).search() !== this.value ) {
+                                    d2_table
+                                        .column(i)
+                                        .search( this.value )
+                                        .draw();
+                                }
+                            } );
+                        }
+                        else if(i == 1){
+                            if(pepMin !== pepMax){
+                                $(this).html('<div id=container><div id=slider1></div></div>');
+                                var slider = $('#slider1');
+                                noUiSlider.create(slider[0], {
+                                    start: [pepMin, pepMax],
+                                    range: { min: pepMin, max: pepMax },
+                                    tooltips: [true,true],
+                                    step: 1,
+                                    connect: true,
+                                    format: {
+                                        from: function(value) {
+                                                return parseInt(value);
+                                            },
+                                        to: function(value) {
+                                                return parseInt(value);
+                                            }
+                                        }
+                                });
+                            }
+                            
+                        }else if(i == 2){
+                            $(this).html('<div id=container><div id=slider2></div></div>');
+                            var slider = $('#slider2');
+                            noUiSlider.create(slider[0], {
+                                start: [0, 3],
+                                range: { min: 0, max: 3 },
+                                tooltips: [true,true],
+                                step: 1,
+                                connect: true,
+                                format: {
+                                    from: function(value) {
+                                            return parseInt(value);
+                                        },
+                                    to: function(value) {
+                                            return parseInt(value);
+                                        }
+                                    }
+                            });
+                            
+                        }
+                    } );
+                    $.fn.dataTableExt.oSort["test-desc"] = function (x, y)
+                    {
+                        var x = parseInt(x.split('-')[0]);
+                        var y = parseInt(y.split('-')[0]);
+                        if ( x > y)
+                        {
+                            return -1;
+                        }
+                        return 1;
+                    };
+                    $.fn.dataTableExt.oSort["test-asc"] = function (x, y)
+                    {
+                        var x = parseInt(x.split('-')[0]);
+                        var y = parseInt(y.split('-')[0]);
+                        if ( x > y)
+                        {
+                            return 1;
+                        }
+                        return -1;
+                    }
+                    d2_table = $('#table_2').DataTable({
+                        retreive:true,
+                        deferRender: true,
+                        processing: true,
+                        fixedColumns: true,
+                        columnDefs: [
+                            { width: 100, targets: 1 },
+                            { width: 80, targets: 2 },
+                            { "type": "test", targets: 3 }
+                        ],
+                        dom: "<'row firstHeadTable'<'col-md-12'B>>" +
+                            "<'row secondHeadTable'<'col-sm-3 col-md-4'i><'col-sm-6 pull-right'f>>" +
+                            "<'row no_overmargin'<'col-sm-12 table_overflow'tr>>" +
+                            "<'row no_overmargin'<'col-sm-3 col-md-2'l><'col-sm-9 pull-right pageTable'p>>",
+                        buttons: [
+                            'copy', 'csv', 'excel', 'print'
+                        ],
+                        data: pep_data,
+                        columns: [
+                            { data: 'sequence', title:"Peptide sequence"},
+                            { data: 'length', title:"Length"},
+                            { data:'missed_cleavages', title:"Missed cleavages"},
+                            { data: 'position', title:"Position"},
+                            { data: 'uniqueness', title:"Unique without variants"},
+                            { data: 'natural', title:"Natural"},
+                            { data: 'synthetic', title:"Synthetic"},
+                            // { data: 'link', title: 'Link to neXtProt'},
+                        ], 
+                        "order" :[[3,"asc"]], 
+                        buttons: [
+                            'copy', 'csv', 'excel', 'pdf', 'print'
+                        ]
+                    } );
+                    if(pepMin !== pepMax){
+                        $('#slider1')[0].noUiSlider.on('update', function (values, handle) {
+                            var value = values[handle];
+                            length_range[handle] = values[handle];
+                            d2_table.draw();
+                        })
+                    }
+                    $('#slider2')[0].noUiSlider.on('update', function (values, handle) {
+                        var value = values[handle];
+                        missCleav_range[handle] = values[handle];
+
+                        // children = $('#slider2')[0].getElementsByClassName('noUi-handle');
+                        // children[handle].dataset.value = values[handle];
+                        d2_table.draw();
+                    })
+
+                    self.updateStyles();
+                } ); 
+            // }); 
+            },
+            _updateSpinnerStatus: function(show) {
+                if (show) {
+                    this.$.spinner.active = true;
+                    this.$.spinner.hidden = false;
+                }
+                else{
+                    this.$.spinner.active = false;
+                    this.$.spinner.hidden = true;
+                }
+        },
+    });           
+
+</script>
+</dom-module>
+
+</html>

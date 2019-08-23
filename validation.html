@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<!-- <script> 
+Polymer({
+
+    is: 'custom-validator',
+
+    behaviors: [
+        Polymer.IronValidatorBehavior
+    ]
+});
+</script>  -->
+
+<dom-module id='validation-element'>
+    <template>
+        <custom-validator id="valid1" validator-name="validator1"></custom-validator>
+        <paper-input auto-validate id='input_1' label='Max missed cleavages' validator='validator1'></paper-input>
+    </template>
+</dom-module>
+<script>
+
+    Polymer({
+
+        is: 'validation-element',
+
+        validate1: function(value) {
+            if (value == "") {
+                alert("Name must be filled out");
+                return false;
+            console.log("validate1");
+            }
+        },
+
+        ready: function() {
+            this.$.valid1.validate = this.validate1.bind(this);
+        }
+
+    });
+
+</script>

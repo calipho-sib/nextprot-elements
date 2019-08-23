@@ -1,0 +1,52 @@
+
+<link rel="import" href="../iron-icon/iron-icon.html">
+<!-- <link rel="import" href="../iron-icon/iron-icons.html"> -->
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="external-scripts.html">
+<!-- <link rel="import" href="./bower_components/iron-icon/iron-icon.html"> -->
+
+<!--
+`paper-input-search`
+A paper-input-search
+@demo demo/paper-input-search.html
+-->
+<dom-module id="paper-input-search">
+
+    <template>
+        <!-- Latest compiled and minified CSS -->
+        <style is="custom-style" include="nextprot-elements-shared-styles">
+            paper-input{
+                --paper-input-container-focus-color: #3FB8AF; 
+                --paper-input-container: {
+                    padding:0px;
+                }
+            }
+            </style>
+        <paper-input label="[[text_top]]" value="" always-float-label>
+            <iron-icon icon=[[iconinput]] slot="prefix"></iron-icon>
+        </paper-input>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'paper-input-search',
+            properties: {
+                iconinput: {
+                    type: String,
+                    value: "mail"
+                },
+                slotinput: {
+                    type: String,
+                    value: "prefix"
+                },
+                text_top:{
+                    type:String,
+                    value:"Filter"
+                }
+            },
+            attached: function(){
+            }
+            
+        });
+    </script>
+</dom-module>
