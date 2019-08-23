@@ -751,6 +751,7 @@ View list of chromosome names.
                     if (evidence.assignedBy.toLowerCase() == "nextprot") evidence.assignedBy = "neXtProt";
                     if (evidence.assignedBy.toLowerCase() == "cosmic") evidence.assignedBy = "COSMIC";
                     if (evidence.assignedBy.toLowerCase() == "kegg_ptw") evidence.assignedBy = "KEGG";
+                    if (evidence.assignedBy.toLowerCase() == "gnomeAD") evidence.assignedBy = "GnomeAD";
                     if (evidenceSourceList.indexOf(evidence.assignedBy) < 0) evidenceSourceList.push(evidence.assignedBy);
                 });
                 return evidenceSourceList.sort(NXUtils.sortByAlphabet);
