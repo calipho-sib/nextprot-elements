@@ -569,11 +569,9 @@ Digestion overview
                             return self.indexOf(item) == pos;
                         })
                         console.log('Peptide list submitted to pepx : ', full_peptide_list.length);
-                        // self._testPostMethod(full_peptide_list);
 
-                        var peplist_to_str = full_peptide_list.join(",");
-                        console.log("peplist_to_str",peplist_to_str);
-                        // self.nx.getEntryforPeptide(peplist_to_str).then(function (data) {
+                        // var peplist_to_str = full_peptide_list.join(",");
+                        // console.log("peplist_to_str",peplist_to_str);
                         self._getEntryforPeptidePOST(full_peptide_list, function(data){
                             console.log("Entry for peptide", data);
                             self.new_pep_map = self._createPeptideMap(data);
@@ -807,7 +805,6 @@ Digestion overview
                         "</tr></tfoot>"
                     );
                     $('#table_2 tfoot tr th').each( function (i) {
-                        console.log("i",i);
                         if(i !== 1 && i!==2 && i!==3){
                             var title = $(this).text();
                             $(this).html("");
