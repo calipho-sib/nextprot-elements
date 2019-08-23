@@ -198,6 +198,9 @@ Digestion overview
         :host {
             margin: 10px;
         }
+        #isoform-digestion{
+            margin:10px;
+        }
 
         h1 {
             font-family: "Helvetica Neue";
@@ -208,10 +211,11 @@ Digestion overview
         }
 
         h3 {
-            font-family: 'Roboto';
+            font-family: 'Lato';
             font-size: 16px;
-            font-weight: 900;
+            font-weight: 700;
             margin: 30px 10px;
+            text-align:left;
         }
 
         paper-button.nextprot {
@@ -226,6 +230,7 @@ Digestion overview
             background-color: white;
             color: #C50063;
             padding:5px 10px;
+            margin-left: 10px;
         }
         paper-button iron-icon {
             padding-right:5px;
@@ -271,6 +276,15 @@ Digestion overview
 
         paper-spinner-lite.nextprot{
             --paper-spinner-color: #C50063;
+        }
+        .description{
+            padding: 0px 100px;
+        }
+        table.table{
+            padding:0px;
+        }
+        table.table tbody tr td,table.table thead tr th{
+            height:auto;
         }
     </style>
     <template>
