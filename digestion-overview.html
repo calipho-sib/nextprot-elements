@@ -477,7 +477,7 @@ Digestion overview
                 console.log("number of peptides submitted for post : ",peptides.length);
                 // console.log(JSON.stringify(peptides));
                 $.ajax({
-                    url:"https://dev-api.nextprot.org/entries/search/peptide-post.json",
+                    url:"https://dev-api.nextprot.org/entries/search/peptide-post.json?no-variant-match=true",
                     type:"POST",
                     data:JSON.stringify(peptides),
                     contentType:"application/json",
