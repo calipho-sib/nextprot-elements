@@ -155,7 +155,7 @@ Block element representing an evidence record.
             getAlleleFrequency: function(evidence) {
                 if(evidence.assignedBy === 'gnomAD') {
                     if(evidence.properties) {
-                        return evidence.properties["alleleFrequency"]
+                        return evidence.properties["allele frequency"]
                     } else {
                         return null;
                     }
@@ -166,7 +166,7 @@ Block element representing an evidence record.
             getAlleleCount:  function(evidence) {
                 if(evidence.assignedBy === 'gnomAD') {
                     if(evidence.properties) {
-                        return evidence.properties["alleleCount"]
+                        return evidence.properties["allele count"]
                     } else {
                         return null;
                     }
@@ -177,7 +177,7 @@ Block element representing an evidence record.
             getAlleleNumber:  function(evidence) {
                 if(evidence.assignedBy === 'gnomAD') {
                     if(evidence.properties) {
-                        return evidence.properties["alleleNumber"]
+                        return evidence.properties["total alleles"]
                     } else {
                         return null;
                     }
@@ -188,7 +188,7 @@ Block element representing an evidence record.
             getHomozygotCount:  function(evidence) {
                 if(evidence.assignedBy === 'gnomAD') {
                     if(evidence.properties) {
-                        return evidence.properties["homozygoteCount"]
+                        return evidence.properties["homozygote count"]
                     } else {
                         return null;
                     }
