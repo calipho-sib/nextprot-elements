@@ -93,7 +93,10 @@ Block element representing an evidence record.
                                 <template is="dom-if" if="[[!data.urlLabel]]">[[data.resourceAccession]]</template>
                             </a></p>
                             <p>
-                                <template is="dom-if" if="[[getAlleleFrequency(data)]]">Allele Frequency: [[getAlleleFrequency(data)]]</template>
+                                <template is="dom-if" if="[[getAlleleFrequency(data)]]">Allele frequency: [[getAlleleFrequency(data)]] ([[getAlleleCount(data)]] / [[getAlleleNumber(data)]])</template>                               
+                            </p>
+                            <p>
+                                <template is="dom-if" if="[[getHomozygotCount(data)]]">Number of homozygotes: [[getHomozygotCount(data)]] </template> 
                             </p>
                         </div>
                     </template>
@@ -152,7 +155,40 @@ Block element representing an evidence record.
             getAlleleFrequency: function(evidence) {
                 if(evidence.assignedBy === 'gnomAD') {
                     if(evidence.properties) {
-                        return evidence.properties["GnomAD Allel Frequency"];
+                        return evidence.properties["alleleFrequency"]
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            },
+            getAlleleCount:  function(evidence) {
+                if(evidence.assignedBy === 'gnomAD') {
+                    if(evidence.properties) {
+                        return evidence.properties["alleleCount"]
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            },
+            getAlleleNumber:  function(evidence) {
+                if(evidence.assignedBy === 'gnomAD') {
+                    if(evidence.properties) {
+                        return evidence.properties["alleleNumber"]
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            },
+            getHomozygotCount:  function(evidence) {
+                if(evidence.assignedBy === 'gnomAD') {
+                    if(evidence.properties) {
+                        return evidence.properties["homozygoteCount"]
                     } else {
                         return null;
                     }
