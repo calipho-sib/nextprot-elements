@@ -383,15 +383,15 @@ Digestion overview
                     </paper-input>
                 </div>
                 <div class="form-container">
-                    <paper-input id="maxMisCleav" style="flex-grow:1" label="Max missed cleavages" type=number min=0 max=3
+                    <paper-input id="maxMisCleav" style="flex-grow:2" label="Max missed cleavages" type=number min=0 max=3
                         error-message="Number of max missed cleaveages only between 0 and 3"
                         value="{{maxmissedcleavages}}" always-float-label error-message="NOOOOOOO" auto-validate="true"></paper-input>
                     <paper-input id="minPepLen" style="flex-grow:1" label="Min peptide length" type=number min=7
                     error-message="Minimum peptide size is 7"
                     value="{{minPeptideSize}}" always-float-label auto-validate="true"></paper-input>
                     <paper-input id="maxPepLen"
-                    style="flex-grow:1" label="Max peptide length" type=number min={{minPeptideSize}} value="{{maxPeptideSize}}"
-                        always-float-label auto-validate="true" error-message="Max length should be more than min length"></paper-input>
+                    style="flex-grow:2" label="Max peptide length" type=number min={{minPeptideSize}} value="{{maxPeptideSize}}"
+                        always-float-label auto-validate="true" error-message="Should be <100 & more than min length" max="100"></paper-input>
                     <paper-button raised class="custom nextprot" on-click="_resetForm">Reset</paper-button>
                     <paper-button raised class="custom nextprot" on-click="_digestIsoform">Digest</paper-button>
                 </div>
@@ -469,7 +469,7 @@ Digestion overview
                 },
                 maxPeptideSize: {
                     type: Number,
-                    value: ''
+                    value: '100'
                 },
                 digestsByProtease: {
                     type: Array,
