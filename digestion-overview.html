@@ -287,6 +287,38 @@ Digestion overview
             padding: 0px 100px;
         }
 
+        .info-box{
+            display:flex;
+            margin:10px;
+            box-shadow:0 2px 10px rgba(0, 0, 0, 0.2);
+            align-items: center;
+        }
+        .info-red{
+            /* background-color:#FF5722; */
+            background-color:#D1270A;
+        }
+        .info-box>div{
+            display: inline-block;
+            color:white;
+        }
+        .info-content{
+            width:90%;
+            text-align: left;
+            padding: 7px 10px;
+        }
+        .info-icon{
+            width:70px;
+            background-color:rgba(0,0,0,0.1);
+            text-align:center;
+        }
+        .info-icon iron-icon{
+            /* line-height: 70px; */
+            /* font-size: 45px; */
+            color:rgba(250,250,250,0.8);
+            width:80%;
+            height:100%;
+            padding:5px;
+        }
     </style>
     <template>
        <div id="isoform-digestion">
@@ -318,7 +350,20 @@ Digestion overview
                     <paper-button raised class="custom nextprot" on-click="_digestIsoform">Digest</paper-button>
                 </div>
             </div>
-
+            <template is="dom-if" if="[[error_message.length]]">
+                <div class="info-box info-red">
+                    <div class="info-icon">
+                        <!-- <span class="fa fa-exclamation-circle"></span> -->
+                        <iron-icon icon="icons:error"></iron-icon>
+                    </div>
+                    <div class="info-content">
+                        <span style="font-weight:300">
+                            <span style="font-size:20px;font-weight:500">Impossible to get the data !</span>
+                            <span>[[error_message]]</span>
+                        </span>
+                    </div>
+                </div>            
+            </template>
             <div style="text-align: center;margin-top:50px;"><paper-spinner-lite class="nextprot" id="spinner"></paper-spinner-lite></div>
             <template is="dom-if" if="[[digestsByProtease.length]]">
                     <h3> DIGESTED PEPTIDES FOR EACH PROTEASE :</h3>
@@ -328,13 +373,14 @@ Digestion overview
                 </div>
 
                 
-                    <div>
-                        <div class="form-container">
-                            <paper-input label="Select a protease" value="{{proteases_selected}}">
-                                    <iron-icon icon="icons:search" slot="prefix"></iron-icon>
-                            </paper-input>
-                            <paper-button raised class="custom nextprot" on-click="_peptidesList">Get peptides</paper-button>
-                        </div>
+                <div>
+                    <div class="form-container">
+                        <paper-input label="Select a protease" value="{{proteases_selected}}">
+                                <iron-icon icon="icons:search" slot="prefix"></iron-icon>
+                        </paper-input>
+                        <paper-button raised class="custom nextprot" on-click="_peptidesList">Get peptides</paper-button>
+                    </div>
+                </div>
 
             </template>
             <template is="dom-if" if="[[show_protease_results]]">
@@ -365,7 +411,7 @@ Digestion overview
                 },
                 isoformAC: {
                     type: String,
-                    value: ""
+                    value: "NX_P33443434-32"
                 },
                 maxmissedcleavages: {
                     type: Number,
@@ -403,6 +449,10 @@ Digestion overview
                     type: Array,
                     value: []
                 },
+                error_message:{
+                    type: String,
+                    value: ""
+                }
             },
 
             ready: function () {
@@ -430,9 +480,11 @@ Digestion overview
                 this.minPeptideSize=7;
                 this.maxPeptideSize="";
                 this.isoformAC = "";
+                this.error_message = "";
                 this._resetValues();
             },
             _resetValues: function(){
+                this.error_message = "";
                 this.show_protease_results = false;
                 this.set('digestsByProtease', []);
                 this.set('proteases_selected', "");
@@ -496,8 +548,7 @@ Digestion overview
                 })
             },
             _digestIsoform: function () {
-                var keepForm = true;
-                this._resetValues(keepForm);
+                this._resetValues();
 
                 var validator = this._validateForm();
                 if(!validator){
@@ -519,17 +570,31 @@ Digestion overview
                 var protease_api_call = []
                 var peptide_mapping_calls = []
 
-                peptide_mapping_calls.push(this.nx.getProteinSequence(this.isoformAC));
-                peptide_mapping_calls.push(this.nx.getAnnotationsByCategory(this.isoformAC, "peptide-mapping"));
-                peptide_mapping_calls.push(this.nx.getAnnotationsByCategory(this.isoformAC, "srm-peptide-mapping"));
+                this.nx.getProteinSequence(this.isoformAC)
+                .then(function(iso_data){
+                    console.log("iso_data",iso_data);
+                    var isoform_selected = iso_data.filter(function(iso){
+                        return iso.isoformAccession ===  self.isoformAC
+                    })
+                    if(!isoform_selected.length){
+                        self._updateSpinnerStatus(false);
+                        self.set('error_message', "The isoform "+self.isoformAC+" doesn't exist.");
+                    }
+                    else{
+                        self.isoform_seq = isoform_selected[0].sequence;
+                    }
+                
+                // peptide_mapping_calls.push(this.nx.getProteinSequence(this.isoformAC));
+                peptide_mapping_calls.push(self.nx.getAnnotationsByCategory(self.isoformAC, "peptide-mapping"));
+                peptide_mapping_calls.push(self.nx.getAnnotationsByCategory(self.isoformAC, "srm-peptide-mapping"));
 
 
                 Promise.all(peptide_mapping_calls).then(function (peptide_nextprot) {
 
                     console.log("peptide_nextprot", peptide_nextprot);
-                    self.isoform_seq = peptide_nextprot[0].filter(function (iso) { return iso.isoformAccession === self.isoformAC })[0];
-                    var natural_pep = peptide_nextprot[1].annot;
-                    var synthetic_pep = peptide_nextprot[2].annot;
+                    // self.isoform_seq = peptide_nextprot[0].filter(function (iso) { return iso.isoformAccession === self.isoformAC })[0];
+                    var natural_pep = peptide_nextprot[0].annot;
+                    var synthetic_pep = peptide_nextprot[1].annot;
                     console.log("peptide_natural", natural_pep)
                     console.log("peptide_synthetic", synthetic_pep)
                     var peptide_mapping = [];
@@ -663,6 +728,13 @@ Digestion overview
                         });
                     })
                 })
+                })
+                .catch(function(err){
+                    // console.log("iso_data ERROR message: ",err.responseJSON.message);
+                    console.log("err",err);
+                    self.set('error_message', err.responseJSON.message);
+                    self._updateSpinnerStatus(false);
+                })
             },
             _updateProteaseSelected: function (protease_indexes) {
                 var self = this;
@@ -670,6 +742,9 @@ Digestion overview
                     return self.digestsByProtease[elem]['name']
                 })
                 this.set('proteases_selected',proteases_list);
+                this._clearPeptideTable();
+            },
+            _clearPeptideTable: function(){
                 if ( $.fn.dataTable.isDataTable( '#table_2' ) ) {
                     var table2 = $('#table_2').DataTable();
                     table2.destroy();
@@ -729,6 +804,7 @@ Digestion overview
                 })
             },
             _peptidesList: function () {
+                this._clearPeptideTable();
                 this.show_protease_results = true;
                 var self = this;
                 console.log("Protease name :", this.proteases_selected);
@@ -748,7 +824,7 @@ Digestion overview
                 
                 for (var i = 0; i < pep_data.length; i++) {
 
-                    var position_first = self.isoform_seq.sequence.indexOf(pep_data[i].sequence) + 1;
+                    var position_first = self.isoform_seq.indexOf(pep_data[i].sequence) + 1;
                     var position_last = position_first + pep_data[i].sequence.length - 1;
                     pep_data[i]["position"]= position_first + "-" + position_last;
                     // pep_data[i]["link"]= this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].natural ? ('See details in peptide view <img src="../np-x.png">'.link('https://www.nextprot.org/entry/'+ this.isoformAC + '/peptides')) :  this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].synthetic ? "See details in peptide view".link('https://www.nextprot.org/entry/'+ this.isoformAC + '/peptides'):"";
