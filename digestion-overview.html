@@ -6,7 +6,7 @@
 <link rel="import" href="quality-label.html">
 <link rel="import" href="heatmap-table-row.html">
 <link rel="import" href="paper-input-search.html">
-<link rel="import" href="../iron-icon/iron-icon.html">
+<!-- <link rel="import" href="../iron-icon/iron-icon.html"> -->
 <!-- <script src="../nextprot/src/nextprot-core.js"></script>
 <script src="../nextprot/src/nextprot-utils.js"></script> -->
 
@@ -365,7 +365,7 @@ Digestion overview
                 },
                 isoformAC: {
                     type: String,
-                    value: "NX_P01308-1"
+                    value: ""
                 },
                 maxmissedcleavages: {
                     type: Number,
@@ -452,15 +452,16 @@ Digestion overview
                     alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1"); 
                     return false; 
                 }
-                if (this.isoformAC.length !== 11 && this.isoformAC!==9){
-                    alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1");
-                    return false; 
-                }
+                // if (this.isoformAC.length !== 11 && this.isoformAC!==9){
+                //     alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1");
+                //     return false; 
+                // }
                 // if (this.isoformAC[0] !== "N" & this.isoformAC[1] !== "X" & this.isoformAC[3] !== "P" & this.isoformAC[3] !== "Q" & this.isoformAC[3] !== "O" ){
                 //     alert("The isoform accession number is false");
                 //     return false; 
                 // }
-                if (this.isoformAC[0] !=="N" & this.isoformAC[1] !=="X" & this.isoformAC[2] !=="_"){
+                if (!this.isoformAC.startsWith("NX_")){
+                // if (this.isoformAC[0] !=="N" && this.isoformAC[1] !=="X" && this.isoformAC[2] !=="_"){
                     this.isoformAC='NX_'+this.isoformAC; 
                 }
                 return true;
@@ -753,7 +754,7 @@ Digestion overview
                     // pep_data[i]["link"]= this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].natural ? ('See details in peptide view <img src="../np-x.png">'.link('https://www.nextprot.org/entry/'+ this.isoformAC + '/peptides')) :  this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].synthetic ? "See details in peptide view".link('https://www.nextprot.org/entry/'+ this.isoformAC + '/peptides'):"";
                     // pep_data[i]["link"]= (self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].natural) || (self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].synthetic) ? '<a class="nxtooltip" href="https://www.nextprot.org/entry/'+ self.isoformAC + '/peptides"><img src="../np-x.png" height="20" width="18"><span class="nxtooltiptext">See details in peptide view</span></a>' : "";
                     pep_data[i]["length"] = pep_data[i].sequence.length;
-                    pep_data[i]["uniqueness"] = self.new_pep_map[pep_data[i].sequence].uniqueness === "UNIQUE" ? "Yes" : self.new_pep_map[pep_data[i].sequence].uniqueness === "PSEUDO_UNIQUE" ? "PSEUDO_UNIQUE" : "No";
+                    pep_data[i]["uniqueness"] = self.new_pep_map[pep_data[i].sequence].uniqueness === "UNIQUE" || self.new_pep_map[pep_data[i].sequence].uniqueness === "PSEUDO_UNIQUE" ? "Yes" : "No";
                     pep_data[i]["natural"] = self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].natural ? "Yes" : "No";
                     pep_data[i]["synthetic"] = self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].synthetic ? "Yes" : "No";
                 }
