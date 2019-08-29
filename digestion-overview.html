@@ -6,12 +6,12 @@
 <link rel="import" href="quality-label.html">
 <link rel="import" href="heatmap-table-row.html">
 <link rel="import" href="paper-input-search.html">
-<link rel="import" href="../iron-icon/iron-icon.html">
+<!-- <link rel="import" href="../iron-icon/iron-icon.html"> -->
 <!-- <script src="../nextprot/src/nextprot-core.js"></script>
 <script src="../nextprot/src/nextprot-utils.js"></script> -->
+<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
 
-<link rel="stylesheet" type="text/css"
-    href="https://cdn.datatables.net/v/bs-3.3.7/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/sl-1.3.0/datatables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/v/bs-3.3.7/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/b-print-1.5.6/sl-1.3.0/datatables.min.css">
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
@@ -21,7 +21,7 @@
 
     <!-- slider lib :  -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.css">
 <style>
 #table.dataTable tbody tr.selected,#table.dataTable tbody tr.selected td {
     color: white;
@@ -290,11 +290,11 @@ Digestion overview
     </style>
     <template>
        <div id="isoform-digestion">
-            <h1>Protein digestion tool </h1>
+            <!-- <h1>Protein digestion tool </h1> -->
             <div class="description" style="font-size:18px; display:inline-block; text-align: center; font-style: italic; font-weight: 300">
                 The protein digestion tool allows scientists to determine which enzymes and experimental conditions would yield peptides that could be used to confidently identify a protein of interest.            </div>
             <div class="documentation" style="font-size:15px; font-weight: 300; text-align:center;margin:20px 0px;">
-                <a href="https://www.nextprot.org/help/protein-digestion" target="_blank"> The documentation of this tool is available on this link</a>
+                <a href="/help/protein-digestion"> The documentation of this tool is available on this link</a>
             </div>
             <hr id="separationLine" class="" style="margin:15px 0px 15px;">
             <div id="first-form">
@@ -314,16 +314,13 @@ Digestion overview
                     <paper-input id="maxPepLen"
                     style="flex-grow:1" label="Max peptide length" type=number min={{minPeptideSize}} value="{{maxPeptideSize}}"
                         always-float-label auto-validate="true" error-message="Max length should be more than min length"></paper-input>
-                    <paper-button raised class="custom nextprot" on-click="_resetValues">Reset</paper-button>
+                    <paper-button raised class="custom nextprot" on-click="_resetForm">Reset</paper-button>
                     <paper-button raised class="custom nextprot" on-click="_digestIsoform">Digest</paper-button>
                 </div>
             </div>
 
             <div style="text-align: center;margin-top:50px;"><paper-spinner-lite class="nextprot" id="spinner"></paper-spinner-lite></div>
             <template is="dom-if" if="[[digestsByProtease.length]]">
-                    <a class="nextprot-link" href="https://www.nextprot.org/entry/{{isoformAC}}/peptides" tabindex="-1" target="_blank">
-                        <paper-button raised class="custom peptideViewLink"><iron-icon icon="icons:line-style" slot="prefix"></iron-icon> See Peptide View</paper-button>
-                    </a>
                     <h3> DIGESTED PEPTIDES FOR EACH PROTEASE :</h3>
                 <div class="table-container">
                     <table id="table_1" class="table table-striped table-bordered table-condensed tableuno" width="100%">
@@ -345,6 +342,9 @@ Digestion overview
                         <table id="table_2" class="table table-striped table-bordered table-condensed tabledos" width="100%">
                         </table>
                         <!-- <a href="https://www.nextprot.org/entry/+ this.isoformAC + '/peptides'">See details in peptide view</a> -->
+                        <a class="nextprot-link pull-right" href="https://www.nextprot.org/entry/{{isoformAC}}/peptides" tabindex="-1" target="_blank">
+                            <paper-button raised class="custom peptideViewLink"><iron-icon icon="icons:line-style" slot="prefix"></iron-icon> See Peptide View</paper-button>
+                        </a>
                     </div>
                 </div>
             </template>
@@ -365,7 +365,7 @@ Digestion overview
                 },
                 isoformAC: {
                     type: String,
-                    value: "NX_P01308-1"
+                    value: ""
                 },
                 maxmissedcleavages: {
                     type: Number,
@@ -425,10 +425,14 @@ Digestion overview
                 var urladdress = "/digestion/" + isoformAC + ".json?protease=" + protease + "&minpeplen=" + minPeptideSize + "&maxpeplen=" + maxPeptideSize + "&maxmissedcleavages=" + maxmissedcleavages + "&digestmaturepartsonly=true";
                 return urladdress;
             },
+            _resetForm: function(){
+                this.maxmissedcleavages=0;
+                this.minPeptideSize=7;
+                this.maxPeptideSize="";
+                this.isoformAC = "";
+                this._resetValues();
+            },
             _resetValues: function(){
-                // this.maxmissedcleavages=0;
-                // this.minPeptideSize=7;
-                // this.maxPeptideSize="";
                 this.show_protease_results = false;
                 this.set('digestsByProtease', []);
                 this.set('proteases_selected', "");
@@ -448,15 +452,16 @@ Digestion overview
                     alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1"); 
                     return false; 
                 }
-                if (this.isoformAC.length !== 11 && this.isoformAC!==9){
-                    alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1");
-                    return false; 
-                }
+                // if (this.isoformAC.length !== 11 && this.isoformAC!==9){
+                //     alert("Please enter a neXtProt isoform accession number, i.e NX_P50222-1");
+                //     return false; 
+                // }
                 // if (this.isoformAC[0] !== "N" & this.isoformAC[1] !== "X" & this.isoformAC[3] !== "P" & this.isoformAC[3] !== "Q" & this.isoformAC[3] !== "O" ){
                 //     alert("The isoform accession number is false");
                 //     return false; 
                 // }
-                if (this.isoformAC[0] !=="N" & this.isoformAC[1] !=="X" & this.isoformAC[2] !=="_"){
+                if (!this.isoformAC.startsWith("NX_")){
+                // if (this.isoformAC[0] !=="N" && this.isoformAC[1] !=="X" && this.isoformAC[2] !=="_"){
                     this.isoformAC='NX_'+this.isoformAC; 
                 }
                 return true;
@@ -474,10 +479,11 @@ Digestion overview
 
             _getEntryforPeptidePOST: function (peptides, callback) {
                 var start = new Date().getTime();
+                var apiBaseUrl = this.nxConfig.env === "dev" ? "https://dev-api.nextprot.org" : this.nxConfig.env === "alpha" ? "http://alpha-api.nextprot.org" : "https://api.nextprot.org";
                 console.log("number of peptides submitted for post : ",peptides.length);
                 // console.log(JSON.stringify(peptides));
                 $.ajax({
-                    url:"https://dev-api.nextprot.org/entries/search/peptide-post.json?no-variant-match=true",
+                    url: apiBaseUrl + "/entries/search/peptide-post.json?no-variant-match=true",
                     type:"POST",
                     data:JSON.stringify(peptides),
                     contentType:"application/json",
@@ -490,8 +496,8 @@ Digestion overview
                 })
             },
             _digestIsoform: function () {
-
-                this._resetValues();
+                var keepForm = true;
+                this._resetValues(keepForm);
 
                 var validator = this._validateForm();
                 if(!validator){
@@ -748,7 +754,7 @@ Digestion overview
                     // pep_data[i]["link"]= this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].natural ? ('See details in peptide view <img src="../np-x.png">'.link('https://www.nextprot.org/entry/'+ this.isoformAC + '/peptides')) :  this.peptide_mapping.hasOwnProperty(pep_data[i].position) && this.peptide_mapping[pep_data[i].position].synthetic ? "See details in peptide view".link('https://www.nextprot.org/entry/'+ this.isoformAC + '/peptides'):"";
                     // pep_data[i]["link"]= (self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].natural) || (self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].synthetic) ? '<a class="nxtooltip" href="https://www.nextprot.org/entry/'+ self.isoformAC + '/peptides"><img src="../np-x.png" height="20" width="18"><span class="nxtooltiptext">See details in peptide view</span></a>' : "";
                     pep_data[i]["length"] = pep_data[i].sequence.length;
-                    pep_data[i]["uniqueness"] = self.new_pep_map[pep_data[i].sequence].uniqueness === "UNIQUE" ? "Yes" : self.new_pep_map[pep_data[i].sequence].uniqueness === "PSEUDO_UNIQUE" ? "PSEUDO_UNIQUE" : "No";
+                    pep_data[i]["uniqueness"] = self.new_pep_map[pep_data[i].sequence].uniqueness === "UNIQUE" || self.new_pep_map[pep_data[i].sequence].uniqueness === "PSEUDO_UNIQUE" ? "Yes" : "No";
                     pep_data[i]["natural"] = self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].natural ? "Yes" : "No";
                     pep_data[i]["synthetic"] = self.peptide_mapping.hasOwnProperty(pep_data[i].position) && self.peptide_mapping[pep_data[i].position].synthetic ? "Yes" : "No";
                 }
@@ -924,13 +930,13 @@ Digestion overview
                             { data:'missed_cleavages', title:"Missed cleavages"},
                             { data: 'position', title:"Position"},
                             { data: 'uniqueness', title:"Unique without variants"},
-                            { data: 'natural', title:"Natural"},
-                            { data: 'synthetic', title:"Synthetic"},
+                            { data: 'natural', title:"Natural in neXtProt"},
+                            { data: 'synthetic', title:"Synthetic in neXtProt"},
                             // { data: 'link', title: 'Link to neXtProt'},
                         ], 
                         "order" :[[3,"asc"]], 
                         buttons: [
-                            'copy', 'csv', 'excel', 'pdf', 'print'
+                            'copy', 'csv', 'excel', 'print'
                         ]
                     } );
                     if(pepMin !== pepMax){
