@@ -319,6 +319,9 @@ Digestion overview
             height:100%;
             padding:5px;
         }
+        table{
+            background-color:white;
+        }
     </style>
     <template>
        <div id="isoform-digestion">
@@ -411,7 +414,7 @@ Digestion overview
                 },
                 isoformAC: {
                     type: String,
-                    value: "NX_P33443434-32"
+                    value: ""
                 },
                 maxmissedcleavages: {
                     type: Number,
@@ -1030,6 +1033,9 @@ Digestion overview
                         // children[handle].dataset.value = values[handle];
                         d2_table.draw();
                     })
+                    $('html, body').animate({
+                        scrollTop: $("#table_2").offset().top - 150
+                    }, 1000);
 
                     self.updateStyles();
                 } ); 
