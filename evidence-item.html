@@ -177,7 +177,7 @@ Block element representing an evidence record.
             getAlleleNumber:  function(evidence) {
                 if(evidence.assignedBy === 'gnomAD') {
                     if(evidence.properties) {
-                        return evidence.properties["total alleles"]
+                        return evidence.properties["allele number"]
                     } else {
                         return null;
                     }
