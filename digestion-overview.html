@@ -383,11 +383,11 @@ Digestion overview
                     </paper-input>
                 </div>
                 <div class="form-container">
-                    <paper-input id="maxMisCleav" style="flex-grow:2" label="Max missed cleavages" type=number min=0 max=3
-                        error-message="Number of max missed cleaveages only between 0 and 3"
+                    <paper-input id="maxMisCleav" style="flex-grow:3" label="Max miscleavages" type=number min=0 max=3
+                        error-message="Max value is 3"
                         value="{{maxmissedcleavages}}" always-float-label error-message="NOOOOOOO" auto-validate="true"></paper-input>
                     <paper-input id="minPepLen" style="flex-grow:1" label="Min peptide length" type=number min=7
-                    error-message="Minimum peptide size is 7"
+                    error-message="Min value for length is 7"
                     value="{{minPeptideSize}}" always-float-label auto-validate="true"></paper-input>
                     <paper-input id="maxPepLen"
                     style="flex-grow:2" label="Max peptide length" type=number min={{minPeptideSize}} value="{{maxPeptideSize}}"
