@@ -888,6 +888,12 @@ Digestion overview
                 console.log("lengthArray",lengthArray);
                 var pepMin = lengthArray[0];
                 var pepMax = lengthArray[lengthArray.length-1];
+                var missesdCleavageMax = 0;
+                pep_data.forEach((peptide) => {
+                    if(missesdCleavageMax < peptide.missed_cleavages) {
+                        missesdCleavageMax = peptide.missed_cleavages;
+                    }
+                })
 
                     var length_range = [pepMin,pepMax];
                     var missCleav_range = [0,3];
@@ -992,7 +998,7 @@ Digestion overview
                             var slider = $('#slider2');
                             noUiSlider.create(slider[0], {
                                 start: [0, 3],
-                                range: { min: 0, max: 3 },
+                                range: { min: 0, max: missesdCleavageMax },
                                 tooltips: [true,true],
                                 step: 1,
                                 connect: true,
