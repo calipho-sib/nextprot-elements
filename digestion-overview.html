@@ -993,9 +993,12 @@ Digestion overview
                                 });
                             }
                             
-                        }else if(i == 2 && missesdCleavageMax != 0){
+                        }else if(i == 2){
                             $(this).html('<div id=container><div id=slider2></div></div>');
                             var slider = $('#slider2');
+                            if(missesdCleavageMax == 0) {
+                                missesdCleavageMax = 1
+                            }
                             noUiSlider.create(slider[0], {
                                 start: [0, missesdCleavageMax],
                                 range: { min: 0, max: missesdCleavageMax },
