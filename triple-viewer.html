@@ -662,11 +662,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             
                             if(this._isDisulfideBondFeature(feature.category)){
                                 feature.length = "";
-                                if (feature.description && feature.description.toLowerCase().startsWith("interchain")){
-                                    feature.range = feature.start;
-                                } else {
-                                    feature.range = feature.start+"&#x256d;&#x256e;"+feature.end;
-                                }
+                                // Does not differentiate the interchain case when displaying the bond
+                                feature.range = feature.start+"&#x256d;&#x256e;"+feature.end;
+
                             }else if(this._isSingleResidueFeature(feature.length)){
                                 feature.range = feature.start;
                             }else{
