@@ -29,6 +29,12 @@ These dependencies are not required in the production, when integrated into next
     <script src="../bootstrap/dist/js/bootstrap.js"></script>
 ```
 
+NOTE: Same for nextprot-elements-shared-styles.html:
+```
+    <link rel="stylesheet" href="../bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+```
+
 ## Running Tests
 
 ```
