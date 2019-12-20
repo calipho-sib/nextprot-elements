@@ -16,6 +16,19 @@ Serving your application locally.
 $ polymer serve
 ```
 
+NOTE: In order to run elements locally, you have to uncomment the following lines from the external-scripts.html file.
+These dependencies are not required in the production, when integrated into nextprot UI.
+
+```
+    <script src="../nextprot/src/nextprot-core.js"></script>
+    <script src="../nextprot/src/nextprot-utils.js"></script>
+    <script src="../d3/d3.min.js"></script>
+    <script src="../feature-viewer/dist/feature-viewer.min.js"></script>
+    <script src="../sequence-viewer/dist/sequence-viewer.min.js"></script>
+    <script src="../jquery/dist/jquery.js"></script>
+    <script src="../bootstrap/dist/js/bootstrap.js"></script>
+```
+
 ## Running Tests
 
 ```
