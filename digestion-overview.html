@@ -512,6 +512,11 @@ Digestion overview
                     .then(function (proteases) {
                         self.proteases = proteases;
                     });
+
+                // Assigns the isoform accession if exists
+                if(this.nxConfig.isoform) {
+                    this.isoformAC = this.nxConfig.isoform;
+                }
             },
             _initApiClient: function () {
                 this._npClient = new Nextprot.Client("neXtProt protein overview", "Calipho Group");
