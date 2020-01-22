@@ -318,7 +318,7 @@
                 return false;
             },
             _computeColor: function(data){
-                if (["positive", "high"].indexOf(data.expressionLevel) > -1){
+                if (["detected", "positive", "high"].indexOf(data.expressionLevel) > -1){
                     return "high-level";
                 }
                 else if (data.expressionLevel === "medium"){

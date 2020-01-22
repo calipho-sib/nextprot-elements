@@ -135,9 +135,7 @@ Annotation section used in function, medical, and expression views.
                         },
                         {
                             methodName : "RNA-Seq", methodEvidenceCodeName: "RNA-seq evidence",ecoCode: "ECO:0000295",
-                            possibleValues : [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
-                                {expressionLevel: "medium", tooltip: "positive (medium)", color: "#ffc870"},
-                                {expressionLevel: "low", tooltip: "positive (low)", color: "#ffe6bd"},
+                            possibleValues : [{expressionLevel: "detected", tooltip: "positive", color: "#ffa10a"},
                                 {expressionLevel: "not detected", tooltip: "negative", color: "#969e96"}]
                             
                         },
@@ -150,7 +148,10 @@ Annotation section used in function, medical, and expression views.
                             possibleValues : [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
                                 {expressionLevel: "medium", tooltip: "positive (medium)", color: "#ffc870"},
                                 {expressionLevel: "low", tooltip: "positive (low)", color: "#ffe6bd"},
-                                {expressionLevel: "not detected", tooltip: "negative", color: "#969e96"}]
+                                {expressionLevel: "not detected", tooltip: "negative", color: "#969e96"},
+                                <!-- Adds an extra space to match with the header-->
+                                {expressionLevel: "", tooltip: "", color: ""}
+                            ]
 
                         }]
 
