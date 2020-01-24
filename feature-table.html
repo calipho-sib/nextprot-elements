@@ -776,14 +776,24 @@ View list of chromosome names.
             },
             _filterEvidenceSource: function(sources){
                 var peptideAtlasCount = 0;
+                var massiveCount = 0;
+                var nextprotCount = 0;
                 var sourcesWithoutPeptideAtlas = sources.filter(function(src){
                     if (src.indexOf("PeptideAtlas") !== -1){
                         peptideAtlasCount += 1;
+                        return false;
+                    } else if (src.indexOf("MassIVE") !== -1) {
+                        massiveCount += 1;
+                        return false;
+                    } else if (src.indexOf("neXtProt") != -1) {
+                        nextprotCount += 1;
                         return false;
                     }
                     else return true;
                 })
                 if (peptideAtlasCount) sourcesWithoutPeptideAtlas.push(peptideAtlasCount + " PeptideAtlas human set(s)");
+                if (massiveCount) sourcesWithoutPeptideAtlas.push(massiveCount + " Massive human set(s)");
+                if (nextprotCount) sourcesWithoutPeptideAtlas.push(nextprotCount + " neXtProt human set(s)");
                 return sourcesWithoutPeptideAtlas;
             },
             _displayIndex: function(index){
