@@ -547,9 +547,13 @@ Protein overview
                     if (EC.length) EC.sort(NXUtils.sortByAlphabet);
                 }
 
-                var recommendedProteinSynonyms = NXUtils.getSynonyms(overview.recommendedProteinName.synonyms);
+                let recommendedProteinSynonyms = NXUtils.getSynonyms(overview.recommendedProteinName.synonyms);
 
-                var isonames = overview.isoformNames;
+                let isonames = overview.isoformNames;
+
+                // Workaround to convert the timestamp
+                let lastSeqUpdateDate = new Date(overview.history.lastSequenceUpdate);
+                let formattedLastSeqUpdate = lastSeqUpdateDate.getFullYear() + '-' + lastSeqUpdateDate.getMonth() + '-' + lastSeqUpdateDate.getDay();
 
                 this.data = {
                     "entryName": overview.recommendedProteinName.name,
@@ -587,7 +591,7 @@ Protein overview
                     "UniprotLastUpdate": overview.history.formattedUniprotUpdateDate,
                     "version": overview.history.uniprotVersion,
                     "seqVersion": overview.history.sequenceVersion,
-                    "lastSeqUpdate": overview.history.lastSequenceUpdate,
+                    "lastSeqUpdate": formattedLastSeqUpdate,
                     "accessionNumber": this.nxEntry
                 };
             },
