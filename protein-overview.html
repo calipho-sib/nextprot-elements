@@ -555,8 +555,11 @@ Protein overview
                 // TODO: Could have been better to deal with dates with moment.js
                 let lastSeqUpdateDate = new Date(overview.history.lastSequenceUpdate);
                 let month = lastSeqUpdateDate.getMonth();
-                month = (month + 1) <= 10 ? +'0'+ month + 1 : month + 1;
-                let formattedLastSeqUpdate = lastSeqUpdateDate.getFullYear() + '-' + month + '-' + lastSeqUpdateDate.getDay();
+                month = (month + 1) <= 10 ? '0'+ (month + 1) : month + 1;
+
+                let date = lastSeqUpdateDate.getDate();
+                date = date < 10 ? '0'+ date : date;
+                let formattedLastSeqUpdate = lastSeqUpdateDate.getFullYear() + '-' + month + '-' + date;
 
                 this.data = {
                     "entryName": overview.recommendedProteinName.name,
