@@ -65,14 +65,6 @@ gene information section demo
                 display: inline-block;
             }
 
-            .ens-link:after {
-                content: "\f08e";
-                font-family: "FontAwesome";
-                font-size: 11px;
-                margin-left: 5px;
-                vertical-align: middle;
-            }
-
             #tableDiv {
                 overflow: auto;
             }
@@ -80,7 +72,6 @@ gene information section demo
             #mappingTable {
                 margin-bottom: 10px;
             }
-
         </style>
 
         <paper-spinner-lite id="spinner" active></paper-spinner-lite>
@@ -318,7 +309,7 @@ gene information section demo
                     return "";
                 }
 
-                return '<a class="ens-link" target="_blank" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g='+location.accession+'">'+location.accession+'</a>';
+                return '<a class="ext-link" target="_blank" href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g='+location.accession+'">'+location.accession+'</a>';
             },
             _isChromosomeLocationDefined: function (location) {
 
