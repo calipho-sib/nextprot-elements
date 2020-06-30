@@ -69,13 +69,19 @@ Block element representing an evidence record.
                 margin-left: 5px;
                 vertical-align: middle;
             }
-
+            .psimi {
+                background-color:#b3e2d1;
+                color:black;
+                border-radius: 2px;
+                margin-left: 5px;
+            }
         </style>
         <template is="dom-if" if="[[data.evidenceCodeName]]" >
 
-            <div class$="[[_computeHighlighted(highlighted)]]" >
+            <template class$="[[_computeHighlighted(highlighted)]]" >
                 <div class="evidence-arrow">&#10549;</div>  Evidence [[index]]:
                 <span class="colored-label evidence-code-name">[[data.evidenceCodeName]]</span>
+                <template is="dom-if" if="[[getPsimiId(data)]]"><span class="colored-label psimi">[[getPsimiId(data)]]</span></template>
                 <span class="colored-label evidence-source">[[data.assignedBy]]</span>
                 <template is="dom-if" if="[[data.negative]]"><span class="colored-label warning-label">negative evidence</span></template>
                 <quality-label quality=[[data.qualityQualifier]]></quality-label>
