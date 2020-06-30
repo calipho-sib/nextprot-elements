@@ -78,7 +78,7 @@ Block element representing an evidence record.
         </style>
         <template is="dom-if" if="[[data.evidenceCodeName]]" >
 
-            <template class$="[[_computeHighlighted(highlighted)]]" >
+            <div class$="[[_computeHighlighted(highlighted)]]" >
                 <div class="evidence-arrow">&#10549;</div>  Evidence [[index]]:
                 <span class="colored-label evidence-code-name">[[data.evidenceCodeName]]</span>
                 <template is="dom-if" if="[[getPsimiId(data)]]"><span class="colored-label psimi">[[getPsimiId(data)]]</span></template>
