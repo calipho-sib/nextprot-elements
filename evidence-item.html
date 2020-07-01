@@ -202,6 +202,17 @@ Block element representing an evidence record.
                     return null;
                 }
             },
+            getPsimiId:  function(evidence) {
+                if(evidence.assignedBy === 'ENYO') {
+                    if(evidence.properties) {
+                        return evidence.properties["psimiId"]
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            },
         });
     </script>
 </dom-module>
