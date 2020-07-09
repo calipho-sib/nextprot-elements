@@ -81,7 +81,7 @@ Block element representing an evidence record.
             <div class$="[[_computeHighlighted(highlighted)]]" >
                 <div class="evidence-arrow">&#10549;</div>  Evidence [[index]]:
                 <span class="colored-label evidence-code-name">[[data.evidenceCodeName]]</span>
-                <template is="dom-if" if="[[getPsimiId(data)]]"><span class="colored-label psimi">[[getPsimiId(data)]]</span></template>
+                <template is="dom-if" if="[[getPsimiId(data)]]"><span class="colored-label psimi">[[getPsimiCVName(data)]]</span></template>
                 <span class="colored-label evidence-source">[[data.assignedBy]]</span>
                 <template is="dom-if" if="[[data.negative]]"><span class="colored-label warning-label">negative evidence</span></template>
                 <quality-label quality=[[data.qualityQualifier]]></quality-label>
@@ -202,10 +202,10 @@ Block element representing an evidence record.
                     return null;
                 }
             },
-            getPsimiId:  function(evidence) {
+            getPsimiCVName:  function(evidence) {
                 if(evidence.assignedBy === 'ENYO') {
                     if(evidence.properties) {
-                        return evidence.properties["psimiId"]
+                        return evidence.properties["psimiCvName"]
                     } else {
                         return null;
                     }
