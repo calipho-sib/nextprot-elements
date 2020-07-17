@@ -739,6 +739,12 @@ Annotation section used in function, medical, and expression views.
                     if (e.assignedBy==="Alzheimers_University_of_Toronto") e.assignedBy="Alzheimers UoT";
                     //if (e.assignedBy.endsWith("_PTW")) e.assignedBy = e.assignedBy.replace("_PTW","");
                     e.numberOfExperiments = e.properties ? e.properties.numberOfExperiments : undefined;
+                    let psimiCvName;
+                    if(e.assignedBy === 'ENYO') {
+                        if(e.properties) {
+                            psimiCvName = e.properties["psimiCvName"]
+                        }
+                    }
                     return {
                         "evidenceCodeName": e.evidenceCodeName,
                         "resourceAccession": e.resourceAccession,
@@ -748,7 +754,8 @@ Annotation section used in function, medical, and expression views.
                         "qualityQualifier": e.qualityQualifier,
                         "numberOfExperiments": e.numberOfExperiments,
                         "url": getUrl(e.resourceId),
-                        "publication": self._getPublication(publi[e.resourceId])
+                        "publication": self._getPublication(publi[e.resourceId]),
+                        "psimiCvName": psimiCvName
                     }
                 })
             },

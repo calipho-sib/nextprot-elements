@@ -80,7 +80,7 @@ Block element representing an evidence record.
 
             <div class$="[[_computeHighlighted(highlighted)]]" >
                 <div class="evidence-arrow">&#10549;</div>  Evidence [[index]]:
-                <span class="colored-label evidence-code-name">[[data.evidenceCodeName]]</span>
+                <span class="colored-label evidence-code-name">[[capitalizeFirstLetter(data.evidenceCodeName)]]</span>
                 <template is="dom-if" if="[[getPsimiCVName(data)]]"><span class="colored-label psimi">[[getPsimiCVName(data)]]</span></template>
                 <span class="colored-label evidence-source">[[data.assignedBy]]</span>
                 <template is="dom-if" if="[[data.negative]]"><span class="colored-label warning-label">negative evidence</span></template>
@@ -213,6 +213,22 @@ Block element representing an evidence record.
                     return null;
                 }
             },
+            getPsimiCVName:  function(evidence) {
+                if(evidence.assignedBy === 'ENYO') {
+                    if(evidence.properties) {
+                        return evidence.properties["psimiCvName"]
+                    } else if(evidence.psimiCvName){
+                        return evidence.psimiCvName
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            },
+            capitalizeFirstLetter: function(string) {
+                return string.charAt(0).toUpperCase() + string.slice(1)
+            }
         });
     </script>
 </dom-module>
