@@ -684,6 +684,7 @@ Annotation section used in function, medical, and expression views.
                 if (b.selfInteraction) return 1;
                 if (a.geneName=="-") return 1;
                 if (b.geneName=="-") return -1;
+                if (b.geneName === undefined) return -1;
                 if (a.geneName)
                     return a.geneName.toLowerCase() > b.geneName.toLowerCase() ? 1 : -1;
             },
