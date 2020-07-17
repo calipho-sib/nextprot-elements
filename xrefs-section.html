@@ -154,7 +154,8 @@ Exteranl links section present in function, medical, expression, interactions, s
                 var newTypeList = [];
 
                 for (elem in typeList) {
-                    if (["IntAct", "BioGrid", "ESTHER"].indexOf(typeList[elem].databaseName) !== -1) {
+                    // display property as [name : value]
+                    if (["IntAct", "BioGrid", "ESTHER","BioGRID"].indexOf(typeList[elem].databaseName) !== -1) {
                         if (typeList[elem].properties.length > 0) {
                             newTypeList.push({
                                 name: typeList[elem].databaseName,
@@ -163,6 +164,45 @@ Exteranl links section present in function, medical, expression, interactions, s
                                     url: typeList[elem].resolvedUrl,
                                     prefix: "",
                                     suffix: "[" + typeList[elem].properties[0].name[0].toUpperCase() + typeList[elem].properties[0].name.substring(1) + ": " + typeList[elem].properties[0].value + "]"
+                                }]
+                            })
+                        }
+                    }
+                    else if (typeList[elem].databaseName === "Pharos") {
+                        if (typeList[elem].properties.length > 0) {
+                            newTypeList.push({
+                                name: typeList[elem].databaseName,
+                                xrefs: [{
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "",
+                                    suffix: "[" + this._filterByNameMapToValue(typeList[elem].properties, "development level") + "]"
+                                }]
+                            })
+                        }
+                    }
+                    else if (typeList[elem].databaseName === "BioGRID-ORCS") {
+                        if (typeList[elem].properties.length > 0) {
+                            newTypeList.push({
+                                name: typeList[elem].databaseName,
+                                xrefs: [{
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "",
+                                    suffix: "[" + this._filterByNameMapToValue(typeList[elem].properties, "hits") + "]"
+                                }]
+                            })
+                        }
+                    }
+                    else if (typeList[elem].databaseName === "Antibodypedia") {
+                        if (typeList[elem].properties.length > 0) {
+                            newTypeList.push({
+                                name: typeList[elem].databaseName,
+                                xrefs: [{
+                                    accession: typeList[elem].accession,
+                                    url: typeList[elem].resolvedUrl,
+                                    prefix: "",
+                                    suffix: "[" + this._filterByNameMapToValue(typeList[elem].properties, "antibodies") + "]"
                                 }]
                             })
                         }
