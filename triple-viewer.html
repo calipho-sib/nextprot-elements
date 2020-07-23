@@ -462,7 +462,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     isoLengths[i.uniqueName] = i.sequenceLength;
                 })
                 for (var i=1; i<this.rawData.length-1;i++) {
-                    var feat = NXUtils.convertMappingsToIsoformMap(this.rawData[i],this.metaData[i].name,this.metaData[i].filter, "");
+                    var feat = NXUtils.convertMappingsToIsoformMap(this.rawData[i],this.metaData[i].name.replace('.',''),this.metaData[i].filter, "");
                     if (this.nxConfig.goldOnly) feat = this._filterGoldForViewer(feat);
                     featForViewer = NXViewerUtils.convertNXAnnotations(feat,this.metaData[i],isoLengths);
                     this.featuresForViewer.push(featForViewer);
@@ -705,6 +705,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 }
 //                Polymer.RenderStatus.afterNextRender(self.$.featTable, function(){
                 this.featuresForTable = this._toFlat(this.featuresByGroup);
+                this.featuresForTable.forEach(feature => {
+                    if(feature.category === 'Exp interaction' ) {
+                        feature.category = 'Exp. interaction'
+                    }
+                })
                 document.querySelector('iron-list').fire('iron-resize');
 //                });
 //                else {
