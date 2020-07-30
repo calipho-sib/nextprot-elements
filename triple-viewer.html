@@ -699,23 +699,34 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         }
                     }
                     this.featuresByGroup = features;
-//                    this.notifyPath("groupedFeatures", features);
-                    
-//                    this.featuresLength = number;
                 }
-//                Polymer.RenderStatus.afterNextRender(self.$.featTable, function(){
+
+                // Sort region features in the table
+                if(this.featuresByGroup.Region) {
+                    this.featuresByGroup.Region.sort(function(a,b){
+                        if(a.start === b.start && a.end === b.end && a.length === b.length) {
+                            if(a.description > b.description) {
+                                return 1
+                            } else {
+                                return -1
+                            }
+                            return 0
+                        } else {
+                            return -1
+                        }
+                    })
+                }
+
                 this.featuresForTable = this._toFlat(this.featuresByGroup);
+
+                // Rename the experimental interactions (This is an exceptional case)
                 this.featuresForTable.forEach(feature => {
                     if(feature.category === 'Exp interaction' ) {
                         feature.category = 'Exp. interaction'
                     }
                 })
+
                 document.querySelector('iron-list').fire('iron-resize');
-//                });
-//                else {
-//                    document.querySelector('iron-list').fire('iron-resize');
-//                }
-//                };
             },
             _reloadFeatureTable: function(){
                 this._fillTable();
