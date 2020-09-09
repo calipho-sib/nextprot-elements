@@ -127,25 +127,34 @@ Annotation section used in function, medical, and expression views.
                 },
                 heatmapOptions: {
                     type: Object,
-                    value: { "methods" : [ 
+                    value: { "methods" : [
                         {
-                        methodName : "Microarray", methodEvidenceCodeName: "DNA to cDNA expression microarray evidence", ecoCode: "ECO:0000104",
-                        possibleValues : [{expressionLevel : "positive", tooltip: "positive", color: "#ffa10a"},
-                            {expressionLevel : "negative", tooltip: "negative", color : "#969e96"}]
+                            methodName: "Microarray Bgee", methodEvidenceCodeName: "DNA to cDNA expression microarray evidence",
+                            ecoCode: "ECO:0000104", resourceDb : "Bgee",
+                            possibleValues: [{expressionLevel: "positive", tooltip: "positive", color: "#ffa10a"},
+                                {expressionLevel: "negative", tooltip: "negative", color: "#969e96"}]
                         },
                         {
-                            methodName : "RNA-Seq", methodEvidenceCodeName: "RNA-sequencing evidence",ecoCode: "ECO:0000295",
+                            methodName: "RNA-Seq Bgee", methodEvidenceCodeName: "RNA-sequencing evidence",
+                            ecoCode: "ECO:0000295", resourceDb: "Bgee",
+                            possibleValues: [{expressionLevel: "positive", tooltip: "positive", color: "#ffa10a"},
+                                {expressionLevel: "negative", tooltip: "negative", color: "#969e96"}]
+                        },
+                        {
+                            methodName: "RNA-Seq HPA", methodEvidenceCodeName: "RNA-sequencing evidence",
+                            ecoCode: "ECO:0000295", resourceDb: "HPA",
                             possibleValues : [{expressionLevel: "detected", tooltip: "positive", color: "#ffa10a"},
                                 {expressionLevel: "not detected", tooltip: "negative", color: "#969e96"}]
-                            
                         },
                         {
-                            methodName : "EST", methodEvidenceCodeName: "transcript expression evidence",ecoCode: "ECO:0000009",
-                            possibleValues : [{expressionLevel: "positive", tooltip: "positive", color: "#ffa10a"}]
+                            methodName: "EST Bgee", methodEvidenceCodeName: "transcript expression evidence",
+                            ecoCode: "ECO:0000009", resourceDb: "Bgee",
+                            possibleValues: [{expressionLevel: "positive", tooltip: "positive", color: "#ffa10a"}]
                         },
-                        {   
-                            methodName : "IHC", methodEvidenceCodeName: "immunohistochemistry evidence",ecoCode: "ECO:0001055",
-                            possibleValues : [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
+                        {
+                            methodName: "IHC", methodEvidenceCodeName: "immunohistochemistry evidence",
+                            ecoCode: "ECO:0001055", resourceDb: "HPA",
+                            possibleValues: [{expressionLevel: "high", tooltip: "positive (high)", color: "#ffa10a"},
                                 {expressionLevel: "medium", tooltip: "positive (medium)", color: "#ffc870"},
                                 {expressionLevel: "low", tooltip: "positive (low)", color: "#ffe6bd"},
                                 {expressionLevel: "not detected", tooltip: "negative", color: "#969e96"},
@@ -324,8 +333,8 @@ Annotation section used in function, medical, and expression views.
 
                         var evidenceMatchCount = 0;
                         for(var e=0; e<evidences.length; e++){
-                            var evidence = evidences[e]
-                            if (evidence.evidenceCodeName === method.methodEvidenceCodeName) {
+                            var evidence = evidences[e];
+                            if (evidence.evidenceCodeName === method.methodEvidenceCodeName && evidence.resourceDb === method.resourceDb) {
                                 if (evidence.expressionLevel === methodPossibleValue.expressionLevel) {
                                     evidenceMatchCount++;
                                     atLeastOneEvidenceValid = true;
