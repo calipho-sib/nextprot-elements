@@ -740,10 +740,8 @@ Annotation section used in function, medical, and expression views.
                     //if (e.assignedBy.endsWith("_PTW")) e.assignedBy = e.assignedBy.replace("_PTW","");
                     e.numberOfExperiments = e.properties ? e.properties.numberOfExperiments : undefined;
                     let psimiCvName;
-                    if(e.assignedBy === 'ENYO') {
-                        if(e.properties) {
-                            psimiCvName = e.properties["psimiCvName"]
-                        }
+                    if (e.properties) {
+                        psimiCvName = e.properties["psimiCvName"]
                     }
                     return {
                         "evidenceCodeName": e.evidenceCodeName,
