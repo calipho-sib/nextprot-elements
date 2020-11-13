@@ -217,25 +217,10 @@ Block element representing an evidence record.
                 }
             },
             getPsimiCVName:  function(evidence) {
-                if(evidence.assignedBy === 'ENYO') {
-                    if(evidence.properties) {
-                        return evidence.properties["psimiCvName"]
-                    } else {
-                        return null;
-                    }
-                } else {
-                    return null;
-                }
-            },
-            getPsimiCVName:  function(evidence) {
-                if(evidence.assignedBy === 'ENYO') {
-                    if(evidence.properties) {
-                        return evidence.properties["psimiCvName"]
-                    } else if(evidence.psimiCvName){
-                        return evidence.psimiCvName
-                    } else {
-                        return null;
-                    }
+                if(evidence.properties) {
+                    return evidence.properties["psimiCvName"]
+                } else if(evidence.psimiCvName){
+                    return evidence.psimiCvName
                 } else {
                     return null;
                 }
