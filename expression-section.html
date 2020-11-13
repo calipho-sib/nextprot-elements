@@ -369,13 +369,6 @@ Annotation section used in function, medical, and expression views.
                                 evidence.urlLabel = evidence.resourceAccession;
                             }
 
-                        } else if(evidence.resourceDb == "Bgee"){
-                            var geneId = evidence.resourceAccession.slice(evidence.resourceAccession.indexOf("gene_id=") + 8);
-
-                            if(geneId.indexOf("&") != -1){
-                                geneId = geneId.substring(0, geneId.indexOf("&"));
-                            }
-                            evidence.urlLabel = geneId
                         }
                     })
                 })
