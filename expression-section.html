@@ -327,7 +327,7 @@ Annotation section used in function, medical, and expression views.
                 var atLeastOneEvidenceValid = false;
                 this.heatmapOptions.methods.forEach(function (method) {
                     var methodPossibleValues = method.possibleValues;
-                    var groupObject = {name: method.methodName, values: [], ecoCode:method.ecoCode}
+                    var groupObject = {name: method.methodName, values: [], ecoCode:method.ecoCode, resourceDb: method.resourceDb}
                     groups.push(groupObject)
                     methodPossibleValues.forEach(function (methodPossibleValue) {
 
@@ -462,7 +462,7 @@ Annotation section used in function, medical, and expression views.
 
                             //Create group if group is not present
                             if(!data.groupValues[g]){
-                                data.groupValues.push({name: group.name, values:[], ecoCode: group.ecoCode})
+                                data.groupValues.push({name: group.name, values:[], ecoCode: group.ecoCode, resourceDb: group.resourceDb})
                             }
 
                             for(var v=0; v< group.values.length; v++){
