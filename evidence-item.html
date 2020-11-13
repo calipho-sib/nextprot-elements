@@ -102,6 +102,9 @@ Block element representing an evidence record.
                                 <template is="dom-if" if="[[getAlleleFrequency(data)]]">Allele frequency: [[getAlleleFrequency(data)]] ([[getAlleleCount(data)]] / [[getAlleleNumber(data)]])</template>                               
                             </p>
                             <p>
+                                <template is="dom-if" if="[[getExpressionScore(data)]]">Expression score: [[getExpressionScore(data)]] / 100</template>
+                            </p>
+                            <p>
                                 <template is="dom-if" if="[[getHomozygotCount(data)]]">Number of homozygotes: [[getHomozygotCount(data)]] </template> 
                             </p>
                         </div>
@@ -157,6 +160,17 @@ Block element representing an evidence record.
                 }
                 return "evidence-container";
 
+            },
+            getExpressionScore: function(evidence) {
+                if(evidence.assignedBy === 'Bgee') {
+                    if(evidence.properties) {
+                        return evidence.properties["expression score"]
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
             },
             getAlleleFrequency: function(evidence) {
                 if(evidence.assignedBy === 'gnomAD') {
