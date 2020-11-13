@@ -213,7 +213,7 @@
                                 <!-- Number of evidences are displayed for the given group --> 
                                 <div class="heatmap-column heatmap-group-count-size">
                                     <template is="dom-if" if="[[ _computeCountForGroup(group, d)]]">
-                                        <span class="evidenceNumber"  method-ecocode$="[[group.ecoCode]]_[[group.resourceDb]]" data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group, d)]]</span>
+                                        <span class="evidenceNumber" group-ecocode$="[[group.ecoCode]]" group-resourcedb$="[[group.resourceDb]]" data-args$="[[d.annotation]]" on-tap="_showEvidences">[[_computeCountForGroup(group, d)]]</span>
                                     </template>
                                 </div>
                                 </div>
@@ -298,7 +298,6 @@
                 }
             },
             _computeCountForGroup: function (group, data) {
-                console.log("group",group)
                 var totalEvidenceForGroup = group.values.reduce(function(v1, v2) {return v1 + v2.currentNodeEvidenceCount}, 0);
                 if(totalEvidenceForGroup > 0){
                     return totalEvidenceForGroup;
@@ -385,15 +384,16 @@
                 }
             },
 
-            _currentlyHighlightedKey: function(evidenceContainer) {
+            _groupCurrentlyHighlighted: function(evidenceContainer) {
                 if (evidenceContainer.childElementCount > 0) {
                     var evidenceItems = evidenceContainer.children;
                     for (var i=0;i<evidenceItems.length;i++) {
                         var evidenceItem=evidenceItems[i];
-                        if (evidenceItem.highlighted==='yes') return evidenceItem.data.evidenceCodeAC +"_"+evidenceItem.data.resourceDb;
+                        if (evidenceItem.highlighted==='yes')
+                            return {ecoCode: evidenceItem.data.evidenceCodeAC, resourceDb: evidenceItem.data.resourceDb};
                     }
                 }
-                return "";
+                return {};
             },
 
             _stopEventPropagation: function(event) {
@@ -418,12 +418,12 @@
             },
 
 
-            _showEvidencesOfAnnotationAndEco: function(annotation, newkey) {
+            _showEvidencesOfAnnotation: function(annotation, newGroup) {
                 if (annotation === undefined || annotation === null) return;
                 var container = this.$$("#annotation-"+annotation.annotationId+"-evidence-container");
                 if (container === undefined || container === null) return;
 
-                var oldkey = this._currentlyHighlightedKey(container);
+                var oldGroup = this._groupCurrentlyHighlighted(container);
                 this._sortEvidences(annotation.evidences);
                 // if evidence-items are not yet created, create them and highlight those related to neweco
                 if(container.childElementCount===0){
@@ -435,18 +435,18 @@
                         }
                         var evidenceItem = document.createElement("evidence-item");
                         evidenceItem.setAttribute("index", new Number(evidenceIdx) + 1);
-                        var hlValue = (newkey === evidence.evidenceCodeAC+"_"+evidence.resourceDb  ? "yes" : "no");
+                        var hlValue = (newGroup.ecoCode === evidence.evidenceCodeAC && newGroup.resourceDb === evidence.resourceDb  ? "yes" : "no");
                         evidenceItem.setAttribute("highlighted", hlValue);
                         evidenceItem.data=evidence;
                         container.appendChild(evidenceItem);
                         this.updateStyles();
                     }
-                    // else if we want to highlight evidence-items related to another eco/ or resource,
+                    // else if we want to highlight evidence-items related to another eco or resource,
                     // then update the highlighted value for all
-                } else if (oldkey != newkey) {
+                } else if (oldGroup.ecoCode !== newGroup.ecoCode || oldGroup.resourceDb !== newGroup.resourceDb ) {
                     for (var i=0;i<container.children.length;i++) {
                         var evidenceItem=container.children[i];
-                        var hlValue = (newkey === evidenceItem.data.evidenceCodeAC +"_"+evidenceItem.data.resourceDb ? "yes" : "no");
+                        var hlValue = (newGroup.ecoCode === evidenceItem.data.evidenceCodeAC  && newGroup.resourceDb === evidenceItem.data.resourceDb ? "yes" : "no");
                         evidenceItem.highlighted=hlValue;
                         container.hidden = false;
                     }
@@ -467,15 +467,18 @@
             _effectiveAllEvidencesHandler: function() {
                 for (var i=0;i<this.data.length;i++) {
                     console.log("handling all evidences",i+1,this.data.length);
-                    this._showEvidencesOfAnnotationAndEco(this.data[i].annotation, "", "");
+                    this._showEvidencesOfAnnotation(this.data[i].annotation);
                 }
                 this.slowProcess = false;
             },
 
             _showEvidences: function(e) {
                 var annotation = JSON.parse(e.target.dataset.args);
-                var neweco = e.target.attributes["method-ecocode"].nodeValue;
-                this._showEvidencesOfAnnotationAndEco(annotation, neweco);
+                var newGroup = {
+                    ecoCode: e.target.attributes["group-ecocode"].nodeValue,
+                    resourceDb: e.target.attributes["group-resourcedb"].nodeValue
+                }
+                this._showEvidencesOfAnnotation(annotation, newGroup);
                 // prevents event to go on bubbling and this way prevents toggleChildren() to be executed
                 this._stopEventPropagation(e);
             }
