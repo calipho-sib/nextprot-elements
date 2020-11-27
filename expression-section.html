@@ -398,12 +398,16 @@ Annotation section used in function, medical, and expression views.
 
                         if(context.developmentalStage) {
                             var label = context.developmentalStage.name
-                            levelAndStageLabel = levelAndStageLabel  + " at " + ((label === "unknown" || label === "late adulthood") ? (label + " stage") : label) + "."
-                        }else {
-                            levelAndStageLabel += "."
+                            levelAndStageLabel = levelAndStageLabel  + " at " + ((label === "unknown" || label === "late adulthood") ? (label + " stage") : label)
                         }
-                        evidence.levelAndStageLabel = levelAndStageLabel;
 
+                        if (evidence.properties["expressionScore"]) {
+                            levelAndStageLabel = levelAndStageLabel  + " with score " + evidence.properties["expressionScore"] +  "/100"
+                        }
+
+                        levelAndStageLabel += "."
+
+                        evidence.levelAndStageLabel = levelAndStageLabel;
                     })
                 })
             },
