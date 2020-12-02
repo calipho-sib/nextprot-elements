@@ -533,11 +533,15 @@ Annotation section used in function, medical, and expression views.
                         }
                         else if (a.isoformsDisplayedAsSpecific.length===1) a.isoformSpecific = "Isoform "+ data_isoforms[a.isoformsDisplayedAsSpecific[0]].mainEntityName.name;
                     }
-                    if (a.apicategory=="BINARY_INTERACTION") {
+                    if (a.apicategory === "BINARY_INTERACTION") {
                         for (var e in evidences) {
                             if (evidences[e].numberOfExperiments) {
-                                a.numberOfExperiments = evidences[e].numberOfExperiments;
-                                continue;
+                                if (!a.numberOfExperiments) {
+                                    // when it's 'undefined', we have to initialize with 0 to be able to do an addition with evidences[e].numberOfExperiments.
+                                    a.numberOfExperiments = 0;
+                                }
+                                // Note: The 10 here specifies decimal (base-10). Without this some browsers may not interpret the string correctly.
+                                a.numberOfExperiments = a.numberOfExperiments + parseInt(evidences[e].numberOfExperiments, 10);
                             }
                         }
                     }
