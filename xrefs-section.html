@@ -45,6 +45,9 @@ Exteranl links section present in function, medical, expression, interactions, s
                                                     <template is="dom-if" if="[[xref.suffix]]">
                                                         <label class="suffix-label">[[xref.suffix]]</label>
                                                     </template>
+                                                    <template is="dom-if" if="[[xref.isoformId]]">
+                                                        <label class="suffix-label style-scope xrefs-section">[[[xref.isoformId]]]</label>
+                                                    </template>
                                                 </div>
                                             </template>
                                         </div>
@@ -398,11 +401,22 @@ Exteranl links section present in function, medical, expression, interactions, s
                             var nucleotide = $.grep(typeList, function (e) {
                                 return e.accession == nucleotideID;
                             })[0];
+
+                            // Adds isoform info
+                            let isoformId;
+                            typeList[elem].properties.forEach(function(property) {
+                                if(property.name === "isoform ID") {
+                                    isoformId = property.value;
+                                    break;
+                                }
+                            });
+
                             refseq.xrefs.push({
                                 accession: nucleotide.accession,
                                 url: nucleotide.resolvedUrl,
                                 prefix: "Nucleotide sequence",
-                                suffix: ""
+                                suffix: "",
+                                isoformId: isoformId
                             });
                             newTypeList.push(refseq);
                         }
