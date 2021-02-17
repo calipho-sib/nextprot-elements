@@ -266,27 +266,44 @@ Exteranl links section present in function, medical, expression, interactions, s
                                         var result = $.grep(typeList, function (e) {
                                             return e.accession === p.value;
                                         })[0];
+
+                                        let isoformId;
+                                        if(p.name === "isoform Id") {
+                                            isoformId = p.value;
+                                        }
                                         ensembl.xrefs.push({
                                             accession: result.accession,
                                             url: result.resolvedUrl,
                                             prefix: "Protein",
-                                            suffix: ""
+                                            suffix: "",
+                                            isoformId: isoformId
                                         });
                                     }
                                 })
+
+                                // Adds the isoform accession to the end of the line
+                                var result;
+                                var isoformId;
                                 typeList[elem].properties.forEach(function (p) {
                                     if (p.name === "nxmapped gene ID") {
-                                        var result = $.grep(typeList, function (e) {
+                                        result = $.grep(typeList, function (e) {
                                             return e.accession === p.value;
                                         })[0];
-                                        ensembl.xrefs.push({
-                                            accession: result.accession,
-                                            url: result.resolvedUrl,
-                                            prefix: "Gene",
-                                            suffix: ""
-                                        });
+
+                                    }
+
+                                    if (p.name === "isoform ID") {
+                                        isoformId = p.value;
                                     }
                                 })
+
+                                ensembl.xrefs.push({
+                                    accession: result.accession,
+                                    url: result.resolvedUrl,
+                                    prefix: "Gene",
+                                    suffix: "",
+                                    isoformId: isoformId
+                                });
 
                                 if ($.grep(ensembl.xrefs, function (e) {
                                     return e.prefix === "Protein";
