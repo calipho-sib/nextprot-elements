@@ -48,6 +48,9 @@ Exteranl links section present in function, medical, expression, interactions, s
                                                     <template is="dom-if" if="[[xref.isoformId]]">
                                                         <label class="suffix-label style-scope xrefs-section">[[[xref.isoformId]]]</label>
                                                     </template>
+                                                    <template is="dom-if" if="[[xref.value]]">
+                                                        <label class="suffix-label style-scope xrefs-section">[[[xref.value]]]</label>
+                                                    </template>
                                                 </div>
                                             </template>
                                         </div>
@@ -482,11 +485,17 @@ Exteranl links section present in function, medical, expression, interactions, s
                     }
                     else {
                         var suffix = "";
+                        var value = "";
                         if (typeList[elem].properties.length > 0) {
                             var addInfos = $.grep(typeList[elem].properties, function (e) {
                                 return e.name === "entry name" || e.name === "isoform ID" || e.name === "gene designation" || e.name === "taxonomic scope";
                             })[0];
                             suffix = addInfos ? "[" + addInfos.value + "]" : "";
+
+                            // Add value for Glyconnect and Glygen
+                            if(typeList[elem].databaseName === "GlyConnect" || typeList[elem].databaseName === "GlyGen" || typeList[elem].databaseName === "CPTC") {
+                                value = typeList[elem].properties[0].value;
+                            }
                         }
                         newTypeList.push({
                             name: typeList[elem].databaseName,
@@ -494,7 +503,8 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 accession: typeList[elem].accession,
                                 url: typeList[elem].resolvedUrl,
                                 prefix: "",
-                                suffix: suffix
+                                suffix: suffix,
+                                value: value
                             }]
                         })
                     }
