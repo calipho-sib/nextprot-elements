@@ -585,7 +585,7 @@ Digestion overview
 
             _getEntryforPeptidePOST: function (peptides, callback) {
                 var start = new Date().getTime();
-                var apiBaseUrl = this.nxConfig.env === "dev" ? "https://dev-api.nextprot.org" : this.nxConfig.env === "alpha" ? "http://alpha-api.nextprot.org" : "https://api.nextprot.org";
+                var apiBaseUrl = this.nxConfig.env === "dev" ? "https://dev-api.nextprot.org" : this.nxConfig.env === "alpha" ? "https://alpha-api.nextprot.org" : "https://api.nextprot.org";
                 console.log("number of peptides submitted for post : ",peptides.length);
                 // console.log(JSON.stringify(peptides));
                 $.ajax({
