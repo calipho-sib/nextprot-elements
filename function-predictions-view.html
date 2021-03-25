@@ -1,0 +1,41 @@
+<link rel="import" href="protein-overview.html">
+<link rel="import" href="generic-annotation-section.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+
+<!--
+`function-predictions-view`
+View listing protein function predictions.
+
+#### Example
+
+          <function-predictions-view nx-config='{"entry": "P52701"}'></function-view>
+
+@demo demo/function-predictions-view-demo.html
+-->
+<dom-module id="function-predictions-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                background:#f8f8f8;
+                overflow-y: auto;
+            }
+        </style>
+        <div class="row">
+            <div id="nxOverview" class="col-md-12">
+                <protein-overview nx-config="[[nxConfig]]"></protein-overview>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'function-predictions-view',
+            properties: {
+                nxConfig: {
+                    type: Object,
+                    value: {}
+                }
+            }
+        });
+    </script>
+</dom-module>
