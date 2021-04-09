@@ -8,7 +8,7 @@ View listing protein function predictions.
 
 #### Example
 
-          <function-predictions-view nx-config='{"entry": "P52701"}'></function-view>
+          <function-predictions-view nx-config='{"entry": "P52701"}'></function-predictions-view>
 
 @demo demo/function-predictions-view-demo.html
 -->
@@ -17,8 +17,65 @@ View listing protein function predictions.
         <style include="nextprot-elements-shared-styles">
             :host {
                 display: block;
-                background:#f8f8f8;
-                overflow-y: auto;
+                min-height: 35px;
+            }
+            .annotation-container {
+                float: left;
+                display: inline;
+                width: calc(100% - 175px);
+            }
+            .annotation-row {
+                margin-right: 0px;
+                margin-bottom: 0px;
+            }
+            .evidences-button-container {
+                display: inline;
+                width: 175px;
+            }
+            .evidences-container {
+                margin: 0px 200px 15px 0px;
+            }
+            .blue-well {
+                margin: 5px 190px 10px 10px;
+            }
+            .evidence-arrow {
+                transform:rotate(180deg);
+                display:inline-block;
+                font-weight: 900;
+            }
+            .evidence-code-name {
+                background-color:#7cba0f;
+                color:white;
+                border-radius: 2px;
+                margin-left: 5px;
+            }
+            .evidence-source {
+                background-color: #dedede;
+                color: #999;
+                border-radius: 2px;
+            }
+            .evidence-publication{
+                margin-top: 5px;
+                padding-left: 17px;
+            }
+            .border-left {
+                border-left: 1px solid #ddd;
+            }
+            .ext-link:after {
+                content: "\f08e";
+                font-family: "FontAwesome";
+                font-size: 11px;
+                margin-left: 5px;
+                vertical-align: middle;
+            }
+
+            @media (max-width: 1080px) {
+                .evidences-container {
+                    margin: 0px 25px 20px 0px;
+                }
+                .blue-well {
+                    margin: 5px 15px 10px 10px;
+                }
             }
         </style>
         <div class="row">
@@ -26,16 +83,150 @@ View listing protein function predictions.
                 <protein-overview nx-config="[[nxConfig]]"></protein-overview>
             </div>
         </div>
+        <div class="row">
+            <div id="nxAnnotations" class="col-md-12">
+                <template is="dom-if" if="[[predictionGroups]]">
+                    <div id="notice" class="grey-x">
+                        <i>Annotations in this section apply to all the isoforms if not specified otherwise.</i>
+<!--                        <paper-spinner-lite id="spinner" active></paper-spinner-lite>-->
+                    </div>
+                    <!-- GO categories -->
+                    <template is="dom-repeat" items="[[_toArray(predictionGroups)]]" as="group" initial-count="1" index-as="group_idx">
+                        <div id="[[group.id]]-section">
+                            <div>
+                                <h4 class="annotation-category-title">[[group.name]]</h4>
+                            </div>
+                            <!-- Predictions -->
+                            <template is="dom-repeat" items="[[group.predictions]]" as="pred" initial-count="1" index-as="pred_idx" target-framerate="1000" >
+                                <div class="row annotation-row">
+                                    <div class="annotation-container">
+                                        <div class$="annotation-title-container [[group.id]]">
+                                            <template is="dom-if" if="[[pred.cvTermAccessionCode]]">
+                                                <div class="annotation-title">
+                                                    <p inner-h-t-m-l="[[pred.cvTermName]]"></p>
+                                                    <div class="annotation-labels">
+                                                        <a class="accession-code-link" href="/term/[[pred.cvTermAccessionCode]]">[[pred.cvTermAccessionCode]]</a>
+                                                        <span id="description-button-[[group_idx]]-[[pred_idx]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <template is="dom-if" if="[[_countItems(pred.evidences)]]">
+                                        <div class="evidences-button-container">
+                                            <div class="show-references-button">
+                                                <a id="evidences-button-[[group_idx]]-[[pred_idx]]" class="btn" on-tap="_toggle">
+                                                    <p class="show-references-button-counter">[[_countItems(pred.evidences)]]</p>
+                                                    <p class="show-references-button-label">ev</p>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                                <iron-collapse id="description-container-[[group_idx]]-[[pred_idx]]">
+                                    <div class="well blue-well">
+                                        [[pred.cvTermDescription]]
+                                    </div>
+                                </iron-collapse>
+
+                                <!-- Evidences -->
+                                <iron-collapse id="evidences-container-[[group_idx]]-[[pred_idx]]">
+                                    <div class="evidences-container">
+                                        <template is="dom-repeat" items="[[pred.evidences]]" as="evidence">
+                                            <div >
+                                                <div class="evidence-arrow">&#10549;</div>  Evidence [[_getIndex(index)]]:
+                                                <span class="colored-label evidence-code-name">[[_capitalizeFirstLetter(evidence.evidenceCodeName)]]</span>
+                                                <template is="dom-if" if="[[evidence.userOrcid]]">
+                                                    <span class="colored-label evidence-source">
+                                                        ORCID: <a href="https://orcid.org/[[evidence.userOrcid]]" class="ext-link" target='_blank'>[[evidence.userOrcid]]</a>
+                                                    </span>
+                                                </template>
+                                                <template is="dom-if" if="[[!evidence.userOrcid]]">
+                                                    <span class="colored-label evidence-source">Anonymous</span>
+                                                </template>
+                                                <div class="border-left">
+                                                    <template is="dom-if" if="[[evidence.publicationAc]]">
+                                                        <div class="evidences-container">
+                                                            <div class="evidence-publication">
+                                                                [[evidence.publicationDatabaseName]]:
+                                                                <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=search&term=[[evidence.publicationAc]]" class="ext-link" target='_blank'>[[evidence.publicationAc]]</a>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </iron-collapse>
+                            </template>
+                        </div>
+                    </template>
+                </template>
+                <template is="dom-if" if="[[!predictionGroups]]">
+                    No predictions
+                </template>
+            </div>
+        </div>
     </template>
     <script>
         Polymer({
-            is: 'function-predictions-view',
-            properties: {
-                nxConfig: {
-                    type: Object,
-                    value: {}
+                is: 'function-predictions-view',
+                properties: {
+                    nxConfig: {
+                        type: Object,
+                        value: {}
+                    }
+                },
+
+                ready: function () {
+
+                    this.nx = new Nextprot.Client("neXtProt function prediction view", "Calipho Group");
+                    this._initApiClient();
+                    var self = this;
+                    this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/function-predictions.json", "true")
+                        .then(function (response) {
+                            self.predictionGroups = response.predictions;
+                        })
+                        .catch(function (error) {
+                            console.error("Error: ", error);
+                        });
+                },
+
+                _initApiClient: function () {
+                    this._npClient = new Nextprot.Client("neXtProt function prediction view", "Calipho Group");
+                    this._npClient.updateEnvironment("dev");
+                    if (this.nxConfig.env) {
+                        this._npClient.updateEnvironment(this.nxConfig.env);
+                    }
+                },
+
+                _toArray: function (obj) {
+                    if (obj){
+                        var arr = Object.keys(obj).map(function (key) {
+                            return {"id": key, "name": key.replace(/-/g, " "), "predictions": obj[key]};
+                        });
+                        return arr;
+                    }
+                    return [];
+                },
+
+                _countItems: function(obj){
+                    return obj.length;
+                },
+
+                _getIndex: function(index){
+                    return index+1;
+                },
+
+                _toggle: function(mouseEvent){
+                    var srcElementId = mouseEvent.target.id || mouseEvent.target.parentNode.id;
+                    this.$$("#"+srcElementId.replace('button','container')).toggle();
+                },
+
+                _capitalizeFirstLetter: function(string) {
+                    return string.charAt(0).toUpperCase() + string.slice(1)
                 }
-            }
-        });
+            },
+        );
     </script>
 </dom-module>
