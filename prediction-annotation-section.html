@@ -45,14 +45,12 @@ Annotation section used in function predictions views.
                 border-radius: 2px;
                 margin-left: 5px;
             }
-            .evidence-source {
-                background-color: #dedede;
-                color: #999;
-                border-radius: 2px;
-            }
-            .evidence-publication{
+            .evidence-publication, .evidence-submitters {
                 margin-top: 5px;
                 padding-left: 17px;
+            }
+            .submitter {
+                white-space: nowrap;
             }
             .border-left {
                 border-left: 1px solid #ddd;
@@ -64,7 +62,11 @@ Annotation section used in function predictions views.
                 margin-left: 5px;
                 vertical-align: middle;
             }
-
+            .orcid_logo {
+                height: 16px;
+                width: 16px;
+                margin: 4px;
+            }
             @media (max-width: 1080px) {
                 .evidences-container {
                     margin: 0px 25px 20px 0px;
@@ -76,86 +78,88 @@ Annotation section used in function predictions views.
         </style>
         <div class="category-main">
             <div id="notice" class="grey-x">
-                <i>Annotations in this section apply to all the isoforms if not specified otherwise.</i>
+                <i>Predictions in this section apply to all the isoforms if not specified otherwise.</i>
                 <paper-spinner-lite id="spinner" active></paper-spinner-lite>
             </div>
-            <template is="dom-if" if="[[predictionGroups]]">
-                <!-- GO categories -->
-                <template is="dom-repeat" items="[[_toArray(predictionGroups)]]" as="group" initial-count="1" index-as="group_idx">
-                    <div id="[[group.id]]-section">
-                        <div>
-                            <h4 class="annotation-category-title">[[group.name]]</h4>
-                        </div>
-                        <!-- Predictions -->
-                        <template is="dom-repeat" items="[[group.predictions]]" as="pred" initial-count="1" index-as="pred_idx" target-framerate="1000" >
-                            <div class="row annotation-row">
-                                <div class="annotation-container">
-                                    <div class$="annotation-title-container [[group.id]]">
-                                        <template is="dom-if" if="[[pred.cvTermAccessionCode]]">
-                                            <div class="annotation-title">
-                                                <p inner-h-t-m-l="[[pred.cvTermName]]"></p>
-                                                <div class="annotation-labels">
-                                                    <a class="accession-code-link" href="/term/[[pred.cvTermAccessionCode]]">[[pred.cvTermAccessionCode]]</a>
-                                                    <span id="description-button-[[group_idx]]-[[pred_idx]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
-                                                </div>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </div>
-                                <template is="dom-if" if="[[_countItems(pred.evidences)]]">
-                                    <div class="evidences-button-container">
-                                        <div class="show-references-button">
-                                            <a id="evidences-button-[[group_idx]]-[[pred_idx]]" class="btn" on-tap="_toggle">
-                                                <p class="show-references-button-counter">[[_countItems(pred.evidences)]]</p>
-                                                <p class="show-references-button-label">ev</p>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                            <iron-collapse id="description-container-[[group_idx]]-[[pred_idx]]">
-                                <div class="well blue-well">
-                                    [[pred.cvTermDescription]]
-                                </div>
-                            </iron-collapse>
-
-                            <!-- Evidences -->
-                            <iron-collapse id="evidences-container-[[group_idx]]-[[pred_idx]]">
-                                <div class="evidences-container">
-                                    <template is="dom-repeat" items="[[pred.evidences]]" as="evidence">
-                                        <div >
-                                            <div class="evidence-arrow">&#10549;</div>  Evidence [[_getIndex(index)]]:
-                                            <span class="colored-label evidence-code-name">[[_capitalizeFirstLetter(evidence.evidenceCodeName)]]</span>
-                                            <template is="dom-if" if="[[evidence.userOrcid]]">
-                                                    <span class="colored-label evidence-source">
-                                                        ORCID: <a href="https://orcid.org/[[evidence.userOrcid]]" class="ext-link" target='_blank'>[[evidence.userOrcid]]</a>
-                                                    </span>
-                                            </template>
-                                            <template is="dom-if" if="[[!evidence.userOrcid]]">
-                                                <span class="colored-label evidence-source">Anonymous</span>
-                                            </template>
-                                            <div class="border-left">
-                                                <template is="dom-if" if="[[evidence.publicationAc]]">
-                                                    <div class="evidences-container">
-                                                        <div class="evidence-publication">
-                                                            [[evidence.publicationDatabaseName]]:
-                                                            <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=search&term=[[evidence.publicationAc]]" class="ext-link" target='_blank'>[[evidence.publicationAc]]</a>
-                                                        </div>
-                                                    </div>
-                                                </template>
+            <!-- GO categories -->
+            <template is="dom-repeat" items="[[_toArray(predictionGroups)]]" as="group" initial-count="1" index-as="group_idx">
+                <div id="[[group.id]]-section">
+                    <div>
+                        <h4 class="annotation-category-title">[[group.name]]</h4>
+                    </div>
+                    <!-- Predictions -->
+                    <template is="dom-repeat" items="[[group.predictions]]" as="pred" initial-count="1" index-as="pred_idx" target-framerate="1000" >
+                        <div class="row annotation-row">
+                            <div class="annotation-container">
+                                <div class$="annotation-title-container [[group.id]]">
+                                    <template is="dom-if" if="[[pred.cvTermAccessionCode]]">
+                                        <div class="annotation-title">
+                                            <p inner-h-t-m-l="[[pred.cvTermName]]"></p>
+                                            <div class="annotation-labels">
+                                                <a class="accession-code-link" href="/term/[[pred.cvTermAccessionCode]]">[[pred.cvTermAccessionCode]]</a>
+                                                <span id="description-button-[[group_idx]]-[[pred_idx]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
                                             </div>
                                         </div>
                                     </template>
                                 </div>
-                            </iron-collapse>
-                        </template>
-                    </div>
-                </template>
-            </template>
-            <template is="dom-if" if="[[!predictionGroups]]">
-                No predictions
-            </template>
+                            </div>
+                            <template is="dom-if" if="[[_countItems(pred.evidences)]]">
+                                <div class="evidences-button-container">
+                                    <div class="show-references-button">
+                                        <a id="evidences-button-[[group_idx]]-[[pred_idx]]" class="btn" on-tap="_toggle">
+                                            <p class="show-references-button-counter">[[_countItems(pred.evidences)]]</p>
+                                            <p class="show-references-button-label">ev</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        <iron-collapse id="description-container-[[group_idx]]-[[pred_idx]]">
+                            <div class="well blue-well">
+                                [[pred.cvTermDescription]]
+                            </div>
+                        </iron-collapse>
 
+                        <!-- Evidences -->
+                        <iron-collapse id="evidences-container-[[group_idx]]-[[pred_idx]]">
+                            <div class="evidences-container">
+                                <template is="dom-repeat" items="[[pred.evidences]]" as="evidence">
+                                    <div >
+                                        <div class="evidence-arrow">&#10549;</div>  Evidence [[_getIndex(index)]]:
+                                        <span class="colored-label evidence-code-name">[[_capitalizeFirstLetter(evidence.evidenceCodeName)]]</span>
+                                        <div class="border-left">
+                                            <div class="evidences-container">
+                                                <div class="evidence-submitters">
+                                                    <template is="dom-if" if="[[evidence.userOrcids]]">
+                                                        Submitter<template is="dom-if" if="[[_hasMultipleIds(evidence.userOrcids)]]">s</template>:
+                                                        <template is="dom-repeat" items="[[evidence.userOrcids]]" as="userOrcid">
+                                                                    <span class="submitter">
+                                                                        <a href="https://orcid.org/[[userOrcid]]" class="ext-link" target='_blank'>
+                                                                            <img class="orcid_logo" alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" />
+                                                                            [[userOrcid]]
+                                                                        </a>
+                                                                    </span>
+                                                        </template>
+                                                    </template>
+                                                    <template is="dom-if" if="[[!evidence.userOrcids]]">
+                                                        Anonymous submitter
+                                                    </template>
+                                                </div>
+                                                <template is="dom-if" if="[[evidence.publicationAc]]">
+                                                    <div class="evidence-publication">
+                                                        [[evidence.publicationDatabaseName]]:
+                                                        <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=search&term=[[evidence.publicationAc]]" class="ext-link" target='_blank'>[[evidence.publicationAc]]</a>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </iron-collapse>
+                    </template>
+                </div>
+            </template>
         </div>
     </template>
 
@@ -166,6 +170,10 @@ Annotation section used in function predictions views.
                     nxConfig: {
                         type: Object,
                         value: {}
+                    },
+                    count: {
+                        type: Number,
+                        notify: true
                     }
                 },
 
@@ -176,13 +184,16 @@ Annotation section used in function predictions views.
                     this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/function-predictions.json", "true")
                         .then(function (response) {
                             self.predictionGroups = response.predictions;
+                            self.count = Object.keys(self.predictionGroups).length;
                             self.$.spinner.removeAttribute('active');
                         })
                         .catch(function (error) {
                             console.log("Argh, broken: " + error.message);
                             console.log("Error at line : " + error.stack);
-                            // self.$.spinner.removeAttribute('active');
-                        });
+                            self.count = 0;
+                            self.$.spinner.removeAttribute('active');
+                        })
+
                 },
 
                 _initApiClient: function () {
@@ -218,6 +229,10 @@ Annotation section used in function predictions views.
 
                 _capitalizeFirstLetter: function(string) {
                     return string.charAt(0).toUpperCase() + string.slice(1)
+                },
+
+                _hasMultipleIds: function(ids) {
+                    return ids && ids.length > 1;
                 }
             },
         );
