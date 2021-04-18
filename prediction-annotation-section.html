@@ -178,7 +178,6 @@ Annotation section used in function predictions views.
                 },
 
                 ready: function () {
-                    this.nx = new Nextprot.Client("neXtProt function prediction view", "Calipho Group");
                     this._initApiClient();
                     var self = this;
                     this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/function-predictions.json", "true")

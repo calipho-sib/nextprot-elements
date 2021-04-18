@@ -33,8 +33,14 @@ View listing protein function annotations.
         <protein-overview nx-config="[[nxConfig]]"></protein-overview>
       </div>
     </div>
-    <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no function information available in neXtProt for [[nxConfig.entry]].
-      Suggestions for updates are welcome! Please <a href="javascript:location='mailto:\u0073\u0075\u0070\u0070\u006f\u0072\u0074\u0040\u006e\u0065\u0078\u0074\u0070\u0072\u006f\u0074\u002e\u006f\u0072\u0067';void 0">contact us</a>.
+    <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no function predictions available in neXtProt for [[nxConfig.entry]].
+      <template is="dom-if" if="[[hasPredictions]]">
+        Functional predictions have been submitted, please take a look at <a href="entry/[[data.accession]]/function-predictions">function predictions view</a>. Suggestions for updates are welcome!
+      </template>
+      <template is="dom-if" if="[[!hasPredictions]]">
+        Suggestions for updates and submission of functional predictions are welcome!
+      </template>
+      Please <a href="javascript:location='mailto:\u0073\u0075\u0070\u0070\u006f\u0072\u0074\u0040\u006e\u0065\u0078\u0074\u0070\u0072\u006f\u0074\u002e\u006f\u0072\u0067';void 0">contact us</a>.
     </div>
     <div class="row">
       <div id="nxAnnotations" class="col-md-12">
@@ -84,8 +90,34 @@ View listing protein function annotations.
         xrefsCount: {
           type: Number,
           observer: "_checkXrefs"
+        },
+        hasPredictions: {
+          type: Boolean,
+          value: false
         }
       },
+
+      ready: function () {
+        this._initApiClient();
+        var self = this;
+        this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/function-predictions.json", "true")
+                .then(function (response) {
+                  self.hasPredictions = Object.keys(response.predictions).length > 0;
+                })
+                .catch(function (error) {
+                  console.log("Argh, broken: " + error.message);
+                  console.log("Error at line : " + error.stack);
+                })
+      },
+
+      _initApiClient: function () {
+        this._npClient = new Nextprot.Client("neXtProt function prediction view", "Calipho Group");
+        this._npClient.updateEnvironment("dev");
+        if (this.nxConfig.env) {
+          this._npClient.updateEnvironment(this.nxConfig.env);
+        }
+      },
+
       _checkAnnotations: function(){
         if(this.annotationsCount===0) this.$.nxAnnotations.hidden=true;
         else this.$.nxAnnotations.hidden=false;
