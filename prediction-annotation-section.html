@@ -180,7 +180,7 @@ Annotation section used in function predictions views.
                 ready: function () {
                     this._initApiClient();
                     var self = this;
-                    this._npClient.getJSON("/entry/" + this.nxConfig.entry + "/function-predictions.json", "true")
+                    this._npClient.getJSON("/function-predictions/"+ this.nxConfig.entry +".json", "true")
                         .then(function (response) {
                             self.predictionGroups = response.predictions;
                             self.count = Object.keys(self.predictionGroups).length;
