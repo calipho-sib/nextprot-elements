@@ -77,7 +77,7 @@ Annotation section used in function predictions views.
             }
         </style>
         <div class="category-main">
-            <div id="notice" class="grey-x">
+            <div id="notice" class="white">
                 <i>Predictions in this section apply to all the isoforms if not specified otherwise.</i>
                 <paper-spinner-lite id="spinner" active></paper-spinner-lite>
             </div>
@@ -92,11 +92,11 @@ Annotation section used in function predictions views.
                         <div class="row annotation-row">
                             <div class="annotation-container">
                                 <div class$="annotation-title-container [[group.id]]">
-                                    <template is="dom-if" if="[[pred.cvTermAccessionCode]]">
+                                    <template is="dom-if" if="[[pred.cvTermAccession]]">
                                         <div class="annotation-title">
                                             <p inner-h-t-m-l="[[pred.cvTermName]]"></p>
                                             <div class="annotation-labels">
-                                                <a class="accession-code-link" href="/term/[[pred.cvTermAccessionCode]]">[[pred.cvTermAccessionCode]]</a>
+                                                <a class="accession-code-link" href="/term/[[pred.cvTermAccession]]">[[pred.cvTermAccession]]</a>
                                                 <span id="description-button-[[group_idx]]-[[pred_idx]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
                                             </div>
                                         </div>
