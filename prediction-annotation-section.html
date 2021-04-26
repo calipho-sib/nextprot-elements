@@ -81,14 +81,24 @@ Annotation section used in function predictions views.
                 <i>Predictions in this section apply to all the isoforms if not specified otherwise.</i>
                 <paper-spinner-lite id="spinner" active></paper-spinner-lite>
             </div>
+
+            <template is="dom-if" if="[[!predictionGroups]]">
+                <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no function predictions available in neXtProt for [[nxConfig.entry]].
+                    <template is="dom-if" if="[[!hasPredictions]]">
+                        Suggestions for updates are welcome! Please contact us.
+                    </template>
+                    Please <a href="javascript:location='mailto:\u0073\u0075\u0070\u0070\u006f\u0072\u0074\u0040\u006e\u0065\u0078\u0074\u0070\u0072\u006f\u0074\u002e\u006f\u0072\u0067';void 0">contact us</a>.
+                </div>
+            </template>
+
             <!-- GO categories -->
             <template is="dom-repeat" items="[[_toArray(predictionGroups)]]" as="group" initial-count="1" index-as="group_idx">
                 <div id="[[group.id]]-section">
                     <div>
-                        <h4 class="annotation-category-title">[[group.name]]</h4>
+                        <h4 class="annotation-category-title">[[_formatGroupName(group.name)]]</h4>
                     </div>
                     <!-- Predictions -->
-                    <template is="dom-repeat" items="[[group.predictions]]" as="pred" initial-count="1" index-as="pred_idx" target-framerate="1000" >
+                    <template is="dom-repeat" items="[[_sortPredictions(group.predictions)]]" as="pred" initial-count="1" index-as="pred_idx" target-framerate="1000" >
                         <div class="row annotation-row">
                             <div class="annotation-container">
                                 <div class$="annotation-title-container [[group.id]]">
@@ -235,6 +245,14 @@ Annotation section used in function predictions views.
 
                 _hasMultipleIds: function(ids) {
                     return ids && ids.length > 1;
+                },
+
+                _formatGroupName: function(string) {
+                    return string.replace(/_/g, ' ');
+                },
+
+                _sortPredictions: function(predictions) {
+                    return predictions.sort((a,b) => a.cvTermName > b.cvTermName)
                 }
             },
         );

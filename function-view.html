@@ -33,9 +33,9 @@ View listing protein function annotations.
         <protein-overview nx-config="[[nxConfig]]"></protein-overview>
       </div>
     </div>
-    <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no function predictions available in neXtProt for [[nxConfig.entry]].
+    <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no function information available in neXtProt for [[nxConfig.entry]].
       <template is="dom-if" if="[[hasPredictions]]">
-        Functional predictions have been submitted, please take a look at <a href="entry/[[data.accession]]/function-predictions">function predictions view</a>. Suggestions for updates are welcome!
+        Functional predictions have been submitted <a href="entry/[[nxConfig.entry]]/function-predictions">here</a>. Suggestions for updates are welcome! Please contact us
       </template>
       <template is="dom-if" if="[[!hasPredictions]]">
         Suggestions for updates and submission of functional predictions are welcome!
@@ -66,7 +66,7 @@ View listing protein function annotations.
         <xrefs-section categories='["GuidetoPHARMACOLOGY", "SwissLipids", "BioCyc", "BRENDA", "SABIO-RK", "CAZy", "ESTHER", "MEROPS", "MoonProt", "PeroxiBase", "Pharos", "REBASE", "SFLD", "GeneWiki", "GenomeRNAi", "PRO", "MoonDB", "BioGRID-ORCS","PathwayCommons"]'
                        nx-config="[[nxConfig]]" view="function" count="{{xrefsCount}}">
         </xrefs-section>
-        
+
       </div>
     </div>
   </template>
