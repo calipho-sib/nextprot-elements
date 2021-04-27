@@ -67,6 +67,10 @@ Annotation section used in function predictions views.
                 width: 16px;
                 margin: 4px;
             }
+            #evidenceButton {
+                float: right;
+                padding: 0px 6px 0px 0px;
+            }
             @media (max-width: 1080px) {
                 .evidences-container {
                     margin: 0px 25px 20px 0px;
@@ -77,7 +81,19 @@ Annotation section used in function predictions views.
             }
         </style>
         <div class="category-main">
-            <div id="notice" class="white">
+            <template is="dom-if" if="[[predictionGroups]]">
+                <button id="evidenceButton" class="btn btn-default" on-tap="_toggleAllEvidences">
+                    <template is="dom-if" if="[[evidencesShown]]">
+                        <iron-icon icon="arrow-drop-up"></iron-icon>
+                        Hide evidences
+                    </template>
+                    <template is="dom-if" if="[[!evidencesShown]]">
+                        <iron-icon icon="arrow-drop-down"></iron-icon>
+                        Show evidences
+                    </template>
+                </button>
+            </template>
+            <div id="notice" class="grey-x">
                 <i>Predictions in this section apply to all the isoforms if not specified otherwise.</i>
                 <paper-spinner-lite id="spinner" active></paper-spinner-lite>
             </div>
@@ -187,10 +203,15 @@ Annotation section used in function predictions views.
                     count: {
                         type: Number,
                         notify: true
+                    },
+                    showEvidences: {
+                        type: Boolean,
+                        value: false
                     }
                 },
 
                 ready: function () {
+                    if(this.evidencesShown===undefined) this._toggleAllEvidences();
                     this._initApiClient();
                     var self = this;
                     this._npClient.getJSON("/function-predictions/"+ this.nxConfig.entry +".json", "true")
@@ -198,6 +219,7 @@ Annotation section used in function predictions views.
                             self.predictionGroups = response.predictions;
                             self.count = Object.keys(self.predictionGroups).length;
                             self.$.spinner.removeAttribute('active');
+                            self.predictionsAvailable = true;
                         })
                         .catch(function (error) {
                             console.log("Argh, broken: " + error.message);
@@ -253,6 +275,22 @@ Annotation section used in function predictions views.
 
                 _sortPredictions: function(predictions) {
                     return predictions.sort((a,b) => a.cvTermName > b.cvTermName)
+                },
+
+                _toggleAllEvidences: function(){
+                    this.async(function() {
+                        this.evidencesShown=true;
+                        var evidenceContainers = Polymer.dom(this.root).querySelectorAll(".evidences-container");
+                        for (var e in evidenceContainers) {
+                            if (this.showEvidences == true) {
+                                evidenceContainers[e].parentNode.opened = true;
+                            } else {
+                                evidenceContainers[e].parentNode.opened = false;
+                            }
+                        }
+                        this.evidencesShown = this.showEvidences;
+                        this.showEvidences = !this.showEvidences;
+                    }, 1);
                 }
             },
         );
