@@ -35,12 +35,11 @@ View listing protein function annotations.
     </div>
     <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no function information available in neXtProt for [[nxConfig.entry]].
       <template is="dom-if" if="[[hasPredictions]]">
-        Functional predictions have been submitted <a href="entry/[[nxConfig.entry]]/function-predictions">here</a>. Suggestions for updates are welcome! Please contact us
+        Functional predictions have been submitted <a href="entry/[[nxConfig.entry]]/function-predictions">here</a>. Suggestions for updates are welcome! Please <a href="javascript:location='mailto:\u0073\u0075\u0070\u0070\u006f\u0072\u0074\u0040\u006e\u0065\u0078\u0074\u0070\u0072\u006f\u0074\u002e\u006f\u0072\u0067';void 0">contact us</a>
       </template>
       <template is="dom-if" if="[[!hasPredictions]]">
-        Suggestions for updates and submission of functional predictions are welcome!
+        Suggestions for updates and submission of functional predictions are welcome!, Please <a href="javascript:location='mailto:\u0073\u0075\u0070\u0070\u006f\u0072\u0074\u0040\u006e\u0065\u0078\u0074\u0070\u0072\u006f\u0074\u002e\u006f\u0072\u0067';void 0">contact us</a>
       </template>
-      Please <a href="javascript:location='mailto:\u0073\u0075\u0070\u0070\u006f\u0072\u0074\u0040\u006e\u0065\u0078\u0074\u0070\u0072\u006f\u0074\u002e\u006f\u0072\u0067';void 0">contact us</a>.
     </div>
     <div class="row">
       <div id="nxAnnotations" class="col-md-12">
