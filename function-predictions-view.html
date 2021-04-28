@@ -1,0 +1,66 @@
+<link rel="import" href="protein-overview.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<link rel="import" href="prediction-annotation-section.html">
+
+<!--
+`function-predictions-view`
+View listing protein function predictions.
+
+#### Example
+
+          <function-predictions-view nx-config='{"entry": "P52701"}'></function-predictions-view>
+
+@demo demo/function-predictions-view-demo.html
+-->
+<dom-module id="function-predictions-view">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            :host {
+                display: block;
+                min-height: 35px;
+                background:#f8f8f8;
+                overflow-y: auto;
+            }
+        </style>
+        <div class="row">
+            <div id="nxOverview" class="col-md-12">
+                <protein-overview nx-config="[[nxConfig]]"></protein-overview>
+            </div>
+        </div>
+        <div id="noDataWarning" class='alert alert-warning noData' hidden>There are no function predictions available in neXtProt for [[nxConfig.entry]].
+            Suggestions for updates are welcome! Please <a href="javascript:location='mailto:\u0073\u0075\u0070\u0070\u006f\u0072\u0074\u0040\u006e\u0065\u0078\u0074\u0070\u0072\u006f\u0074\u002e\u006f\u0072\u0067';void 0">contact us</a>.
+        </div>
+        <div class="row nxSection">
+            <div id="nxPredictions" class="col-md-12">
+                <prediction-annotation-section nx-config="[[nxConfig]]" count="{{predictionCount}}"></prediction-annotation-section>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+                is: 'function-predictions-view',
+                properties: {
+                    nxConfig: {
+                        type: Object,
+                        value: {}
+                    },
+                    predictionCount: {
+                        type: Number,
+                        value: -1,
+                        observer: "_checkPredictions"
+                    },
+
+                },
+
+                _checkPredictions: function() {
+                    if (this.predictionCount === 0) {
+                        this.$.nxPredictions.hidden = true;
+                    } else {
+                        this.$.nxPredictions.hidden = false;
+                    }
+                    this.$.noDataWarning.hidden = !this.$.nxPredictions.hidden;
+                }
+            },
+        );
+    </script>
+</dom-module>

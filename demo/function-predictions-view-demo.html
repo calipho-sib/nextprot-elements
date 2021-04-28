@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>function-predictions-view demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../external-elements.html">
+    <link rel="import" href="../function-predictions-view.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .vertical-section-container {
+        max-width: 80%;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="vertical-section-container centered">
+      <h3>Basic function-predictions-view demo</h3>
+      <demo-snippet>
+        <template>
+          <function-predictions-view nx-config='{"env": "localhost", "entry": "NX_P04637"}'></function-predictions-view>
+        </template>
+      </demo-snippet>
+      <h3>Basic function-predictions-view without prediction demo</h3>
+      <demo-snippet>
+        <template>
+          <function-predictions-view nx-config='{"env": "localhost", "entry": "NX_Q5SV17"}'></function-predictions-view>
+        </template>
+      </demo-snippet>
+
+    </div>
+  </body>
+</html>

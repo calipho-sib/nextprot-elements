@@ -1,0 +1,298 @@
+
+<link rel="import" href="quality-label.html">
+<link rel="import" href="external-scripts.html">
+<link rel="import" href="nextprot-elements-shared-styles.html">
+<!--
+`prediction-annotation-section`
+Annotation section used in function predictions views.
+
+#### Example
+    <prediction-annotation-section nx-config='{"entry": "P52701"}'></prediction-annotation-section>
+
+
+@demo demo/prediction-annotation-demo.html
+-->
+<dom-module id="prediction-annotation-section">
+    <template>
+        <style include="nextprot-elements-shared-styles">
+            .annotation-container {
+                float: left;
+                display: inline;
+                width: calc(100% - 175px);
+            }
+            .annotation-row {
+                margin-right: 0px;
+                margin-bottom: 0px;
+            }
+            .evidences-button-container {
+                display: inline;
+                width: 175px;
+            }
+            .evidences-container {
+                margin: 0px 200px 15px 0px;
+            }
+            .blue-well {
+                margin: 5px 190px 10px 10px;
+            }
+            .evidence-arrow {
+                transform:rotate(180deg);
+                display:inline-block;
+                font-weight: 900;
+            }
+            .evidence-code-name {
+                background-color:#7cba0f;
+                color:white;
+                border-radius: 2px;
+                margin-left: 5px;
+            }
+            .evidence-publication, .evidence-submitters {
+                margin-top: 5px;
+                padding-left: 17px;
+            }
+            .submitter {
+                white-space: nowrap;
+            }
+            .border-left {
+                border-left: 1px solid #ddd;
+            }
+            .ext-link:after {
+                content: "\f08e";
+                font-family: "FontAwesome";
+                font-size: 11px;
+                margin-left: 5px;
+                vertical-align: middle;
+            }
+            .orcid_logo {
+                height: 16px;
+                width: 16px;
+                margin: 4px;
+            }
+            #evidenceButton {
+                float: right;
+                padding: 0px 6px 0px 0px;
+            }
+            @media (max-width: 1080px) {
+                .evidences-container {
+                    margin: 0px 25px 20px 0px;
+                }
+                .blue-well {
+                    margin: 5px 15px 10px 10px;
+                }
+            }
+        </style>
+        <div class="category-main">
+            <template is="dom-if" if="[[predictionGroups]]">
+                <button id="evidenceButton" class="btn btn-default" on-tap="_toggleAllEvidences">
+                    <template is="dom-if" if="[[evidencesShown]]">
+                        <iron-icon icon="arrow-drop-up"></iron-icon>
+                        Hide evidences
+                    </template>
+                    <template is="dom-if" if="[[!evidencesShown]]">
+                        <iron-icon icon="arrow-drop-down"></iron-icon>
+                        Show evidences
+                    </template>
+                </button>
+            </template>
+            <div id="notice" class="grey-x">
+                <i>Predictions in this section apply to all the isoforms if not specified otherwise.</i>
+                <paper-spinner-lite id="spinner" active></paper-spinner-lite>
+            </div>
+
+            <template is="dom-if" if="[[!predictionGroups]]">
+                <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no function predictions available in neXtProt for [[nxConfig.entry]].
+                    <template is="dom-if" if="[[!hasPredictions]]">
+                        Suggestions for updates are welcome! Please contact us.
+                    </template>
+                    Please <a href="javascript:location='mailto:\u0073\u0075\u0070\u0070\u006f\u0072\u0074\u0040\u006e\u0065\u0078\u0074\u0070\u0072\u006f\u0074\u002e\u006f\u0072\u0067';void 0">contact us</a>.
+                </div>
+            </template>
+
+            <!-- GO categories -->
+            <template is="dom-repeat" items="[[_toArray(predictionGroups)]]" as="group" initial-count="1" index-as="group_idx">
+                <div id="[[group.id]]-section">
+                    <div>
+                        <h4 class="annotation-category-title">[[_formatGroupName(group.name)]]</h4>
+                    </div>
+                    <!-- Predictions -->
+                    <template is="dom-repeat" items="[[_sortPredictions(group.predictions)]]" as="pred" initial-count="1" index-as="pred_idx" target-framerate="1000" >
+                        <div class="row annotation-row">
+                            <div class="annotation-container">
+                                <div class$="annotation-title-container [[group.id]]">
+                                    <template is="dom-if" if="[[pred.cvTermAccession]]">
+                                        <div class="annotation-title">
+                                            <p inner-h-t-m-l="[[pred.cvTermName]]"></p>
+                                            <div class="annotation-labels">
+                                                <a class="accession-code-link" href="/term/[[pred.cvTermAccession]]">[[pred.cvTermAccession]]</a>
+                                                <span id="description-button-[[group_idx]]-[[pred_idx]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                            <template is="dom-if" if="[[_countItems(pred.evidences)]]">
+                                <div class="evidences-button-container">
+                                    <div class="show-references-button">
+                                        <a id="evidences-button-[[group_idx]]-[[pred_idx]]" class="btn" on-tap="_toggle">
+                                            <p class="show-references-button-counter">[[_countItems(pred.evidences)]]</p>
+                                            <p class="show-references-button-label">ev</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        <iron-collapse id="description-container-[[group_idx]]-[[pred_idx]]">
+                            <div class="well blue-well">
+                                [[pred.cvTermDescription]]
+                            </div>
+                        </iron-collapse>
+
+                        <!-- Evidences -->
+                        <iron-collapse id="evidences-container-[[group_idx]]-[[pred_idx]]">
+                            <div class="evidences-container">
+                                <template is="dom-repeat" items="[[pred.evidences]]" as="evidence">
+                                    <div >
+                                        <div class="evidence-arrow">&#10549;</div>  Evidence [[_getIndex(index)]]:
+                                        <span class="colored-label evidence-code-name">[[_capitalizeFirstLetter(evidence.evidenceCodeName)]]</span>
+                                        <div class="border-left">
+                                            <div class="evidences-container">
+                                                <div class="evidence-submitters">
+                                                    <template is="dom-if" if="[[evidence.userOrcIDs]]">
+                                                        Submitter: <template is="dom-if" if="[[!evidence.userHidden]]">
+                                                        <template is="dom-if" if="[[_hasMultipleIds(evidence.userOrcIDs)]]">
+                                                            <template is="dom-repeat" items="[[evidence.userOrcIDs]]" as="userOrcid">
+                                                                    <span class="submitter">
+                                                                        <a href="https://orcid.org/[[userOrcid]]" class="ext-link" target='_blank'>
+                                                                            <img class="orcid_logo" alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" />
+                                                                            [[userOrcid]]
+                                                                        </a>
+                                                                    </span>
+                                                            </template>
+                                                        </template>
+                                                    </template>
+                                                        <template is="dom-if" if="[[evidence.userHidden]]">
+                                                            Anonymous
+                                                        </template>
+                                                    </template>
+                                                </div>
+                                                <template is="dom-if" if="[[evidence.publicationAc]]">
+                                                    <div class="evidence-publication">
+                                                        [[evidence.publicationDatabaseName]]:
+                                                        <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=search&term=[[evidence.publicationAc]]" class="ext-link" target='_blank'>[[evidence.publicationAc]]</a>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </iron-collapse>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+                is: 'prediction-annotation-section',
+                properties: {
+                    nxConfig: {
+                        type: Object,
+                        value: {}
+                    },
+                    count: {
+                        type: Number,
+                        notify: true
+                    },
+                    showEvidences: {
+                        type: Boolean,
+                        value: false
+                    }
+                },
+
+                ready: function () {
+                    if(this.evidencesShown===undefined) this._toggleAllEvidences();
+                    this._initApiClient();
+                    var self = this;
+                    this._npClient.getJSON("/function-predictions/"+ this.nxConfig.entry +".json", "true")
+                        .then(function (response) {
+                            self.predictionGroups = response.predictions;
+                            self.count = Object.keys(self.predictionGroups).length;
+                            self.$.spinner.removeAttribute('active');
+                            self.predictionsAvailable = true;
+                        })
+                        .catch(function (error) {
+                            console.log("Argh, broken: " + error.message);
+                            console.log("Error at line : " + error.stack);
+                            self.count = 0;
+                            self.$.spinner.removeAttribute('active');
+                        })
+
+                },
+
+                _initApiClient: function () {
+                    this._npClient = new Nextprot.Client("neXtProt function prediction view", "Calipho Group");
+                    this._npClient.updateEnvironment("dev");
+                    if (this.nxConfig.env) {
+                        this._npClient.updateEnvironment(this.nxConfig.env);
+                    }
+                },
+
+                _toArray: function (obj) {
+                    if (obj){
+                        var arr = Object.keys(obj).map(function (key) {
+                            return {"id": key, "name": key.replace(/-/g, " "), "predictions": obj[key]};
+                        });
+                        return arr;
+                    }
+                    return [];
+                },
+
+                _countItems: function(obj){
+                    return obj.length;
+                },
+
+                _getIndex: function(index){
+                    return index+1;
+                },
+
+                _toggle: function(mouseEvent){
+                    var srcElementId = mouseEvent.target.id || mouseEvent.target.parentNode.id;
+                    this.$$("#"+srcElementId.replace('button','container')).toggle();
+                },
+
+                _capitalizeFirstLetter: function(string) {
+                    return string.charAt(0).toUpperCase() + string.slice(1)
+                },
+
+                _hasMultipleIds: function(ids) {
+                    return ids && ids.length > 1;
+                },
+
+                _formatGroupName: function(string) {
+                    return string.replace(/_/g, ' ');
+                },
+
+                _sortPredictions: function(predictions) {
+                    return predictions.sort((a,b) => a.cvTermName > b.cvTermName)
+                },
+
+                _toggleAllEvidences: function(){
+                    this.async(function() {
+                        this.evidencesShown=true;
+                        var evidenceContainers = Polymer.dom(this.root).querySelectorAll(".evidences-container");
+                        for (var e in evidenceContainers) {
+                            if (this.showEvidences == true) {
+                                evidenceContainers[e].parentNode.opened = true;
+                            } else {
+                                evidenceContainers[e].parentNode.opened = false;
+                            }
+                        }
+                        this.evidencesShown = this.showEvidences;
+                        this.showEvidences = !this.showEvidences;
+                    }, 1);
+                }
+            },
+        );
+    </script>
+</dom-module>
