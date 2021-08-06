@@ -470,6 +470,70 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 }
                 this.notifyPath("featuresByIsoform", featsByIso);
             },
+            _addDiseaseRelatedVariants: function (variants) {
+                var calls = [];
+                calls.push(variants)
+                calls.push(this.nx.getAnnotationsByCategory(this.nxEntry, "disease-related-variant"))
+                return Promise.all(calls)
+                    .then(function (rawData) {
+                        var variants = rawData[0];
+                        var diseaseRelatedVariants = rawData[1];
+                        var variantHashToDrvAnnots = {};
+                        var diseasesHashToDiseaseAnnot = {};
+
+                        for (let annotKey in diseaseRelatedVariants.annot) {
+                            let a = diseaseRelatedVariants.annot[annotKey];
+                            if (a.apicategory === "DISEASE_RELATED_VARIANT") {
+                                var subjects = a.subjectComponents;
+                                for (let subjectKey in subjects) {
+                                    var s = subjects[subjectKey];
+                                    variantHashToDrvAnnots[s] = variantHashToDrvAnnots[s] || [];
+                                    variantHashToDrvAnnots[s].push(a);
+                                }
+                            } else if (a.apicategory === "DISEASE") {
+                                diseasesHashToDiseaseAnnot[a.annotationHash] = a;
+                            }
+                        }
+                        for (let variantsKey in variants.annot) {
+                            let v = variants.annot[variantsKey];
+                            if (v.annotationHash && variantHashToDrvAnnots[v.annotationHash]) {
+                                let annots = variantHashToDrvAnnots[v.annotationHash];
+                                for (let annotKey in annots) {
+                                    let drvAnnot = annots[annotKey];
+                                    let diseaseAnnot = diseasesHashToDiseaseAnnot[drvAnnot.bioObject.annotationHash];
+                                    let disease = "[" + diseaseAnnot.cvTermName + ":" + diseaseAnnot.cvApiName + ":" + diseaseAnnot.cvTermAccessionCode + "]";
+                                    var hasNegEv = false;
+                                    var hasNotNegEv = false;
+                                    for (let evidencesKey in drvAnnot.evidences) {
+                                        if (drvAnnot.evidences[evidencesKey].negativeEvidence) {
+                                            hasNegEv = true;
+                                        } else {
+                                            hasNotNegEv = true;
+                                        }
+                                    }
+                                    if (hasNotNegEv) {
+                                        let suffix = "Causes " + disease;
+                                        if (v.description) {
+                                            v.description = v.description + "; " + suffix;
+                                        } else {
+                                            v.description = suffix;
+                                        }
+                                    }
+                                    if (hasNegEv) {
+                                        let suffix = "Not causes " + disease;
+                                        if (v.description) {
+                                            v.description = v.description + "; " + suffix;
+                                        } else {
+                                            v.description = suffix;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return variants;
+                    });
+            },
+
             _getFeaturesByView: function() {
                 var featuresForViewer = [];
                 for (var feat in this.featureList) {
@@ -483,8 +547,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         case "isoform-mapping":
                             featuresForViewer.push(this.nx.getIsoformMapping(this.nxEntry));
                             break;
+                        case "variant":
+                            featuresForViewer.push(this._addDiseaseRelatedVariants(this.nx.getAnnotationsByCategory(this.nxEntry, this.featureList[feat].APIRef)));
+                            break;
                         case "variant-medical":
-                            featuresForViewer.push(this.nx.getAnnotationsWithProperty(this.nxEntry, "variant", "disease-related", true));
+                            featuresForViewer.push(this._addDiseaseRelatedVariants(this.nx.getAnnotationsWithProperty(this.nxEntry, "variant", "disease-related", true)));
                             break;
                         case "miscellaneous-region-interactions":
                             featuresForViewer.push(this.nx.getAnnotationsWithProperty(this.nxEntry, "miscellaneous-region", "interaction-related", true));
