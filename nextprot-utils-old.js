@@ -303,6 +303,7 @@ var NXUtils = {
                         var description = NXUtils.getDescription(mapping,category);
                         var link = NXUtils.getLinkForFeature(domain, mapping.cvTermAccessionCode, description, category);
                         var quality = mapping.qualityQualifier ? mapping.qualityQualifier.toLowerCase() : "";
+                        var conflict = mapping.conflict;
                         var proteotypic = NXUtils.getProteotypicity(mapping.properties);
                         var variant = false;
                         var source = mapping.evidences.map(function (d) {
@@ -464,6 +465,7 @@ var NXUtils = {
                             evidenceLength: source.length,
                             source: source,
                             variant: variant,
+                            conflict: conflict,
                             context: featMappings.contexts
                         });
                     }

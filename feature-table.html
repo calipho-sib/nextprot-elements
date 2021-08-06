@@ -516,6 +516,7 @@ View list of chromosome names.
                             </div>
                             <div class="inBlock" style="width:10%;text-align:right" class="text-align-right">[[feature.length]]</div>
                             <div class="inBlock" style="width:30%;"><span inner-h-t-m-l="[[feature.link]]"></span>
+                                <template is="dom-if" if="[[feature.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
                                 <template is="dom-repeat" items="[[feature.crossRef]]" as="crossRef">
                                     ; [[crossRef.value.dbName]]: <a class="ext-link" href="[[crossRef.value.url]]" target="_blank">[[crossRef.value.name]]</a>
                                 </template>

@@ -545,6 +545,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                             v.description = suffix;
                                         }
                                     }
+                                    if (hasNegEv && hasNotNegEv) {
+                                        v.conflict = true;
+                                    }
                                 }
                             }
                         }
