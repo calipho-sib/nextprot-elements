@@ -504,11 +504,29 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     let disease = "[" + diseaseAnnot.cvTermName + ":" + diseaseAnnot.cvApiName + ":" + diseaseAnnot.cvTermAccessionCode + "]";
                                     var hasNegEv = false;
                                     var hasNotNegEv = false;
-                                    for (let evidencesKey in drvAnnot.evidences) {
-                                        if (drvAnnot.evidences[evidencesKey].negativeEvidence) {
-                                            hasNegEv = true;
-                                        } else {
-                                            hasNotNegEv = true;
+                                    for (let drvEvidenceKey in drvAnnot.evidences) {
+                                        let drvEvidence = drvAnnot.evidences[drvEvidenceKey];
+                                        // TODO: Retrieved info from drvEvidence should be set using cvTerm
+                                        for (const vEvidenceKey in v.evidences) {
+                                            let vEvidence = v.evidences[vEvidenceKey];
+                                            if (drvEvidence.negativeEvidence) {
+                                                hasNegEv = true;
+                                                if (drvEvidence.resourceId === vEvidence.resourceId
+                                                    && drvEvidence.assignedBy === vEvidence.assignedBy) {
+                                                    vEvidence.negativeEvidence = true;
+                                                    vEvidence.diseaseRelatedPrefix = "Not causes";
+                                                }
+                                            } else {
+                                                hasNotNegEv = true;
+                                                if (drvEvidence.resourceId === vEvidence.resourceId
+                                                    && drvEvidence.assignedBy === vEvidence.assignedBy) {
+                                                    vEvidence.diseaseRelatedPrefix = "Causes" ;
+                                                }
+                                            }
+                                            // TODO: vEvidence.diseaseRelatedPrefix, diseaseRelatedName, diseaseRelatedAccession should not set,
+                                            //  this should be managed by evidence-item from disease
+                                            vEvidence.diseaseRelatedName = diseaseAnnot.cvTermName;
+                                            vEvidence.diseaseRelatedAccession = diseaseAnnot.cvTermAccessionCode;
                                         }
                                     }
                                     if (hasNotNegEv) {
