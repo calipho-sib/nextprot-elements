@@ -703,9 +703,15 @@ Annotation section used in function, medical, and expression views.
                 return -1;
             },
             _sortDisease: function(a,b){
+                // first show the UniProt disease terms (in alphabetical order)
+                // then the Orphanet disease (in alphabetical order). Both of these refer to genetic diseases.
+                // then the NCI Thesaurus disease terms (in alphabetical order) at the end as they are not always genetic diseases.
                 if (a.evidenceSources.indexOf("UniProt")===-1 && b.evidenceSources.indexOf("UniProt")!==-1) return 1;
                 if (a.evidenceSources.indexOf("UniProt")!==-1 && b.evidenceSources.indexOf("UniProt")===-1) return -1;
                 if (a.evidenceSources.indexOf("UniProt")!==-1 && b.evidenceSources.indexOf("UniProt")!==-1) return this._sortByRank(a,b);
+                if (a.evidenceSources.indexOf("Orphanet")===-1 && b.evidenceSources.indexOf("Orphanet")!==-1) return 1;
+                if (a.evidenceSources.indexOf("Orphanet")!==-1 && b.evidenceSources.indexOf("Orphanet")===-1) return -1;
+                if (a.evidenceSources.indexOf("Orphanet")!==-1 && b.evidenceSources.indexOf("Orphanet")!==-1) return this._sortAlphabetically(a,b);
                 else return this._sortAlphabetically(a,b);
             },
             _sortAdditionalInfo: function(a,b){
@@ -790,11 +796,11 @@ Annotation section used in function, medical, and expression views.
                 return evidenceSourceList;
             },
             _parseDiseaseDescription: function(annotation){
-                uniprotDiseaseRegExMatch = /.*[MIM:[0-9]*]/g.exec(annotation.description);
+                uniprotDiseaseRegExMatch = /.*\[MIM:[0-9]*\]/g.exec(annotation.description);
                 if(uniprotDiseaseRegExMatch) {
                     uniprotDiseaseString = uniprotDiseaseRegExMatch[0];
                     cvTermShortRegExMatch = /\([A-Za-z0-9 -+/()]*\)/g.exec(uniprotDiseaseString);
-                    mimAccessionRegExMatch = / [MIM:[0-9]*]/g.exec(uniprotDiseaseString);
+                    mimAccessionRegExMatch = / \[MIM:[0-9]*\]/g.exec(uniprotDiseaseString);
                     if (cvTermShortRegExMatch) {
                         cvTermShort = cvTermShortRegExMatch[0].slice(1,cvTermShortRegExMatch[0].length-1);
                         cvTermLink = "<a href=\"/term/"+annotation.cvTermAccessionCode+"\">"+cvTermShort+"</a>";
@@ -805,6 +811,13 @@ Annotation section used in function, medical, and expression views.
                         mimLink = "<a href=\"http://www.omim.org/entry/"+mimAccession+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">MIM:"+mimAccession+"</a>";
                         annotation.description = annotation.description.replace("MIM:"+mimAccession, mimLink);
                     }
+                }
+                nciDiseaseRegExMatch = /(.*\()([C0-9]*)(\) \[)(NCI thesaurus:[C0-9]*)(\].*)/g.exec(annotation.description);
+                if(nciDiseaseRegExMatch) {
+                    nciAccession = nciDiseaseRegExMatch[2];
+                    cvTermLink = "<a href=\"/term/"+nciAccession+"\">"+nciAccession+"</a>";
+                    nciLink = "<a href=\"http://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI%20Thesaurus&code="+nciAccession+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">"+nciDiseaseRegExMatch[4]+"</a>";
+                    annotation.description = nciDiseaseRegExMatch[1] +cvTermLink + nciDiseaseRegExMatch[3] + nciLink + nciDiseaseRegExMatch[5];
                 }
                 return annotation.description;
             },

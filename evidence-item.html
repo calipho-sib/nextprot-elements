@@ -111,6 +111,21 @@ Block element representing an evidence record.
                             <np-publication publication="[[data.publication]]" view="detailed"></np-publication>
                         </div>
                     </template>
+                    <template is="dom-if" if="[[data.diseaseRelatedVariant]]">
+                        <div class="evidence-accession">
+
+                            <p>
+                                <template is="dom-if" if="[[data.diseaseRelatedVariant.isNegative]]">
+                                    <b>Not </b>
+                                </template>
+                                [[data.diseaseRelatedVariant.relation]] <a href='/term/[[data.diseaseRelatedVariant.accession]]'>[[data.diseaseRelatedVariant.name]]</a>
+                                <template is="dom-if" if="[[data.context.cellLine]]">(originates from: <a href="/term/[[data.context.cellLineAC]]">[[data.context.cellLine.name]]</a>)</template>
+                                <template is="dom-if" if="[[!data.context.cellLine]]">
+                                    <template is="dom-if" if="[[data.context.tissue]]">(originates from: <a href="/term/[[data.context.tissueAC]]">[[data.context.tissue.name]]</a>)</template>
+                                </template>
+                            </p>
+                        </div>
+                    </template>
                     <template is="dom-if" if="[[data.context.disease]]">
                         <div class="evidence-accession">
                             <p>Found in: <a href="/term/[[data.context.diseaseAC]]">[[data.context.disease.name]]</a>
