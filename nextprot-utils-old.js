@@ -148,20 +148,17 @@ var NXUtils = {
         }
         return family;
     },
-    getProteinExistence: function(term){
-        var existence = term.split('_').join(' ').toLowerCase();
-        mainSentence = "Entry whose protein(s) existence is ";
-        based = "based on ";
+    getProteinExistence: function(pe){
+        var description = pe.description;
+        var existence = description.toLowerCase();
+        var mainSentence = "Entry whose protein(s) existence is ";
         switch(existence) {
             case "uncertain":
                 return mainSentence + existence;
-                break;
             case "inferred from homology":
                 return mainSentence + existence;
-                break;
             default:
-                return mainSentence + based + existence;
-                break;
+                return mainSentence + "based on " + existence;
         }
     },
     getSequenceForIsoform: function (isoSequences, isoformName) {
@@ -184,33 +181,26 @@ var NXUtils = {
         }
         return result;
     },
-    getXrefAccessions: function(evidences){
-        return evidences[0].resourceId;
-//        var accessionIds = []
-//        
-//        for (var ev in evidences){
-//            accessionIds.push(evidences[ev].resourceId);
-//        }
-//        return accessionIds;
-    },
-    getXrefUrls: function(xrefs, evidences){
-//        var urls = []
-//        accessionIds.forEach(function(a){
-//            var url = xrefs.filter(function(x){return x.dbXrefId === a})[0];
-        var accessionId = evidences[0].resourceId;
-        var xref = xrefs[accessionId];
-        if (xref){
-            return {accession:xref.accession,url:xref.resolvedUrl}
-        }
-        return "";
-    },
-    getLinkForFeature: function (domain, accession, description, type) {
-        if (["Peptide","SRM Peptide","Antibody"].indexOf(type) > -1){
-            if (domain) {
-                return "<a class='ext-link' href='" + domain + "' target='_blank'>" + accession + "</a>";
+    getLinkForFeature: function (domain, accession, description, type, feature, xrefDict) {
+
+        //TOSEE WITH MATHIEU - On 15.02.2018 Daniel has added feature + xrefDict in the signature of this method. Is it still necessary to hardcode some other (resee signature because now fields are redudant)
+        if (type === "Peptide" || type === "SRM Peptide") {
+            if (description) {
+                if(feature && feature.evidences && (feature.evidences.length > 0) && feature.evidences[0].resourceId && xrefDict){
+                    if(xrefDict[feature.evidences[0].resourceId]) {
+                        var url = xrefDict[feature.evidences[0].resourceId].resolvedUrl
+                        return "<a class='ext-link' href='" + url + "' target='_blank'>" + description + "</a>";
+                    }
+                }
+                console.warn("Could not find xref for evidence ", xrefDict[feature.evidences[0]]);
+                return ""
             }
             else return "";
-        }else if (type === "publication") {
+        } else if (type === "Antibody") {
+            if(domain) return "<a class='ext-link' href='" + domain + "' target='_blank'>" + accession + "</a>";
+//            if(domain) return "<a class='ext-link' href='" + domain + "'>" + accession + "<span class='fa fa-external-link'></span></a>";
+            else return "";
+        } else if (type === "publication") {
             var url = domain + "/publication/" + accession;
             return "<a href='" + url + "'>" + description + "</a>";
         } else if (accession) {
@@ -219,6 +209,10 @@ var NXUtils = {
         } else if (description) return description;
         else return "";
     },
+    setNotInBold: function (text) {
+        return text.replace(/Not /g, "<b>Not </b>")
+    },
+
     getDescription: function (elem, category) {
         if (category === "Peptide" || category === "SRM Peptide") {
             for (var ev in elem.evidences) {
@@ -236,12 +230,6 @@ var NXUtils = {
             }
         }
         else return elem.description;
-    },
-    getEvidenceCodeName: function (elem, category) {
-        if (category === "Peptide") {
-            return "EXP";
-        }
-        else return elem.evidenceCodeName;
     },
     getAssignedBy: function (elem) {
         if (elem === "Uniprot") {
@@ -262,6 +250,19 @@ var NXUtils = {
         }
         else return true;
     },
+    getUnicity: function (elem){
+        if (elem.propertiesMap.hasOwnProperty("peptide unicity")){
+            var unicity = elem.propertiesMap["peptide unicity"][0].value;
+            var unicityValue = unicity === "PSEUDO_UNIQUE" ? "pseudo-unique" : unicity.replace("_"," ").toLowerCase();
+            return unicityValue;
+        }
+        if (elem.propertiesMap.hasOwnProperty("antibody unicity")){
+            var unicity = elem.propertiesMap["antibody unicity"][0].value;
+            var unicityValue = unicity === "PSEUDO_UNIQUE" ? "pseudo-unique" : unicity == "UNIQUE" ? "unique" : "not unique";
+            return unicityValue;
+        }
+        return "";
+    },
     truncateString: function(str, lenMax, internalString, suffixLen) {
 
         if (str) {
@@ -280,7 +281,26 @@ var NXUtils = {
         }
         return str;
     },
+    getMdataPubLink: function (pubId){
+        return pubId.map(function(pb){
+            if (pb.db === "PubMed"){
+                return{
+                    url: "https://www.ncbi.nlm.nih.gov/pubmed?cmd=search&term=" + pb.dbkey,
+                    accession: pb.dbkey,
+                    label: "PubMed"
+                }
+            }
+            else if (pb.db === "DOI"){
+                return{
+                    url: "http://dx.doi.org/" + pb.dbkey,
+                    accession:pb.dbkey,
+                    label:"Full text"
+                }
+            }
+        })
+    },
     convertMappingsToIsoformMap: function (featMappings, category, group, baseUrl) {
+        var xrefsDict = featMappings.xrefs;
         var domain = baseUrl ? baseUrl : baseUrl === "" ? baseUrl : "https://www.nextprot.org";
         var mappings = jQuery.extend([], featMappings);
         var publiActive = false;
@@ -301,14 +321,15 @@ var NXUtils = {
                         var end = mapping.targetingIsoformsMap[name].lastPosition;
                         var length = start && end ? end - start + 1 : null;
                         var description = NXUtils.getDescription(mapping,category);
-                        var link = NXUtils.getLinkForFeature(domain, mapping.cvTermAccessionCode, description, category);
+                        var link = NXUtils.getLinkForFeature(domain, mapping.cvTermAccessionCode, description, category, mapping, xrefsDict);
                         var quality = mapping.qualityQualifier ? mapping.qualityQualifier.toLowerCase() : "";
-                        var conflict = mapping.conflict;
                         var proteotypic = NXUtils.getProteotypicity(mapping.properties);
+                        var unicity = NXUtils.getUnicity(mapping);;
                         var variant = false;
                         var source = mapping.evidences.map(function (d) {
                             var pub = null;
                             var xref = null;
+                            var mdata = null;
                             var context = (featMappings.contexts[d.experimentalContextId]) ? featMappings.contexts[d.experimentalContextId] : false;
                             if (publiActive) {
                                 if (featMappings.publi[d.resourceId]) {
@@ -317,16 +338,29 @@ var NXUtils = {
                                 if (featMappings.xrefs[d.resourceId]) {
                                     xref = featMappings.xrefs[d.resourceId];
                                 }
+                                if (featMappings.mdata[d.mdataId]) {
+                                    mdata = featMappings.mdata[d.mdataId].mdataContext;
+                                    if (mdata && mdata.publications && mdata.publications.values) {
+//                                        mdata.publications = mdata.publications.values.map(function(pb){
+//                                            return featMappings.publi[pb.db_xref.dbkey];
+//                                        })
+                                        var pubId = mdata.publications.values.map(function(pb){
+//                                            return featMappings.publi[pb.db_xref.dbkey];
+//                                            return pb.db_xref.dbkey;
+                                            return pb.db_xref;
+                                        })
+                                        mdata.mdataPubLink = NXUtils.getMdataPubLink(pubId);
+                                        mdata.publications = null; null;
+                                    }
+                                }
                                 return {
-                                    evidenceCodeName: NXUtils.getEvidenceCodeName(d,category),
+                                    evidenceCodeName: d.evidenceCodeName,
                                     assignedBy: NXUtils.getAssignedBy(d.assignedBy),
                                     resourceDb: d.resourceDb,
                                     externalDb: d.resourceDb !== "UniProt",
                                     qualityQualifier: d.qualityQualifier ? d.qualityQualifier.toLowerCase() : "",
                                     negative: d.negativeEvidence,
-                                    diseaseRelatedAccession: d.diseaseRelatedAccession,
-                                    diseaseRelatedName: d.diseaseRelatedName,
-                                    diseaseRelatedPrefix: d.diseaseRelatedPrefix,
+                                    diseaseRelatedVariant: d.diseaseRelatedVariant,
                                     publicationMD5: d.publicationMD5,
                                     publication: pub ? featMappings.publi[pub]: null,
                                     dbXrefs: pub ? featMappings.publi[pub].dbXrefs ?featMappings.publi[pub].dbXrefs.map(function (o) {
@@ -341,11 +375,13 @@ var NXUtils = {
                                         name: xref.accession,
                                         url: xref.resolvedUrl
                                     } : null,
-                                    context: context
+                                    context: context,
+                                    mdata: mdata,
+                                    properties: d.properties ? d.properties : null
                                 }
                             } else {
                                 return {
-                                    evidenceCodeName: NXUtils.getEvidenceCodeName(d, category),
+                                    evidenceCodeName: d.evidenceCodeName,
                                     assignedBy: NXUtils.getAssignedBy(d.assignedBy),
                                     publicationMD5: d.publicationMD5,
                                     title: "",
@@ -353,7 +389,9 @@ var NXUtils = {
                                     journal: "",
                                     volume: "",
                                     abstract: "",
-                                    context: context
+                                    context: context,
+                                    mdata: mdata,
+                                    properties: d.properties ? d.properties : null
                                 }
                             }
                         });
@@ -425,7 +463,7 @@ var NXUtils = {
                                     return withLinksDesc;
                                 }
 
-                                return (description) ?  " ; " + _replacePotentialLinks(description) : "";
+                                return (description) ?  " ; " + NXUtils.setNotInBold(_replacePotentialLinks(description)) : "";
                             }
 
                             var variantObj = buildVariantObjectForTooltip(mapping);
@@ -436,13 +474,9 @@ var NXUtils = {
 
                             variant = true;
                         }
-                        else if (["Peptide","SRM Peptide","Antibody"].indexOf(category) > -1){
-//                            var accs = NXUtils.getXrefAccessions(mapping.evidences);
-//                            var accs_unique = accs.filter(function(item, pos, self) {
-//                                return self.indexOf(item) == pos;
-//                            })
-                            var x = NXUtils.getXrefUrls(featMappings.xrefs, mapping.evidences);
-                            link = NXUtils.getLinkForFeature(x.url, x.accession, x.accession, category);
+                        else if (category === "Antibody") {
+                            url = featMappings.xrefs[mapping.evidences[0].resourceId].resolvedUrl
+                            link = NXUtils.getLinkForFeature(url, description, description, category);
                         }
                         else {
                             description = thisNXUtilsObject.truncateString(description, 80, " ... ", 40);
@@ -459,13 +493,14 @@ var NXUtils = {
                             description: description,
                             quality: quality,
                             proteotypicity: proteotypic,
+                            unicity: unicity,
                             category: category,
                             group: group,
                             link: link,
                             evidenceLength: source.length,
                             source: source,
                             variant: variant,
-                            conflict: conflict,
+                            conflict: mapping.conflict,
                             context: featMappings.contexts
                         });
                     }
@@ -531,7 +566,7 @@ var NXViewerUtils = {
                     y: annotation.end ? annotation.end : isoLengths && isoLengths[name] ? isoLengths[name] : 100000,
                     id: annotation.id,
                     category: annotation.category,
-                    description: annotation.description // tooltip description
+                    description: NXUtils.setNotInBold(annotation.description) // tooltip description
                 }
             });
             result[name] = meta;

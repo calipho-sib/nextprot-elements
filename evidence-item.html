@@ -106,14 +106,24 @@ Block element representing an evidence record.
                             </p>
                         </div>
                     </template>
-                    <template is="dom-if" if="[[data.diseaseRelatedAccession]]">
-                        <div class="evidence-accession">
-                            <p><span>[[data.diseaseRelatedPrefix]] <a href='/term/[[data.diseaseRelatedAccession]]'>[[data.diseaseRelatedName]]</a></span></p>
-                        </div>
-                    </template>
                     <template is="dom-if" if="[[data.publication]]">
                         <div class="evidence-publication">
                             <np-publication publication="[[data.publication]]" view="detailed"></np-publication>
+                        </div>
+                    </template>
+                    <template is="dom-if" if="[[data.diseaseRelatedVariant]]">
+                        <div class="evidence-accession">
+
+                            <p>
+                                <template is="dom-if" if="[[data.diseaseRelatedVariant.isNegative]]">
+                                    <b>Not </b>
+                                </template>
+                                [[data.diseaseRelatedVariant.relation]] <a href='/term/[[data.diseaseRelatedVariant.accession]]'>[[data.diseaseRelatedVariant.name]]</a>
+                                <template is="dom-if" if="[[data.context.cellLine]]">(originates from: <a href="/term/[[data.context.cellLineAC]]">[[data.context.cellLine.name]]</a>)</template>
+                                <template is="dom-if" if="[[!data.context.cellLine]]">
+                                    <template is="dom-if" if="[[data.context.tissue]]">(originates from: <a href="/term/[[data.context.tissueAC]]">[[data.context.tissue.name]]</a>)</template>
+                                </template>
+                            </p>
                         </div>
                     </template>
                     <template is="dom-if" if="[[data.context.disease]]">
