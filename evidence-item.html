@@ -113,7 +113,6 @@ Block element representing an evidence record.
                     </template>
                     <template is="dom-if" if="[[data.diseaseRelatedVariant]]">
                         <div class="evidence-accession">
-
                             <p>
                                 <template is="dom-if" if="[[data.diseaseRelatedVariant.isNegative]]">
                                     <b>Not </b>
@@ -135,6 +134,15 @@ Block element representing an evidence record.
                                 </template>
                             </p>
                         </div>
+                    </template>
+                    <template is="dom-if" if="[[!data.diseaseRelatedVariant]]">
+                        <template is="dom-if" if="[[!data.context.disease]]">
+                            <template is="dom-if" if="[[data.context.cellLine]]">
+                                <div class="evidence-accession">
+                                    Originates from: <a href="/term/[[data.context.cellLineAC]]">[[data.context.cellLine.name]]</a>
+                                </div>
+                            </template>
+                        </template>
                     </template>
                     <template is="dom-if" if="[[data.levelAndStageLabel]]">
                         <div class="evidence-accession">
