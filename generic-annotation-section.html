@@ -74,6 +74,10 @@ Annotation section used in function, medical, and expression views.
                 line-height: 1.3em;
                 padding-right: 30px;
             }
+            .drug-protein {
+                word-break: break-all;
+                white-space: normal;
+            }
             @media (max-width: 1080px) {
                 .evidences-container {
                     margin: 0px 25px 20px 0px;
@@ -175,7 +179,7 @@ Annotation section used in function, medical, and expression views.
                                                 <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
                                                 <p>[[annotation.value.description]]</p>
                                                 <div class="annotation-labels">
-                                                <template is="dom-if" if="[[annotation.value.chemicalName]]"><p>[[annotation.value.chemicalName]]</p></template>
+                                                <template is="dom-if" if="[[annotation.value.chemicalName]]"><p class="drug-protein">[[annotation.value.chemicalName]]</p></template>
                                                     <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
                                                     <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                 </div>
