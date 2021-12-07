@@ -500,7 +500,7 @@ Annotation section used in function, medical, and expression views.
                     if (a.cvTermName && dontCapitalize.indexOf(a.cvTermName.split(" ")[0])===-1) a.cvTermName=a.cvTermName.charAt(0).toUpperCase()+a.cvTermName.slice(1);
                     if (a.apicategory==="TRANSPORT_ACTIVITY") a.categoryLabel = "TCDB TRANSPORT CLASSIFICATION";
                     if (a.bioObject) {
-                        a.geneName=a.bioObject.properties.geneName;
+                        a.geneName=a.bioObject.properties.geneName != '' ? a.bioObject.properties.geneName : '-';
                         a.proteinName=a.bioObject.properties.proteinName;
                         a.url=a.bioObject.properties.url;
                         a.database=a.bioObject.database;
