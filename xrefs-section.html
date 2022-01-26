@@ -161,7 +161,7 @@ Exteranl links section present in function, medical, expression, interactions, s
 
                 for (elem in typeList) {
                     // display property as [name : value]
-                    if (["IntAct", "BioGrid", "ESTHER","BioGRID"].indexOf(typeList[elem].databaseName) !== -1) {
+                    if (["IntAct", "BioGrid", "ESTHER", "BioGRID"].indexOf(typeList[elem].databaseName) !== -1) {
                         if (typeList[elem].properties.length > 0) {
                             newTypeList.push({
                                 name: typeList[elem].databaseName,
@@ -173,8 +173,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 }]
                             })
                         }
-                    }
-                    else if (typeList[elem].databaseName === "Pharos") {
+                    } else if (typeList[elem].databaseName === "Pharos") {
                         if (typeList[elem].properties.length > 0) {
                             newTypeList.push({
                                 name: typeList[elem].databaseName,
@@ -186,8 +185,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 }]
                             })
                         }
-                    }
-                    else if (typeList[elem].databaseName === "BioGRID-ORCS") {
+                    } else if (typeList[elem].databaseName === "BioGRID-ORCS") {
                         if (typeList[elem].properties.length > 0) {
                             newTypeList.push({
                                 name: typeList[elem].databaseName,
@@ -199,8 +197,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 }]
                             })
                         }
-                    }
-                    else if (typeList[elem].databaseName === "Antibodypedia") {
+                    } else if (typeList[elem].databaseName === "Antibodypedia") {
                         if (typeList[elem].properties.length > 0) {
                             newTypeList.push({
                                 name: typeList[elem].databaseName,
@@ -212,8 +209,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 }]
                             })
                         }
-                    }
-                    else if (typeList[elem].databaseName === "MoonDB") {
+                    } else if (typeList[elem].databaseName === "MoonDB") {
                         if (typeList[elem].properties.length > 0) {
                             newTypeList.push({
                                 name: typeList[elem].databaseName,
@@ -225,8 +221,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 }]
                             })
                         }
-                    }
-                    else if (typeList[elem].databaseName === "Bgee") {
+                    } else if (typeList[elem].databaseName === "Bgee") {
                         if (typeList[elem].properties.length > 0) {
                             newTypeList.push({
                                 name: typeList[elem].databaseName,
@@ -238,8 +233,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 }]
                             })
                         }
-                    }
-                    else if (["Allergome", "MIM"].indexOf(typeList[elem].databaseName) !== -1) {
+                    } else if (["Allergome", "MIM"].indexOf(typeList[elem].databaseName) !== -1) {
                         if (typeList[elem].properties.length > 0) {
                             newTypeList.push({
                                 name: typeList[elem].databaseName,
@@ -251,10 +245,22 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 }]
                             })
                         }
-                    }
-                    else if (typeList[elem].databaseName === "Ensembl") {
+                    } else if (typeList[elem].databaseName === "Ensembl") {
+
                         if (typeList[elem].accession.startsWith("ENST")) {
-                            if (typeList[elem].properties) {
+                            let mappingValue = typeList[elem].properties.value;
+                            if (mappingValue) {
+                                let ids = mappingValue.split('|');
+                                let enstId = ids[0];
+                                let ensgId = ids[0];
+                                let enspId = ids[0];
+                                let isoformId = ids[0];
+
+                                if (!self.nxConfig.entry.contains(isoformId)) {
+                                    return;
+                                }
+
+                                // ENST
                                 var ensembl = {
                                     name: typeList[elem].databaseName,
                                     xrefs: [{
@@ -264,59 +270,45 @@ Exteranl links section present in function, medical, expression, interactions, s
                                         suffix: ""
                                     }]
                                 };
-                                typeList[elem].properties.forEach(function (p) {
-                                    if (p.name === "nxmapped protein sequence ID") {
-                                        var result = $.grep(typeList, function (e) {
-                                            return e.accession === p.value;
-                                        })[0];
 
-                                        let isoformId;
-                                        if(p.name === "isoform Id") {
-                                            isoformId = p.value;
-                                        }
-                                        ensembl.xrefs.push({
-                                            accession: result.accession,
-                                            url: result.resolvedUrl,
-                                            prefix: "Protein",
-                                            suffix: "",
-                                            isoformId: isoformId
-                                        });
-                                    }
-                                })
+                                //ENSG
+                                var ensg = $.grep(typeList, function (e) {
+                                    return e.accession === ensgId.value;
+                                })[0];
 
-                                // Adds the isoform accession to the end of the line
-                                var result;
-                                var isoformId;
-                                typeList[elem].properties.forEach(function (p) {
-                                    if (p.name === "nxmapped gene ID") {
-                                        result = $.grep(typeList, function (e) {
-                                            return e.accession === p.value;
-                                        })[0];
+                                if(ensg) {
+                                    ensembl.xrefs.push({
+                                        accession: ensg.accession,
+                                        url: ensg.resolvedUrl,
+                                        prefix: "Gene",
+                                        suffix: "",
+                                        isoformId: isoformId
+                                    });
+                                }
 
-                                    }
+                                //ENSP
+                                var ensp = $.grep(typeList, function (e) {
+                                    return e.accession === enspId.value;
+                                })[0];
 
-                                    if (p.name === "isoform ID") {
-                                        isoformId = p.value;
-                                    }
-                                })
-
-                                ensembl.xrefs.push({
-                                    accession: result.accession,
-                                    url: result.resolvedUrl,
-                                    prefix: "Gene",
-                                    suffix: "",
-                                    isoformId: isoformId
-                                });
-
-                                if ($.grep(ensembl.xrefs, function (e) {
-                                    return e.prefix === "Protein";
-                                }).length === 1) {
-                                    newTypeList.push(ensembl);
+                                if(ensp) {
+                                    ensembl.xrefs.push({
+                                        accession: ensp.accession,
+                                        url: ensp.resolvedUrl,
+                                        prefix: "Protein",
+                                        suffix: "",
+                                        isoformId: isoformId
+                                    });
                                 }
                             }
+
+                            if ($.grep(ensembl.xrefs, function (e) {
+                                return e.prefix === "Protein";
+                            }).length === 1) {
+                                newTypeList.push(ensembl);
+                            }
                         }
-                    }
-                    else if (typeList[elem].databaseName === "EMBL") { //TODO
+                    } else if (typeList[elem].databaseName === "EMBL") { //TODO
                         if (typeList[elem].properties.length > 0) {
                             var molType = $.grep(typeList[elem].properties, function (e) {
                                 return e.name === "molecule type";
@@ -354,8 +346,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                         suffix: suffix
                                     })
                                 }
-                            }
-                            else if (molType.value === "protein") {
+                            } else if (molType.value === "protein") {
                                 var geneIDs = $.grep(typeList[elem].properties, function (e) {
                                     return e.name === "genomic sequence ID";
                                 });
@@ -376,8 +367,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                     prefix: "Translation",
                                     suffix: suffix
                                 })
-                            }
-                            else if (molType.value === "Genomic_DNA" && addInfos.value) {
+                            } else if (molType.value === "Genomic_DNA" && addInfos.value) {
                                 var geneIDs = $.grep(typeList[elem].properties, function (e) {
                                     return e.name === "genomic sequence ID";
                                 });
@@ -387,8 +377,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                     prefix: "Genomic DNA",
                                     suffix: suffix
                                 })
-                            }
-                            else if (molType.value === "Unassigned_DNA" && addInfos.value) {
+                            } else if (molType.value === "Unassigned_DNA" && addInfos.value) {
                                 var geneIDs = $.grep(typeList[elem].properties, function (e) {
                                     return e.name === "genomic sequence ID";
                                 });
@@ -403,8 +392,7 @@ Exteranl links section present in function, medical, expression, interactions, s
 
                             newTypeList.push(embl);
                         }
-                    }
-                    else if (typeList[elem].databaseName === "RefSeq") { //TODO
+                    } else if (typeList[elem].databaseName === "RefSeq") { //TODO
                         if (typeList[elem].properties.length > 0) {
                             var nucleotideID = $.grep(typeList[elem].properties, function (e) {
                                 return e.name === "nucleotide sequence ID";
@@ -424,8 +412,8 @@ Exteranl links section present in function, medical, expression, interactions, s
 
                             // Adds isoform info
                             let isoformId;
-                            typeList[elem].properties.forEach(function(property) {
-                                if(property.name === "isoform ID") {
+                            typeList[elem].properties.forEach(function (property) {
+                                if (property.name === "isoform ID") {
                                     isoformId = property.value;
                                 }
                             });
@@ -439,12 +427,10 @@ Exteranl links section present in function, medical, expression, interactions, s
                             });
                             newTypeList.push(refseq);
                         }
-                    }
-                    else if (typeList[elem].databaseName === "Reactome"
+                    } else if (typeList[elem].databaseName === "Reactome"
                         || typeList[elem].databaseName === "KEGGPathway") {
                         continue;
-                    }
-                    else if (typeList[elem].databaseName === "MIM") {
+                    } else if (typeList[elem].databaseName === "MIM") {
                         var isGene = false;
                         for (var p in typeList[elem].properties) {
                             if (typeList[elem].properties[p].name = "value"
@@ -460,8 +446,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                     suffix: suffix
                                 }]
                             })
-                    }
-                    else if (typeList[elem].databaseName === "SFLD") {
+                    } else if (typeList[elem].databaseName === "SFLD") {
                         newTypeList.push({
                             name: typeList[elem].databaseName,
                             xrefs: [{
@@ -471,8 +456,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 suffix: "[" + typeList[elem].properties[0].value + "]"
                             }]
                         })
-                    }
-                    else if (typeList[elem].databaseName === "PIR") {
+                    } else if (typeList[elem].databaseName === "PIR") {
                         newTypeList.push({
                             name: typeList[elem].databaseName,
                             xrefs: [{
@@ -482,8 +466,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 suffix: ""
                             }]
                         })
-                    }
-                    else {
+                    } else {
                         var suffix = "";
                         var value = "";
                         if (typeList[elem].properties.length > 0) {
@@ -493,7 +476,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                             suffix = addInfos ? "[" + addInfos.value + "]" : "";
 
                             // Add value for Glyconnect and Glygen
-                            if(typeList[elem].databaseName === "GlyConnect" || typeList[elem].databaseName === "GlyGen" || typeList[elem].databaseName === "CPTC") {
+                            if (typeList[elem].databaseName === "GlyConnect" || typeList[elem].databaseName === "GlyGen" || typeList[elem].databaseName === "CPTC") {
                                 value = typeList[elem].properties[0].value;
                             }
                         }
