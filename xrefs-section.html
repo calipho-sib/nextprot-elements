@@ -254,7 +254,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                                 let enspId = mappingValue.split('|')[2];;
                                 let isoformId = mappingValue.split('|')[3];;
 
-                                if (!this.nxConfig.entry.includes(isoformId)) {
+                                if (!this.nxConfig.entry.includes(isoformId.substr(0,isoformId.indexOf('-')))) {
                                     return;
                                 }
 
