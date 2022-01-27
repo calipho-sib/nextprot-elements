@@ -250,13 +250,11 @@ Exteranl links section present in function, medical, expression, interactions, s
                         if (typeList[elem].accession.startsWith("ENST")) {
                             let mappingValue = typeList[elem].properties.filter(p => p.name === 'nxmap')[0].value;
                             if (mappingValue) {
-                                let ids = mappingValue.split('|');
-                                let enstId = ids[0];
-                                let ensgId = ids[0];
-                                let enspId = ids[0];
-                                let isoformId = ids[0];
+                                let ensgId = mappingValue.split('|')[1];
+                                let enspId = mappingValue.split('|')[2];;
+                                let isoformId = mappingValue.split('|')[3];;
 
-                                if (!self.nxConfig.entry.contains(isoformId)) {
+                                if (!this.nxConfig.entry.includes(isoformId)) {
                                     return;
                                 }
 
