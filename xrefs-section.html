@@ -248,7 +248,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                     } else if (typeList[elem].databaseName === "Ensembl") {
 
                         if (typeList[elem].accession.startsWith("ENST")) {
-                            let mappingValue = typeList[elem].properties.value;
+                            let mappingValue = typeList[elem].properties.filter(p => p.name === 'nxmap')[0].value;
                             if (mappingValue) {
                                 let ids = mappingValue.split('|');
                                 let enstId = ids[0];
