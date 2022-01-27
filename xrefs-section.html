@@ -271,7 +271,7 @@ Exteranl links section present in function, medical, expression, interactions, s
 
                                 //ENSG
                                 var ensg = $.grep(typeList, function (e) {
-                                    return e.accession === ensgId.value;
+                                    return e.accession === ensgId;
                                 })[0];
 
                                 if(ensg) {
@@ -286,7 +286,7 @@ Exteranl links section present in function, medical, expression, interactions, s
 
                                 //ENSP
                                 var ensp = $.grep(typeList, function (e) {
-                                    return e.accession === enspId.value;
+                                    return e.accession === enspId;
                                 })[0];
 
                                 if(ensp) {
