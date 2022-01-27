@@ -300,12 +300,12 @@ Exteranl links section present in function, medical, expression, interactions, s
                                         isoformId: isoformId
                                     });
                                 }
-                            }
 
-                            if ($.grep(ensembl.xrefs, function (e) {
-                                return e.prefix === "Protein";
-                            }).length === 1) {
-                                newTypeList.push(ensembl);
+                                if ($.grep(ensembl.xrefs, function (e) {
+                                    return e.prefix === "Protein";
+                                }).length === 1) {
+                                    newTypeList.push(ensembl);
+                                }
                             }
                         }
                     } else if (typeList[elem].databaseName === "EMBL") { //TODO
