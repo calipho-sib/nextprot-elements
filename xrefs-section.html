@@ -246,65 +246,70 @@ Exteranl links section present in function, medical, expression, interactions, s
                             })
                         }
                     } else if (typeList[elem].databaseName === "Ensembl") {
-
                         if (typeList[elem].accession.startsWith("ENST")) {
-                            let mappingValue = typeList[elem].properties.filter(p => p.name === 'nxmap')[0].value;
-                            if (mappingValue) {
-                                let ensgId = mappingValue.split('|')[1];
-                                let enspId = mappingValue.split('|')[2];;
-                                let isoformId = mappingValue.split('|')[3];;
-
-                                if (!this.nxConfig.entry.includes(isoformId.substr(0,isoformId.indexOf('-')))) {
-                                    return;
-                                }
-
-                                // ENST
+                            typeList[elem].properties.filter(p => p.name === 'nxmap').forEach(nxmap => {
                                 var ensembl = {
                                     name: typeList[elem].databaseName,
-                                    xrefs: [{
-                                        accession: typeList[elem].accession,
-                                        url: typeList[elem].resolvedUrl,
-                                        prefix: "Transcript",
-                                        suffix: ""
-                                    }]
+                                    xrefs: []
                                 };
 
-                                //ENSG
-                                var ensg = $.grep(typeList, function (e) {
-                                    return e.accession === ensgId;
-                                })[0];
+                                let mappingValue = nxmap.value;
+                                console.log("Mapping value " + mappingValue)
+                                if (mappingValue) {
+                                    let enstId = mappingValue.split('|')[0];
+                                    let ensgId = mappingValue.split('|')[1];
+                                    let enspId = mappingValue.split('|')[2];
+                                    let isoformId = mappingValue.split('|')[3];
 
-                                if(ensg) {
-                                    ensembl.xrefs.push({
-                                        accession: ensg.accession,
-                                        url: ensg.resolvedUrl,
-                                        prefix: "Gene",
-                                        suffix: "",
-                                        isoformId: isoformId
-                                    });
-                                }
+                                    if (!this.nxConfig.entry.includes(isoformId.substr(0, isoformId.indexOf('-')))) {
+                                        return;
+                                    }
 
-                                //ENSP
-                                var ensp = $.grep(typeList, function (e) {
-                                    return e.accession === enspId;
-                                })[0];
+                                    // ENST
+                                    var enst = $.grep(typeList, function (e) {
+                                        return e.accession === enstId;
+                                    })[0];
 
-                                if(ensp) {
-                                    ensembl.xrefs.push({
-                                        accession: ensp.accession,
-                                        url: ensp.resolvedUrl,
-                                        prefix: "Protein",
-                                        suffix: "",
-                                        isoformId: isoformId
-                                    });
-                                }
+                                    if(enst) {
+                                        ensembl.xrefs.push({
+                                            accession: enst.accession,
+                                            url: enst.resolvedUrl,
+                                            prefix: "Transcript",
+                                            suffix: ""
+                                        })
+                                    }
 
-                                if ($.grep(ensembl.xrefs, function (e) {
-                                    return e.prefix === "Protein";
-                                }).length === 1) {
+                                    // ENSG
+                                    var ensg = $.grep(typeList, function (e) {
+                                        return e.accession === ensgId;
+                                    })[0];
+
+                                    if (ensg) {
+                                        ensembl.xrefs.push({
+                                            accession: ensg.accession,
+                                            url: ensg.resolvedUrl,
+                                            prefix: "Gene",
+                                            suffix: ""
+                                        });
+                                    }
+
+                                    //ENSP
+                                    var ensp = $.grep(typeList, function (e) {
+                                        return e.accession === enspId;
+                                    })[0];
+
+                                    if (ensp) {
+                                        ensembl.xrefs.push({
+                                            accession: ensp.accession,
+                                            url: ensp.resolvedUrl,
+                                            prefix: "Protein",
+                                            suffix: "",
+                                            isoformId: isoformId
+                                        });
+                                    }
                                     newTypeList.push(ensembl);
                                 }
-                            }
+                            });
                         }
                     } else if (typeList[elem].databaseName === "EMBL") { //TODO
                         if (typeList[elem].properties.length > 0) {
