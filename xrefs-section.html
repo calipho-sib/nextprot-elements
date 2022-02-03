@@ -285,13 +285,16 @@ Exteranl links section present in function, medical, expression, interactions, s
                                     })[0];
 
                                     if (ensg) {
-                                        ensembl.xrefs.push({
+                                        let ensgXREF = {
                                             accession: ensg.accession,
                                             url: ensg.resolvedUrl,
                                             prefix: "Gene",
-                                            suffix: "",
-                                            isoformId: isoformId
-                                        });
+                                            suffix: ""
+                                        }
+                                        if(!ensp) {
+                                            ensgXREF["isoformId"] = isoformId
+                                        }
+                                        ensembl.xrefs.push(ensgXREF);
                                     }
 
                                     //ENSP
