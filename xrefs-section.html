@@ -284,6 +284,12 @@ Exteranl links section present in function, medical, expression, interactions, s
                                         return e.accession === ensgId;
                                     })[0];
 
+
+                                    //ENSP
+                                    var ensp = $.grep(typeList, function (e) {
+                                        return e.accession === enspId;
+                                    })[0];
+
                                     if (ensg) {
                                         let ensgXREF = {
                                             accession: ensg.accession,
@@ -291,16 +297,12 @@ Exteranl links section present in function, medical, expression, interactions, s
                                             prefix: "Gene",
                                             suffix: ""
                                         }
+
                                         if(!ensp) {
-                                            ensgXREF["isoformId"] = isoformId
+                                            ensgXREF["isoformId"] = isoformId;
                                         }
                                         ensembl.xrefs.push(ensgXREF);
                                     }
-
-                                    //ENSP
-                                    var ensp = $.grep(typeList, function (e) {
-                                        return e.accession === enspId;
-                                    })[0];
 
                                     if (ensp) {
                                         ensembl.xrefs.push({
