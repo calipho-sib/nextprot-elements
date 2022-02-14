@@ -41,7 +41,12 @@ Exteranl links section present in function, medical, expression, interactions, s
                                                     <template is="dom-if" if="[[xref.prefix]]">
                                                         <label class="btn btn-xs prefix-label">[[xref.prefix]]</label>
                                                     </template>
-                                                    <a class="selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
+                                                    <template is="dom-if" if="[[xref.url]]">
+                                                        <a class="selectable ext-link" href="[[xref.url]]" target="_blank">[[xref.accession]]</a>
+                                                    </template>
+                                                    <template is="dom-if" if="[[!xref.url]]">
+                                                        <label class="suffix-label">[[xref.accession]]</label>
+                                                    </template>
                                                     <template is="dom-if" if="[[xref.suffix]]">
                                                         <label class="suffix-label">[[xref.suffix]]</label>
                                                     </template>
@@ -142,8 +147,26 @@ Exteranl links section present in function, medical, expression, interactions, s
                         var dbB = b.name.toUpperCase();
                         var prefA = a.xrefs[0].prefix.toUpperCase();
                         var prefB = b.xrefs[0].prefix.toUpperCase();
-                        var accA = a.xrefs[0].accession.toUpperCase();
-                        var accB = b.xrefs[0].accession.toUpperCase();
+
+                        var accA;
+                        var accB;
+                        if(a.name === 'Ensembl' && b.name === 'Ensembl') {
+                            if(a.xrefs[2].isoformId && b.xrefs[2].isoformId) {
+                                accA = a.xrefs[2].isoformId.toUpperCase();
+                                accB = b.xrefs[2].isoformId.toUpperCase();
+                            } else if(a.xrefs[2].isoformId) {
+                                accA = a.xrefs[2].isoformId.toUpperCase();
+                                accB = 'Z';
+                            } else if(b.xrefs[2].isoformId) {
+                                accA = 'Z';
+                                accB = b.xrefs[2].isoformId.toUpperCase();
+                            }
+
+                        } else {
+                            accA = a.xrefs[0].accession.toUpperCase();
+                            accB = b.xrefs[0].accession.toUpperCase();
+                        }
+
                         if (dbA < dbB) return -1;
                         else if (dbA > dbB) return 1;
                         else if (prefA < prefB) return -1;
@@ -246,8 +269,13 @@ Exteranl links section present in function, medical, expression, interactions, s
                             })
                         }
                     } else if (typeList[elem].databaseName === "Ensembl") {
+
                         if (typeList[elem].accession.startsWith("ENST")) {
-                            typeList[elem].properties.filter(p => p.name === 'nxmap').forEach(nxmap => {
+
+                            let properties = typeList[elem].properties;
+                            let nxmaps = properties.filter(p => p.name === 'nxmap');
+
+                            nxmaps.forEach(nxmap => {
                                 var ensembl = {
                                     name: typeList[elem].databaseName,
                                     xrefs: []
@@ -265,6 +293,20 @@ Exteranl links section present in function, medical, expression, interactions, s
                                         return;
                                     }
 
+                                    // ENSG
+                                    var ensg = $.grep(typeList, function (e) {
+                                        return e.accession === ensgId;
+                                    })[0];
+
+                                    if (ensg) {
+                                        ensembl.xrefs.push({
+                                            accession: ensg.accession,
+                                            url: ensg.resolvedUrl,
+                                            prefix: "Gene",
+                                            suffix: ""
+                                        });
+                                    }
+
                                     // ENST
                                     var enst = $.grep(typeList, function (e) {
                                         return e.accession === enstId;
@@ -279,40 +321,20 @@ Exteranl links section present in function, medical, expression, interactions, s
                                         })
                                     }
 
-                                    // ENSG
-                                    var ensg = $.grep(typeList, function (e) {
-                                        return e.accession === ensgId;
-                                    })[0];
-
-
                                     //ENSP
                                     var ensp = $.grep(typeList, function (e) {
                                         return e.accession === enspId;
                                     })[0];
 
-                                    if (ensg) {
-                                        let ensgXREF = {
-                                            accession: ensg.accession,
-                                            url: ensg.resolvedUrl,
-                                            prefix: "Gene",
-                                            suffix: ""
-                                        }
+                                    // If no ENSP show ("NO ENSP") yet show isoformID if exist
+                                    ensembl.xrefs.push({
+                                        accession: ensp ? ensp.accession : 'No ENSP',
+                                        url: ensp ? ensp.resolvedUrl : '',
+                                        prefix: "Protein",
+                                        suffix: "",
+                                        isoformId: 'NX_' + isoformId
+                                    });
 
-                                        if(!ensp) {
-                                            ensgXREF["isoformId"] = isoformId;
-                                        }
-                                        ensembl.xrefs.push(ensgXREF);
-                                    }
-
-                                    if (ensp) {
-                                        ensembl.xrefs.push({
-                                            accession: ensp.accession,
-                                            url: ensp.resolvedUrl,
-                                            prefix: "Protein",
-                                            suffix: "",
-                                            isoformId: isoformId
-                                        });
-                                    }
                                     newTypeList.push(ensembl);
                                 }
                             });
@@ -502,6 +524,7 @@ Exteranl links section present in function, medical, expression, interactions, s
                     }
 
                 }
+
                 return newTypeList;
             },
             _sortCategories: function (a, b) {
