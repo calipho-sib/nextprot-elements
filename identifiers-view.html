@@ -82,7 +82,7 @@ View listing identifiers annotations.
             },
             ready: function(){
                 var nx = new Nextprot.Client("neXtprot identifiers view", "Calipho Group");
-                // nx.setApiBaseUrl('http://localhost:8080/nextprot-api-web');
+                if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                 var self = this;
                 nx.getFullAnnotationsByCategory(this.nxConfig.entry, "IDENTIFIER")
                     .then(function (response) {
@@ -91,14 +91,14 @@ View listing identifiers annotations.
             },
             _process: function(identifiers){
                 result = {};
-                var self = this;
                 identifiers.forEach(function(identifier){
                     var catKey = identifier.databaseCategory;
                     if (! result.hasOwnProperty(catKey)) result[catKey]={};
                     var catObj = result[catKey];
                     var typKey = identifier.type;
                     if (! catObj.hasOwnProperty(typKey)) catObj[typKey]=[];
-                    catObj[typKey].push({accession:identifier.name, link:identifier.link});
+                    var name = typKey === "PDB"? identifier.name.toUpperCase() : identifier.name;
+                    catObj[typKey].push({accession :name, link: identifier.link});
                 });
                 this.identifiers = result;
             },
