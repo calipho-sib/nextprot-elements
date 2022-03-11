@@ -615,7 +615,7 @@ Annotation section used in function, medical, and expression views.
             },
             
             _getPrettyGoQualifier(go_qual) {
-                if (go_qual) return go_qual.substr(0,1).toUpperCase() + go_qual.substr(1).replace("_"," ");
+                if (go_qual) return go_qual.substr(0,1).toUpperCase() + go_qual.substr(1).replaceAll("_"," ");
                 return go_qual;
             },
 
