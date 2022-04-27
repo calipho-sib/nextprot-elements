@@ -116,12 +116,11 @@ View presenting blast search results annotations.
                     <div class="quiet">
                         <p>Query in all human sequences in neXtProt ([[params.db_num]] sequences, [[params.db_len]] amino acids)</p>
                         Similarity matrix:
-                        <shibui-dropdown-menu value="[[matrix]]">
-                            <p id="matrixDropdown" slot="trigger">[[matrix]]<iron-icon icon="arrow-drop-down"></iron-icon></p>
+                        <select on-change="_setMatrix" style="width:100px;">
                             <template is="dom-repeat" items="[[matrices]]" >
-                                <a value="[[item]]" on-tap="_setMatrix">[[item]]</a>
+                                <option value="[[item]]">[[item]]</option>
                             </template>
-                        </shibui-dropdown-menu>
+                        </select>
                         <p class="blast-params">
                             Expect: <input is="iron-input" id="evalue-input" class="number-input" bind-value="{{evalue}}"> ; filter: [[_getFilterState()]]; gap-open: <input is="iron-input" class="number-input" bind-value="{{gapopen}}"> ; gap-extend: <input is="iron-input" class="number-input" bind-value="{{gapextend}}">
                             <button id="reloadButton" class="btn btn-sm" on-tap="getByIsoform"><iron-icon icon="icons:autorenew"></iron-icon>&nbsp;Reload</button>
