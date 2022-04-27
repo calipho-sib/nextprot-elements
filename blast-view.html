@@ -117,9 +117,9 @@ View presenting blast search results annotations.
                     <div class="quiet">
                         <p>Query in all human sequences in neXtProt ([[params.db_num]] sequences, [[params.db_len]] amino acids)</p>
                         Similarity matrix:
-                        <select class="matrixDropdown" on-change="_setMatrix" >
+                        <select class="matrixDropdown" on-change="_setMatrix">
                             <template is="dom-repeat" items="[[matrices]]" >
-                                <option value="[[item]]">[[item]]</option>
+                                <option value="[[item]]" selected="[[_selectedMatrix(item)]]">[[item]]</option>
                             </template>
                         </select>
 
@@ -296,6 +296,9 @@ View presenting blast search results annotations.
                         this.matrix = oldValue;
                     }
                 });
+            },
+            _selectedMatrix: function(matrix) {
+                return matrix === "BLOSUM62";
             },
             _colorScale: function(){
                 var svg = d3.select(this).select("#scale").append("svg")
