@@ -528,7 +528,7 @@ Protein overview
                         self._handleError(error);
                     });
                 } else {
-                    if(self._loadData(this.nxEntryData.entry.overview)) {
+                    if(this.nxEntryData.entry.overview) {
                         self._loadData(this.nxEntryData.entry.overview);
                         self.$.spinner.active = false;
                     }
