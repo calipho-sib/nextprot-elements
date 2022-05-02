@@ -442,6 +442,11 @@ Protein overview
                 nxEntry: {
                     notify: true
                 },
+                nxEntryData: {
+                    type: Object,
+                    value: {}
+                },
+                lazyLoading: false,
                 extended: {
                     type: Boolean,
                     value: false
@@ -513,14 +518,21 @@ Protein overview
                 var self = this;
 
                 // fetch data from overview
-                this._npClient.getProteinOverview(self.nxConfig.entry).then(function (overview) {
+                if(!this.lazyLoading) {
+                    this._npClient.getProteinOverview(self.nxConfig.entry).then(function (overview) {
 
-                    // load data
-                    self._loadData(overview);
-                    self.$.spinner.active = false;
-                }, function (error) {
-                    self._handleError(error);
-                });
+                        // load data
+                        self._loadData(overview);
+                        self.$.spinner.active = false;
+                    }, function (error) {
+                        self._handleError(error);
+                    });
+                } else {
+                    if(self._loadData(this.nxEntryData.entry.overview)) {
+                        self._loadData(this.nxEntryData.entry.overview);
+                        self.$.spinner.active = false;
+                    }
+                }
 
                 this.nxEntry = this.nxConfig.entry || this._npClient.getEntryName();
             },
