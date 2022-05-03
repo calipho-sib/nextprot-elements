@@ -443,8 +443,8 @@ Protein overview
                     notify: true
                 },
                 nxEntryData: {
-                    type: Object,
-                    value: {}
+                    type: String,
+                    value: ""
                 },
                 lazyLoading: false,
                 extended: {
@@ -528,10 +528,8 @@ Protein overview
                         self._handleError(error);
                     });
                 } else {
-                    if(this.nxEntryData.entry.overview) {
-                        self._loadData(this.nxEntryData.entry.overview);
-                        self.$.spinner.active = false;
-                    }
+                    this.data = JSON.parse(decodeURIComponent(this.nxEntryData)).data;
+                    self.$.spinner.active = false;
                 }
 
                 this.nxEntry = this.nxConfig.entry || this._npClient.getEntryName();
