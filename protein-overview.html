@@ -446,7 +446,10 @@ Protein overview
                     type: String,
                     value: ""
                 },
-                lazyLoading: false,
+                lazyLoading: {
+                    type: Boolean,
+                    value: false,
+                },
                 extended: {
                     type: Boolean,
                     value: false
@@ -528,7 +531,7 @@ Protein overview
                         self._handleError(error);
                     });
                 } else {
-                    this.data = JSON.parse(decodeURIComponent(this.nxEntryData)).data;
+                    this._loadData(JSON.parse(decodeURIComponent(this.nxEntryData)).overview.overview);
                     self.$.spinner.active = false;
                 }
 
