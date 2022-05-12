@@ -26,7 +26,7 @@ View listing medical annotations.
         </style>
         <div class="row">
             <div id="nxOverview" class="col-md-12">
-                <protein-overview nx-config="[[nxConfig]]"></protein-overview>
+                <protein-overview nx-config="[[nxConfig]]" nx-entry-data="[[nxEntryData]]" lazy-loading></protein-overview>
             </div>
         </div>
         <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no medical information available in neXtProt for [[nxConfig.entry]].
@@ -69,7 +69,8 @@ View listing medical annotations.
             <div id="nxKeywords" class="col-md-12">
                 <keywords-section categories='["Disease", "Technical term"]'
                                   category-accessions='{"Technical term": ["KW-0582"]}'
-                                  nx-config="[[nxConfig]]"  count="{{keywordsCount}}">
+                                  nx-config="[[nxConfig]]"  count="{{keywordsCount}}"
+                                  nx-entry-data="[[nxEntryData]]" lazy-loading>
                 </keywords-section>
             </div>
         </div>

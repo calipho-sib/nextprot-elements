@@ -30,7 +30,7 @@ View listing protein function annotations.
     </style>
     <div class="row">
       <div id="nxOverview" class="col-md-12">
-        <protein-overview nx-config="[[nxConfig]]" nx-entry-data="[[nxEntryData]]" lazy-loading="false"></protein-overview>
+        <protein-overview nx-config="[[nxConfig]]" nx-entry-data="[[nxEntryData]]" lazy-loading></protein-overview>
       </div>
     </div>
     <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no function information available in neXtProt for [[nxConfig.entry]].
@@ -56,7 +56,9 @@ View listing protein function annotations.
     <div class="row">
       <div id="nxKeywords" class="col-md-12">
         <keywords-section categories='["Molecular function", "Biological process", "Technical term"]'
-                          exceptions='["KW-0002", "KW-0903", "KW-0374", "KW-0582"]' nx-config="[[nxConfig]]" count="{{keywordsCount}}">
+                          exceptions='["KW-0002", "KW-0903", "KW-0374", "KW-0582"]'
+                          nx-config="[[nxConfig]]" count="{{keywordsCount}}"
+                          nx-entry-data="[[nxEntryData]]" lazy-loading>
         </keywords-section>
       </div>
     </div>

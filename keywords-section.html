@@ -60,6 +60,11 @@ Keywords section present on function, medical, sequence, and structures pages.
           type: Object,
           value: {}
         },
+        nxEntryData: {
+          type: String,
+          value: ""
+        },
+        lazyLoading: false,
         categories: {
           type: Array
         },
@@ -80,17 +85,25 @@ Keywords section present on function, medical, sequence, and structures pages.
         var nx = new Nextprot.Client("keywords-section", "ndu");
         if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
         var self=this;
-        nx.getAnnotationsByCategory(self.nxConfig.entry, "uniprot-keyword")
-                .then(function (data) {
-                  var keywordList = self.getKeywordsByView(data.annot);
-                  self.$.spinner.active = false;
-                }).catch(function (err) {
-                  // catch any error that happened so far
-                  console.log("Argh, broken: " + err.message);
-                  console.log("Error at line : " + err.stack);
-                  self.$.spinner.active = false;
-                  self.count = 0;
-                });
+
+        if(this.lazyLoading) {
+          let rawData = JSON.parse(decodeURIComponent(this.nxEntryData)).keywords;
+          let processedData = nx.convertToTupleMap({ entry: rawData }, 'uniprot-keyword');
+          var keywordList = self.getKeywordsByView(processedData.annot);
+          self.$.spinner.active = false;
+        } else {
+          nx.getAnnotationsByCategory(self.nxConfig.entry, "uniprot-keyword")
+                  .then(function (data) {
+                    var keywordList = self.getKeywordsByView(data.annot);
+                    self.$.spinner.active = false;
+                  }).catch(function (err) {
+            // catch any error that happened so far
+            console.log("Argh, broken: " + err.message);
+            console.log("Error at line : " + err.stack);
+            self.$.spinner.active = false;
+            self.count = 0;
+          });
+        }
       },
       getKeywordsByView: function(list){
         var count=0;
