@@ -89,7 +89,7 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                         self.isoforms=data;
                         if(self.isoName && !self._checkIfIsoformExists()) self.isoName = "";
                         self.isoformMapping = self._testAlgoObject(data);
-                        if(this.lazyLoading) {
+                        if(self.lazyLoading) {
                             let entryData = JSON.parse(decodeURIComponent(self.nxEntryData));
                             self.sequences = entryData.isoforms.isoforms;
                             self._initialize();
