@@ -275,6 +275,14 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     value: {},
                     observer: "reload"
                 },
+                nxEntryData: {
+                    type: String,
+                    value: ""
+                },
+                lazyLoading: {
+                    type: Boolean,
+                    value: false
+                },
                 isoName: {
                     type: String,
                     notify: true,
@@ -336,6 +344,13 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 var self=this;
                 Promise.all(self._getFeaturesByView())
                     .then(function (rawData) {
+
+                    if(self.lazyLoading) {
+                        let entryData = JSON.parse(decodeURIComponent(self.nxEntryData));
+                        console.log("HERE")
+                        rawData.unshift(entryData.isoforms.isoforms);
+                    }
+
                     self.rawData = rawData;
                     self.sequences = rawData[0];
                     self._getMetadataByView();
@@ -509,7 +524,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 for (var feat in this.featureList) {
                     switch (this.featureList[feat].APIRef) {
                         case "sequence":
-                            featuresForViewer.push(this.nx.getProteinSequence(this.nxEntry));
+                            if(!this.lazyLoading){
+                                featuresForViewer.push(this.nx.getProteinSequence(this.nxEntry));
+                            }
                             break;
                         case "antibody":
                             featuresForViewer.push(this.nx.getAntibody(this.nxEntry));

@@ -49,6 +49,14 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                     type: Object,
                     value: {}
                 },
+                nxEntryData: {
+                    type: String,
+                    value: ""
+                },
+                lazyLoading: {
+                    type: Boolean,
+                    value: false,
+                },
                 isoforms: {
                     type: Object
                 },
@@ -81,12 +89,18 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                         self.isoforms=data;
                         if(self.isoName && !self._checkIfIsoformExists()) self.isoName = "";
                         self.isoformMapping = self._testAlgoObject(data);
-                        nx.getProteinSequence(nxEntry).then(
-                            function (sequences) {
-                                self.sequences = sequences;
-                                self._initialize();
-                            }
-                        )
+                        if(this.lazyLoading) {
+                            let entryData = JSON.parse(decodeURIComponent(self.nxEntryData));
+                            self.sequences = entryData.isoforms.isoforms;
+                            self._initialize();
+                        } else {
+                            nx.getProteinSequence(nxEntry).then(
+                                function (sequences) {
+                                    self.sequences = sequences;
+                                    self._initialize();
+                                }
+                            )
+                        }
                     }
                 ).catch(function (err) {
                     // catch any error that happened so far

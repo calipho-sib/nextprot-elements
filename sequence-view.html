@@ -41,7 +41,7 @@ View listing sequence annotations.
             Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
         </div>
         <div id="nxPositionalAnnotations" class="row nxSection">
-            <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}}></isoform-selector>
+            <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}} nx-entry-data="[[nxEntryData]]" lazy-loading></isoform-selector>
             <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]] gold-only="[[nxConfig.goldOnly]]" feature-list='[
       {
         "APIRef": "sequence",
@@ -391,7 +391,7 @@ View listing sequence annotations.
         "APIRef": "isoform-mapping",
         "metadata": {}
       }
-    ]' count="{{positionalAnnotationsCount}}">
+    ]' count="{{positionalAnnotationsCount}}" nx-entry-data="[[nxEntryData]]" lazy-loading>
 
             </triple-viewer>
         </div>
@@ -466,6 +466,14 @@ View listing sequence annotations.
                 xrefsCount: {
                     type: Number,
                     observer: "_checkXrefs"
+                },
+                nxEntryData: {
+                    type: String,
+                    value: ""
+                },
+                lazyLoading: {
+                    type: Boolean,
+                    value: false,
                 }
             },
             _checkAnnotations: function() {
