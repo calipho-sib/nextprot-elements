@@ -79,6 +79,11 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 }
             },
             ready: function() {
+
+                if(Object.getOwnPropertyNames(JSON.parse(decodeURIComponent(this.nxEntryData))).length == 0) {
+                    return;
+                }
+
                 var nx = new Nextprot.Client("neXtprot isoform selector", "Calipho Group");
                 if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                 var nxEntry = this.nxConfig.entry || nx.getEntryName();

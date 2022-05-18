@@ -338,6 +338,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 }
             },
             attached: function() {
+
+                if(Object.getOwnPropertyNames(JSON.parse(decodeURIComponent(this.nxEntryData))).length == 0) {
+                    return;
+                }
+
                 this.nx = new Nextprot.Client("neXtprot triple viewer", "Calipho Group");
                 this.nxEntry = this.nx.getEntryName(this.nxConfig.entry);
                 if(!this.isoName) this.isoName = this.nxEntry+"-1";

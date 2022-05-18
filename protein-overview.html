@@ -531,8 +531,12 @@ Protein overview
                         self._handleError(error);
                     });
                 } else {
-                    this._loadData(JSON.parse(decodeURIComponent(this.nxEntryData)).overview.overview);
-                    self.$.spinner.active = false;
+                    if(Object.getOwnPropertyNames(JSON.parse(decodeURIComponent(this.nxEntryData))).length == 0) {
+                        self.$.spinner.active = true;
+                    } else {
+                        this._loadData(JSON.parse(decodeURIComponent(this.nxEntryData)).overview.overview);
+                        self.$.spinner.active = false;
+                    }
                 }
 
                 this.nxEntry = this.nxConfig.entry || this._npClient.getEntryName();
