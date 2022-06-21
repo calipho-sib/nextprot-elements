@@ -156,19 +156,20 @@ Annotation section used in function predictions views.
                                         <div class="border-left">
                                             <div class="evidences-container">
                                                 <div class="evidence-submitters">
-                                                    <template is="dom-if" if="[[evidence.userOrcIDs]]">
-                                                        Submitter: <template is="dom-if" if="[[!evidence.userHidden]]">
-                                                        <template is="dom-if" if="[[_hasMultipleIds(evidence.userOrcIDs)]]">
-                                                            <template is="dom-repeat" items="[[evidence.userOrcIDs]]" as="userOrcid">
+                                                    <template is="dom-if" if="[[_showSubmitter(evidence.userOrcIDs)]]">
+                                                        <template is="dom-if" if="[[!evidence.userHidden]]">
+                                                            Submitter:
+                                                            <template is="dom-if" if="[[_hasMultipleIds(evidence.userOrcIDs)]]">
+                                                                <template is="dom-repeat" items="[[evidence.userOrcIDs]]" as="userOrcid">
                                                                     <span class="submitter">
                                                                         <a href="https://orcid.org/[[userOrcid]]" class="ext-link" target='_blank'>
                                                                             <img class="orcid_logo" alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" />
                                                                             [[userOrcid]]
                                                                         </a>
                                                                     </span>
+                                                                </template>
                                                             </template>
                                                         </template>
-                                                    </template>
                                                         <template is="dom-if" if="[[evidence.userHidden]]">
                                                             Anonymous
                                                         </template>
@@ -263,6 +264,10 @@ Annotation section used in function predictions views.
 
                 _capitalizeFirstLetter: function(string) {
                     return string.charAt(0).toUpperCase() + string.slice(1)
+                },
+
+                _showSubmitter: function(orcids) {
+                    return orcids.length > 0;
                 },
 
                 _hasMultipleIds: function(ids) {

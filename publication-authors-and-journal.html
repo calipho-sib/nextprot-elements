@@ -51,7 +51,12 @@ Publication authors with journal demo
                 <div class="journal">
                     <!-- Article -->
                     <template is="dom-if" if="[[_isType(publication.publicationType, 'ARTICLE')]]">
-                        [[publication.journalResourceLocator.abbrev]]
+                        <template is="dom-if" if="[[publication.journalResourceLocator.abbrev]]">
+                            [[publication.journalResourceLocator.abbrev]]
+                        </template>
+                        <template is="dom-if" if="[[!publication.journalResourceLocator.abbrev]]">
+                            [[publication.journalResourceLocator.name]]
+                        </template>
                         <template is="dom-if" if="[[publication.volume]]">
                             <strong>[[publication.volume]],</strong>
                         </template>
@@ -118,7 +123,13 @@ Publication authors with journal demo
                     </template>
 
                     <!-- Article -->
-                    <template is="dom-if" if="[[_isType(publication.publicationType, 'ARTICLE')]]"> [[publication.journalResourceLocator.medAbbrev]]
+                    <template is="dom-if" if="[[_isType(publication.publicationType, 'ARTICLE')]]">
+                        <template is="dom-if" if="[[publication.journalResourceLocator.medAbbrev]]">
+                            [[publication.journalResourceLocator.medAbbrev]]
+                        </template>
+                        <template is="dom-if" if="[[!publication.journalResourceLocator.medAbbrev]]">
+                            [[publication.journalResourceLocator.name]]
+                        </template>
                         <template is="dom-if" if="[[publication.volume]]"><strong>[[publication.volume]],</strong></template>
                         <template is="dom-if" if="[[publication.firstPage]]">[[pages]]</template>
                         <template is="dom-if" if="[[publication.publicationYear]]">([[publication.publicationYear]])</template>
