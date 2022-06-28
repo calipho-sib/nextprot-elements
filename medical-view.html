@@ -33,7 +33,7 @@ View listing medical annotations.
             Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
         </div>
         <div id="nxPositionalAnnotations" class="row nxSection">
-            <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}}></isoform-selector>
+            <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}} nx-entry-data="[[nxEntryData]]" lazy-loading></isoform-selector>
             <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] gold-only="[[nxConfig.goldOnly]]" feature-list='[
               {
                 "APIRef": "sequence",
@@ -53,7 +53,7 @@ View listing medical annotations.
                 "APIRef": "isoform-mapping",
                 "metadata": {}
               }
-            ]' count="{{positionalAnnotationsCount}}" hide-sequence-viewer>
+            ]' count="{{positionalAnnotationsCount}}" hide-sequence-viewer nx-entry-data="[[nxEntryData]]" lazy-loading>
             </triple-viewer>
         </div>
         <div class="row">
