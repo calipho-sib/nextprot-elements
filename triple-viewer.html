@@ -497,6 +497,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     if (hasNegEv && hasNotNegEv) {
                                         vAnnot.conflict = true;
                                     }
+
+                                    // We treat the two annotations; variant and disease-related-variant separately,
+                                    // Therefore, need to set the disease-related-variant's quality qualifier
+                                    vAnnot.qualityQualifier = drvAnnot.qualityQualifier;
                                 }
                             }
                         }
@@ -518,7 +522,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             featuresForViewer.push(this.nx.getIsoformMapping(this.nxEntry));
                             break;
                         case "variant":
-                            featuresForViewer.push(this._addDiseaseRelatedVariants(this.nx.getAnnotationsByCategory(this.nxEntry, this.featureList[feat].APIRef)));
+                            featuresForViewer.push(this.nx.getAnnotationsByCategory(this.nxEntry, this.featureList[feat].APIRef));
                             break;
                         case "variant-medical":
                             featuresForViewer.push(this._addDiseaseRelatedVariants(this.nx.getAnnotationsWithProperty(this.nxEntry, "variant", "disease-related", true)));
