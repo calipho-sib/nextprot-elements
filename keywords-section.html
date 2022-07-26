@@ -64,7 +64,10 @@ Keywords section present on function, medical, sequence, and structures pages.
           type: String,
           value: ""
         },
-        lazyLoading: false,
+        lazyLoading: {
+          type: Boolean,
+          value: false,
+        },
         categories: {
           type: Array
         },
@@ -87,10 +90,14 @@ Keywords section present on function, medical, sequence, and structures pages.
         var self=this;
 
         if(this.lazyLoading) {
-          let rawData = JSON.parse(decodeURIComponent(this.nxEntryData)).keywords;
-          let processedData = nx.convertToTupleMap({ entry: rawData }, 'uniprot-keyword');
-          var keywordList = self.getKeywordsByView(processedData.annot);
-          self.$.spinner.active = false;
+          if(Object.getOwnPropertyNames(JSON.parse(decodeURIComponent(this.nxEntryData))).length == 0) {
+            self.$.spinner.active = true;
+          } else {
+            let rawData = JSON.parse(decodeURIComponent(this.nxEntryData)).keywords;
+            let processedData = nx.convertToTupleMap({ entry: rawData }, 'uniprot-keyword');
+            var keywordList = self.getKeywordsByView(processedData.annot);
+            self.$.spinner.active = false;
+          }
         } else {
           nx.getAnnotationsByCategory(self.nxConfig.entry, "uniprot-keyword")
                   .then(function (data) {

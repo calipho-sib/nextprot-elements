@@ -34,7 +34,7 @@ View listing sequence annotations.
             Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
         </div>
         <div id="nxPositionalAnnotations" class="row nxSection">
-            <isoform-selector nx-config="{{nxConfig}}" iso-name="{{isoName}}"></isoform-selector>
+            <isoform-selector nx-config="{{nxConfig}}" iso-name="{{isoName}}" nx-entry-data="[[nxEntryData]]" lazy-loading></isoform-selector>
             <triple-viewer nx-config="{{nxConfig}}" count="{{positionalAnnotationsCount}}" hide-sequence-viewer iso-name="[[isoName]]" selection="{{selection}}"
                            feature-list='[
                             {
@@ -294,7 +294,7 @@ View listing sequence annotations.
                             {
                               "APIRef": "isoform-mapping",
                               "metadata": {}
-                            }]'>
+                            }]' nx-entry-data="[[nxEntryData]]" lazy-loading>
             </triple-viewer>
             <bioviz-v2-section nx-config="{{nxConfig}}" isoform="[[isoName]]" selection="[[selection]]"></bioviz-v2-section>
         </div>
@@ -338,6 +338,14 @@ View listing sequence annotations.
                 xrefsCount: {
                     type: Number,
                     observer: "_checkXrefs"
+                },
+                nxEntryData: {
+                    type: String,
+                    value: ""
+                },
+                lazyLoading: {
+                    type: Boolean,
+                    value: false,
                 }
             },
             _checkAnnotations: function() {

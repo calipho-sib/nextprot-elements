@@ -41,7 +41,7 @@ View listing sequence annotations.
             </div>
         </div>
         <div class="row nxSection">
-            <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}}></isoform-selector>
+            <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}} nx-entry-data="[[nxEntryData]]" lazy-loading></isoform-selector>
             <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]] feature-list='[{
         "APIRef": "sequence",
         "metadata": {"name": "Sequence"}
@@ -201,7 +201,7 @@ View listing sequence annotations.
       {
         "APIRef": "isoform-mapping",
         "metadata": {}
-      }]'></triple-viewer>
+      }]' nx-entry-data="[[nxEntryData]]" lazy-loading></triple-viewer>
         </div>
         <div class="row">
             <div id="nxXrefs" class="col-md-12">
@@ -228,6 +228,14 @@ View listing sequence annotations.
                 xrefsCount: {
                     type: Number,
                     observer: "_checkXrefs"
+                },
+                nxEntryData: {
+                    type: String,
+                    value: ""
+                },
+                lazyLoading: {
+                    type: Boolean,
+                    value: false,
                 }
             },
             _checkXrefs: function(){
