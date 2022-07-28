@@ -424,7 +424,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 }
                 this.notifyPath("featuresByIsoform", featsByIso);
             },
-            _addDiseaseRelatedVariants: function (variants) {
+            _addDiseaseRelatedVariants: function (variants, settings) {
                 var calls = [];
                 calls.push(variants)
                 calls.push(this.nx.getAnnotationsByCategory(this.nxEntry, "disease-related-variant"))
@@ -520,7 +520,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 
                                     // We treat the two annotations; variant and disease-related-variant separately,
                                     // Therefore, need to set the disease-related-variant's quality qualifier
-                                    vAnnot.qualityQualifier = drvAnnot.qualityQualifier;
+                                    if(settings && settings.view ===  'variant-medical') {
+                                        vAnnot.qualityQualifier = drvAnnot.qualityQualifier;
+                                    }
                                 }
                             }
                         }
@@ -544,10 +546,12 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             featuresForViewer.push(this.nx.getIsoformMapping(this.nxEntry));
                             break;
                         case "variant":
-                            featuresForViewer.push(this.nx.getAnnotationsByCategory(this.nxEntry, this.featureList[feat].APIRef));
+                            featuresForViewer.push(this._addDiseaseRelatedVariants(this.nx.getAnnotationsByCategory(this.nxEntry, this.featureList[feat].APIRef)));
                             break;
                         case "variant-medical":
-                            featuresForViewer.push(this._addDiseaseRelatedVariants(this.nx.getAnnotationsWithProperty(this.nxEntry, "variant", "disease-related", true)));
+                            featuresForViewer.push(this._addDiseaseRelatedVariants(this.nx.getAnnotationsWithProperty(this.nxEntry, "variant", "disease-related", true)), {
+                                view: 'variant-medical'
+                            });
                             break;
                         case "miscellaneous-region-interactions":
                             featuresForViewer.push(this.nx.getAnnotationsWithProperty(this.nxEntry, "miscellaneous-region", "interaction-related", true));
