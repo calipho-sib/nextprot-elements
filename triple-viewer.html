@@ -487,6 +487,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                                 drvEvidence.diseaseRelatedVariant.name = diseaseAnnot.cvTermName;
                                                 drvEvidence.diseaseRelatedVariant.accession = diseaseAnnot.cvTermAccessionCode;
                                                 drvEvidence.diseaseRelatedVariant.experimentalContextId = drvEvidence.experimentalContextId;
+                                                if (!settings) {
+                                                    drvEvidence.qualityQualifier = vAnnot.qualityQualifier;
+                                                }
                                                 vAnnot.evidences.push(drvEvidence);
                                             }
                                         }
