@@ -159,15 +159,13 @@ Annotation section used in function predictions views.
                                                     <template is="dom-if" if="[[_showSubmitter(evidence.userOrcIDs)]]">
                                                         <template is="dom-if" if="[[!evidence.userHidden]]">
                                                             Submitter:
-                                                            <template is="dom-if" if="[[_hasMultipleIds(evidence.userOrcIDs)]]">
-                                                                <template is="dom-repeat" items="[[evidence.userOrcIDs]]" as="userOrcid">
-                                                                    <span class="submitter">
-                                                                        <a href="https://orcid.org/[[userOrcid]]" class="ext-link" target='_blank'>
-                                                                            <img class="orcid_logo" alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" />
-                                                                            [[userOrcid]]
-                                                                        </a>
-                                                                    </span>
-                                                                </template>
+                                                            <template is="dom-repeat" items="[[evidence.userOrcIDs]]" as="userOrcid">
+                                                                <span class="submitter">
+                                                                    <a href="https://orcid.org/[[userOrcid]]" class="ext-link" target='_blank'>
+                                                                        <img class="orcid_logo" alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" />
+                                                                        [[userOrcid]]
+                                                                    </a>
+                                                                </span>
                                                             </template>
                                                         </template>
                                                         <template is="dom-if" if="[[evidence.userHidden]]">
