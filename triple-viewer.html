@@ -424,7 +424,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 }
                 this.notifyPath("featuresByIsoform", featsByIso);
             },
-            _addDiseaseRelatedVariants: function (variants, settings) {
+            _addDiseaseRelatedVariants: function (variants) {
                 var calls = [];
                 calls.push(variants)
                 calls.push(this.nx.getAnnotationsByCategory(this.nxEntry, "disease-related-variant"))
@@ -487,9 +487,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                                 drvEvidence.diseaseRelatedVariant.name = diseaseAnnot.cvTermName;
                                                 drvEvidence.diseaseRelatedVariant.accession = diseaseAnnot.cvTermAccessionCode;
                                                 drvEvidence.diseaseRelatedVariant.experimentalContextId = drvEvidence.experimentalContextId;
-                                                if (!settings) {
-                                                    drvEvidence.qualityQualifier = vAnnot.qualityQualifier;
-                                                }
                                                 vAnnot.evidences.push(drvEvidence);
                                             }
                                         }
@@ -520,12 +517,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     if (hasNegEv && hasNotNegEv) {
                                         vAnnot.conflict = true;
                                     }
-
-                                    // We treat the two annotations; variant and disease-related-variant separately,
-                                    // Therefore, need to set the disease-related-variant's quality qualifier
-                                    if(settings && settings.view ===  'variant-medical') {
-                                        vAnnot.qualityQualifier = drvAnnot.qualityQualifier;
-                                    }
                                 }
                             }
                         }
@@ -552,9 +543,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             featuresForViewer.push(this._addDiseaseRelatedVariants(this.nx.getAnnotationsByCategory(this.nxEntry, this.featureList[feat].APIRef)));
                             break;
                         case "variant-medical":
-                            featuresForViewer.push(this._addDiseaseRelatedVariants(this.nx.getAnnotationsWithProperty(this.nxEntry, "variant", "disease-related", true),{
-                                view: 'variant-medical'
-                            }));
+                            featuresForViewer.push(this._addDiseaseRelatedVariants(this.nx.getAnnotationsWithProperty(this.nxEntry, "variant", "disease-related", true)));
                             break;
                         case "miscellaneous-region-interactions":
                             featuresForViewer.push(this.nx.getAnnotationsWithProperty(this.nxEntry, "miscellaneous-region", "interaction-related", true));
