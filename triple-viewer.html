@@ -452,10 +452,12 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             }
                         }
 
+
                         for (let variantsKey in variants.annot) {
                             let vAnnot = variants.annot[variantsKey];
                             if (vAnnot.annotationHash && variantHashToDrvAnnots[vAnnot.annotationHash]) {
                                 let drvAnnots = variantHashToDrvAnnots[vAnnot.annotationHash];
+                                let drvEvidenceNames = [];
                                 for (let drvAnnotKey in drvAnnots) {
                                     let drvAnnot = drvAnnots[drvAnnotKey];
                                     let diseaseAnnot = diseasesHashToDiseaseAnnot[drvAnnot.bioObject.annotationHash];
@@ -467,30 +469,41 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     // And an evidence in variant annot has several similar ev. in drv annot due to several exp. contexts.
                                     // So we put drv evidences in variant annot and remove similar ev. which are in variant annot.
                                     let vEvidenceIdsToRemove = [];
+                                    let evidenceToAdd;
                                     for (const vEvidenceKey in vAnnot.evidences) {
                                         let vEvidence = vAnnot.evidences[vEvidenceKey];
                                         for (let drvEvidenceKey in drvAnnot.evidences) {
                                             let drvEvidence = drvAnnot.evidences[drvEvidenceKey];
+                                            drvEvidence.diseaseRelatedVariant = {};
+                                            if (drvEvidence.negativeEvidence) {
+                                                hasNegEv = true;
+                                                drvEvidence.diseaseRelatedVariant.isNegative = true;
+                                                drvEvidence.diseaseRelatedVariant.relation = "causes";
+                                            } else {
+                                                hasNotNegEv = true;
+                                                drvEvidence.diseaseRelatedVariant.isNegative = false;
+                                                drvEvidence.diseaseRelatedVariant.relation = "Causes" ;
+                                            }
+                                            drvEvidence.diseaseRelatedVariant.name = diseaseAnnot.cvTermName;
+                                            drvEvidence.diseaseRelatedVariant.accession = diseaseAnnot.cvTermAccessionCode;
+                                            drvEvidence.diseaseRelatedVariant.experimentalContextId = drvEvidence.experimentalContextId;
+                                            drvEvidenceNames.push({
+                                                name: diseaseAnnot.cvTermName,
+                                                accession: diseaseAnnot.cvTermAccessionCode
+                                            })
                                             if (vEvidence.resourceId === drvEvidence.resourceId && vEvidence.assignedBy === drvEvidence.assignedBy) {
                                                 vEvidenceIdsToRemove.push(vEvidence.evidenceId);
-
-                                                drvEvidence.diseaseRelatedVariant = {};
-                                                if (drvEvidence.negativeEvidence) {
-                                                    hasNegEv = true;
-                                                    drvEvidence.diseaseRelatedVariant.isNegative = true;
-                                                    drvEvidence.diseaseRelatedVariant.relation = "causes";
-                                                } else {
-                                                    hasNotNegEv = true;
-                                                    drvEvidence.diseaseRelatedVariant.isNegative = false;
-                                                    drvEvidence.diseaseRelatedVariant.relation = "Causes" ;
-                                                }
-                                                drvEvidence.diseaseRelatedVariant.name = diseaseAnnot.cvTermName;
-                                                drvEvidence.diseaseRelatedVariant.accession = diseaseAnnot.cvTermAccessionCode;
-                                                drvEvidence.diseaseRelatedVariant.experimentalContextId = drvEvidence.experimentalContextId;
-                                                vAnnot.evidences.push(drvEvidence);
+                                                evidenceToAdd = drvEvidence;
                                             }
                                         }
                                     }
+
+                                    if(evidenceToAdd) {
+                                        evidenceToAdd.diseaseRelatedVariant.names = [... new Set(drvEvidenceNames)];
+                                        console.log(evidenceToAdd.names)
+                                        vAnnot.evidences.push(evidenceToAdd);
+                                    }
+
                                     if (vEvidenceIdsToRemove) {
                                         vAnnot.evidences = vAnnot.evidences.filter(e => !vEvidenceIdsToRemove.includes(e.evidenceId));
                                     }

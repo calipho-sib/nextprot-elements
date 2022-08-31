@@ -117,7 +117,10 @@ Block element representing an evidence record.
                                 <template is="dom-if" if="[[data.diseaseRelatedVariant.isNegative]]">
                                     <b>Not </b>
                                 </template>
-                                [[data.diseaseRelatedVariant.relation]] <a href='/term/[[data.diseaseRelatedVariant.accession]]'>[[data.diseaseRelatedVariant.name]]</a>
+                                [[data.diseaseRelatedVariant.relation]]
+                                <template is="dom-repeat" items="[[data.diseaseRelatedVariant.names]]" as="diseaseRelatedInfo">
+                                    <a href='/term/[[diseaseRelatedInfo.accession]]'>[[diseaseRelatedInfo.name]] </a> ,
+                                </template>a>
                                 <template is="dom-if" if="[[data.context.tissue]]"> (originates from: <a href="/term/[[data.context.tissueAC]]">[[data.context.tissue.name]]</a>)</template>
                                 <template is="dom-if" if="[[data.context.cellLine]]"> in cell line <a href="/term/[[data.context.cellLineAC]]">[[data.context.cellLine.name]]</a></template>
                             </p>
