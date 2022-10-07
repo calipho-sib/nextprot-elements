@@ -3,6 +3,8 @@
 <link rel="import" href="nextprot-elements-shared-styles.html">
 <link rel="import" href="external-scripts.html">
 <link rel="import" href="feature-table.html">
+<link href="https://calipho-sib.github.io/VEP-community-tool/static/css/2.654c004e.chunk.css" rel="stylesheet">
+<link href="https://calipho-sib.github.io/VEP-community-tool/static/css/main.f64af5bb.chunk.css" rel="stylesheet">
 <!--
 <script src="../jquery/dist/jquery.js"></script>
 <script src="../bootstrap/dist/js/bootstrap.js"></script>
@@ -339,7 +341,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             },
             attached: function() {
 
-                if(Object.getOwnPropertyNames(JSON.parse(decodeURIComponent(this.nxEntryData))).length == 0) {
+                if(this.lazyLoading && Object.getOwnPropertyNames(JSON.parse(decodeURIComponent(this.nxEntryData))).length == 0) {
                     return;
                 }
 
@@ -352,7 +354,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 
                     if(self.lazyLoading) {
                         let entryData = JSON.parse(decodeURIComponent(self.nxEntryData));
-                        console.log("HERE")
                         rawData.unshift(entryData.isoforms.isoforms);
                     }
 
@@ -419,7 +420,60 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     var feat = NXUtils.convertMappingsToIsoformMap(this.rawData[i],this.metaData[i].name.replace('.',''),this.metaData[i].filter, "");
                     if (this.nxConfig.goldOnly) feat = this._filterGoldForViewer(feat);
                     featForViewer = NXViewerUtils.convertNXAnnotations(feat,this.metaData[i],isoLengths);
-                    this.featuresForViewer.push(featForViewer);
+
+
+                    let frequencyFeature = {};
+                    if(this.rawData[i].annot.length > 0 ) {
+                        if (this.rawData[i].annot[0].apicategory === 'VARIANT') {
+                            // Get target isoform details
+                            this.rawData[i].annot.map(function (variant) {
+                                // Add isoforms available
+                                Object.keys(variant.targetingIsoformsMap).forEach(function(isoform) {
+                                    if(!(isoform in frequencyFeature)) {
+                                        frequencyFeature[isoform] = [];
+                                    }
+
+                                    let frequencyEvidence = variant.evidences.filter(function (evidence) {
+                                        return (evidence.assignedBy === 'gnomAD');
+                                    });
+
+                                    if(frequencyEvidence.length > 0 ) {
+                                        frequencyEvidence = frequencyEvidence[0];
+                                        let frequency = frequencyEvidence.properties["allele frequency"];
+
+                                        // Check if the variant has isoform specific position
+                                        let variantFrequencyDetails = {};
+                                        variantFrequencyDetails["x"] = variant.targetingIsoformsMap[isoform]['firstPosition'];
+                                        variantFrequencyDetails["y"] = frequency;
+                                        variantFrequencyDetails["id"] = 'Frequency';
+                                        variantFrequencyDetails["category"] = 'Frequency';
+                                        variantFrequencyDetails["description"] = variantFrequencyDetails["y"];
+                                        frequencyFeature[isoform].push(variantFrequencyDetails);
+                                    }
+                                });
+
+                            });
+                        }
+
+                        if(Object.keys(frequencyFeature).length !== 0 ){
+                            featsByIso.push(frequencyFeature);
+                            let frequencyFeatureForViewer = {};
+                            Object.keys(frequencyFeature).forEach(function(key) {
+                                let x = {
+                                    className: "freq",
+                                    color: "#B3B3C2",
+                                    name: "Frequency",
+                                    type: "bar",
+                                    filter: 'type2',
+                                    data: frequencyFeature[key]
+                                }
+                                frequencyFeatureForViewer[key] = x;
+                            });
+                            this.featuresForViewer.push(frequencyFeatureForViewer);
+                        }
+                        this.featuresForViewer.push(featForViewer);
+
+                    }
                     featsByIso.push(feat);
                 }
                 this.notifyPath("featuresByIsoform", featsByIso);
@@ -689,6 +743,32 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                 return 0
                             })
                         }
+
+                        // For variant feature, add another track with variant frequencies
+                        /*if(feature.name === 'Variant') {
+
+                            // Get target isoform details
+                            feature.data.map(function(variant){
+                                let frequencyEvidence = variant.evidences.filter(function(evidence){
+                                    return (evidence.assignedBy === 'gnomAD');
+                                });
+                                let frequency = frequencyEvidence.properties["allele frequency"];
+
+                                // Check if the variant has isoform specific position
+                                let variantFrequencyDetails = {};
+                                variantFrequencyDetails["y"] = frequency;
+                                if(this.isoName in variant.targetIsoformMap) {
+                                    let isoformSpecificVariantDetails = targetIsoformMap[this.isoName];
+                                    variantFrequencyDetails["x"] = isoformSpecificVariantDetails["firstPosition"];
+                                } else {
+                                    console.log("??")
+                                }
+                                variantFrequencyDetails["id"] = 'Frequency';
+                                variantFrequencyDetails["category"] = 'Frequency';
+                                variantFrequencyDetails["description"] = variantFrequencyDetails["y"];
+                            });
+                        }*/
+
 
                         this.ft.addFeature(feature);
                     }
