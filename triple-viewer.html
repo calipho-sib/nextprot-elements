@@ -425,6 +425,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         if (this.rawData[i].annot[0].apicategory === 'VARIANT') {
                             // Get target isoform details
                             this.rawData[i].annot.map(function (variant) {
+                                let variantAnnotation = variant;
                                 // Add isoforms available
                                 Object.keys(variant.targetingIsoformsMap).forEach(function(isoform) {
                                     if(!(isoform in frequencyFeature)) {
@@ -437,21 +438,38 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 
                                     if(frequencyEvidence.length > 0 ) {
                                         frequencyEvidence = frequencyEvidence[0];
-                                        let frequency = frequencyEvidence.properties["allele frequency"];
+                                        let frequency = Number(frequencyEvidence.properties["allele frequency"]);
 
                                         // Check if the variant has isoform specific position
                                         let variantFrequencyDetails = {};
                                         variantFrequencyDetails["x"] = variant.targetingIsoformsMap[isoform]['firstPosition'];
                                         variantFrequencyDetails["y"] = frequency;
                                         variantFrequencyDetails["id"] = 'Frequency';
+                                        variantFrequencyDetails["id"] = 'Frequency';
                                         variantFrequencyDetails["category"] = 'Frequency';
-                                        variantFrequencyDetails["description"] = variantFrequencyDetails["y"];
+                                        let variantDescription = variantAnnotation.variant.original + " → " + variantAnnotation.variant.variant ;
+
+                                        variantFrequencyDetails["description"] = "<span>"+ variant.targetingIsoformsMap[isoform]['firstPosition'] + "<br/>" + variantDescription +"<br/>"+ frequency +"</span>";
                                         frequencyFeature[isoform].push(variantFrequencyDetails);
+
+
+                                        if(isoform in frequencyMinValues) {
+                                            if(frequencyMinValues[isoform] > frequency) {
+                                                frequencyMinValues[isoform] = frequency;
+                                            }
+                                        } else {
+                                            frequencyMinValues[isoform] = frequency;
+                                        }
                                     }
                                 });
-
                             });
                         }
+
+                        Object.keys(frequencyFeature).forEach(function(isoform) {
+                            frequencyFeature[isoform].forEach(function(variant) {
+                                variant['y'] = (-Math.log10(frequencyMinValues[isoform])) + 0.2 + Math.log10(variant['y'])
+                            })
+                        });
 
                         if(Object.keys(frequencyFeature).length !== 0 ){
                             featsByIso.push(frequencyFeature);
@@ -460,7 +478,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                 let x = {
                                     className: "freq",
                                     color: "#B3B3C2",
-                                    name: "Frequency",
+                                    name: "Frequency (Log)",
                                     type: "bar",
                                     filter: 'type2',
                                     data: frequencyFeature[key]
@@ -961,6 +979,9 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             eventTV: function() {
                 var self=this;
                 this.ft.onFeatureSelected(function(d){
+                    if(d.detail.id === 'Frequency') {
+                        d.detail.end = d.detail.start;
+                    }
                     self.selection = d.detail;
                     // update isoform selector
                     //console.log("feature selected");
