@@ -1,3 +1,4 @@
+
 <link rel="import" href="evidence-item.html">
 <link rel="import" href="quality-label.html">
 <link rel="import" href="external-scripts.html">
@@ -19,65 +20,52 @@ Annotation section used in function, medical, and expression views.
                 display: block;
                 min-height: 35px;
             }
-
             .xeno-label, .isoform-label {
                 color: #999;
                 border: 1px solid;
                 border-radius: 2px;
                 padding: 0px 2px;
             }
-
             .front-label {
                 margin-right: 5px;
             }
-
             .end-label {
                 margin-left: 5px;
             }
-
             .annotation-container {
                 float: left;
                 display: inline;
                 width: calc(100% - 175px);
             }
-
             .annotation-row {
                 margin-right: 0px;
                 margin-bottom: 0px;
             }
-
             .annotation-title-container > .isoform-label {
                 margin-top: 3px;
             }
-
             .BINARY_INTERACTION {
                 max-width: calc(100% - 55px);
             }
-
             .annotation-title > .grey-x {
                 display: inline;
             }
-
             .evidences-button-container {
                 display: inline;
                 width: 175px;
             }
-
             .evidences-container {
                 margin: 0px 200px 15px 0px;
             }
-
             .blue-well {
                 margin: 5px 190px 10px 10px;
             }
-
             .right-column-header {
                 display: inline;
                 float: right;
                 margin-right: 180px;
                 text-transform: initial;
             }
-
             .experiments-counter {
                 float: right;
                 color: #999;
@@ -86,39 +74,33 @@ Annotation section used in function, medical, and expression views.
                 line-height: 1.3em;
                 padding-right: 30px;
             }
-
             .drug-protein {
                 word-break: break-all;
                 white-space: normal;
             }
-
             @media (max-width: 1080px) {
                 .evidences-container {
                     margin: 0px 25px 20px 0px;
                 }
-
                 .blue-well {
                     margin: 5px 15px 10px 10px;
                 }
             }
-
             #evidenceButton {
                 float: right;
                 padding: 0px 6px 0px 0px;
             }
-
             #notice {
                 margin: 0 0 0 5px;
             }
-
             #biophysicochemical-properties-section {
                 border: 1px solid #E7EAEC;
                 margin-top: 2em;
             }
         </style>
-        <div className="category-main">
+        <div class="category-main">
             <template is="dom-if" if="[[data]]">
-                <button id="evidenceButton" className="btn btn-default" on-tap="_toggleAllEvidences">
+                <button id="evidenceButton" class="btn btn-default" on-tap="_toggleAllEvidences">
                     <template is="dom-if" if="[[evidencesShown]]">
                         <iron-icon icon="arrow-drop-up"></iron-icon>
                         Hide evidences
@@ -129,209 +111,146 @@ Annotation section used in function, medical, and expression views.
                     </template>
                 </button>
             </template>
-            <div id="notice" className="grey-x"><i>Annotations in this section apply to all the isoforms if not
-                specified otherwise.</i>
-                <paper-spinner-lite id="spinner" active></paper-spinner-lite>
-            </div>
+            <div id="notice" class="grey-x"><i>Annotations in this section apply to all the isoforms if not specified otherwise.</i><paper-spinner-lite id="spinner" active></paper-spinner-lite></div>
             <template is="dom-repeat" items="[[_toArray(data)]]" as="category">
                 <template is="dom-if" if="[[_checkCategoryLabel(category.name)]]">
-                    <div className="row category-row">
+                    <div class="row category-row">
                         <div>
-                            <h4 className="annotation-category-title"> [[_displayCategoryTitle(category.name)]]
+                            <h4 class="annotation-category-title"> [[_displayCategoryTitle(category.name)]]
                                 <template is="dom-if" if="[[_isProteinProteinInteraction(category)]]">
-                                    <div className="grey-x right-column-header">Number of IntAct expt.</div>
+                                    <div class="grey-x right-column-header">Number of IntAct expt.</div>
                                 </template>
                             </h4>
                         </div>
                         <div id="[[_stringToId(category.name)]]-section">
-                            <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation"
-                                      initial-count="1" target-framerate="1000">
+                            <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" initial-count="1" target-framerate="1000">
                                 <template is="dom-if" if="[[_isNewIsoformSection(category.value, index)]]">
-                                    <div className="grey-x">Interactions for [[annotation.value.isoformSpecific]]</div>
+                                    <div class="grey-x">Interactions for [[annotation.value.isoformSpecific]]</div>
                                 </template>
-                                <div className="row annotation-row">
+                                <div class="row annotation-row">
                                     <template is="dom-if" if="[[annotation.value.prefix]]">
-                                        <div className="grey-x">[[annotation.value.prefix]]</div>
+                                        <div class="grey-x">[[annotation.value.prefix]]</div>
                                     </template>
-                                    <div className="annotation-container">
+                                    <div class="annotation-container">
                                         <div class$="annotation-title-container [[annotation.value.category]]">
                                             <template is="dom-if" if="[[annotation.value.chemicalName]]">
                                                 <template is="dom-if" if="[[_checkIfChebi(annotation.value.database)]]">
-                                                    <p className="annotation-title" style="text-transform: capitalize">
+                                                    <p class="annotation-title" style="text-transform: capitalize">
                                                         [[annotation.value.chemicalName]]
-                                                        <a href="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=[[annotation.value.accession]]"
-                                                           className="ext-link" target="_blank">[[annotation.value.accession]]</a>
+                                                        <a href="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=[[annotation.value.accession]]" class="ext-link" target="_blank">[[annotation.value.accession]]</a>
                                                     </p>
                                                 </template>
                                             </template>
                                             <template is="dom-if" if="[[annotation.value.cvTermAccessionCode]]">
                                                 <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
-                                                    <div className="annotation-title"><span
-                                                            className="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
-                                                    </div>
+                                                    <div class="annotation-title"><span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span></div>
                                                 </template>
                                                 <template is="dom-if" if="[[annotation.value.matureProtein]]">
-                                                    <div className="annotation-title"><span
-                                                            className="isoform-label front-label">[[annotation.value.matureProtein]]</span>
-                                                    </div>
+                                                    <div class="annotation-title"><span class="isoform-label front-label">[[annotation.value.matureProtein]]</span></div>
                                                 </template>
-                                                <template is="dom-if"
-                                                          if="[[_checkIfSubcellularLocation(annotation.value)]]">
-                                                    <div className="annotation-title">
-                                                        <template is="dom-if" if="[[annotation.value.conflict]]"><span
-                                                                className="colored-label warning-label">Conflict</span>
-                                                        </template>
+                                                <template is="dom-if" if="[[_checkIfSubcellularLocation(annotation.value)]]">
+                                                    <div class="annotation-title">
+                                                        <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
                                                         <p inner-h-t-m-l="[[annotation.value.cvTermName]]"></p>
-                                                        <a className="accession-code-link"
-                                                           href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
-                                                        <span id="description-button-[[annotation.value.id]]"
-                                                              className="colored-label definition-button"
-                                                              on-tap="_toggle">Definition</span>
+                                                        <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
+                                                        <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
                                                         <template is="dom-if" if="[[annotation.value.nameModifier]]">
                                                             <p inner-h-t-m-l="[[annotation.value.nameModifier]]"></p>
                                                         </template>
-                                                        <quality-label
-                                                                quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                     </div>
                                                 </template>
-                                                <template is="dom-if"
-                                                          if="[[!_checkIfSubcellularLocation(annotation.value)]]">
-                                                    <div className="annotation-title">
-                                                        <template is="dom-if" if="[[annotation.value.conflict]]"><span
-                                                                className="colored-label warning-label">Conflict</span>
-                                                        </template>
+                                                <template is="dom-if" if="[[!_checkIfSubcellularLocation(annotation.value)]]">
+                                                    <div class="annotation-title">
+                                                        <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
                                                         <p inner-h-t-m-l="[[annotation.value.description]]"></p>
-                                                        <div className="annotation-labels">
-                                                            <template is="dom-if"
-                                                                      if="[[!_checkIfDisease(annotation.value)]]">
-                                                                <a className="accession-code-link"
-                                                                   href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
-                                                                <span id="description-button-[[annotation.value.id]]"
-                                                                      className="colored-label definition-button"
-                                                                      on-tap="_toggle">Definition</span>
+                                                        <div class="annotation-labels">
+                                                            <template is="dom-if" if="[[!_checkIfDisease(annotation.value)]]">
+                                                                <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
+                                                                <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
                                                             </template>
-                                                            <quality-label
-                                                                    quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                            <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                         </div>
                                                     </div>
                                                 </template>
                                             </template>
                                             <template is="dom-if" if="[[annotation.value.parentXref]]">
-                                                <div className="annotation-title">
-                                                    <template is="dom-if" if="[[annotation.value.conflict]]"><span
-                                                            className="colored-label warning-label">Conflict</span>
-                                                    </template>
+                                                <div class="annotation-title">
+                                                    <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
                                                     <p>[[annotation.value.description]]</p>
-                                                    <div className="annotation-labels">
-                                                        <template is="dom-if" if="[[annotation.value.chemicalName]]"><p
-                                                                className="drug-protein">
-                                                            [[annotation.value.chemicalName]]</p></template>
-                                                        <a className="accession-code-link ext-link selectable"
-                                                           href="[[annotation.value.parentXref.resolvedUrl]]"
-                                                           target="_blank">[[annotation.value.parentXref.accession]]</a>
-                                                        <quality-label
-                                                                quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                    <div class="annotation-labels">
+                                                        <template is="dom-if" if="[[annotation.value.chemicalName]]"><p class="drug-protein">[[annotation.value.chemicalName]]</p></template>
+                                                        <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
+                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                     </div>
                                                 </div>
                                             </template>
-                                            <template is="dom-if"
-                                                      if="[[!_checkIfContainsAccessionOrXref(annotation.value)]]">
-                                                <template is="dom-if"
-                                                          if="[[_isBiophysicochemicalProperty(annotation.value.category)]]">
-                                                    <template is="dom-if"
-                                                              if="[[_isNewSubcategory(category.value, index)]]">
-                                                        <div className="grey-x">[[annotation.value.subcategory]]</div>
+                                            <template is="dom-if" if="[[!_checkIfContainsAccessionOrXref(annotation.value)]]">
+                                                <template is="dom-if" if="[[_isBiophysicochemicalProperty(annotation.value.category)]]">
+                                                    <template is="dom-if" if="[[_isNewSubcategory(category.value, index)]]">
+                                                        <div class="grey-x">[[annotation.value.subcategory]]</div>
                                                     </template>
-                                                    <div className="col-lg-2 col-md-2 col-sm-3 col-xs-4"
-                                                         inner-h-t-m-l="[[annotation.value.label]]"></div>
-                                                    <div className="col-lg-10 col-md-10 col-sm-9 col-xs-8"
-                                                         inner-h-t-m-l="[[annotation.value.description]]"></div>
+                                                    <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4" inner-h-t-m-l="[[annotation.value.label]]"></div>
+                                                    <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8" inner-h-t-m-l="[[annotation.value.description]]"></div>
                                                 </template>
-                                                <p className="annotation-title justify">
-                                                    <template is="dom-if"
-                                                              if="[[!_isBinaryInteractionOrBiophysical(annotation.value.category)]]">
+                                                <p class="annotation-title justify">
+                                                    <template is="dom-if" if="[[!_isBinaryInteractionOrBiophysical(annotation.value.category)]]">
                                                         <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
-                                                            <span className="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
+                                                            <span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
                                                         </template>
                                                         <template is="dom-if" if="[[annotation.value.matureProtein]]">
-                                                            <span className="isoform-label front-label">[[annotation.value.matureProtein]]</span>
+                                                            <span class="isoform-label front-label">[[annotation.value.matureProtein]]</span>
                                                         </template>
                                                         <span inner-h-t-m-l="[[annotation.value.description]]"></span>
-                                                        <quality-label
-                                                                quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                     </template>
                                                 </p>
                                                 <template is="dom-if" if="[[annotation.value.selfInteraction]]">
-                                                    <p className="annotation-title">Itself
-                                                        <quality-label
-                                                                quality="[[annotation.value.qualityQualifier]]"></quality-label>
-                                                    </p>
+                                                    <p class="annotation-title">Itself <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label></p>
                                                 </template>
                                                 <template is="dom-if" if="[[!annotation.value.selfInteraction]]">
                                                     <template is="dom-if" if="[[annotation.value.geneName]]">
-                                                        <p className="annotation-title">
-                                                            <template is="dom-if" if="[[annotation.value.conflict]]">
-                                                                <span className="colored-label warning-label">Conflict</span>
-                                                            </template>
-                                                            <template is="dom-if"
-                                                                      if="[[annotation.value.negativeAnnotation]]"><b>Not</b>
-                                                            </template>
-                                                            <template is="dom-if"
-                                                                      if="[[_checkIfNextprot(annotation.value.database)]]">
+                                                        <p class="annotation-title">
+                                                            <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
+                                                            <template is="dom-if" if="[[annotation.value.negativeAnnotation]]"><b>Not</b></template>
+                                                            <template is="dom-if" if="[[_checkIfNextprot(annotation.value.database)]]">
                                                                 <a href="[[annotation.value.url]]">[[annotation.value.geneName]]</a>
-                                                                <template is="dom-if"
-                                                                          if="[[annotation.value.proteinName]]">
+                                                                <template is="dom-if" if="[[annotation.value.proteinName]]">
                                                                     → [[annotation.value.proteinName]]
                                                                 </template>
                                                             </template>
-                                                            <template is="dom-if"
-                                                                      if="[[!_checkIfNextprot(annotation.value.database)]]">
-                                                                [[annotation.value.geneName]] →
-                                                                [[annotation.value.database]]: <a
-                                                                    href="[[annotation.value.url]]" className="ext-link"
-                                                                    target="_blank">[[annotation.value.accession]]</a>
+                                                            <template is="dom-if" if="[[!_checkIfNextprot(annotation.value.database)]]">
+                                                                [[annotation.value.geneName]] → [[annotation.value.database]]: <a href="[[annotation.value.url]]" class="ext-link" target="_blank">[[annotation.value.accession]]</a>
                                                             </template>
-                                                            <template is="dom-if"
-                                                                      if="[[annotation.value.interactantIsoform]]">
-                                                                <span className="annotation-title isoform-label end-label">Isoform [[annotation.value.interactantIsoform]]</span>
+                                                            <template is="dom-if" if="[[annotation.value.interactantIsoform]]">
+                                                                <span class="annotation-title isoform-label end-label">Isoform [[annotation.value.interactantIsoform]]</span>
                                                             </template>
                                                             <template is="dom-if" if="[[annotation.value.xeno]]">
-                                                                <span className="xeno-label end-label">Xeno</span>
+                                                                <span class="xeno-label end-label">Xeno</span>
                                                             </template>
-                                                            <quality-label
-                                                                    quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                            <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                         </p>
                                                     </template>
                                                 </template>
                                             </template>
                                         </div>
-                                        <template is="dom-repeat" items="[[annotation.value.additionalInfo]]"
-                                                  as="additionalInfo">
-                                            <div className="row additional-info annotation-title">
-                                                <div className="grey-x">[[additionalInfo.name]]</div>
-                                                » [[additionalInfo.value]]
-                                                <a className="accession-code-link"
-                                                   href="/term/[[additionalInfo.accession]]">[[additionalInfo.accession]]</a>
-                                            </div>
+                                        <template is="dom-repeat" items="[[annotation.value.additionalInfo]]" as="additionalInfo">
+                                            <div class="row additional-info annotation-title"><div class="grey-x">[[additionalInfo.name]]</div> » [[additionalInfo.value]]
+                                                <a class="accession-code-link" href="/term/[[additionalInfo.accession]]">[[additionalInfo.accession]]</a></div>
                                         </template>
-                                        <div className="experiments-counter">[[annotation.value.numberOfExperiments]]
-                                        </div>
+                                        <div class="experiments-counter">[[annotation.value.numberOfExperiments]]</div>
                                     </div>
                                     <template is="dom-if" if="[[!_isPathwayOrTcdb(annotation.value.category)]]">
                                         <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
-                                            <div className="evidences-button-container">
-                                                <div className="show-references-button">
-                                                    <a id="evidences-button-[[annotation.value.id]]" className="btn"
-                                                       on-tap="_toggle">
-                                                        <p className="show-references-button-counter">
-                                                            [[_countItems(annotation.value.evidences)]]</p>
-                                                        <p className="show-references-button-label">ev</p>
+                                            <div class="evidences-button-container">
+                                                <div class="show-references-button">
+                                                    <a id="evidences-button-[[annotation.value.id]]" class="btn" on-tap="_toggle">
+                                                        <p class="show-references-button-counter">[[_countItems(annotation.value.evidences)]]</p>
+                                                        <p class="show-references-button-label">ev</p>
                                                     </a>
-                                                    <div className="reference-label-container">
-                                                        <template is="dom-repeat"
-                                                                  items="[[annotation.value.evidenceSources]]"
-                                                                  as="source">
-                                                            <div className="reference-label">[[source]]</div>
+                                                    <div class="reference-label-container">
+                                                        <template is="dom-repeat" items="[[annotation.value.evidenceSources]]" as="source">
+                                                            <div class="reference-label">[[source]]</div>
                                                         </template>
                                                     </div>
                                                 </div>
@@ -340,18 +259,16 @@ Annotation section used in function, medical, and expression views.
                                     </template>
                                 </div>
                                 <iron-collapse id="description-container-[[annotation.value.id]]">
-                                    <div className="well blue-well">
+                                    <div class="well blue-well">
                                         [[annotation.value.cvTermDescription]]
                                     </div>
                                 </iron-collapse>
                                 <template is="dom-if" if="[[!_isPathwayOrTcdb(annotation.value.category)]]">
                                     <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
                                         <iron-collapse id="evidences-container-[[annotation.value.id]]">
-                                            <div className="evidences-container">
-                                                <template is="dom-repeat" items="[[annotation.value.evidences]]"
-                                                          as="evidence">
-                                                    <evidence-item data="[[evidence]]"
-                                                                   index="[[_getIndex(index)]]"></evidence-item>
+                                            <div class="evidences-container">
+                                                <template is="dom-repeat" items="[[annotation.value.evidences]]" as="evidence">
+                                                    <evidence-item data="[[evidence]]" index="[[_getIndex(index)]]"></evidence-item>
                                                 </template>
                                             </div>
                                         </iron-collapse>
@@ -405,16 +322,21 @@ Annotation section used in function, medical, and expression views.
                     observer: "_reloadIsoform"
                 }
             },
-            ready: function () {
-                if (this.evidencesShown === undefined) this._toggleAllEvidences();
-                Polymer.RenderStatus.afterNextRender(this, function () {
+            ready: function(){
+                if(this.evidencesShown===undefined) this._toggleAllEvidences();
+                Polymer.RenderStatus.afterNextRender(this, function() {
                     var nx = new Nextprot.Client("neXtprot annotation loader", "Calipho Group");
                     if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                     var apiCall = [];
+                    /*for (var i in this.categories) {
+                        if (typeof this.categories[i]==="object") apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i][0], this.categories[i][1]));
+                        else apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i]));
+                    }*/
                     apiCall.push(nx.getAnnotationsbyCategories(this.nxConfig.entry, this.categories));
                     var self = this;
                     Promise.all(apiCall)
                         .then(function (data) {
+                            //let categories = data[0];
                             self.annotationsByCategory = data[0];
                             self._getAnnotationsByView();
                             self.$.spinner.removeAttribute('active');
@@ -427,206 +349,199 @@ Annotation section used in function, medical, and expression views.
                     });
                 });
             },
-            _reloadIsoform: function () {
-                if (this.count) this._getAnnotationsByView();
+            _reloadIsoform: function(){
+                if(this.count) this._getAnnotationsByView();
             },
-            _getAnnotationsByView: function () {
+            _getAnnotationsByView: function() {
                 var data_xrefs = [];
                 var data_publi = [];
                 var data_isoforms = [];
                 var data_annot = [];
                 var count = 0;
                 this.containsGoldEv = {};
-                for (var i in this.annotationsByCategory) {
+                for(var i in this.annotationsByCategory) {
                     if (this.annotationsByCategory[i].childrenOfCvTerm) {
-                        for (var j in this.annotationsByCategory[i].annot)
-                            this.annotationsByCategory[i].annot[j].apicategory = this.annotationsByCategory[i].childrenOfCvTerm;
+                        for(var j in this.annotationsByCategory[i].annot)
+                            this.annotationsByCategory[i].annot[j].apicategory=this.annotationsByCategory[i].childrenOfCvTerm;
                     }
                     Object.assign(data_xrefs, this.annotationsByCategory[i].xrefs);
                     Object.assign(data_publi, this.annotationsByCategory[i].publi);
                     Object.assign(data_isoforms, this.annotationsByCategory[i].isoforms);
                     $.merge(data_annot, this.annotationsByCategory[i].annot);
-                }
-                ;
+                };
                 data = {};
                 var self = this;
                 var annotCategoryList = [];
                 for (var v in this._objectValues(data_annot)) annotCategoryList.push(data_annot[v].apicategory);
-                annotCategoryCount = annotCategoryList.reduce(function (prev, item) {
-                    if (item in prev) prev[item]++;
+                annotCategoryCount = annotCategoryList.reduce( function (prev, item) {
+                    if ( item in prev ) prev[item] ++;
                     else prev[item] = 1;
                     return prev;
-                }, {});
+                }, {} );
                 for (var i in data_annot) {
                     var a = data_annot[i];
 
-                    if (this.section === "function") {
-                        if (a.apicategory === "GO_MOLECULAR_FUNCTION" && a.cvTermAccessionCode == "GO:0003674") continue;
-                        if (a.apicategory === "GO_BIOLOGICAL_PROCESS" && a.cvTermAccessionCode == "GO:0008150") continue;
-                        if (a.apicategory === "GO_CELLULAR_COMPONENT" && a.cvTermAccessionCode == "GO:0005575") continue;
+                    if (this.section==="function"){
+                        if (a.apicategory==="GO_MOLECULAR_FUNCTION" && a.cvTermAccessionCode=="GO:0003674") continue;
+                        if (a.apicategory==="GO_BIOLOGICAL_PROCESS" && a.cvTermAccessionCode=="GO:0008150") continue;
+                        if (a.apicategory==="GO_CELLULAR_COMPONENT" && a.cvTermAccessionCode=="GO:0005575") continue;
                         // if (a.apicategory==="CAUTION" && a.description=="Product of a dubious CDS prediction.") continue;
                         // if (a.apicategory==="CAUTION" && a.description=="Product of a dubious gene prediction.") continue;
                         // if (a.apicategory==="CAUTION" && a.description=="Could be the product of a pseudogene.") continue;
-                        if (a.apicategory === "CAUTION" && a.description.startsWith("It is uncertain whether Met")) continue;
-                        if (a.apicategory === "MISCELLANEOUS" && a.description.toLowerCase().match(/.*antibod.*/)) continue;
-                        if (a.apicategory === "MISCELLANEOUS" && a.description.toLowerCase().match(/.*antigen.*/)) continue;
-                        if (a.apicategory === "MISCELLANEOUS" && a.description.toLowerCase().match(/.*\sbind.*/)) continue;
-                        if (a.apicategory === "MISCELLANEOUS" && a.description.toLowerCase().match(/^bind.*/)) continue;
-                    } else if (this.section === "medical") {
+                        if (a.apicategory==="CAUTION" && a.description.startsWith("It is uncertain whether Met")) continue;
+                        if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*antibod.*/)) continue;
+                        if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*antigen.*/)) continue;
+                        if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/.*\sbind.*/)) continue;
+                        if (a.apicategory==="MISCELLANEOUS" && a.description.toLowerCase().match(/^bind.*/)) continue;
+                    } else if (this.section==="medical") {
                         if (a.bioObject && a.apicategory === "SMALL_MOLECULE_INTERACTION" && a.bioObject.database !== "DrugBank") {
                             continue;
                         }
-                        if (["DISEASE", "VARIANT_INFO"].indexOf(a.apicategory) !== -1) a.description = this._parseDiseaseDescription(a);
-                        if (a.apicategory === "MISCELLANEOUS"
+                        if (["DISEASE", "VARIANT_INFO"].indexOf(a.apicategory)!==-1) a.description = this._parseDiseaseDescription(a);
+                        if (a.apicategory==="MISCELLANEOUS"
                             && !(a.description.toLowerCase().match(/.*antibod.*/)
                                 || a.description.toLowerCase().match(/.*antigen.*/)
                                 || a.description.toLowerCase().match(/.*yamanaka factors.*/)
                                 || a.description.toLowerCase().match(/.*assess cell proliferation.*/)
                                 || a.description.toLowerCase().match(/.*potential pharmaceutical target.*/)
                                 || a.description.toLowerCase().match(/.*diagnostic marker.*/))) continue;
-                    } else if (this.section === "interactions") {
-                        if (a.apicategory === "MISCELLANEOUS" && !(a.description.toLowerCase().match(/.*bind.*/) || a.description.toLowerCase().match(/^bind.*/))) continue;
-                    } else if (this.section === "sequence") {
-                        if (a.apicategory === "CAUTION" && !a.description.startsWith("It is uncertain whether Met")) continue;
+                    } else if (this.section==="interactions"){
+                        if (a.apicategory==="MISCELLANEOUS" && !(a.description.toLowerCase().match(/.*bind.*/) || a.description.toLowerCase().match(/^bind.*/))) continue;
+                    } else if (this.section==="sequence"){
+                        if (a.apicategory==="CAUTION" && !a.description.startsWith("It is uncertain whether Met")) continue;
                     }
-                    if (a.apicategory === "SEQUENCE_CAUTION") {
-                        for (var j in a.properties) {
-                            if (a.properties[j].name === "differing sequence") {
+                    if(a.apicategory==="SEQUENCE_CAUTION") {
+                        for(var j in a.properties) {
+                            if(a.properties[j].name==="differing sequence") {
                                 a.description = a.description.replace(
                                     a.properties[j].accession,
-                                    "<a href=\"" + data_xrefs[a.properties[j].value].resolvedUrl + "\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">" + a.properties[j].accession + "</a>"
+                                    "<a href=\""+data_xrefs[a.properties[j].value].resolvedUrl+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">"+a.properties[j].accession+"</a>"
                                 );
                             }
                         }
                     }
-                    if (a.cvTermAccessionCode && a.apicategory === "CATALYTIC_ACTIVITY") a.cvTermAccessionCodeLabel = "EC " + a.cvTermAccessionCode;
-                    else if (a.cvTermAccessionCode) a.cvTermAccessionCodeLabel = a.cvTermAccessionCode;
+                    if (a.cvTermAccessionCode && a.apicategory==="CATALYTIC_ACTIVITY") a.cvTermAccessionCodeLabel="EC "+a.cvTermAccessionCode;
+                    else if (a.cvTermAccessionCode) a.cvTermAccessionCodeLabel=a.cvTermAccessionCode;
                     if (a.properties) {
-                        for (var j in a.properties) if (a.properties[j].name === "rank") a.rank = a.properties[j].value;
+                        for (var j in a.properties) if(a.properties[j].name==="rank") a.rank=a.properties[j].value;
                     }
-                    if (a.apicategory === "SMALL_MOLECULE_INTERACTION") {
+                    if (a.apicategory==="SMALL_MOLECULE_INTERACTION") {
                         a.chemicalName = a.bioObject.properties["chemical name"] ?
                             a.bioObject.properties["chemical name"] : undefined;
                     }
-                    if (a.apicategory === "COFACTOR") {
+                    if (a.apicategory==="COFACTOR") {
                         a.chemicalName = a.bioObject.properties["chemical name"] ?
                             a.bioObject.properties["chemical name"] : undefined;
-                        if (this.section === "function") {
-                            if (a.rank == 1 && annotCategoryCount["COFACTOR"] > 1) a.prefix = "It requires the following cofactors "
-                            else if (a.rank == 1) a.prefix = "It requires the following cofactor "
-                            a.rank = 200 + a.rank;
+                        if(this.section==="function") {
+                            if (a.rank==1 &&  annotCategoryCount["COFACTOR"]>1) a.prefix = "It requires the following cofactors "
+                            else if (a.rank==1) a.prefix = "It requires the following cofactor "
+                            a.rank = 200+ a.rank;
                         }
                     }
-                    if (a.apicategory === "COFACTOR_INFO" && this.section === "function") a.rank = 300 + a.rank;
-                    if (a.apicategory === "CATALYTIC_ACTIVITY" && a.rank == 1 && annotCategoryCount["CATALYTIC_ACTIVITY"] > 1) a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reactions";
-                    else if (a.apicategory == "CATALYTIC_ACTIVITY" && a.rank == 1) a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reaction";
-                    if (a.apicategory === "ACTIVITY_REGULATION") {
-                        if (a.rank == 1 && annotCategoryCount["ACTIVITY_REGULATION"] > 1) a.prefix = "It is regulated in the following manners "
-                        if (a.rank == 1) a.prefix = "It is regulated in the following manner";
-                        a.rank = 100 + a.rank;
+                    if (a.apicategory==="COFACTOR_INFO" && this.section==="function") a.rank=300 + a.rank;
+                    if (a.apicategory==="CATALYTIC_ACTIVITY" && a.rank==1 && annotCategoryCount["CATALYTIC_ACTIVITY"]>1) a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reactions";
+                    else if (a.apicategory=="CATALYTIC_ACTIVITY" && a.rank==1) a.prefix = "This protein acts as an enzyme. It is known to catalyze the following reaction";
+                    if (a.apicategory==="ACTIVITY_REGULATION") {
+                        if (a.rank==1 &&  annotCategoryCount["ACTIVITY_REGULATION"]>1) a.prefix = "It is regulated in the following manners "
+                        if (a.rank==1) a.prefix = "It is regulated in the following manner";
+                        a.rank = 100+ a.rank;
                     }
-                    if (a.apicategory === "PATHWAY") {
-                        a.apicategory = self._getUniqueListOfEvidenceSources(a.evidences) + " pathways";
+                    if(a.apicategory==="PATHWAY") {
+                        a.apicategory=self._getUniqueListOfEvidenceSources(a.evidences)+" pathways";
                     }
-                    if (a.apicategory === "UNIPROT_PATHWAYS") a.categoryLabel = "UNIPATHWAYS";
-                    if (a.apicategory === "SUBCELLULAR_LOCATION") {
+                    if(a.apicategory==="UNIPROT_PATHWAYS") a.categoryLabel="UNIPATHWAYS";
+                    if(a.apicategory==="SUBCELLULAR_LOCATION") {
                         a.additionalInfo = [];
                         for (var j in a.properties) {
-                            if (a.properties[j].name === "long-name") a.cvTermName = a.properties[j].value;
-                            if (a.properties[j].name === "name-modifier") a.nameModifier = a.properties[j].value;
-                            if (["topology", "orientation"].indexOf(a.properties[j].name) !== -1) {
+                            if (a.properties[j].name==="long-name") a.cvTermName = a.properties[j].value;
+                            if (a.properties[j].name==="name-modifier") a.nameModifier = a.properties[j].value;
+                            if (["topology", "orientation"].indexOf(a.properties[j].name)!==-1) {
                                 a.additionalInfo.push({
                                     name: a.properties[j].name.toUpperCase(),
                                     value: a.properties[j].value,
-                                    accession: a.properties[j].accession
-                                });
+                                    accession: a.properties[j].accession});
                             }
                         }
                         a.additionalInfo = a.additionalInfo.sort(this._sortAdditionalInfo);
                     }
-                    if (a.apicategory === "SUBCELLULAR_LOCATION_NOTE") {
-                        a.categoryLabel = "";
-                        if (!a.description.startsWith("<b>Note:</b>")) a.description = "<b>Note:</b> " + a.description;
+                    if(a.apicategory==="SUBCELLULAR_LOCATION_NOTE") {
+                        a.categoryLabel="";
+                        if(!a.description.startsWith("<b>Note:</b>")) a.description = "<b>Note:</b> "+ a.description;
                     }
-                    if (["KINETIC_KM", "KINETIC_VMAX", "KINETIC_NOTE"].indexOf(a.apicategory) !== -1) {
-                        if (a.apicategory === "KINETIC_KM") a.label = "K<sub>M</sub>";
-                        if (a.apicategory === "KINETIC_VMAX") a.label = "V<sub>max</sub>";
+                    if (["KINETIC_KM", "KINETIC_VMAX", "KINETIC_NOTE"].indexOf(a.apicategory)!==-1) {
+                        if(a.apicategory==="KINETIC_KM") a.label="K<sub>M</sub>";
+                        if(a.apicategory==="KINETIC_VMAX") a.label="V<sub>max</sub>";
+                        a.categoryLabel= "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.apicategory= "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.subcategory="KINETIC PARAMETERS";
+                    }
+                    if (["PH_DEPENDENCE", "TEMPERATURE_DEPENDENCE"].indexOf(a.apicategory)!==-1) {
+                        if(a.apicategory==="TEMPERATURE_DEPENDENCE") a.label="Temperature";
+                        if(a.apicategory==="PH_DEPENDENCE") a.label="pH";
                         a.categoryLabel = "BIOPHYSICOCHEMICAL PROPERTIES";
-                        a.apicategory = "BIOPHYSICOCHEMICAL PROPERTIES";
-                        a.subcategory = "KINETIC PARAMETERS";
+                        a.apicategory= "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.subcategory="DEPENDENCE";
                     }
-                    if (["PH_DEPENDENCE", "TEMPERATURE_DEPENDENCE"].indexOf(a.apicategory) !== -1) {
-                        if (a.apicategory === "TEMPERATURE_DEPENDENCE") a.label = "Temperature";
-                        if (a.apicategory === "PH_DEPENDENCE") a.label = "pH";
+                    if (["ABSORPTION_MAX", "ABSORPTION_NOTE"].indexOf(a.apicategory)!==-1) {
+                        if (a.apicategory=="ABSORPTION_MAX") a.label="&lambda;<sub>max</sub>";
                         a.categoryLabel = "BIOPHYSICOCHEMICAL PROPERTIES";
-                        a.apicategory = "BIOPHYSICOCHEMICAL PROPERTIES";
-                        a.subcategory = "DEPENDENCE";
+                        a.apicategory= "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.subcategory="ABSORPTION";
                     }
-                    if (["ABSORPTION_MAX", "ABSORPTION_NOTE"].indexOf(a.apicategory) !== -1) {
-                        if (a.apicategory == "ABSORPTION_MAX") a.label = "&lambda;<sub>max</sub>";
+                    if (a.apicategory=="REDOX_POTENTIAL") {
                         a.categoryLabel = "BIOPHYSICOCHEMICAL PROPERTIES";
-                        a.apicategory = "BIOPHYSICOCHEMICAL PROPERTIES";
-                        a.subcategory = "ABSORPTION";
+                        a.apicategory= "BIOPHYSICOCHEMICAL PROPERTIES";
+                        a.subcategory="REDOX POTENTIAL";
                     }
-                    if (a.apicategory == "REDOX_POTENTIAL") {
-                        a.categoryLabel = "BIOPHYSICOCHEMICAL PROPERTIES";
-                        a.apicategory = "BIOPHYSICOCHEMICAL PROPERTIES";
-                        a.subcategory = "REDOX POTENTIAL";
-                    }
-                    if (Object.keys(self.categoryTitles).indexOf(a.apicategory) != -1) a.categoryLabel = self.categoryTitles[a.apicategory];
+                    if(Object.keys(self.categoryTitles).indexOf(a.apicategory)!=-1) a.categoryLabel = self.categoryTitles[a.apicategory];
                     else a.cateogryLabel = a.category.toUpperCase();
                     dontCapitalize = ["mRNA", "tRNA", "rRNA", "dsDNA", "ssDNA", "siRNA", "snRNA", "ssRNA", "tmRNA",
                         "dAMP", "dADP", "dATP", "dCMP", "dCDP", "dCTP", "dGMP", "dGDP", "dGTP",
                         "dTMP", "dTDP", "dTTP", "cAMP", "cGMP", "hnRNP", "snRNP", "bZIP", "cTAGE", "eIF", "mTERF"]
-                    if (a.description && dontCapitalize.indexOf(a.description.split(" ")[0]) === -1) a.description = a.description.charAt(0).toUpperCase() + self._addPubmedLink(a.description).slice(1);
-                    if (a.cvTermName && dontCapitalize.indexOf(a.cvTermName.split(" ")[0]) === -1) a.cvTermName = a.cvTermName.charAt(0).toUpperCase() + a.cvTermName.slice(1);
-                    if (a.apicategory === "TRANSPORT_ACTIVITY") a.categoryLabel = "TCDB TRANSPORT CLASSIFICATION";
+                    if (a.description && dontCapitalize.indexOf(a.description.split(" ")[0])===-1) a.description= a.description.charAt(0).toUpperCase()+ self._addPubmedLink(a.description).slice(1);
+                    if (a.cvTermName && dontCapitalize.indexOf(a.cvTermName.split(" ")[0])===-1) a.cvTermName=a.cvTermName.charAt(0).toUpperCase()+a.cvTermName.slice(1);
+                    if (a.apicategory==="TRANSPORT_ACTIVITY") a.categoryLabel = "TCDB TRANSPORT CLASSIFICATION";
                     if (a.bioObject) {
-                        a.geneName = a.bioObject.properties.geneName != '' ? a.bioObject.properties.geneName : '-';
-                        a.proteinName = a.bioObject.properties.proteinName;
-                        a.url = a.bioObject.properties.url;
-                        a.database = a.bioObject.database;
-                        a.accession = a.bioObject.accession;
-                        if (a.bioObject.bioType == "PROTEIN_ISOFORM") {
-                            a.interactantIsoform = a.bioObject.properties.isoformName;
-                        }
-                        ;
+                        a.geneName=a.bioObject.properties.geneName != '' ? a.bioObject.properties.geneName : '-';
+                        a.proteinName=a.bioObject.properties.proteinName;
+                        a.url=a.bioObject.properties.url;
+                        a.database=a.bioObject.database;
+                        a.accession=a.bioObject.accession;
+                        if(a.bioObject.bioType=="PROTEIN_ISOFORM") {a.interactantIsoform=a.bioObject.properties.isoformName;};
                     }
                     a.selfInteraction = a.propertiesMap.selfInteraction ? a.propertiesMap.selfInteraction[0].value : false;
                     a.matureProtein = a.propertiesMap["mature protein"] ? a.propertiesMap["mature protein"][0].value : false;
-                    a.xeno = a.database != "neXtProt" ? true : false;
-                    if (!a.categoryLabel) a.categoryLabel = a.apicategory.replace(/_/g, " ");
+                    a.xeno = a.database!="neXtProt" ? true : false;
+                    if(!a.categoryLabel) a.categoryLabel = a.apicategory.replace(/_/g, " ");
                     if (a.apicategory === "SMALL_MOLECULE_INTERACTION" && a.database !== "DrugBank") {
                         a.categoryLabel = "PROTEIN-CHEMICAL INTERACTION";
                     }
-                    if (!data.hasOwnProperty(a.categoryLabel)) data[a.categoryLabel] = [];
+                    if (!data.hasOwnProperty(a.categoryLabel)) data[a.categoryLabel]=[];
                     var evidences = self._getEvidence(a.evidences, data_xrefs, data_publi);
-                    for (var e in evidences) if (e > 0 && evidences[e].negative !== evidences[e - 1].negative) {
+                    for (var e in evidences) if(e>0 && evidences[e].negative!==evidences[e-1].negative) {
                         a.conflict = true;
                         continue;
                     }
-                    for (var j in a.evidences) {
+                    for(var j in a.evidences){
                         var goq = self._getPrettyGoQualifier(a.evidences[j].goQualifier);
                         var italic_goq = "<i>" + goq + "</i>&nbsp;";
-                        if (goq && a.description && !a.description.startsWith(italic_goq)) {
+                        if(goq && a.description && !a.description.startsWith(italic_goq)) {
                             a.description = a.description.replace(goq + " ", italic_goq);
                         }
 
-                        if (a.evidences[j].negativeEvidence == true && !a.conflict) {
-                            if (a.description && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b>&nbsp;" + a.description.charAt(0).toLowerCase() + a.description.slice(1);
-                            if (a.cvTermName && !a.cvTermName.startsWith("<b>Not</b>")) a.cvTermName = "<b>Not</b>&nbsp;" + a.cvTermName.charAt(0).toLowerCase() + a.cvTermName.slice(1);
+                        if(a.evidences[j].negativeEvidence==true && !a.conflict) {
+                            if(a.description && !a.description.startsWith("<b>Not</b>")) a.description = "<b>Not</b>&nbsp;"+a.description.charAt(0).toLowerCase()+a.description.slice(1);
+                            if(a.cvTermName && !a.cvTermName.startsWith("<b>Not</b>")) a.cvTermName = "<b>Not</b>&nbsp;"+a.cvTermName.charAt(0).toLowerCase()+a.cvTermName.slice(1);
                             a.negativeAnnotation = true;
+                        };
+                    };
+                    if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
+                    if(a.isoformsDisplayedAsSpecific){
+                        if(a.isoformsDisplayedAsSpecific.length>1) for(var iso in a.isoformsDisplayedAsSpecific) {
+                            if(!a.isoformSpecific) a.isoformSpecific = "Isoforms "+data_isoforms[a.isoformsDisplayedAsSpecific[iso]].mainEntityName.name;
+                            else if(!a.isoformSpecific.match(data_isoforms[a.isoformsDisplayedAsSpecific[iso]].mainEntityName.name)) a.isoformSpecific = a.isoformSpecific+", "+data_isoforms[a.isoformsDisplayedAsSpecific[iso]].mainEntityName.name;
                         }
-                        ;
-                    }
-                    ;
-                    if (a.annotationId === 0) a.annotationId = data_annot.indexOf(a);
-                    if (a.isoformsDisplayedAsSpecific) {
-                        if (a.isoformsDisplayedAsSpecific.length > 1) for (var iso in a.isoformsDisplayedAsSpecific) {
-                            if (!a.isoformSpecific) a.isoformSpecific = "Isoforms " + data_isoforms[a.isoformsDisplayedAsSpecific[iso]].mainEntityName.name;
-                            else if (!a.isoformSpecific.match(data_isoforms[a.isoformsDisplayedAsSpecific[iso]].mainEntityName.name)) a.isoformSpecific = a.isoformSpecific + ", " + data_isoforms[a.isoformsDisplayedAsSpecific[iso]].mainEntityName.name;
-                        }
-                        else if (a.isoformsDisplayedAsSpecific.length === 1) a.isoformSpecific = "Isoform " + data_isoforms[a.isoformsDisplayedAsSpecific[0]].mainEntityName.name;
+                        else if (a.isoformsDisplayedAsSpecific.length===1) a.isoformSpecific = "Isoform "+ data_isoforms[a.isoformsDisplayedAsSpecific[0]].mainEntityName.name;
                     }
                     if (a.apicategory === "BINARY_INTERACTION") {
                         for (var e in evidences) {
@@ -640,7 +555,7 @@ Annotation section used in function, medical, and expression views.
                             }
                         }
                     }
-                    if (a.qualityQualifier === "GOLD") this.containsGoldEv[a.categoryLabel] = true;
+                    if (a.qualityQualifier==="GOLD") this.containsGoldEv[a.categoryLabel] = true;
                     data[a.categoryLabel].push({
                         id: a.annotationId,
                         description: a.description || a.cvTermName,
@@ -654,7 +569,7 @@ Annotation section used in function, medical, and expression views.
                         nameModifier: a.nameModifier,
                         additionalInfo: a.additionalInfo,
                         cvTermDescription: a.cvTermDescription,
-                        selfInteraction: a.selfInteraction == "true",
+                        selfInteraction: a.selfInteraction=="true",
                         matureProtein: a.matureProtein,
                         rank: a.rank,
                         xeno: a.xeno,
@@ -667,7 +582,7 @@ Annotation section used in function, medical, and expression views.
                         parentXref: a.parentXref,
                         evidences: evidences,
                         conflict: a.conflict,
-                        negativeAnnotation: a.negativeAnnotation,
+                        negativeAnnotation:a.negativeAnnotation,
                         evidenceSources: self._getUniqueListOfEvidenceSources(a.evidences),
                         qualityQualifier: a.qualityQualifier,
                         isoformSpecific: a.isoformSpecific,
@@ -679,147 +594,149 @@ Annotation section used in function, medical, and expression views.
 
                 for (var i in Object.keys(data)) {
                     var category = Object.keys(data)[i];
-                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "OVERVIEW", "PTM", "DOMAIN"].indexOf(category.toUpperCase()) !== -1) data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByRank);
-                    else if (category === "INTERACTIONS") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortOverview);
-                    else if (category === "SUBCELLULAR LOCATION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortSubcellular);
-                    else if (category === "BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBiophysicochemical);
-                    else if (category === "PROTEIN-PROTEIN INTERACTION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBinaryInteractions);
-                    else if (category === "DISEASE") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortDisease.bind(this));
-                    else if (category === "PROTEIN-CHEMICAL INTERACTION" || category === "PROTEIN-DRUG INTERACTION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByChemicalName);
+                    if (["ENZYMATIC ACTIVITY", "PROTEIN-COFACTOR INTERACTION", "COFACTOR", "NOTE", "CAUTION", "OVERVIEW", "PTM", "DOMAIN"].indexOf(category.toUpperCase())!==-1) data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByRank);
+                    else if (category==="INTERACTIONS") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortOverview);
+                    else if (category==="SUBCELLULAR LOCATION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortSubcellular);
+                    else if (category==="BIOPHYSICOCHEMICAL PROPERTIES") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBiophysicochemical);
+                    else if (category==="PROTEIN-PROTEIN INTERACTION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortBinaryInteractions);
+                    else if (category==="DISEASE") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortDisease.bind(this));
+                    else if (category==="PROTEIN-CHEMICAL INTERACTION" || category==="PROTEIN-DRUG INTERACTION") data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortByChemicalName);
                     else data[category] = data[Object.keys(data)[i]].filter(this._filter.bind(this)).sort(this._sortAlphabetically);
-                    count += data[Object.keys(data)[i]].length;
+                    count+=data[Object.keys(data)[i]].length;
                 }
                 this.data = data;
                 this.count = count;
-                if (this.$$("#evidenceButton") && this.goldOnly && !Object.keys(this.containsGoldEv).length) {
+                if(this.$$("#evidenceButton") && this.goldOnly && !Object.keys(this.containsGoldEv).length) {
                     this.$$("#evidenceButton").style.display = "none";
                     this.$$("#notice").innerHTML = "<i>The entry does not contain gold annotations.</i>";
-                } else if (this.$$("#evidenceButton")) {
+                }
+                else if(this.$$("#evidenceButton")) {
                     this.$$("#evidenceButton").style.display = "block";
                     this.$$("#notice").innerHTML = "<i>Annotations in this section apply to all the isoforms if not specified otherwise.</i>";
                 }
             },
 
             _getPrettyGoQualifier(go_qual) {
-                if (go_qual) return go_qual.substr(0, 1).toUpperCase() + go_qual.substr(1).replaceAll("_", " ");
+                if (go_qual) return go_qual.substr(0,1).toUpperCase() + go_qual.substr(1).replaceAll("_"," ");
                 return go_qual;
             },
 
             //Rename some titles if necessary
-            _displayCategoryTitle: function (name) {
-                if (name === "EXPRESSION INFO") {
+            _displayCategoryTitle: function(name){
+                if (name === "EXPRESSION INFO"){
                     return "EXPRESSION"
                 } else return name;
             },
-            _sortAlphabetically: function (a, b) {
-                if (a.isoformSpecific && !b.isoformSpecific) return 1;
-                else if (!a.isoformSpecific && b.isoformSpecific) return -1;
+            _sortAlphabetically: function(a,b) {
+                if(a.isoformSpecific && !b.isoformSpecific) return 1;
+                else if(!a.isoformSpecific && b.isoformSpecific) return -1;
 
                 if (!a.description)
                     return 1;
                 else if (!b.description)
                     return -1;
-                else if (a.description.startsWith("<b>") || b.description.startsWith("<b>") || a.description.startsWith("<i>") || b.description.startsWith("<i>"))
-                    return a.description.replace("<i>Contributes to</i> ", "").replace("<b>Not</b> ", "").replace("<i>Colocalizes with</i>&nbsp;", "").toLowerCase()
-                    > b.description.replace("<i>Contributes to</i> ", "").replace("<b>Not</b> ", "").replace("<i>Colocalizes with</i>&nbsp;", "").toLowerCase() ? 1 : -1;
+                else if(a.description.startsWith("<b>") || b.description.startsWith("<b>") || a.description.startsWith("<i>") || b.description.startsWith("<i>"))
+                    return a.description.replace("<i>Contributes to</i> ","").replace("<b>Not</b> ","").replace("<i>Colocalizes with</i>&nbsp;","").toLowerCase()
+                    > b.description.replace("<i>Contributes to</i> ","").replace("<b>Not</b> ","").replace("<i>Colocalizes with</i>&nbsp;","").toLowerCase() ? 1 : -1;
                 return a.description.toLowerCase() > b.description.toLowerCase() ? 1 : -1;
             },
-            _sortByRank: function (a, b) {
+            _sortByRank: function(a,b) {
                 return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
             },
-            _sortByChemicalName: function (a, b) {
+            _sortByChemicalName: function(a,b) {
                 return ('' + a.chemicalName).localeCompare(b.chemicalName);
             },
-            _sortOverview: function (a, b) {
-                return (a.isoformSpecific && !b.isoformSpecific) ? 1 : -1;
+            _sortOverview: function(a,b){
+                return (a.isoformSpecific && !b.isoformSpecific)?1:-1;
             },
-            _sortSubcellular: function (a, b) {
-                if (a.category === "SUBCELLULAR_LOCATION_NOTE" && b.category === "SUBCELLULAR_LOCATION_NOTE") return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
-                else if (a.category === "SUBCELLULAR_LOCATION" && b.category === "SUBCELLULAR_LOCATION") {
-                    if (a.isoformSpecific && !b.isoformSpecific) return 1;
-                    else if (!a.isoformSpecific && b.isoformSpecific) return -1;
-                    else if (a.isoformSpecific && b.isoformSpecific) return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
-                    else if (a.evidenceSources.indexOf("HPA subcell") !== -1 && b.evidenceSources.indexOf("HPA subcell") === -1) return -1;
-                    else if (a.evidenceSources.indexOf("HPA subcell") === -1 && b.evidenceSources.indexOf("HPA subcell") !== -1) return 1;
-                    else if (a.evidenceSources.indexOf("HPA subcell") !== -1 && b.evidenceSources.indexOf("HPA subcell") !== -1) {
-                        if (a.description.indexOf("Main location.") !== -1) return -1;
-                        else if (b.description.indexOf("Main location.") !== -1) return 1;
-                        else if (a.description.indexOf("Main location.") !== -1 && b.description.indexOf("Main location.") === -1) return -1;
-                        else if (a.description.indexOf("Main location.") === -1 && b.description.indexOf("Main location.") !== -1) return 1;
+            _sortSubcellular: function(a,b){
+                if(a.category==="SUBCELLULAR_LOCATION_NOTE" && b.category==="SUBCELLULAR_LOCATION_NOTE") return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
+                else if(a.category==="SUBCELLULAR_LOCATION" && b.category==="SUBCELLULAR_LOCATION") {
+                    if(a.isoformSpecific && !b.isoformSpecific) return 1;
+                    else if(!a.isoformSpecific && b.isoformSpecific) return -1;
+                    else if(a.isoformSpecific && b.isoformSpecific) return parseInt(a.rank) > parseInt(b.rank) ? 1 : -1;
+                    else if(a.evidenceSources.indexOf("HPA subcell")!==-1 && b.evidenceSources.indexOf("HPA subcell")===-1) return -1;
+                    else if(a.evidenceSources.indexOf("HPA subcell")===-1 && b.evidenceSources.indexOf("HPA subcell")!==-1) return 1;
+                    else if(a.evidenceSources.indexOf("HPA subcell")!==-1 && b.evidenceSources.indexOf("HPA subcell")!==-1) {
+                        if (a.description.indexOf("Main location.")!==-1) return -1;
+                        else if (b.description.indexOf("Main location.")!==-1) return 1;
+                        else if (a.description.indexOf("Main location.")!==-1 && b.description.indexOf("Main location.")===-1) return -1;
+                        else if (a.description.indexOf("Main location.")===-1 && b.description.indexOf("Main location.")!==-1) return 1;
                         else a.cvTermName.toLowerCase() > b.cvTermName.toLowerCase() ? 1 : -1;
                     }
                     return a.cvTermName.toLowerCase() > b.cvTermName.toLowerCase() ? 1 : -1;
-                } else if (a.category === "SUBCELLULAR_LOCATION_NOTE" && b.category === "SUBCELLULAR_LOCATION") return 1;
-                else if (b.category === "SUBCELLULAR_LOCATION_NOTE" && a.category === "SUBCELLULAR_LOCATION") return -1;
+                }
+                else if(a.category==="SUBCELLULAR_LOCATION_NOTE" && b.category==="SUBCELLULAR_LOCATION") return 1;
+                else if(b.category==="SUBCELLULAR_LOCATION_NOTE" && a.category==="SUBCELLULAR_LOCATION") return -1;
             },
-            _sortBiophysicochemical: function (a, b) {
-                if (a.subcategory == "ABSORPTION" && b.subcategory != "ABSORPTION") return -1;
-                if (a.subcategory == "ABSORPTION" && b.subcategory == "ABSORPTION") {
-                    if (a.label) {
+            _sortBiophysicochemical: function(a,b) {
+                if(a.subcategory=="ABSORPTION" && b.subcategory!="ABSORPTION") return -1;
+                if(a.subcategory=="ABSORPTION" && b.subcategory=="ABSORPTION") {
+                    if(a.label){
                         return -1;
                     }
                     return 1;
                 }
-                if (a.subcategory == "KINETIC PARAMETERS" && b.subcategory == "KINETIC PARAMETERS") {
-                    if (a.label == "K<sub>M</sub>" && b.label == "K<sub>M</sub>") {
-                        return (a.description.toLowerCase().split("for ")[1] > b.description.toLowerCase().split("for ")[1]) ? 1 : -1;
+                if(a.subcategory=="KINETIC PARAMETERS" && b.subcategory=="KINETIC PARAMETERS") {
+                    if(a.label == "K<sub>M</sub>" && b.label == "K<sub>M</sub>") {
+                        return (a.description.toLowerCase().split("for ")[1] > b.description.toLowerCase().split("for ")[1]) ? 1: -1;
                     }
-                    if (a.label == "V<sub>max</sub>" && b.label == "V<sub>max</sub>") {
-                        return (a.description.toLowerCase().split("enzyme ")[1] > b.description.toLowerCase().split("enzyme ")[1]) ? 1 : -1;
+                    if(a.label == "V<sub>max</sub>" && b.label == "V<sub>max</sub>") {
+                        return (a.description.toLowerCase().split("enzyme ")[1] > b.description.toLowerCase().split("enzyme ")[1]) ? 1: -1;
                     }
-                    if (a.label == "K<sub>M</sub>" && b.label == "V<sub>max</sub>") return -1;
-                    if (a.label == "V<sub>max</sub>" && b.label == "K<sub>M</sub>") return 1;
-                    if (a.id > b.id) {
+                    if(a.label == "K<sub>M</sub>" && b.label == "V<sub>max</sub>") return -1;
+                    if(a.label == "V<sub>max</sub>" && b.label == "K<sub>M</sub>") return 1;
+                    if(a.id > b.id) {
                         return 1;
                     }
                     return -1;
                 }
-                if (a.subcategory === "KINETIC PARAMETERS" && b.subcategory === "ABSORPTION") return 1;
-                if (a.subcategory === "KINETIC PARAMETERS" && b.subcategory === "DEPENDENCE") return -1;
-                if (a.subcategory == "DEPENDENCE" && b.subcategory != "DEPENDENCE") return 1;
-                if (a.subcategory === "DEPENDENCE" && b.subcategory === "DEPENDENCE" && b.label === "pH") return 1;
+                if(a.subcategory==="KINETIC PARAMETERS" && b.subcategory==="ABSORPTION") return 1;
+                if(a.subcategory==="KINETIC PARAMETERS" && b.subcategory==="DEPENDENCE") return -1;
+                if(a.subcategory=="DEPENDENCE" && b.subcategory!="DEPENDENCE") return 1;
+                if(a.subcategory==="DEPENDENCE" && b.subcategory==="DEPENDENCE" && b.label==="pH") return 1;
             },
-            _sortBinaryInteractions: function (a, b) {
+            _sortBinaryInteractions: function(a,b){
                 if (a.isoformSpecific && !b.isoformSpecific) return 1
                 if (!a.isoformSpecific && b.isoformSpecific) return -1
-                if (a.isoformSpecific && b.isoformSpecific && a.isoformSpecific !== b.isoformSpecific) return a.isoformSpecific.toLowerCase() > b.isoformSpecific.toLowerCase() ? 1 : -1;
+                if (a.isoformSpecific && b.isoformSpecific && a.isoformSpecific!==b.isoformSpecific) return a.isoformSpecific.toLowerCase() > b.isoformSpecific.toLowerCase() ? 1 : -1;
                 if (a.selfInteraction) return -1;
                 if (b.selfInteraction) return 1;
-                if (a.geneName == "-") return 1;
-                if (b.geneName == "-") return -1;
+                if (a.geneName=="-") return 1;
+                if (b.geneName=="-") return -1;
                 if (b.geneName === undefined) return -1;
                 if (a.geneName && b.geneName) return a.geneName.toLowerCase() > b.geneName.toLowerCase() ? 1 : -1;
                 return -1;
             },
-            _sortDisease: function (a, b) {
+            _sortDisease: function(a,b){
                 // first show the UniProt disease terms (in alphabetical order)
                 // then the Orphanet disease (in alphabetical order). Both of these refer to genetic diseases.
                 // then the NCI Thesaurus disease terms (in alphabetical order) at the end as they are not always genetic diseases.
-                if (a.evidenceSources.indexOf("UniProt") === -1 && b.evidenceSources.indexOf("UniProt") !== -1) return 1;
-                if (a.evidenceSources.indexOf("UniProt") !== -1 && b.evidenceSources.indexOf("UniProt") === -1) return -1;
-                if (a.evidenceSources.indexOf("UniProt") !== -1 && b.evidenceSources.indexOf("UniProt") !== -1) return this._sortByRank(a, b);
-                if (a.evidenceSources.indexOf("Orphanet") === -1 && b.evidenceSources.indexOf("Orphanet") !== -1) return 1;
-                if (a.evidenceSources.indexOf("Orphanet") !== -1 && b.evidenceSources.indexOf("Orphanet") === -1) return -1;
-                if (a.evidenceSources.indexOf("Orphanet") !== -1 && b.evidenceSources.indexOf("Orphanet") !== -1) return this._sortAlphabetically(a, b);
-                else return this._sortAlphabetically(a, b);
+                if (a.evidenceSources.indexOf("UniProt")===-1 && b.evidenceSources.indexOf("UniProt")!==-1) return 1;
+                if (a.evidenceSources.indexOf("UniProt")!==-1 && b.evidenceSources.indexOf("UniProt")===-1) return -1;
+                if (a.evidenceSources.indexOf("UniProt")!==-1 && b.evidenceSources.indexOf("UniProt")!==-1) return this._sortByRank(a,b);
+                if (a.evidenceSources.indexOf("Orphanet")===-1 && b.evidenceSources.indexOf("Orphanet")!==-1) return 1;
+                if (a.evidenceSources.indexOf("Orphanet")!==-1 && b.evidenceSources.indexOf("Orphanet")===-1) return -1;
+                if (a.evidenceSources.indexOf("Orphanet")!==-1 && b.evidenceSources.indexOf("Orphanet")!==-1) return this._sortAlphabetically(a,b);
+                else return this._sortAlphabetically(a,b);
             },
-            _sortAdditionalInfo: function (a, b) {
-                return (a.name !== "TOPOLOGY" && b.name === "TOPOLOGY") ? 1 : -1;
+            _sortAdditionalInfo: function(a,b){
+                return (a.name!=="TOPOLOGY" && b.name==="TOPOLOGY")? 1 : -1;
             },
-            _filter: function (item) {
+            _filter: function(item){
                 return (this._filterGold(item) && this._filterIsoform(item));
             },
-            _filterGold: function (item) {
-                if (this.goldOnly) return item.qualityQualifier === "GOLD";
+            _filterGold: function(item){
+                if (this.goldOnly) return item.qualityQualifier==="GOLD";
                 return true;
             },
-            _filterIsoform: function (item) {
-                if (this.isoform && this.isoform !== "all") return (item.isoformAccession === this.isoform || !item.isoformSpecific);
+            _filterIsoform: function(item){
+                if (this.isoform && this.isoform!=="all") return (item.isoformAccession===this.isoform || !item.isoformSpecific);
                 return true;
             },
-            _toggleAllEvidences: function () {
-                this.async(function () {
-                    this.evidencesShown = true;
+            _toggleAllEvidences: function(){
+                this.async(function() {
+                    this.evidencesShown=true;
                     var evidenceContainers = Polymer.dom(this.root).querySelectorAll(".evidences-container");
                     for (var e in evidenceContainers) {
                         if (this.showEvidences == true) {
@@ -832,21 +749,20 @@ Annotation section used in function, medical, and expression views.
                     this.showEvidences = !this.showEvidences;
                 }, 1);
             },
-            _getEvidence: function (ev, xrefs, publi) {
-                function getUrl(id) {
+            _getEvidence: function(ev, xrefs, publi){
+                function getUrl(id){
                     if (xrefs.hasOwnProperty(id)) {
                         return xrefs[id].resolvedUrl;
                     }
                     return "";
                 }
-
                 var self = this;
-                return ev.map(function (e) {
+                return ev.map(function(e){
                     if (e.goAssignedBy) e.assignedBy = e.goAssignedBy;
-                    if (e.assignedBy === "NextProt") e.assignedBy = "neXtProt";
-                    if (e.assignedBy === "Uniprot") e.assignedBy = "UniProt";
-                    if (e.assignedBy === "Human protein atlas subcellular localization") e.assignedBy = "HPA subcell";
-                    if (e.assignedBy === "Alzheimers_University_of_Toronto") e.assignedBy = "Alzheimers UoT";
+                    if (e.assignedBy==="NextProt") e.assignedBy="neXtProt";
+                    if (e.assignedBy==="Uniprot") e.assignedBy="UniProt";
+                    if (e.assignedBy==="Human protein atlas subcellular localization") e.assignedBy="HPA subcell";
+                    if (e.assignedBy==="Alzheimers_University_of_Toronto") e.assignedBy="Alzheimers UoT";
                     //if (e.assignedBy.endsWith("_PTW")) e.assignedBy = e.assignedBy.replace("_PTW","");
                     e.numberOfExperiments = e.properties ? e.properties.numberOfExperiments : undefined;
                     let psimiCvName;
@@ -867,59 +783,59 @@ Annotation section used in function, medical, and expression views.
                     }
                 })
             },
-            _getPublication: function (pub) {
-                if (pub) {
+            _getPublication: function(pub){
+                if(pub){
                     var pubCopy = jQuery.extend(true, {}, pub);
-                    pubCopy.localUrl = "/publications/" + pub.publicationId;
+                    pubCopy.localUrl = "/publications/"+pub.publicationId;
                     return pubCopy;
                 }
             },
-            _getUniqueListOfEvidenceSources: function (evidenceList) {
+            _getUniqueListOfEvidenceSources: function(evidenceList){
                 var evidenceSourceList = [];
-                for (var i in evidenceList) {
+                for (var i in evidenceList){
                     if (evidenceList[i].assignedBy.endsWith("_PTW"))
-                        evidenceList[i].assignedBy = evidenceList[i].assignedBy.replace("_PTW", "");
-                    if (evidenceSourceList.indexOf(evidenceList[i].assignedBy) < 0) {
+                        evidenceList[i].assignedBy = evidenceList[i].assignedBy.replace("_PTW","");
+                    if(evidenceSourceList.indexOf(evidenceList[i].assignedBy) < 0) {
                         evidenceSourceList.push(evidenceList[i].assignedBy);
                     }
                 }
                 return evidenceSourceList;
             },
-            _parseDiseaseDescription: function (annotation) {
+            _parseDiseaseDescription: function(annotation){
                 uniprotDiseaseRegExMatch = /.*\[MIM:[0-9]*\]/g.exec(annotation.description);
-                if (uniprotDiseaseRegExMatch) {
+                if(uniprotDiseaseRegExMatch) {
                     uniprotDiseaseString = uniprotDiseaseRegExMatch[0];
                     cvTermShortRegExMatch = /\([A-Za-z0-9 -+/()]*\)/g.exec(uniprotDiseaseString);
                     mimAccessionRegExMatch = / \[MIM:[0-9]*\]/g.exec(uniprotDiseaseString);
                     if (cvTermShortRegExMatch) {
-                        cvTermShort = cvTermShortRegExMatch[0].slice(1, cvTermShortRegExMatch[0].length - 1);
-                        cvTermLink = "<a href=\"/term/" + annotation.cvTermAccessionCode + "\">" + cvTermShort + "</a>";
+                        cvTermShort = cvTermShortRegExMatch[0].slice(1,cvTermShortRegExMatch[0].length-1);
+                        cvTermLink = "<a href=\"/term/"+annotation.cvTermAccessionCode+"\">"+cvTermShort+"</a>";
                         annotation.description = annotation.description.replace(new RegExp(cvTermShort, 'g'), cvTermLink);
                     }
                     if (mimAccessionRegExMatch) {
-                        mimAccession = mimAccessionRegExMatch[0].slice(6, mimAccessionRegExMatch[0].length - 1);
-                        mimLink = "<a href=\"http://www.omim.org/entry/" + mimAccession + "\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">MIM:" + mimAccession + "</a>";
-                        annotation.description = annotation.description.replace("MIM:" + mimAccession, mimLink);
+                        mimAccession = mimAccessionRegExMatch[0].slice(6,mimAccessionRegExMatch[0].length-1);
+                        mimLink = "<a href=\"http://www.omim.org/entry/"+mimAccession+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">MIM:"+mimAccession+"</a>";
+                        annotation.description = annotation.description.replace("MIM:"+mimAccession, mimLink);
                     }
                 }
                 nciDiseaseRegExMatch = /(.*\()([C0-9]*)(\) \[)(NCI thesaurus:[C0-9]*)(\].*)/g.exec(annotation.description);
-                if (nciDiseaseRegExMatch) {
+                if(nciDiseaseRegExMatch) {
                     nciAccession = nciDiseaseRegExMatch[2];
-                    cvTermLink = "<a href=\"/term/" + nciAccession + "\">" + nciAccession + "</a>";
-                    nciLink = "<a href=\"http://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI%20Thesaurus&code=" + nciAccession + "\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">" + nciDiseaseRegExMatch[4] + "</a>";
-                    annotation.description = nciDiseaseRegExMatch[1] + cvTermLink + nciDiseaseRegExMatch[3] + nciLink + nciDiseaseRegExMatch[5];
+                    cvTermLink = "<a href=\"/term/"+nciAccession+"\">"+nciAccession+"</a>";
+                    nciLink = "<a href=\"http://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI%20Thesaurus&code="+nciAccession+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">"+nciDiseaseRegExMatch[4]+"</a>";
+                    annotation.description = nciDiseaseRegExMatch[1] +cvTermLink + nciDiseaseRegExMatch[3] + nciLink + nciDiseaseRegExMatch[5];
                 }
                 return annotation.description;
             },
-            _checkCategoryLabel: function (category) {
-                return this.containsGoldEv[category] || this.goldOnly !== true;
+            _checkCategoryLabel: function(category){
+                return this.containsGoldEv[category] || this.goldOnly!==true;
             },
-            _checkIfContainsAccessionOrXref: function (annotation) {
+            _checkIfContainsAccessionOrXref: function(annotation){
                 return Boolean(annotation.cvTermAccessionCode || annotation.parentXref);
             },
-            _toArray: function (obj) {
+            _toArray: function(obj) {
                 if (typeof obj === 'object') {
-                    return Object.keys(obj).map(function (key) {
+                    return Object.keys(obj).map(function(key) {
                         return {
                             name: key,
                             value: obj[key]
@@ -928,81 +844,81 @@ Annotation section used in function, medical, and expression views.
                 }
                 return null;
             },
-            _objectValues: function (obj) {
+            _objectValues: function(obj) {
                 var vals = [];
-                for (var key in obj) {
-                    if (obj.hasOwnProperty(key)) {
+                for( var key in obj ) {
+                    if ( obj.hasOwnProperty(key) ) {
                         vals.push(obj[key]);
                     }
                 }
                 return vals;
             },
-            _getIndex: function (index) {
-                return index + 1;
+            _getIndex: function(index){
+                return index+1;
             },
-            _countItems: function (obj) {
+            _countItems: function(obj){
                 return obj.length;
             },
-            _toggle: function (mouseEvent) {
+            _toggle: function(mouseEvent){
                 var srcElementId = mouseEvent.target.id || mouseEvent.target.parentNode.id;
-                this.$$("#" + srcElementId.replace('button', 'container')).toggle();
+                this.$$("#"+srcElementId.replace('button','container')).toggle();
             },
-            _isNewPathwayCategory: function (category, name) {
-                if (category === "PATHWAY" && this.pathwayCategory != new String(name).split('_')[0]) {
+            _isNewPathwayCategory: function(category, name){
+                if (category==="PATHWAY" && this.pathwayCategory!=new String(name).split('_')[0]) {
                     this.pathwayCategory = new String(name).split('_')[0];
                     return true;
                 }
                 return false;
             },
-            _checkIfNextAnnotHasTheSameSource: function (categoryObj, index) {
+            _checkIfNextAnnotHasTheSameSource: function(categoryObj, index){
                 var firstAnnotCat = categoryObj[index]['evidenceSources'][0];
-                var secondAnnotCat = categoryObj[index + 1] ?
-                    categoryObj[index + 1]['evidenceSources'][0] : undefined;
-                return firstAnnotCat === secondAnnotCat;
+                var secondAnnotCat = categoryObj[index+1] ?
+                    categoryObj[index+1]['evidenceSources'][0] : undefined;
+                return firstAnnotCat===secondAnnotCat;
             },
-            _checkIfNextprot: function (databaseName) {
-                return databaseName.toLowerCase() === "nextprot";
+            _checkIfNextprot: function(databaseName){
+                return databaseName.toLowerCase()==="nextprot";
             },
-            _checkIfChebi: function (databaseName) {
-                return databaseName.toLowerCase() === "chebi";
+            _checkIfChebi: function(databaseName){
+                return databaseName.toLowerCase()==="chebi";
             },
-            _checkIfSubcellularLocation: function (annotation) {
-                return (annotation.category === "SUBCELLULAR_LOCATION" && annotation.cvTermName !== annotation.description);
+            _checkIfSubcellularLocation: function(annotation){
+                return (annotation.category==="SUBCELLULAR_LOCATION" && annotation.cvTermName!==annotation.description);
             },
-            _checkIfDisease: function (annotation) {
-                return annotation.category === "DISEASE";
+            _checkIfDisease: function(annotation){
+                return annotation.category==="DISEASE";
             },
-            _isBinaryInteractionOrBiophysical: function (category) {
-                return (["BINARY_INTERACTION", "BIOPHYSICOCHEMICAL PROPERTIES"].indexOf(category) !== -1);
+            _isBinaryInteractionOrBiophysical: function (category){
+                return (["BINARY_INTERACTION", "BIOPHYSICOCHEMICAL PROPERTIES"].indexOf(category)!==-1);
             },
-            _isBiophysicochemicalProperty: function (category) {
-                return category === "BIOPHYSICOCHEMICAL PROPERTIES";
+            _isBiophysicochemicalProperty: function(category){
+                return category==="BIOPHYSICOCHEMICAL PROPERTIES";
             },
-            _isPathwayOrTcdb: function (category) {
-                return ["UNIPATHWAYS", "KEGG PATHWAYS", "REACTOME PATHWAYS", "TCDB TRANSPORT CLASSIFICATION"].indexOf(category) !== -1;
+            _isPathwayOrTcdb: function(category){
+                return ["UNIPATHWAYS", "KEGG PATHWAYS", "REACTOME PATHWAYS", "TCDB TRANSPORT CLASSIFICATION"].indexOf(category)!==-1;
             },
-            _isProteinProteinInteraction: function (category) {
-                return category.name === "PROTEIN-PROTEIN INTERACTION";
+            _isProteinProteinInteraction: function(category){
+                return category.name==="PROTEIN-PROTEIN INTERACTION";
             },
-            _isNewSubcategory: function (annotations, index) {
-                return index === 0 || annotations[index].subcategory !== annotations[index - 1].subcategory;
+            _isNewSubcategory: function(annotations,index){
+                return index===0 || annotations[index].subcategory!==annotations[index-1].subcategory;
             },
-            _isNewIsoformSection: function (annotations, index) {
-                if (index === 0 || !annotations[index] || annotations[index].category !== "BINARY_INTERACTION") return false;
-                else return annotations[index].isoformSpecific !== annotations[index - 1].isoformSpecific;
+            _isNewIsoformSection: function(annotations, index){
+                if (index===0 || !annotations[index] || annotations[index].category!=="BINARY_INTERACTION") return false;
+                else return annotations[index].isoformSpecific!==annotations[index-1].isoformSpecific;
             },
-            _stringToId: function (str) {
+            _stringToId: function(str){
                 return str.toLowerCase().replace(" ", "-");
             },
-            _addPubmedLink: function (text) {
+            _addPubmedLink: function(text){
                 var pmidRegexp = /PubMed:\d{7,9}\.{0,1}\d{0,1}/g
                 var matches = text.match(pmidRegexp);
                 if (matches) {
-                    for (var i in matches) {
+                    for (var i in matches){
                         var pmid = matches[i].split(":")[1];
                         text = text.replace(
                             matches[i],
-                            'PubMed: <a href="https://www.ncbi.nlm.nih.gov/pubmed/' + pmid + '" class="ext-link style-scope generic-annotation-section" target="_blank">' + pmid + '</a>'
+                            'PubMed: <a href="https://www.ncbi.nlm.nih.gov/pubmed/'+pmid+'" class="ext-link style-scope generic-annotation-section" target="_blank">'+pmid+'</a>'
                         );
                     }
                 }
