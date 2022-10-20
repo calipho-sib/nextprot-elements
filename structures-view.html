@@ -27,14 +27,14 @@ View listing sequence annotations.
         </style>
         <div class="row">
             <div id="nxOverview" class="col-md-12">
-                <protein-overview nx-config="{{nxConfig}}" nx-entry-data="[[nxEntryData]]" lazy-loading></protein-overview>
+                <protein-overview nx-config="{{nxConfig}}" nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]"></protein-overview>
             </div>
         </div>
         <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no structure related features available in neXtProt for [[nxConfig.entry]].
             Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
         </div>
         <div id="nxPositionalAnnotations" class="row nxSection">
-            <isoform-selector nx-config="{{nxConfig}}" iso-name="{{isoName}}" nx-entry-data="[[nxEntryData]]" lazy-loading></isoform-selector>
+            <isoform-selector nx-config="{{nxConfig}}" iso-name="{{isoName}}" nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]"></isoform-selector>
             <triple-viewer nx-config="{{nxConfig}}" count="{{positionalAnnotationsCount}}" hide-sequence-viewer iso-name="[[isoName]]" selection="{{selection}}"
                            feature-list='[
                             {
@@ -303,7 +303,7 @@ View listing sequence annotations.
                 <keywords-section categories='["Technical term"]'
                                   exceptions='["KW-0021", "KW-0181", "KW-0903", "KW-0895", "KW-0374", "KW-0511", "KW-0582", "KW-0814"]'
                                   nx-config="{{nxConfig}}" count="{{keywordsCount}}"
-                                  nx-entry-data="[[nxEntryData]]" lazy-loading>
+                                  nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]">
                 </keywords-section>
             </div>
         </div>
