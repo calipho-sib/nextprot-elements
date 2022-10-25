@@ -445,8 +445,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                         let variantFrequencyDetails = {};
                                         variantFrequencyDetails["x"] = variant.targetingIsoformsMap[isoform]['firstPosition'];
                                         variantFrequencyDetails["y"] = frequency;
-                                        variantFrequencyDetails["id"] = 'Frequency';
-                                        variantFrequencyDetails["id"] = 'Frequency';
+                                        variantFrequencyDetails["id"] = "FREQUENCY_Variant_"+ variantFrequencyDetails["x"] + "_" + variantFrequencyDetails["x"] + "_" + variantAnnotation.uniqueName;
                                         variantFrequencyDetails["category"] = 'Frequency';
                                         let variantDescription = variantAnnotation.variant.original + " → " + variantAnnotation.variant.variant ;
 
@@ -761,32 +760,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             })
                         }
 
-                        // For variant feature, add another track with variant frequencies
-                        /*if(feature.name === 'Variant') {
-
-                            // Get target isoform details
-                            feature.data.map(function(variant){
-                                let frequencyEvidence = variant.evidences.filter(function(evidence){
-                                    return (evidence.assignedBy === 'gnomAD');
-                                });
-                                let frequency = frequencyEvidence.properties["allele frequency"];
-
-                                // Check if the variant has isoform specific position
-                                let variantFrequencyDetails = {};
-                                variantFrequencyDetails["y"] = frequency;
-                                if(this.isoName in variant.targetIsoformMap) {
-                                    let isoformSpecificVariantDetails = targetIsoformMap[this.isoName];
-                                    variantFrequencyDetails["x"] = isoformSpecificVariantDetails["firstPosition"];
-                                } else {
-                                    console.log("??")
-                                }
-                                variantFrequencyDetails["id"] = 'Frequency';
-                                variantFrequencyDetails["category"] = 'Frequency';
-                                variantFrequencyDetails["description"] = variantFrequencyDetails["y"];
-                            });
-                        }*/
-
-
                         this.ft.addFeature(feature);
                     }
                 }
@@ -980,7 +953,8 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             eventTV: function() {
                 var self=this;
                 this.ft.onFeatureSelected(function(d){
-                    if(d.detail.id === 'Frequency') {
+                    if(d.detail.id.includes('FREQUENCY')) {
+                        d.detail.id = d.detail.id.replace("FREQUENCY_","")
                         d.detail.end = d.detail.start;
                     }
                     self.selection = d.detail;
