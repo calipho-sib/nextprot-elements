@@ -527,7 +527,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             let vAnnot = variants.annot[variantsKey];
                             if (vAnnot.annotationHash && variantHashToDrvAnnots[vAnnot.annotationHash]) {
                                 let drvAnnots = variantHashToDrvAnnots[vAnnot.annotationHash];
-                                let drvEvidenceNames = [];
+                                let drvEvidenceNames = new Set();
                                 for (let drvAnnotKey in drvAnnots) {
                                     let drvAnnot = drvAnnots[drvAnnotKey];
                                     let diseaseAnnot = diseasesHashToDiseaseAnnot[drvAnnot.bioObject.annotationHash];
@@ -557,10 +557,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                             drvEvidence.diseaseRelatedVariant.name = diseaseAnnot.cvTermName;
                                             drvEvidence.diseaseRelatedVariant.accession = diseaseAnnot.cvTermAccessionCode;
                                             drvEvidence.diseaseRelatedVariant.experimentalContextId = drvEvidence.experimentalContextId;
-                                            drvEvidenceNames.push({
+                                            drvEvidenceNames.add(JSON.stringify({
                                                 name: diseaseAnnot.cvTermName,
                                                 accession: diseaseAnnot.cvTermAccessionCode
-                                            })
+                                            }));
                                             if (vEvidence.resourceId === drvEvidence.resourceId && vEvidence.assignedBy === drvEvidence.assignedBy) {
                                                 vEvidenceIdsToRemove.push(vEvidence.evidenceId);
                                                 evidenceToAdd = drvEvidence;
@@ -569,8 +569,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     }
 
                                     if(evidenceToAdd) {
-                                        evidenceToAdd.diseaseRelatedVariant.names = [... new Set(drvEvidenceNames)];
-                                        console.log(evidenceToAdd.names)
+                                        let evidenceNames = [];
+                                        drvEvidenceNames.forEach(function(evidence) {
+                                            evidenceNames.push(JSON.parse(evidence));
+                                        });
+                                        evidenceToAdd.diseaseRelatedVariant.names = evidenceNames;
                                         vAnnot.evidences.push(evidenceToAdd);
                                     }
 
