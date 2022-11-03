@@ -26,14 +26,14 @@ View listing medical annotations.
         </style>
         <div class="row">
             <div id="nxOverview" class="col-md-12">
-                <protein-overview nx-config="[[nxConfig]]" nx-entry-data="[[nxEntryData]]" lazy-loading></protein-overview>
+                <protein-overview nx-config="[[nxConfig]]" nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]"></protein-overview>
             </div>
         </div>
         <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no medical information available in neXtProt for [[nxConfig.entry]].
             Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
         </div>
         <div id="nxPositionalAnnotations" class="row nxSection">
-            <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}} nx-entry-data="[[nxEntryData]]" lazy-loading></isoform-selector>
+            <isoform-selector nx-config="{{nxConfig}}" iso-name={{isoName}} nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]"></isoform-selector>
             <triple-viewer nx-config="{{nxConfig}}" iso-name=[[isoName]] gold-only="[[nxConfig.goldOnly]]" feature-list='[
               {
                 "APIRef": "sequence",
@@ -53,7 +53,7 @@ View listing medical annotations.
                 "APIRef": "isoform-mapping",
                 "metadata": {}
               }
-            ]' count="{{positionalAnnotationsCount}}" hide-sequence-viewer nx-entry-data="[[nxEntryData]]" lazy-loading>
+            ]' count="{{positionalAnnotationsCount}}" hide-sequence-viewer nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]">
             </triple-viewer>
         </div>
         <div class="row">
@@ -70,7 +70,7 @@ View listing medical annotations.
                 <keywords-section categories='["Disease", "Technical term"]'
                                   category-accessions='{"Technical term": ["KW-0582"]}'
                                   nx-config="[[nxConfig]]"  count="{{keywordsCount}}"
-                                  nx-entry-data="[[nxEntryData]]" lazy-loading>
+                                  nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]">
                 </keywords-section>
             </div>
         </div>

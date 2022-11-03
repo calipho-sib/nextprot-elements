@@ -339,7 +339,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             },
             attached: function() {
 
-                if(Object.getOwnPropertyNames(JSON.parse(decodeURIComponent(this.nxEntryData))).length == 0) {
+                if(this.lazyLoading && Object.getOwnPropertyNames(JSON.parse(decodeURIComponent(this.nxEntryData))).length == 0) {
                     return;
                 }
 
@@ -352,7 +352,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
 
                     if(self.lazyLoading) {
                         let entryData = JSON.parse(decodeURIComponent(self.nxEntryData));
-                        console.log("HERE")
                         rawData.unshift(entryData.isoforms.isoforms);
                     }
 
@@ -419,7 +418,78 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     var feat = NXUtils.convertMappingsToIsoformMap(this.rawData[i],this.metaData[i].name.replace('.',''),this.metaData[i].filter, "");
                     if (this.nxConfig.goldOnly) feat = this._filterGoldForViewer(feat);
                     featForViewer = NXViewerUtils.convertNXAnnotations(feat,this.metaData[i],isoLengths);
-                    this.featuresForViewer.push(featForViewer);
+
+
+                    let frequencyFeature = {};
+                    let frequencyMinValues = {};
+                    if(this.rawData[i].annot.length > 0 ) {
+                        if (this.rawData[i].annot[0].apicategory === 'VARIANT') {
+                            // Get target isoform details
+                            this.rawData[i].annot.map(function (variant) {
+                                let variantAnnotation = variant;
+                                // Add isoforms available
+                                Object.keys(variant.targetingIsoformsMap).forEach(function(isoform) {
+                                    if(!(isoform in frequencyFeature)) {
+                                        frequencyFeature[isoform] = [];
+                                    }
+
+                                    let frequencyEvidence = variant.evidences.filter(function (evidence) {
+                                        return (evidence.assignedBy === 'gnomAD');
+                                    });
+
+                                    if(frequencyEvidence.length > 0 ) {
+                                        frequencyEvidence = frequencyEvidence[0];
+                                        let frequency = Number(frequencyEvidence.properties["allele frequency"]);
+
+                                        // Check if the variant has isoform specific position
+                                        let variantFrequencyDetails = {};
+                                        variantFrequencyDetails["x"] = variant.targetingIsoformsMap[isoform]['firstPosition'];
+                                        variantFrequencyDetails["y"] = frequency;
+                                        variantFrequencyDetails["id"] = "FREQUENCY_Variant_"+ variantFrequencyDetails["x"] + "_" + variantFrequencyDetails["x"] + "_" + variantAnnotation.uniqueName;
+                                        variantFrequencyDetails["category"] = 'Frequency';
+                                        let variantDescription = variantAnnotation.variant.original + " → " + variantAnnotation.variant.variant ;
+
+                                        variantFrequencyDetails["description"] = "<span>"+ variant.targetingIsoformsMap[isoform]['firstPosition'] + "<br/>" + variantDescription +"<br/>"+ frequency +"</span>";
+                                        frequencyFeature[isoform].push(variantFrequencyDetails);
+
+
+                                        if(isoform in frequencyMinValues) {
+                                            if(frequencyMinValues[isoform] > frequency) {
+                                                frequencyMinValues[isoform] = frequency;
+                                            }
+                                        } else {
+                                            frequencyMinValues[isoform] = frequency;
+                                        }
+                                    }
+                                });
+                            });
+                        }
+
+                        Object.keys(frequencyFeature).forEach(function(isoform) {
+                            frequencyFeature[isoform].forEach(function(variant) {
+                                variant['y'] = (-Math.log10(frequencyMinValues[isoform])) + 0.2 + Math.log10(variant['y'])
+                            })
+                        });
+
+                        if(Object.keys(frequencyFeature).length !== 0 ){
+                            featsByIso.push(frequencyFeature);
+                            let frequencyFeatureForViewer = {};
+                            Object.keys(frequencyFeature).forEach(function(key) {
+                                let x = {
+                                    className: "freq",
+                                    color: "#B3B3C2",
+                                    name: "Frequency (Log)",
+                                    type: "bar",
+                                    filter: 'Frequency',
+                                    data: frequencyFeature[key]
+                                }
+                                frequencyFeatureForViewer[key] = x;
+                            });
+                            this.featuresForViewer.push(frequencyFeatureForViewer);
+                        }
+                        this.featuresForViewer.push(featForViewer);
+
+                    }
                     featsByIso.push(feat);
                 }
                 this.notifyPath("featuresByIsoform", featsByIso);
@@ -457,7 +527,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             let vAnnot = variants.annot[variantsKey];
                             if (vAnnot.annotationHash && variantHashToDrvAnnots[vAnnot.annotationHash]) {
                                 let drvAnnots = variantHashToDrvAnnots[vAnnot.annotationHash];
-                                let drvEvidenceNames = [];
+                                let drvEvidenceNames = new Set();
                                 for (let drvAnnotKey in drvAnnots) {
                                     let drvAnnot = drvAnnots[drvAnnotKey];
                                     let diseaseAnnot = diseasesHashToDiseaseAnnot[drvAnnot.bioObject.annotationHash];
@@ -487,10 +557,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                             drvEvidence.diseaseRelatedVariant.name = diseaseAnnot.cvTermName;
                                             drvEvidence.diseaseRelatedVariant.accession = diseaseAnnot.cvTermAccessionCode;
                                             drvEvidence.diseaseRelatedVariant.experimentalContextId = drvEvidence.experimentalContextId;
-                                            drvEvidenceNames.push({
+                                            drvEvidenceNames.add(JSON.stringify({
                                                 name: diseaseAnnot.cvTermName,
                                                 accession: diseaseAnnot.cvTermAccessionCode
-                                            })
+                                            }));
                                             if (vEvidence.resourceId === drvEvidence.resourceId && vEvidence.assignedBy === drvEvidence.assignedBy) {
                                                 vEvidenceIdsToRemove.push(vEvidence.evidenceId);
                                                 evidenceToAdd = drvEvidence;
@@ -499,8 +569,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     }
 
                                     if(evidenceToAdd) {
-                                        evidenceToAdd.diseaseRelatedVariant.names = [... new Set(drvEvidenceNames)];
-                                        console.log(evidenceToAdd.names)
+                                        let evidenceNames = [];
+                                        drvEvidenceNames.forEach(function(evidence) {
+                                            evidenceNames.push(JSON.parse(evidence));
+                                        });
+                                        evidenceToAdd.diseaseRelatedVariant.names = evidenceNames;
                                         vAnnot.evidences.push(evidenceToAdd);
                                     }
 
@@ -883,6 +956,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
             eventTV: function() {
                 var self=this;
                 this.ft.onFeatureSelected(function(d){
+                    if(d.detail.id.includes('FREQUENCY')) {
+                        d.detail.id = d.detail.id.replace("FREQUENCY_","")
+                        d.detail.end = d.detail.start;
+                    }
                     self.selection = d.detail;
                     // update isoform selector
                     //console.log("feature selected");

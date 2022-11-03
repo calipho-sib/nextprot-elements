@@ -115,168 +115,168 @@ Annotation section used in function, medical, and expression views.
             <template is="dom-repeat" items="[[_toArray(data)]]" as="category">
                 <template is="dom-if" if="[[_checkCategoryLabel(category.name)]]">
                     <div class="row category-row">
-                    <div>
-                        <h4 class="annotation-category-title"> [[_displayCategoryTitle(category.name)]]
-                            <template is="dom-if" if="[[_isProteinProteinInteraction(category)]]">
-                                <div class="grey-x right-column-header">Number of IntAct expt.</div>
-                            </template>
-                        </h4>
-                    </div>
-                    <div id="[[_stringToId(category.name)]]-section">
-                        <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" initial-count="1" target-framerate="1000">
-                            <template is="dom-if" if="[[_isNewIsoformSection(category.value, index)]]">
-                                <div class="grey-x">Interactions for [[annotation.value.isoformSpecific]]</div>
-                            </template>
-                            <div class="row annotation-row">
-                                <template is="dom-if" if="[[annotation.value.prefix]]">
-                                    <div class="grey-x">[[annotation.value.prefix]]</div>
+                        <div>
+                            <h4 class="annotation-category-title"> [[_displayCategoryTitle(category.name)]]
+                                <template is="dom-if" if="[[_isProteinProteinInteraction(category)]]">
+                                    <div class="grey-x right-column-header">Number of IntAct expt.</div>
                                 </template>
-                                <div class="annotation-container">
-                                    <div class$="annotation-title-container [[annotation.value.category]]">
-                                        <template is="dom-if" if="[[annotation.value.chemicalName]]">
-                                            <template is="dom-if" if="[[_checkIfChebi(annotation.value.database)]]">
-                                                <p class="annotation-title" style="text-transform: capitalize">
-                                                    [[annotation.value.chemicalName]]
-                                                    <a href="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=[[annotation.value.accession]]" class="ext-link" target="_blank">[[annotation.value.accession]]</a>
-                                                </p>
+                            </h4>
+                        </div>
+                        <div id="[[_stringToId(category.name)]]-section">
+                            <template is="dom-repeat" items="[[_toArray(category.value)]]" as="annotation" initial-count="1" target-framerate="1000">
+                                <template is="dom-if" if="[[_isNewIsoformSection(category.value, index)]]">
+                                    <div class="grey-x">Interactions for [[annotation.value.isoformSpecific]]</div>
+                                </template>
+                                <div class="row annotation-row">
+                                    <template is="dom-if" if="[[annotation.value.prefix]]">
+                                        <div class="grey-x">[[annotation.value.prefix]]</div>
+                                    </template>
+                                    <div class="annotation-container">
+                                        <div class$="annotation-title-container [[annotation.value.category]]">
+                                            <template is="dom-if" if="[[annotation.value.chemicalName]]">
+                                                <template is="dom-if" if="[[_checkIfChebi(annotation.value.database)]]">
+                                                    <p class="annotation-title" style="text-transform: capitalize">
+                                                        [[annotation.value.chemicalName]]
+                                                        <a href="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=[[annotation.value.accession]]" class="ext-link" target="_blank">[[annotation.value.accession]]</a>
+                                                    </p>
+                                                </template>
                                             </template>
-                                        </template>
-                                        <template is="dom-if" if="[[annotation.value.cvTermAccessionCode]]">
-                                            <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
-                                                <div class="annotation-title"><span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span></div>
-                                            </template>
-                                            <template is="dom-if" if="[[annotation.value.matureProtein]]">
-                                                <div class="annotation-title"><span class="isoform-label front-label">[[annotation.value.matureProtein]]</span></div>
-                                            </template>
-                                            <template is="dom-if" if="[[_checkIfSubcellularLocation(annotation.value)]]">
-                                                <div class="annotation-title">
-                                                    <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
-                                                    <p inner-h-t-m-l="[[annotation.value.cvTermName]]"></p>
-                                                    <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
-                                                    <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
-                                                    <template is="dom-if" if="[[annotation.value.nameModifier]]">
-                                                        <p inner-h-t-m-l="[[annotation.value.nameModifier]]"></p>
-                                                    </template>
-                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
-                                                </div>
-                                            </template>
-                                            <template is="dom-if" if="[[!_checkIfSubcellularLocation(annotation.value)]]">
-                                                <div class="annotation-title">
-                                                    <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
-                                                    <p inner-h-t-m-l="[[annotation.value.description]]"></p>
-                                                    <div class="annotation-labels">
-                                                        <template is="dom-if" if="[[!_checkIfDisease(annotation.value)]]">
-                                                            <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
-                                                            <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
+                                            <template is="dom-if" if="[[annotation.value.cvTermAccessionCode]]">
+                                                <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
+                                                    <div class="annotation-title"><span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span></div>
+                                                </template>
+                                                <template is="dom-if" if="[[annotation.value.matureProtein]]">
+                                                    <div class="annotation-title"><span class="isoform-label front-label">[[annotation.value.matureProtein]]</span></div>
+                                                </template>
+                                                <template is="dom-if" if="[[_checkIfSubcellularLocation(annotation.value)]]">
+                                                    <div class="annotation-title">
+                                                        <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
+                                                        <p inner-h-t-m-l="[[annotation.value.cvTermName]]"></p>
+                                                        <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
+                                                        <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
+                                                        <template is="dom-if" if="[[annotation.value.nameModifier]]">
+                                                            <p inner-h-t-m-l="[[annotation.value.nameModifier]]"></p>
                                                         </template>
+                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                    </div>
+                                                </template>
+                                                <template is="dom-if" if="[[!_checkIfSubcellularLocation(annotation.value)]]">
+                                                    <div class="annotation-title">
+                                                        <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
+                                                        <p inner-h-t-m-l="[[annotation.value.description]]"></p>
+                                                        <div class="annotation-labels">
+                                                            <template is="dom-if" if="[[!_checkIfDisease(annotation.value)]]">
+                                                                <a class="accession-code-link" href="/term/[[annotation.value.cvTermAccessionCode]]">[[annotation.value.cvTermAccessionCodeLabel]]</a>
+                                                                <span id="description-button-[[annotation.value.id]]" class="colored-label definition-button" on-tap="_toggle">Definition</span>
+                                                            </template>
+                                                            <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </template>
+                                            <template is="dom-if" if="[[annotation.value.parentXref]]">
+                                                <div class="annotation-title">
+                                                    <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
+                                                    <p>[[annotation.value.description]]</p>
+                                                    <div class="annotation-labels">
+                                                        <template is="dom-if" if="[[annotation.value.chemicalName]]"><p class="drug-protein">[[annotation.value.chemicalName]]</p></template>
+                                                        <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
                                                         <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
                                                     </div>
                                                 </div>
                                             </template>
+                                            <template is="dom-if" if="[[!_checkIfContainsAccessionOrXref(annotation.value)]]">
+                                                <template is="dom-if" if="[[_isBiophysicochemicalProperty(annotation.value.category)]]">
+                                                    <template is="dom-if" if="[[_isNewSubcategory(category.value, index)]]">
+                                                        <div class="grey-x">[[annotation.value.subcategory]]</div>
+                                                    </template>
+                                                    <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4" inner-h-t-m-l="[[annotation.value.label]]"></div>
+                                                    <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8" inner-h-t-m-l="[[annotation.value.description]]"></div>
+                                                </template>
+                                                <p class="annotation-title justify">
+                                                    <template is="dom-if" if="[[!_isBinaryInteractionOrBiophysical(annotation.value.category)]]">
+                                                        <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
+                                                            <span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
+                                                        </template>
+                                                        <template is="dom-if" if="[[annotation.value.matureProtein]]">
+                                                            <span class="isoform-label front-label">[[annotation.value.matureProtein]]</span>
+                                                        </template>
+                                                        <span inner-h-t-m-l="[[annotation.value.description]]"></span>
+                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                    </template>
+                                                </p>
+                                                <template is="dom-if" if="[[annotation.value.selfInteraction]]">
+                                                    <p class="annotation-title">Itself <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label></p>
+                                                </template>
+                                                <template is="dom-if" if="[[!annotation.value.selfInteraction]]">
+                                                    <template is="dom-if" if="[[annotation.value.geneName]]">
+                                                        <p class="annotation-title">
+                                                            <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
+                                                            <template is="dom-if" if="[[annotation.value.negativeAnnotation]]"><b>Not</b></template>
+                                                            <template is="dom-if" if="[[_checkIfNextprot(annotation.value.database)]]">
+                                                                <a href="[[annotation.value.url]]">[[annotation.value.geneName]]</a>
+                                                                <template is="dom-if" if="[[annotation.value.proteinName]]">
+                                                                    → [[annotation.value.proteinName]]
+                                                                </template>
+                                                            </template>
+                                                            <template is="dom-if" if="[[!_checkIfNextprot(annotation.value.database)]]">
+                                                                [[annotation.value.geneName]] → [[annotation.value.database]]: <a href="[[annotation.value.url]]" class="ext-link" target="_blank">[[annotation.value.accession]]</a>
+                                                            </template>
+                                                            <template is="dom-if" if="[[annotation.value.interactantIsoform]]">
+                                                                <span class="annotation-title isoform-label end-label">Isoform [[annotation.value.interactantIsoform]]</span>
+                                                            </template>
+                                                            <template is="dom-if" if="[[annotation.value.xeno]]">
+                                                                <span class="xeno-label end-label">Xeno</span>
+                                                            </template>
+                                                            <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                                        </p>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                        </div>
+                                        <template is="dom-repeat" items="[[annotation.value.additionalInfo]]" as="additionalInfo">
+                                            <div class="row additional-info annotation-title"><div class="grey-x">[[additionalInfo.name]]</div> » [[additionalInfo.value]]
+                                                <a class="accession-code-link" href="/term/[[additionalInfo.accession]]">[[additionalInfo.accession]]</a></div>
                                         </template>
-                                        <template is="dom-if" if="[[annotation.value.parentXref]]">
-                                            <div class="annotation-title">
-                                                <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
-                                                <p>[[annotation.value.description]]</p>
-                                                <div class="annotation-labels">
-                                                <template is="dom-if" if="[[annotation.value.chemicalName]]"><p class="drug-protein">[[annotation.value.chemicalName]]</p></template>
-                                                    <a class="accession-code-link ext-link selectable" href="[[annotation.value.parentXref.resolvedUrl]]" target="_blank">[[annotation.value.parentXref.accession]]</a>
-                                                    <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
+                                        <div class="experiments-counter">[[annotation.value.numberOfExperiments]]</div>
+                                    </div>
+                                    <template is="dom-if" if="[[!_isPathwayOrTcdb(annotation.value.category)]]">
+                                        <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
+                                            <div class="evidences-button-container">
+                                                <div class="show-references-button">
+                                                    <a id="evidences-button-[[annotation.value.id]]" class="btn" on-tap="_toggle">
+                                                        <p class="show-references-button-counter">[[_countItems(annotation.value.evidences)]]</p>
+                                                        <p class="show-references-button-label">ev</p>
+                                                    </a>
+                                                    <div class="reference-label-container">
+                                                        <template is="dom-repeat" items="[[annotation.value.evidenceSources]]" as="source">
+                                                            <div class="reference-label">[[source]]</div>
+                                                        </template>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </template>
-                                        <template is="dom-if" if="[[!_checkIfContainsAccessionOrXref(annotation.value)]]">
-                                            <template is="dom-if" if="[[_isBiophysicochemicalProperty(annotation.value.category)]]">
-                                                <template is="dom-if" if="[[_isNewSubcategory(category.value, index)]]">
-                                                    <div class="grey-x">[[annotation.value.subcategory]]</div>
-                                                </template>
-                                                <div class="col-lg-2 col-md-2 col-sm-3 col-xs-4" inner-h-t-m-l="[[annotation.value.label]]"></div>
-                                                <div class="col-lg-10 col-md-10 col-sm-9 col-xs-8" inner-h-t-m-l="[[annotation.value.description]]"></div>
-                                            </template>
-                                            <p class="annotation-title justify">
-                                                <template is="dom-if" if="[[!_isBinaryInteractionOrBiophysical(annotation.value.category)]]">
-                                                    <template is="dom-if" if="[[annotation.value.isoformSpecific]]">
-                                                        <span class="isoform-label front-label">[[annotation.value.isoformSpecific]]</span>
-                                                    </template>
-                                                    <template is="dom-if" if="[[annotation.value.matureProtein]]">
-                                                        <span class="isoform-label front-label">[[annotation.value.matureProtein]]</span>
-                                                    </template>
-                                                    <span inner-h-t-m-l="[[annotation.value.description]]"></span>
-                                                    <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
-                                                </template>
-                                            </p>
-                                            <template is="dom-if" if="[[annotation.value.selfInteraction]]">
-                                                <p class="annotation-title">Itself <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label></p>
-                                            </template>
-                                            <template is="dom-if" if="[[!annotation.value.selfInteraction]]">
-                                                <template is="dom-if" if="[[annotation.value.geneName]]">
-                                                    <p class="annotation-title">
-                                                        <template is="dom-if" if="[[annotation.value.conflict]]"><span class="colored-label warning-label">Conflict</span></template>
-                                                        <template is="dom-if" if="[[annotation.value.negativeAnnotation]]"><b>Not</b></template>
-                                                        <template is="dom-if" if="[[_checkIfNextprot(annotation.value.database)]]">
-                                                            <a href="[[annotation.value.url]]">[[annotation.value.geneName]]</a>
-                                                            <template is="dom-if" if="[[annotation.value.proteinName]]">
-                                                                → [[annotation.value.proteinName]]
-                                                            </template>
-                                                        </template>
-                                                        <template is="dom-if" if="[[!_checkIfNextprot(annotation.value.database)]]">
-                                                            [[annotation.value.geneName]] → [[annotation.value.database]]: <a href="[[annotation.value.url]]" class="ext-link" target="_blank">[[annotation.value.accession]]</a>
-                                                        </template>
-                                                        <template is="dom-if" if="[[annotation.value.interactantIsoform]]">
-                                                            <span class="annotation-title isoform-label end-label">Isoform [[annotation.value.interactantIsoform]]</span>
-                                                        </template>
-                                                        <template is="dom-if" if="[[annotation.value.xeno]]">
-                                                            <span class="xeno-label end-label">Xeno</span>
-                                                        </template>
-                                                        <quality-label quality="[[annotation.value.qualityQualifier]]"></quality-label>
-                                                    </p>
-                                                </template>
-                                            </template>
-                                        </template>
-                                    </div>
-                                    <template is="dom-repeat" items="[[annotation.value.additionalInfo]]" as="additionalInfo">
-                                        <div class="row additional-info annotation-title"><div class="grey-x">[[additionalInfo.name]]</div> » [[additionalInfo.value]]
-                                        <a class="accession-code-link" href="/term/[[additionalInfo.accession]]">[[additionalInfo.accession]]</a></div>
                                     </template>
-                                    <div class="experiments-counter">[[annotation.value.numberOfExperiments]]</div>
                                 </div>
+                                <iron-collapse id="description-container-[[annotation.value.id]]">
+                                    <div class="well blue-well">
+                                        [[annotation.value.cvTermDescription]]
+                                    </div>
+                                </iron-collapse>
                                 <template is="dom-if" if="[[!_isPathwayOrTcdb(annotation.value.category)]]">
                                     <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
-                                        <div class="evidences-button-container">
-                                            <div class="show-references-button">
-                                                <a id="evidences-button-[[annotation.value.id]]" class="btn" on-tap="_toggle">
-                                                    <p class="show-references-button-counter">[[_countItems(annotation.value.evidences)]]</p>
-                                                    <p class="show-references-button-label">ev</p>
-                                                </a>
-                                                <div class="reference-label-container">
-                                                    <template is="dom-repeat" items="[[annotation.value.evidenceSources]]" as="source">
-                                                        <div class="reference-label">[[source]]</div>
-                                                    </template>
-                                                </div>
+                                        <iron-collapse id="evidences-container-[[annotation.value.id]]">
+                                            <div class="evidences-container">
+                                                <template is="dom-repeat" items="[[annotation.value.evidences]]" as="evidence">
+                                                    <evidence-item data="[[evidence]]" index="[[_getIndex(index)]]"></evidence-item>
+                                                </template>
                                             </div>
-                                        </div>
+                                        </iron-collapse>
                                     </template>
                                 </template>
-                            </div>
-                            <iron-collapse id="description-container-[[annotation.value.id]]">
-                                <div class="well blue-well">
-                                    [[annotation.value.cvTermDescription]]
-                                </div>
-                            </iron-collapse>
-                            <template is="dom-if" if="[[!_isPathwayOrTcdb(annotation.value.category)]]">
-                                <template is="dom-if" if="[[_countItems(annotation.value.evidences)]]">
-                                    <iron-collapse id="evidences-container-[[annotation.value.id]]">
-                                        <div class="evidences-container">
-                                            <template is="dom-repeat" items="[[annotation.value.evidences]]" as="evidence">
-                                                <evidence-item data="[[evidence]]" index="[[_getIndex(index)]]"></evidence-item>
-                                            </template>
-                                        </div>
-                                    </iron-collapse>
-                                </template>
                             </template>
-                        </template>
+                        </div>
                     </div>
-                </div>
                 </template>
             </template>
         </div>
@@ -328,23 +328,25 @@ Annotation section used in function, medical, and expression views.
                     var nx = new Nextprot.Client("neXtprot annotation loader", "Calipho Group");
                     if (this.nxConfig.env) nx.updateEnvironment(this.nxConfig.env);
                     var apiCall = [];
-                    for (var i in this.categories) {
+                    /*for (var i in this.categories) {
                         if (typeof this.categories[i]==="object") apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i][0], this.categories[i][1]));
                         else apiCall.push(nx.getAnnotationsByCategory(this.nxConfig.entry, this.categories[i]));
-                    }
+                    }*/
+                    apiCall.push(nx.getAnnotationsbyCategories(this.nxConfig.entry, this.categories));
                     var self = this;
                     Promise.all(apiCall)
-                            .then(function (categories) {
-                                self.annotationsByCategory = categories;
-                                self._getAnnotationsByView();
-                                self.$.spinner.removeAttribute('active');
-                            }).catch(function (err) {
-                                // catch any error that happened so far
-                                console.log("Argh, broken: " + err.message);
-                                console.log("Error at line : " + err.stack);
-                                self.$.spinner.removeAttribute('active');
-                                self.count = 0;
-                            });
+                        .then(function (data) {
+                            //let categories = data[0];
+                            self.annotationsByCategory = data[0];
+                            self._getAnnotationsByView();
+                            self.$.spinner.removeAttribute('active');
+                        }).catch(function (err) {
+                        // catch any error that happened so far
+                        console.log("Argh, broken: " + err.message);
+                        console.log("Error at line : " + err.stack);
+                        self.$.spinner.removeAttribute('active');
+                        self.count = 0;
+                    });
                 });
             },
             _reloadIsoform: function(){
@@ -398,11 +400,11 @@ Annotation section used in function, medical, and expression views.
                         if (["DISEASE", "VARIANT_INFO"].indexOf(a.apicategory)!==-1) a.description = this._parseDiseaseDescription(a);
                         if (a.apicategory==="MISCELLANEOUS"
                             && !(a.description.toLowerCase().match(/.*antibod.*/)
-                            || a.description.toLowerCase().match(/.*antigen.*/)
-                            || a.description.toLowerCase().match(/.*yamanaka factors.*/)
-                            || a.description.toLowerCase().match(/.*assess cell proliferation.*/)
-                            || a.description.toLowerCase().match(/.*potential pharmaceutical target.*/)
-                            || a.description.toLowerCase().match(/.*diagnostic marker.*/))) continue;
+                                || a.description.toLowerCase().match(/.*antigen.*/)
+                                || a.description.toLowerCase().match(/.*yamanaka factors.*/)
+                                || a.description.toLowerCase().match(/.*assess cell proliferation.*/)
+                                || a.description.toLowerCase().match(/.*potential pharmaceutical target.*/)
+                                || a.description.toLowerCase().match(/.*diagnostic marker.*/))) continue;
                     } else if (this.section==="interactions"){
                         if (a.apicategory==="MISCELLANEOUS" && !(a.description.toLowerCase().match(/.*bind.*/) || a.description.toLowerCase().match(/^bind.*/))) continue;
                     } else if (this.section==="sequence"){
@@ -412,8 +414,8 @@ Annotation section used in function, medical, and expression views.
                         for(var j in a.properties) {
                             if(a.properties[j].name==="differing sequence") {
                                 a.description = a.description.replace(
-                                        a.properties[j].accession,
-                                        "<a href=\""+data_xrefs[a.properties[j].value].resolvedUrl+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">"+a.properties[j].accession+"</a>"
+                                    a.properties[j].accession,
+                                    "<a href=\""+data_xrefs[a.properties[j].value].resolvedUrl+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">"+a.properties[j].accession+"</a>"
                                 );
                             }
                         }
@@ -425,11 +427,11 @@ Annotation section used in function, medical, and expression views.
                     }
                     if (a.apicategory==="SMALL_MOLECULE_INTERACTION") {
                         a.chemicalName = a.bioObject.properties["chemical name"] ?
-                                a.bioObject.properties["chemical name"] : undefined;
+                            a.bioObject.properties["chemical name"] : undefined;
                     }
                     if (a.apicategory==="COFACTOR") {
                         a.chemicalName = a.bioObject.properties["chemical name"] ?
-                                a.bioObject.properties["chemical name"] : undefined;
+                            a.bioObject.properties["chemical name"] : undefined;
                         if(this.section==="function") {
                             if (a.rank==1 &&  annotCategoryCount["COFACTOR"]>1) a.prefix = "It requires the following cofactors "
                             else if (a.rank==1) a.prefix = "It requires the following cofactor "
@@ -494,8 +496,8 @@ Annotation section used in function, medical, and expression views.
                     if(Object.keys(self.categoryTitles).indexOf(a.apicategory)!=-1) a.categoryLabel = self.categoryTitles[a.apicategory];
                     else a.cateogryLabel = a.category.toUpperCase();
                     dontCapitalize = ["mRNA", "tRNA", "rRNA", "dsDNA", "ssDNA", "siRNA", "snRNA", "ssRNA", "tmRNA",
-                    "dAMP", "dADP", "dATP", "dCMP", "dCDP", "dCTP", "dGMP", "dGDP", "dGTP",
-                    "dTMP", "dTDP", "dTTP", "cAMP", "cGMP", "hnRNP", "snRNP", "bZIP", "cTAGE", "eIF", "mTERF"]
+                        "dAMP", "dADP", "dATP", "dCMP", "dCDP", "dCTP", "dGMP", "dGDP", "dGTP",
+                        "dTMP", "dTDP", "dTTP", "cAMP", "cGMP", "hnRNP", "snRNP", "bZIP", "cTAGE", "eIF", "mTERF"]
                     if (a.description && dontCapitalize.indexOf(a.description.split(" ")[0])===-1) a.description= a.description.charAt(0).toUpperCase()+ self._addPubmedLink(a.description).slice(1);
                     if (a.cvTermName && dontCapitalize.indexOf(a.cvTermName.split(" ")[0])===-1) a.cvTermName=a.cvTermName.charAt(0).toUpperCase()+a.cvTermName.slice(1);
                     if (a.apicategory==="TRANSPORT_ACTIVITY") a.categoryLabel = "TCDB TRANSPORT CLASSIFICATION";
@@ -524,7 +526,7 @@ Annotation section used in function, medical, and expression views.
                         var goq = self._getPrettyGoQualifier(a.evidences[j].goQualifier);
                         var italic_goq = "<i>" + goq + "</i>&nbsp;";
                         if(goq && a.description && !a.description.startsWith(italic_goq)) {
-                            a.description = a.description.replace(goq + " ", italic_goq);                            
+                            a.description = a.description.replace(goq + " ", italic_goq);
                         }
 
                         if(a.evidences[j].negativeEvidence==true && !a.conflict) {
@@ -532,7 +534,7 @@ Annotation section used in function, medical, and expression views.
                             if(a.cvTermName && !a.cvTermName.startsWith("<b>Not</b>")) a.cvTermName = "<b>Not</b>&nbsp;"+a.cvTermName.charAt(0).toLowerCase()+a.cvTermName.slice(1);
                             a.negativeAnnotation = true;
                         };
-                    }; 
+                    };
                     if(a.annotationId===0) a.annotationId=data_annot.indexOf(a);
                     if(a.isoformsDisplayedAsSpecific){
                         if(a.isoformsDisplayedAsSpecific.length>1) for(var iso in a.isoformsDisplayedAsSpecific) {
@@ -613,17 +615,17 @@ Annotation section used in function, medical, and expression views.
                     this.$$("#notice").innerHTML = "<i>Annotations in this section apply to all the isoforms if not specified otherwise.</i>";
                 }
             },
-            
+
             _getPrettyGoQualifier(go_qual) {
                 if (go_qual) return go_qual.substr(0,1).toUpperCase() + go_qual.substr(1).replaceAll("_"," ");
                 return go_qual;
             },
 
-             //Rename some titles if necessary
+            //Rename some titles if necessary
             _displayCategoryTitle: function(name){
-              if (name === "EXPRESSION INFO"){
-                return "EXPRESSION"
-              } else return name;  
+                if (name === "EXPRESSION INFO"){
+                    return "EXPRESSION"
+                } else return name;
             },
             _sortAlphabetically: function(a,b) {
                 if(a.isoformSpecific && !b.isoformSpecific) return 1;
@@ -871,7 +873,7 @@ Annotation section used in function, medical, and expression views.
             _checkIfNextAnnotHasTheSameSource: function(categoryObj, index){
                 var firstAnnotCat = categoryObj[index]['evidenceSources'][0];
                 var secondAnnotCat = categoryObj[index+1] ?
-                        categoryObj[index+1]['evidenceSources'][0] : undefined;
+                    categoryObj[index+1]['evidenceSources'][0] : undefined;
                 return firstAnnotCat===secondAnnotCat;
             },
             _checkIfNextprot: function(databaseName){
@@ -915,8 +917,8 @@ Annotation section used in function, medical, and expression views.
                     for (var i in matches){
                         var pmid = matches[i].split(":")[1];
                         text = text.replace(
-                                matches[i],
-                                'PubMed: <a href="https://www.ncbi.nlm.nih.gov/pubmed/'+pmid+'" class="ext-link style-scope generic-annotation-section" target="_blank">'+pmid+'</a>'
+                            matches[i],
+                            'PubMed: <a href="https://www.ncbi.nlm.nih.gov/pubmed/'+pmid+'" class="ext-link style-scope generic-annotation-section" target="_blank">'+pmid+'</a>'
                         );
                     }
                 }

@@ -37,11 +37,11 @@ View listing sequence annotations.
         </style>
         <div class="row">
             <div id="nxOverview" class="col-md-12">
-                <protein-overview nx-config="[[nxConfig]]" nx-entry-data="[[nxEntryData]]" lazy-loading></protein-overview>
+                <protein-overview nx-config="[[nxConfig]]" nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]"></protein-overview>
             </div>
         </div>
         <div class="row nxSection">
-            <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}} nx-entry-data="[[nxEntryData]]" lazy-loading></isoform-selector>
+            <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}} nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]"></isoform-selector>
             <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]] feature-list='[{
         "APIRef": "sequence",
         "metadata": {"name": "Sequence"}
@@ -201,7 +201,7 @@ View listing sequence annotations.
       {
         "APIRef": "isoform-mapping",
         "metadata": {}
-      }]' nx-entry-data="[[nxEntryData]]" lazy-loading></triple-viewer>
+      }]' nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]"></triple-viewer>
         </div>
         <div class="row">
             <div id="nxXrefs" class="col-md-12">
