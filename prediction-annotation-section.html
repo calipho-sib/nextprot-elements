@@ -152,7 +152,7 @@ Annotation section used in function predictions views.
                                 <template is="dom-repeat" items="[[pred.evidences]]" as="evidence">
                                     <div >
                                         <div class="evidence-arrow">&#10549;</div>  Evidence [[_getIndex(index)]]:
-                                        <span class="colored-label evidence-code-name">[[_capitalizeFirstLetter(evidence.evidenceCodeName)]]</span>
+                                        <span class="colored-label evidence-code-name">[[_capitalizeFirstLetter(evidence.evidenceCodeName)]] </span><span class="colored-label evidence-code-name"> [[_capitalizeFirstLetter(evidence.proteinOrigin)]]</span>
                                         <div class="border-left">
                                             <div class="evidences-container">
                                                 <div class="evidence-submitters">
@@ -277,7 +277,12 @@ Annotation section used in function predictions views.
                 },
 
                 _sortPredictions: function(predictions) {
-                    return predictions.sort((a,b) => a.cvTermName > b.cvTermName)
+                    return predictions.sort((a,b) => {
+                        a.cvTermName > b.cvTermName &&
+                        a.ecoCode > b.ecoCode &&
+                        a.publicationAc > b.publicationAc
+
+                    })
                 },
 
                 _toggleAllEvidences: function(){
