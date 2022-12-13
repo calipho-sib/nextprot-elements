@@ -45,6 +45,12 @@ Annotation section used in function predictions views.
                 border-radius: 2px;
                 margin-left: 5px;
             }
+            .species-code-name {
+                background-color:#097469;
+                color:white;
+                border-radius: 2px;
+                margin-left: 5px;
+            }
             .evidence-publication, .evidence-submitters {
                 margin-top: 5px;
                 padding-left: 17px;
@@ -152,7 +158,10 @@ Annotation section used in function predictions views.
                                 <template is="dom-repeat" items="[[pred.evidences]]" as="evidence">
                                     <div >
                                         <div class="evidence-arrow">&#10549;</div>  Evidence [[_getIndex(index)]]:
-                                        <span class="colored-label evidence-code-name">[[_capitalizeFirstLetter(evidence.evidenceCodeName)]] </span><span class="colored-label evidence-code-name"> [[_capitalizeFirstLetter(evidence.proteinOrigin)]]</span>
+                                        <span class="colored-label evidence-code-name">[[_capitalizeFirstLetter(evidence.evidenceCodeName)]] </span>
+                                        <template is="dom-if" if="[[evidence.proteinOrigin]]">
+                                            <span class="colored-label species-code-name"> [[_capitalizeFirstLetter(evidence.proteinOrigin)]]</span>
+                                        </template>
                                         <div class="border-left">
                                             <div class="evidences-container">
                                                 <div class="evidence-submitters">
@@ -261,7 +270,9 @@ Annotation section used in function predictions views.
                 },
 
                 _capitalizeFirstLetter: function(string) {
-                    return string.charAt(0).toUpperCase() + string.slice(1)
+                    if(string) {
+                        return string.charAt(0).toUpperCase() + string.slice(1);
+                    }
                 },
 
                 _showSubmitter: function(orcids) {
