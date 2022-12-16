@@ -472,20 +472,24 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                         });
 
                         if(Object.keys(frequencyFeature).length !== 0 ){
-                            featsByIso.push(frequencyFeature);
                             let frequencyFeatureForViewer = {};
                             Object.keys(frequencyFeature).forEach(function(key) {
-                                let x = {
-                                    className: "freq",
-                                    color: "#B3B3C2",
-                                    name: "Frequency (Log)",
-                                    type: "bar",
-                                    filter: 'Frequency',
-                                    data: frequencyFeature[key]
+                                if(frequencyFeature[key] > 0) {
+                                    let x = {
+                                        className: "freq",
+                                        color: "#B3B3C2",
+                                        name: "Frequency (Log)",
+                                        type: "bar",
+                                        filter: 'Frequency',
+                                        data: frequencyFeature[key]
+                                    }
+                                    frequencyFeatureForViewer[key] = x;
                                 }
-                                frequencyFeatureForViewer[key] = x;
                             });
-                            this.featuresForViewer.push(frequencyFeatureForViewer);
+                            if(Object.keys(frequencyFeatureForViewer) > 0) {$
+                                this.featuresForViewer.push(frequencyFeatureForViewer);
+                                featsByIso.push(frequencyFeature);
+                            }
                         }
                         this.featuresForViewer.push(featForViewer);
 

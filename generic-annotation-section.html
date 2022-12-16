@@ -413,10 +413,12 @@ Annotation section used in function, medical, and expression views.
                     if(a.apicategory==="SEQUENCE_CAUTION") {
                         for(var j in a.properties) {
                             if(a.properties[j].name==="differing sequence") {
-                                a.description = a.description.replace(
-                                    a.properties[j].accession,
-                                    "<a href=\""+data_xrefs[a.properties[j].value].resolvedUrl+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">"+a.properties[j].accession+"</a>"
-                                );
+                                if(data_xrefs[a.properties[j].value]) {
+                                    a.description = a.description.replace(
+                                        a.properties[j].accession,
+                                        "<a href=\""+data_xrefs[a.properties[j].value].resolvedUrl+"\" class=\"ext-link style-scope generic-annotation-section\" target=\"_blank\">"+a.properties[j].accession+"</a>"
+                                    );
+                                }
                             }
                         }
                     }
