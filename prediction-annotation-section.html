@@ -287,32 +287,53 @@ Annotation section used in function predictions views.
                     return string.replace(/_/g, ' ');
                 },
 
-                _sortPredictions: function(predictions) {
-                    const speciesOrder = {
-                        "Homo sapiens" : 1,
-                        "Bos taurus" : 2,
-                        "Mus musculus" : 3,
-                        "Rattus norvegicus" :4,
-                        "Xenopus laevis" :5,
-                        "Danio rerio" :6,
-                        "Caenorhabditis elegans" :7,
-                        "Drosophila melanogaster" :8,
-                        "Dictyostelium discoideum" :9,
-                        "Saccharomyces cerevisiae" : 10,
-                        "Paramecium tetraurelia" : 11,
-                        "Trypanosoma brucei" : 12,
-                        "Chlamydomonas reinhardtii" :13,
-                        "Arabidopsis thaliana" : 14,
-                        "Oryza sativa" : 15
-                    }
+            _sortPredictions: function(predictions) {
+                const speciesOrder = {
+                    "Homo sapiens" : 1,
+                    "Bos taurus" : 2,
+                    "Mus musculus" : 3,
+                    "Rattus norvegicus" :4,
+                    "Xenopus laevis" :5,
+                    "Danio rerio" :6,
+                    "Caenorhabditis elegans" :7,
+                    "Drosophila melanogaster" :8,
+                    "Dictyostelium discoideum" :9,
+                    "Saccharomyces cerevisiae" : 10,
+                    "Paramecium tetraurelia" : 11,
+                    "Trypanosoma brucei" : 12,
+                    "Chlamydomonas reinhardtii" :13,
+                    "Arabidopsis thaliana" : 14,
+                    "Oryza sativa" : 15
+                }
 
-                    return predictions.sort((a,b) => {
-                        a.cvTermName > b.cvTermName &&
-                        a.ecoCode > b.ecoCode &&
-                        a.publicationAc > b.publicationAc
-                        speciesOrder[a.proteinOrigin] > speciesOrder[b.proteinOrigin]
-                    })
-                },
+                predictions.forEach(function(prediction) {
+                    prediction.evidences.sort(function(ev1,ev2){
+                        //ev1.publicationAc < ev2.publicationAc &&
+                        //ev1.evidenceCodeAC > ev2.evidenceCodeAC &&
+                        if(speciesOrder[ev1.proteinOrigin] >=  speciesOrder[ev2.proteinOrigin]) {
+                            if(ev1.evidenceCodeName > ev2.evidenceCodeName) {
+                                if(ev1.publicationAc <= ev2.publicationAc) {
+                                    return 1;
+                                } else {
+                                    return -1;
+                                }
+                            } else {
+                                return 1;
+                            }
+                        } else {
+                            return -1;
+                        }
+                    });
+                });
+
+                return predictions.sort((a,b) => {
+                    if(a.cvTermName > b.cvTermName) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                });
+            },
 
                 _toggleAllEvidences: function(){
                     this.async(function() {
