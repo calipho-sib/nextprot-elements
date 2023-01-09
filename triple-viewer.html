@@ -793,7 +793,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                     var features = {};
                     var self=this;
                     for (feat in this.featuresByIsoform) if(this.featuresByIsoform[feat].hasOwnProperty(this.isoName)) {
-                        var group = this.featuresByIsoform[feat][self.isoName][0].group;
+                        var group;
+                        if(this.featuresByIsoform[feat][self.isoName] && this.featuresByIsoform[feat][self.isoName].length > 0) {
+                            group = this.featuresByIsoform[feat][self.isoName][0].group;
+                        }
                         var featureList = this.featuresByIsoform[feat][self.isoName];
                         for (var i in featureList){
                             var feature = featureList[i];
@@ -833,11 +836,15 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                 feature.length = "";
                             }
                         }
-                        if(Object.keys(features).indexOf(group)<0) {
-                            features[group] = featureList;
-                        } else {
-                            features[group] = features[group].concat(featureList);
+
+                        if(group) {
+                            if(Object.keys(features).indexOf(group)<0) {
+                                features[group] = featureList;
+                            } else {
+                                features[group] = features[group].concat(featureList);
+                            }
                         }
+                        
                         number += feature.length;
                         for (var i=0;i<this.featuresByIsoform[feat][this.isoName].length;i++) if(this.featuresByIsoform[feat][this.isoName][i].source) {
                             this.featuresByIsoform[feat][this.isoName][i].evidenceSources = this._getUniqueListOfEvidenceSources(this.featuresByIsoform[feat][this.isoName][i].source);
