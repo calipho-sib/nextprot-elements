@@ -20,7 +20,7 @@
     "paper-toast": "1.3.1",
     "neon-animation": "~1.2.4",
     "paper-spinner": "^1.2.1",
-    "feature-viewer": "1.3.0-beta.11",
+    "feature-viewer": "1.3.0-beta.12",
     "sequence-viewer": "^0.2.45",
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
     "viz.js": "^1.8.1",
