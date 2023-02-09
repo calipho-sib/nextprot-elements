@@ -32,6 +32,9 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
         <div id="nxIsoformChoice" class="col-md-12">
             <span class="grey-x">Displayed isoform: </span>[[isoformLabel]]
             <span id="isoformMap" class="colored-label definition-button" on-tap="_toggleIsoformMap">Change isoform</span>
+            <template is="dom-if" if="[[!featureViewerReady]]">
+                <paper-spinner-lite id="featViewerSpinner" class="size" active></paper-spinner-lite>
+            </template>
         </div>
         <div class="row">
             <div id="visuContainer" class="col-md-12">
@@ -76,6 +79,9 @@ Widget visualizing isoform sequence coverage, allows switching between isoforms.
                 showAllTab: {
                     type: Boolean,
                     value: false
+                },
+                featureViewerReady: {
+                    type: Boolean,
                 }
             },
             ready: function() {

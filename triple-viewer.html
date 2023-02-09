@@ -335,6 +335,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                 count: {
                     type: Number,
                     notify: true
+                },
+                featureViewerReady: {
+                    type: Boolean,
+                    reflectToAttribute: true,
+                    notify: true
                 }
             },
             attached: function() {
@@ -371,6 +376,7 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                             self._addFiltering();
 //                        self.$.featTableSpinner.active = false;
                         }
+                        self.featureViewerReady = true;
                         //self.$.featViewerSpinner.active = false;
                         if (self.hideSequenceViewer) self.$$("#featuresTable").classList.add("col-md-12");
                         else self.$$("#featuresTable").classList.add("col-md-6")
