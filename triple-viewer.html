@@ -562,8 +562,10 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                                 accession: diseaseAnnot.cvTermAccessionCode
                                             }));
                                             if (vEvidence.resourceId === drvEvidence.resourceId && vEvidence.assignedBy === drvEvidence.assignedBy) {
-                                                vEvidenceIdsToRemove.push(vEvidence.evidenceId);
                                                 evidenceToAdd = drvEvidence;
+                                                if (vEvidence.qualityQualifier === drvEvidence.qualityQualifier) {
+                                                    vEvidenceIdsToRemove.push(vEvidence.evidenceId);
+                                                }
                                             }
                                         }
                                     }
