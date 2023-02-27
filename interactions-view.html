@@ -25,7 +25,10 @@ View listing protein interaction annotations.
       </div>
     </div>
     <div id="nxPositionalAnnotations" class="row nxSection">
-      <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}} nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]"></isoform-selector>
+      <isoform-selector nx-config="[[nxConfig]]" iso-name={{isoName}} nx-entry-data="[[nxEntryData]]"
+                        lazy-loading="[[lazyLoading]]"
+                        feature-viewer-ready="{{featureViewerReady}}">
+      </isoform-selector>
       <triple-viewer nx-config="[[nxConfig]]" iso-name=[[isoName]]  gold-only="[[nxConfig.goldOnly]]" feature-list='[
       {
         "APIRef": "sequence",
@@ -115,7 +118,10 @@ View listing protein interaction annotations.
         "APIRef": "isoform-mapping",
         "metadata": {}
       }
-    ]' count="{{positionalAnnotationsCount}}" gold-only="[[goldOnly]]" nx-entry-data="[[nxEntryData]]" lazy-loading="[[lazyLoading]]"></triple-viewer>
+    ]' count="{{positionalAnnotationsCount}}" gold-only="[[goldOnly]]" nx-entry-data="[[nxEntryData]]"
+                     lazy-loading="[[lazyLoading]]"
+                     feature-viewer-ready="{{featureViewerReady}}">
+      </triple-viewer>
     </div>
     <div id="noDataWarning" class='alert alert-warning noData' hidden>There is no interaction information available in neXtProt for [[nxConfig.entry]].
       Suggestions for updates are welcome! Please <a href='mailto:support@nextprot.org'>contact us</a>.
@@ -176,6 +182,11 @@ View listing protein interaction annotations.
         lazyLoading: {
           type: Boolean,
           value: false,
+        },
+        featureViewerReady: {
+          type: Boolean,
+          value: false,
+          notify: true
         }
       },
       _checkAnnotations: function(){
