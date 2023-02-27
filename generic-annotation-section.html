@@ -268,8 +268,7 @@ Annotation section used in function, medical, and expression views.
                                         <iron-collapse id="evidences-container-[[annotation.value.id]]">
                                             <div class="evidences-container">
                                                 <template is="dom-repeat" items="[[annotation.value.evidences]]" as="evidence">
-                                                    <evidence-item data="[[
-                                                    ]]" index="[[_getIndex(index)]]"></evidence-item>
+                                                    <evidence-item data="[[evidence]]" index="[[_getIndex(index)]]"></evidence-item>
                                                 </template>
                                             </div>
                                         </iron-collapse>
