@@ -118,8 +118,8 @@ Block element representing an evidence record.
                                     <b>Not </b>
                                 </template>
                                 [[data.diseaseRelatedVariant.relation]]
-                                <template is="dom-repeat" items="[[data.diseaseRelatedVariant.names]]" as="diseaseRelatedInfo">
-                                    <a href='/term/[[diseaseRelatedInfo.accession]]'>[[diseaseRelatedInfo.name]] </a> ,
+                                <template is="dom-repeat" items="[[data.diseaseRelatedVariant.names]]" as="diseaseRelatedInfo" initial-count="1" index-as="name_idx">
+                                    <a href='/term/[[diseaseRelatedInfo.accession]]'>[[diseaseRelatedInfo.name]]</a><template is="dom-if" if="[[!isEqualTo(name_idx, data.diseaseRelatedVariant.names.length)]]">, </template>
                                 </template>
                                 <template is="dom-if" if="[[data.context.tissue]]"> (originates from: <a href="/term/[[data.context.tissueAC]]">[[data.context.tissue.name]]</a>)</template>
                                 <template is="dom-if" if="[[data.context.cellLine]]"> in cell line <a href="/term/[[data.context.cellLineAC]]">[[data.context.cellLine.name]]</a></template>
@@ -181,6 +181,9 @@ Block element representing an evidence record.
                 }
                 return "evidence-container";
 
+            },
+            isEqualTo: function(index, size) {
+                return index === size - 1;
             },
             getAlleleFrequency: function(evidence) {
                 if(evidence.assignedBy === 'gnomAD') {
