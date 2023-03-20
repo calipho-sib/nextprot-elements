@@ -161,6 +161,8 @@ View listing identifiers annotations.
                         // special rule for transcript that should come before protein
                         if (a.key === 'Transcript' && b.key === 'Protein') return -1;
                         if (b.key === 'Transcript' && a.key === 'Protein') return  1;
+                        if (a.key === 'RefSeq Transcript' && b.key === 'RefSeq Protein') return -1;
+                        if (b.key === 'RefSeq Transcript' && a.key === 'RefSeq Protein') return  1;
                         // general rule: alpha sorted
                         if (a.key < b.key) return -1;
                         if (a.key > b.key) return  1;
