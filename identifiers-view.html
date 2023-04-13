@@ -124,6 +124,24 @@ View listing identifiers annotations.
                         delete result["NCBI"]["RefSeq"];
                         result["NCBI"]["RefSeq Transcript"] = refseqTranscripts;
                         result["NCBI"]["RefSeq Protein"] = refseqProtein;
+
+                        // MIM
+                        var mimIds = Object.keys(data.xrefs)
+                            .filter((key) => data.xrefs[key].databaseName === 'MIM');
+                        mimIds.forEach((mimId) => {
+                            if(data.xrefs[mimId].properties.length > 0) {
+                                data.xrefs[mimId].properties.forEach((prop) => {
+                                    if(prop['name'] === 'type'
+                                        && prop['value'] === 'gene') {
+                                        result['ADDITIONAL IDENTIFIERS']['MIM'] = [];
+                                        result['ADDITIONAL IDENTIFIERS']['MIM'].push({
+                                            accession : data.xrefs[mimId].accession,
+                                            link: data.xrefs[mimId].resolvedUrl
+                                        })
+                                    }
+                                })
+                            }
+                        })
                     }
                 });
 
