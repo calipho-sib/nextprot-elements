@@ -541,10 +541,11 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                     var hasNegEv = false;
                                     var hasNotNegEv = false;
 
-                                    // Each evidences in disease-related-variant (drv) annot has unique similar ev. in variant annot (same publication and same assignedBy).
-                                    // And an evidence in variant annot has several similar ev. in drv annot due to several exp. contexts.
-                                    // So we put drv evidences in variant annot and remove similar ev. which are in variant annot.
-                                    let vEvidenceIdsToRemove = [];
+                                    // Each evidences in disease-related-variant (drv) annot has unique similar ev. in variant annot
+                                    // (same publication and same assignedBy without experimental context).
+                                    // But an evidence in variant annot has several similar ev. in drv annot due to several exp. contexts.
+                                    // So we put drv evidences in variant annot and remove similar ev later.
+                                    // which are in variant annot if it's the same qualityQualifier.
                                     let evidenceToAdd;
                                     for (const vEvidenceKey in vAnnot.evidences) {
                                         let vEvidence = vAnnot.evidences[vEvidenceKey];
@@ -569,9 +570,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                             }));
                                             if (vEvidence.resourceId === drvEvidence.resourceId && vEvidence.assignedBy === drvEvidence.assignedBy) {
                                                 evidenceToAdd = drvEvidence;
-                                                if (vEvidence.qualityQualifier === drvEvidence.qualityQualifier) {
-                                                    vEvidenceIdsToRemove.push(vEvidence.evidenceId);
-                                                }
                                             }
                                         }
                                     }
@@ -583,10 +581,6 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                         });
                                         evidenceToAdd.diseaseRelatedVariant.names = evidenceNames;
                                         vAnnot.evidences.push(evidenceToAdd);
-                                    }
-
-                                    if (vEvidenceIdsToRemove) {
-                                        vAnnot.evidences = vAnnot.evidences.filter(e => !vEvidenceIdsToRemove.includes(e.evidenceId));
                                     }
 
                                     if (hasNotNegEv) {
@@ -612,6 +606,30 @@ Complex element joining nextprot feature viewer, feature table and sequence view
                                         vAnnot.conflict = true;
                                     }
                                 }
+                            }
+
+                            // NEXTPROT-2230 we remove similar evidences: same publication, same assignedBy,
+                            // without experimental context (not "found in"), not disease releated variant
+                            if (vAnnot.evidences.length < 2) {
+                                continue;
+                            }
+                            let vEvidenceIdsToRemove = [];
+                            for (let vEvidenceKey1 in vAnnot.evidences) {
+                                let vEvidence1 = vAnnot.evidences[vEvidenceKey1];
+                                for (let vEvidenceKey2 in vAnnot.evidences) {
+                                    let vEvidence2 = vAnnot.evidences[vEvidenceKey2];
+                                    if ( vEvidenceKey1 !== vEvidenceKey2
+                                        && vEvidence1.experimentalContextId === null // we don't remove evidences with EC
+                                        && vEvidence1.diseaseRelatedVariant === undefined // we don't remove disease-related-variant evidences
+                                        && vEvidence1.resourceId === vEvidence2.resourceId
+                                        && vEvidence1.assignedBy === vEvidence2.assignedBy
+                                        && vEvidence1.qualityQualifier === vEvidence2.qualityQualifier) {
+                                        vEvidenceIdsToRemove.push(vEvidence1.evidenceId);
+                                    }
+                                }
+                            }
+                            if (vEvidenceIdsToRemove) {
+                                vAnnot.evidences = vAnnot.evidences.filter(e => !vEvidenceIdsToRemove.includes(e.evidenceId));
                             }
                         }
                         return variants;
