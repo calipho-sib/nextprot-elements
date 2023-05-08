@@ -120,11 +120,13 @@ View listing identifiers annotations.
                                 });
                             }
                         });
-                        var refseqProtein = result["NCBI"]["RefSeq"];
-                        delete result["NCBI"]["RefSeq"];
-                        result["NCBI"]["RefSeq Transcript"] = refseqTranscripts;
-                        result["NCBI"]["RefSeq Protein"] = refseqProtein;
-
+                        if("NCBI" in result) {
+                            var refseqProtein = result["NCBI"]["RefSeq"];
+                            delete result["NCBI"]["RefSeq"];
+                            result["NCBI"]["RefSeq Transcript"] = refseqTranscripts;
+                            result["NCBI"]["RefSeq Protein"] = refseqProtein;
+                        }
+                        
                         // MIM
                         var mimIds = Object.keys(data.xrefs)
                             .filter((key) => data.xrefs[key].databaseName === 'MIM');
